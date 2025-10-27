@@ -58,3 +58,6 @@ dist-ssr
 .yarn/install-state.gz
 .pnp.*
 
+# Vercel
+.vercel
+
