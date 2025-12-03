@@ -13,15 +13,17 @@ import { navItems, resourceItems } from '../constants/navigationData';
 import { Route } from '../hooks/useRouter';
 import { User as UserType } from '../hooks/useAuth';
 
-// VortixStream Logo 直接使用網址
+// VortixPR Logo - 使用本地資源
 
-// VortixStream Logo 組件
-function VortixStreamLogo({ className = "" }: { className?: string }) {
+import VortixLogoWhite from '../assets/VortixLogo White_Horizontal.png';
+
+// VortixPR Logo 組件
+function VortixPRLogo({ className = "" }: { className?: string }) {
   return (
     <div className="flex items-center">
       <img
-        src="https://files.blocktempo.ai/votrixstream-2.png"
-        alt="VortixStream"
+        src={VortixLogoWhite}
+        alt="VortixPR"
         className={`h-10 sm:h-11 md:h-12 lg:h-10 xl:h-11 w-auto object-contain transition-opacity duration-300 hover:opacity-80 ${className}`}
       />
     </div>
@@ -51,7 +53,7 @@ interface NavigationProps {
 
 /**
  * Global Navigation Component
- * 全域導航組件，在所有頁面頂部顯示 VortixStream Logo
+ * 全域導航組件，在所有頁面頂部顯示 VortixPR Logo
  * - 固定定位確保始終可見
  * - 響應式設計支援所有設備
  * - 直接導入 logo 確保顯示正確
@@ -125,9 +127,9 @@ export default function Navigation({ currentRoute, onNavigate, user, onLogout, o
     <nav className="bg-black w-full fixed top-0 left-0 z-50 shadow-lg">
       {/* Desktop Navigation Bar */}
       <div className="hidden lg:flex items-center justify-between h-[72px] px-[20px] xl:px-[64px]">
-        {/* Desktop VortixStream Logo */}
+        {/* Desktop VortixPR Logo */}
         <button onClick={() => onNavigate('home')} className="cursor-pointer">
-          <VortixStreamLogo />
+          <VortixPRLogo />
         </button>
         
         {/* Desktop Navigation */}
@@ -259,9 +261,9 @@ export default function Navigation({ currentRoute, onNavigate, user, onLogout, o
 
       {/* Mobile Navigation Bar */}
       <div className="lg:hidden flex items-center justify-between h-14 sm:h-16 md:h-[72px] px-[20px] xl:px-[64px]">
-        {/* Mobile VortixStream Logo */}
+        {/* Mobile VortixPR Logo */}
         <button onClick={() => onNavigate('home')} className="cursor-pointer">
-          <VortixStreamLogo />
+          <VortixPRLogo />
         </button>
         
         {/* Mobile Menu Toggle */}

@@ -1,12 +1,12 @@
 export const aboutContent = {
   hero: {
-    title: "Discover VortixStream: Your Crypto&AI News Partner",
-    description: "At VortixStream, we specialize in delivering top-tier press release distribution services tailored for the blockchain and crypto industry. Our mission is to maximize your news coverage and connect you with the right audience.",
+    title: "Discover VortixPR: Your Crypto&AI News Partner",
+    description: "At VortixPR, we provide strategic PR and distribution services for growing Web3 and AI companies. Our mission is to maximize your news coverage and connect you with the right audience.",
     cta: "Sign Up"
   },
   team: {
     title: "Our Team", 
-    subtitle: "Meet the passionate professionals behind VortixStream.",
+    subtitle: "Meet the passionate professionals behind VortixPR.",
     members: [
       {
         name: "Sarah Mitchell",

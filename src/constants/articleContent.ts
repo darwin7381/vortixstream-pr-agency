@@ -6,7 +6,7 @@ export const articlesContent = {
     category: 'PR Strategy',
     readTime: '5 min read',
     date: '2024-01-15',
-    author: 'VortixStream Team',
+    author: 'VortixPR Team',
     image: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?ixlib=rb-4.0.3&w=800&h=400&fit=crop&crop=center',
     excerpt: 'Learn the essential elements of writing compelling press releases that get results in the crypto industry.',
     content: [
@@ -127,7 +127,7 @@ export const articlesContent = {
     category: 'PR Strategy',
     readTime: '5 min read',
     date: '2023-12-10',
-    author: 'VortixStream Team',
+    author: 'VortixPR Team',
     image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&w=800&h=400&fit=crop&crop=center',
     excerpt: 'Build strategic partnerships with key influencers to amplify your tech PR initiatives.',
     content: [
@@ -274,7 +274,7 @@ export const articlesContent = {
     category: 'Media Strategy',
     readTime: '8 min read',
     date: '2024-01-10',
-    author: 'VortixStream Team',
+    author: 'VortixPR Team',
     image: 'https://images.unsplash.com/photo-1555255707-c07966088b7b?ixlib=rb-4.0.3&w=800&h=400&fit=crop&crop=center',
     excerpt: 'Comprehensive strategies for securing media coverage in the rapidly evolving AI landscape.',
     content: [

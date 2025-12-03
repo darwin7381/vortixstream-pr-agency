@@ -50,7 +50,7 @@ export default function AboutPage() {
                 <div className="aspect-[600/400] bg-gradient-to-br from-white/[0.03] via-white/[0.01] to-transparent border border-white/10 rounded-2xl flex items-center justify-center">
                   <div className="text-white/20 text-center">
                     <MaterialSymbol name="business" size={64} className="mx-auto mb-4" />
-                    <p className="text-[14px]">VortixStream Visual</p>
+                    <p className="text-[14px]">VortixPR Visual</p>
                   </div>
                 </div>
               </div>

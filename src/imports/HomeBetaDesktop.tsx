@@ -1406,7 +1406,7 @@ function Content8() {
         className="font-['Space_Grotesk:Medium',_sans-serif] font-medium leading-[0] min-w-full relative shrink-0 text-[#ffffff] text-[28px] text-center tracking-[-0.28px]"
         style={{ width: "min-content" }}
       >
-        <p className="block leading-[1.4]">{`"VortixStream transformed our media presence, elevating our project visibility in ways we never thought possible."`}</p>
+        <p className="block leading-[1.4]">{`"VortixPR transformed our media presence, elevating our project visibility in ways we never thought possible."`}</p>
       </div>
       <Avatar />
     </div>
@@ -2649,7 +2649,7 @@ function Content12() {
         style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100" }}
       >
         <p className="block leading-[1.5]">
-          At VortixStream, we amplify blockchain, Web3, and AI projects through
+          At VortixPR, we amplify blockchain, Web3, and AI projects through
           strategic media engagement. Our global network ensures your message
           resonates with the right audience.
         </p>

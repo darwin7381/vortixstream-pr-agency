@@ -3,6 +3,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Eye, EyeOff, ArrowLeft, Lock, Mail } from 'lucide-react';
+import VortixLogoWhite from '../assets/VortixLogo White_Horizontal.png';
 
 interface LoginPageProps {
   onNavigate: (route: string) => void;
@@ -99,11 +100,11 @@ export default function LoginPage({ onNavigate, onLogin }: LoginPageProps) {
           {/* 登入表單卡片 */}
           <div className="bg-gray-800/40 backdrop-blur-sm border border-gray-700/50 rounded-3xl p-8 lg:p-10 shadow-2xl">
             
-            {/* VortixStream Logo */}
+            {/* VortixPR Logo */}
             <div className="text-center mb-8">
               <img
-                src="https://files.blocktempo.ai/votrixstream-2.png"
-                alt="VortixStream"
+                src={VortixLogoWhite}
+                alt="VortixPR"
                 className="h-12 mx-auto mb-6 opacity-90"
               />
               <h1 
@@ -113,7 +114,7 @@ export default function LoginPage({ onNavigate, onLogin }: LoginPageProps) {
                 Welcome Back
               </h1>
               <p className="text-white/70 text-[16px]">
-                Sign in to your VortixStream account
+                Sign in to your VortixPR account
               </p>
             </div>
 

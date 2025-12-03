@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ChevronLeft, ChevronRight, TrendingUp, Globe, DollarSign, Users, Zap, Shield, Target, Award, Waves, Eye, Lightbulb, ArrowRight } from 'lucide-react';
 import { Button } from './ui/button';
 import { Route } from '../hooks/useRouter';
+import VortixLogoWhite from '../assets/VortixLogo White_Horizontal.png';
 
 interface ConceptPageProps {
   onNavigate?: (route: Route) => void;
@@ -13,15 +14,15 @@ export default function ConceptPage({ onNavigate }: ConceptPageProps) {
   const slides = [
     {
       id: 'cover',
-      title: 'VortixStream',
+      title: 'VortixPR',
       subtitle: 'Joint Venture Partnership Opportunity',
       description: 'Strategic Alliance for Turkey Market Expansion',
       content: (
         <div className="text-center space-y-8">
           <div className="flex justify-center mb-8">
             <img
-              src="https://files.blocktempo.ai/votrixstream-2.png"
-              alt="VortixStream Logo"
+              src={VortixLogoWhite}
+              alt="VortixPR Logo"
               className="h-24 w-auto object-contain"
             />
           </div>
@@ -118,7 +119,7 @@ export default function ConceptPage({ onNavigate }: ConceptPageProps) {
     },
     {
       id: 'why-vortixstream',
-      title: 'Why VortixStream',
+      title: 'Why VortixPR',
       subtitle: 'The Current That Carries Tech\'s Biggest Stories',
       description: 'Streaming visionary ideas into the mainstream with clarity and impact',
       content: (
@@ -178,7 +179,7 @@ export default function ConceptPage({ onNavigate }: ConceptPageProps) {
                   "We stream your vision into the global spotlight."
                 </p>
                 <p className="text-white/70 text-sm leading-relaxed">
-                  Every partnership with VortixStream means your content, your message, and your innovation reaches audiences worldwide with unprecedented quality and reliability.
+                  Every partnership with VortixPR means your content, your message, and your innovation reaches audiences worldwide with unprecedented quality and reliability.
                 </p>
               </div>
             </div>
@@ -251,7 +252,7 @@ export default function ConceptPage({ onNavigate }: ConceptPageProps) {
           </div>
           
           <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
-            <h3 className="text-2xl font-bold text-white mb-6">The VortixStream Advantage</h3>
+            <h3 className="text-2xl font-bold text-white mb-6">The VortixPR Advantage</h3>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="space-y-4">
                 <div className="flex items-start gap-4">
@@ -300,7 +301,7 @@ export default function ConceptPage({ onNavigate }: ConceptPageProps) {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
               <div className="bg-gradient-to-br from-[#FF7400]/20 to-[#1D3557]/30 border border-[#FF7400]/30 rounded-2xl p-8">
-                <h3 className="text-2xl font-bold text-white mb-6">VortixStream Brings</h3>
+                <h3 className="text-2xl font-bold text-white mb-6">VortixPR Brings</h3>
                 <div className="space-y-4">
                   <div className="flex items-start gap-4">
                     <Zap className="h-6 w-6 text-[#FF7400] mt-1 flex-shrink-0" />
@@ -377,7 +378,7 @@ export default function ConceptPage({ onNavigate }: ConceptPageProps) {
               <div className="text-center">
                 <div className="text-3xl font-bold text-[#FF7400] mb-2">60/40</div>
                 <div className="text-white font-medium mb-2">Revenue Split</div>
-                <div className="text-white/70 text-sm">60% VortixStream / 40% Partner<br/>for all Turkey market deals</div>
+                <div className="text-white/70 text-sm">60% VortixPR / 40% Partner<br/>for all Turkey market deals</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-[#FF7400] mb-2">Joint</div>
@@ -652,7 +653,7 @@ export default function ConceptPage({ onNavigate }: ConceptPageProps) {
                 </div>
               </div>
               <div className="space-y-4">
-                <h4 className="text-lg font-semibold text-[#FF7400]">Clarity for VortixStream</h4>
+                <h4 className="text-lg font-semibold text-[#FF7400]">Clarity for VortixPR</h4>
                 <div className="space-y-2 text-white/70 text-sm">
                   <div>• Seamless market entry through local expertise</div>
                   <div>• Fluid access to established client narratives</div>
@@ -686,7 +687,7 @@ export default function ConceptPage({ onNavigate }: ConceptPageProps) {
                 Ready to stream your vision into the global spotlight?
               </div>
               <div className="text-[#FF7400] text-base italic mb-4">
-                Let VortixStream be the current that carries your story to the world.
+                Let VortixPR be the current that carries your story to the world.
               </div>
               <Button 
                 onClick={() => onNavigate?.('home')}

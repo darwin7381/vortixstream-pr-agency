@@ -1,11 +1,11 @@
-# VortixStream v04 - PR Agency Website
+# VortixPR - Strategic PR & Distribution for Growing Web3 & AI Companies
 
 [![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](http://localhost:3000)
 [![React](https://img.shields.io/badge/React-18.3.1-blue)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-6.3.5-purple)](https://vitejs.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-latest-blue)](https://www.typescriptlang.org/)
 
-Modern, responsive PR agency website for Crypto & AI projects. Built with React, Vite, TypeScript, Radix UI, and Tailwind CSS.
+Modern, responsive PR agency website for Web3 & AI companies. Built with React, Vite, TypeScript, Radix UI, and Tailwind CSS. VortixPR provides strategic PR and distribution services for growing Web3 and AI companies.
 
 ## 🎯 Features
 
@@ -46,8 +46,8 @@ Modern, responsive PR agency website for Crypto & AI projects. Built with React,
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/darwin7381/vortixstream-pr-agency.git
-cd vortixstream-pr-agency
+git clone https://github.com/darwin7381/vortixpr-agency.git
+cd vortixpr-agency
 ```
 
 2. Install dependencies:
@@ -70,13 +70,13 @@ npm run build
 
 ## 📚 Documentation
 
-- [UI Guidelines](src/guidelines/VortixStream_UI_Guidelines.md) - Design system and component guidelines
+- [UI Guidelines](src/guidelines/VortixPR_UI_Guidelines.md) - Design system and component guidelines
 - [Issues & Fixes](ISSUES.md) - Known issues and solutions
 - [Fix Summary](FIX-SUMMARY.md) - Detailed technical fix report
 
 ## 🎨 Design
 
-Original design available at: [Figma - VortixStream_v04](https://www.figma.com/design/KZailxfKsB45U9nc7PYSqF/VortixStream_v04--Slides-)
+Original design available at: [Figma - VortixPR](https://www.figma.com/design/KZailxfKsB45U9nc7PYSqF/VortixPR)
 
 ### Brand Colors
 
@@ -92,7 +92,7 @@ Original design available at: [Figma - VortixStream_v04](https://www.figma.com/d
 ## 📦 Project Structure
 
 ```
-vortixstream-pr-agency/
+vortixpr-agency/
 ├── src/
 │   ├── components/      # React components
 │   │   ├── ui/         # Radix UI components
@@ -123,9 +123,9 @@ This project is proprietary. All rights reserved.
 ## 🔗 Links
 
 - [Live Website](http://localhost:3000)
-- [GitHub Repository](https://github.com/darwin7381/vortixstream-pr-agency)
-- [Original Figma Design](https://www.figma.com/design/KZailxfKsB45U9nc7PYSqF/VortixStream_v04--Slides-)
+- [GitHub Repository](https://github.com/darwin7381/vortixpr-agency)
+- [Original Figma Design](https://www.figma.com/design/KZailxfKsB45U9nc7PYSqF/VortixPR)
 
 ---
 
-**Built with ❤️ for VortixStream**
+**Built with ❤️ for VortixPR**

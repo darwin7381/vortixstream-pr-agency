@@ -157,7 +157,7 @@ export default function ServicesSection() {
               }`}
               style={{ transitionDelay: '1.1s' }}
             >
-              At VortixStream, we amplify blockchain, Web3, and AI projects through strategic media engagement. Our global network ensures your message resonates with the right audience.
+              At VortixPR, we amplify blockchain, Web3, and AI projects through strategic media engagement. Our global network ensures your message resonates with the right audience.
             </p>
           </div>
 

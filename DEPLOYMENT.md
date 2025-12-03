@@ -1,10 +1,10 @@
-# 部署指南 - VortixStream v04
+# 部署指南 - VortixPR
 
 ## Vercel 部署
 
 ### 快速部署
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/darwin7381/vortixstream-pr-agency)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/darwin7381/vortixpr-agency)
 
 ---
 
@@ -39,7 +39,7 @@ Error: No Output Directory named "dist" found after the Build completed.
 
 1. 登入 [Vercel Dashboard](https://vercel.com/dashboard)
 2. 點擊 "Add New Project"
-3. 導入 GitHub repository: `darwin7381/vortixstream-pr-agency`
+3. 導入 GitHub repository: `darwin7381/vortixpr-agency`
 4. Vercel 會自動檢測到 `vercel.json` 配置
 5. 點擊 "Deploy"
 
@@ -177,7 +177,7 @@ Vercel 已自動設定 GitHub 整合:
 
 ## 🔗 相關連結
 
-- **GitHub Repository**: https://github.com/darwin7381/vortixstream-pr-agency
+- **GitHub Repository**: https://github.com/darwin7381/vortixpr-agency
 - **Vercel Documentation**: https://vercel.com/docs
 - **Vite Deployment Guide**: https://vitejs.dev/guide/static-deploy.html
 

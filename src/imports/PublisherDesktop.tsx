@@ -288,7 +288,7 @@ function Content1() {
     >
       <div className="font-['Space_Grotesk:Medium',_sans-serif] font-medium relative shrink-0 text-[52px] tracking-[-0.52px] w-full">
         <p className="block leading-[1.2]">
-          Become a VortixStream Publishing Partner
+          Become a VortixPR Publishing Partner
         </p>
       </div>
       <div
@@ -718,7 +718,7 @@ function Component() {
       data-name="Component"
     >
       <div className="font-['Space_Grotesk:Medium',_sans-serif] font-medium relative shrink-0 text-[72px] tracking-[-0.72px] w-full">
-        <p className="block leading-[1.2]">Why Partner with VortixStream?</p>
+        <p className="block leading-[1.2]">Why Partner with VortixPR?</p>
       </div>
       <div
         className="font-['Noto_Sans:Regular',_sans-serif] font-normal relative shrink-0 text-[18px] w-full"
@@ -2011,7 +2011,7 @@ function Content17() {
       data-name="Content"
     >
       <div className="font-['Space_Grotesk:Medium',_sans-serif] font-medium relative shrink-0 text-[52px] tracking-[-0.52px] w-full">
-        <p className="block leading-[1.2]">{`Ready to Join VortixStream's Publisher Network?`}</p>
+        <p className="block leading-[1.2]">{`Ready to Join VortixPR's Publisher Network?`}</p>
       </div>
       <div
         className="font-['Noto_Sans:Regular',_sans-serif] font-normal relative shrink-0 text-[18px] w-full"

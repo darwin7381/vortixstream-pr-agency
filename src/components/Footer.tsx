@@ -4,6 +4,7 @@ import { Input } from "./ui/input";
 import { Facebook, Instagram, Twitter, Linkedin, Youtube } from "lucide-react";
 import { mapLinks, newsCategoryLinks, policyLinks } from '../constants/footerData';
 import { Route } from '../hooks/useRouter';
+import VortixLogoWhite from '../assets/VortixLogo White_Horizontal.png';
 
 
 interface FooterProps {
@@ -40,18 +41,18 @@ export default function Footer({ onNavigate }: FooterProps) {
   const CompanyLogo = () => (
     <div className="flex items-center">
       <img
-        src="https://files.blocktempo.ai/votrixstream-2.png"
-        alt="VortixStream Logo"
+        src={VortixLogoWhite}
+        alt="VortixPR Logo"
         className="h-10 sm:h-12 md:h-14 xl:h-16 2xl:h-20 shrink-0 w-auto object-contain"
         style={{ 
           maxWidth: 'none',
           display: 'block'
         }}
         onError={(e) => {
-          console.error('Footer VortixStream Logo failed to load:', e);
+          console.error('Footer VortixPR Logo failed to load:', e);
         }}
         onLoad={() => {
-          console.log('Footer VortixStream Logo loaded successfully');
+          console.log('Footer VortixPR Logo loaded successfully');
         }}
       />
     </div>
@@ -166,7 +167,7 @@ export default function Footer({ onNavigate }: FooterProps) {
           <div className="border-t border-white pt-8">
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 lg:gap-8">
               <p className="text-white text-[14px] font-['Noto_Sans:Regular']">
-                © 2025 VortixStream. All rights reserved.
+                © 2025 VortixPR. All rights reserved.
               </p>
               
               <div className="flex flex-wrap gap-x-6 gap-y-2">

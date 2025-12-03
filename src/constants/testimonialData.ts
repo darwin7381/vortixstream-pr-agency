@@ -1,6 +1,6 @@
 export const testimonials = [
   {
-    quote: "Professional, results-driven, and incredibly well-connected. VortixStream delivered beyond our expectations for our token launch.",
+    quote: "Professional, results-driven, and incredibly well-connected. VortixPR delivered beyond our expectations for our token launch.",
     name: "Michael Kim",
     title: "Head of Marketing at BlockchainVentures"
   },
@@ -10,7 +10,7 @@ export const testimonials = [
     title: "CEO at FinTech Innovations"
   },
   {
-    quote: "VortixStream's deep understanding of the crypto space and regulatory landscape made our exchange launch seamless and successful.",
+    quote: "VortixPR's deep understanding of the crypto space and regulatory landscape made our exchange launch seamless and successful.",
     name: "David Park",
     title: "Marketing Director at CryptoExchange Pro"
   },
@@ -20,7 +20,7 @@ export const testimonials = [
     title: "Co-founder at DeFi Protocol Labs"
   },
   {
-    quote: "From concept to launch, VortixStream guided our NFT project with precision and creativity. The community response was incredible.",
+    quote: "From concept to launch, VortixPR guided our NFT project with precision and creativity. The community response was incredible.",
     name: "Alex Rodriguez",
     title: "Creative Director at MetaArt Studios"
   },

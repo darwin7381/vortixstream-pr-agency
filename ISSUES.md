@@ -1,4 +1,4 @@
-# VortixStream v04 專案問題清單
+# VortixPR 專案問題清單
 
 ## 當前狀態
 - 專案已成功啟動在 `http://localhost:3000`

@@ -40,7 +40,7 @@ export const paymentMethods = [
 export const publisherContent = {
   hero: {
     tagline: "Join The Leading News Distribution Network",
-    title: "Become a VortixStream Publishing Partner",
+    title: "Become a VortixPR Publishing Partner",
     description: "Expand your content offerings and generate additional revenue through our automated news syndication platform. Connect with premium news sources and keep your audience informed with the latest industry updates.",
     buttons: {
       primary: "Join Our Network",
@@ -48,7 +48,7 @@ export const publisherContent = {
     }
   },
   whyPartner: {
-    title: "Why Partner with VortixStream?",
+    title: "Why Partner with VortixPR?",
     description: "Our platform offers everything you need to enhance your content strategy and grow your revenue streams."
   },
   everythingNeeded: {
@@ -61,7 +61,7 @@ export const publisherContent = {
     sectionLabel: "Payments"
   },
   cta: {
-    title: "Ready to Join VortixStream's Publisher Network?",
+    title: "Ready to Join VortixPR's Publisher Network?",
     description: "Start monetizing your content today. Sign up takes less than 5 minutes and gives you instant access to our content distribution platform.",
     buttons: {
       primary: "Become a Publisher Partner",

@@ -206,7 +206,7 @@ export default function ArticlePage({ articleId, onNavigate }: ArticlePageProps)
                 <div className="flex flex-wrap items-center gap-4 lg:gap-6 text-white/60 text-[14px] lg:text-[16px]">
                   <div className="flex items-center gap-2">
                     <User size={16} />
-                    <span>{articleContent.author || 'VortixStream Team'}</span>
+                    <span>{articleContent.author || 'VortixPR Team'}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Calendar size={16} />

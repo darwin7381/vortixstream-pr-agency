@@ -244,15 +244,15 @@ export default function PricingContactForm() {
                   <div className="flex-1">
                     <h3 className="text-white text-lg mb-2 font-semibold tracking-[-0.18px] group-hover:text-white transition-colors duration-300">Telegram</h3>
                     <p className="text-white/70 text-sm mb-3 group-hover:text-white/85 transition-colors duration-300">Quick chat support</p>
-                    <a href="https://t.me/VortixStreamPR" target="_blank" rel="noopener noreferrer" className="text-[#FF7400] hover:text-[#FF7400]/80 transition-colors font-medium">
-                      @VortixStreamPR
+                    <a href="https://t.me/VortixPR" target="_blank" rel="noopener noreferrer" className="text-[#FF7400] hover:text-[#FF7400]/80 transition-colors font-medium">
+                      @VortixPR
                     </a>
                   </div>
                 </div>
                 
                 <Button 
                   className="w-full bg-gradient-to-r from-[#FF7400]/10 to-[#1D3557]/10 hover:from-[#FF7400]/20 hover:to-[#1D3557]/20 text-white border border-white/20 hover:border-white/40 py-3 px-4 rounded-lg transition-all duration-300 hover:shadow-[0_4px_16px_rgba(255,116,0,0.2)]"
-                  onClick={() => window.open('https://t.me/VortixStreamPR', '_blank')}
+                  onClick={() => window.open('https://t.me/VortixPR', '_blank')}
                 >
                   Open Telegram
                 </Button>
