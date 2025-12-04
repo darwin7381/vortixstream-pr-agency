@@ -59,7 +59,7 @@ export default function LogoCarousel() {
   ];
 
   return (
-    <section className="relative w-full overflow-hidden py-12 md:py-20">
+    <section className="relative w-full overflow-hidden py-8 md:py-12">
       {/* Subtle Cosmic Background for Continuity */}
       <div 
         className="absolute inset-0 opacity-60"
@@ -103,9 +103,10 @@ export default function LogoCarousel() {
 
       {/* Content */}
       <div className="relative z-10">
-        <div className="text-center mb-8 md:mb-12 px-5 md:px-16">
-          <p className="text-[12px] md:text-[18px] font-bold text-white font-['Noto_Sans:Bold']">
-            Featured In Top Media Outlets
+        {/* Small Subtitle - Following Project Design Pattern */}
+        <div className="text-center mb-6 md:mb-8 px-5 md:px-16">
+          <p className="text-[11px] md:text-[16px] text-white/70 font-['Noto_Sans:Regular'] leading-[1.4]">
+            Selected crypto, tech, AI and regional outlets we work with.
           </p>
         </div>
         

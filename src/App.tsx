@@ -1,7 +1,7 @@
 import { useRouter } from './hooks/useRouter';
 import { useAuth } from './hooks/useAuth';
 import Navigation from './components/Navigation';
-import HeroSection from './components/HeroSection';
+import HeroNewSection from './components/HeroNewSection';
 import StatsSection from './components/StatsSection';
 import LogoCarousel from './components/LogoCarousel';
 import ServicesSection from './components/ServicesSection';
@@ -28,9 +28,9 @@ import { Route } from './hooks/useRouter';
 function HomePage({ onNavigate }: { onNavigate: (route: Route) => void }) {
   return (
     <>
-      <HeroSection />
-      <StatsSection />
+      <HeroNewSection />
       <LogoCarousel />
+      <StatsSection />
       <ServicesSection />
       <TrustedBySection showTitle={true} />
       <FeaturesSection />
