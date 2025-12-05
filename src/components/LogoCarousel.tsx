@@ -1,62 +1,39 @@
-import svgPaths from "../imports/svg-f7gq800qcd";
-
 export default function LogoCarousel() {
-  const PlaceholderLogo = ({ variant }: { variant: 'a' | 'b' }) => (
-    <div className="h-12 md:h-14 w-[120px] md:w-[140px] flex-shrink-0">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 140 56">
-        {variant === 'a' ? (
-          <g>
-            <path
-              clipRule="evenodd"
-              d={svgPaths.pa2af180}
-              fill="white"
-              fillRule="evenodd"
-            />
-            <path d={svgPaths.p17de2200} fill="white" />
-            <path
-              clipRule="evenodd"
-              d={svgPaths.p13bdce00}
-              fill="white"
-              fillRule="evenodd"
-            />
-            <path d={svgPaths.p28c4400} fill="white" />
-            <path
-              clipRule="evenodd"
-              d={svgPaths.p240e7470}
-              fill="white"
-              fillRule="evenodd"
-            />
-            <path d={svgPaths.p29af83f0} fill="white" />
-            <path
-              clipRule="evenodd"
-              d={svgPaths.p3e155c00}
-              fill="white"
-              fillRule="evenodd"
-            />
-            <path d={svgPaths.p2759ce70} fill="white" />
-          </g>
-        ) : (
-          <path
-            clipRule="evenodd"
-            d={svgPaths.p36cda200}
-            fill="white"
-            fillRule="evenodd"
-          />
-        )}
-      </svg>
+  // R2 Logo URLs
+  const logos = [
+    'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/blocktempo%20logo_white_%E6%A9%AB.png',
+    'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/Logo.png',
+    'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(57).png',
+    'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(58).png',
+    'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(59).png',
+    'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(60).png',
+    'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(61).png',
+    'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/output-onlinepngtools%20(9).png'
+  ];
+
+  const MediaLogo = ({ src, alt }: { src: string; alt: string }) => (
+    <div className="h-12 md:h-16 w-[120px] md:w-[160px] flex-shrink-0 flex items-center justify-center group cursor-pointer">
+      <img 
+        src={src} 
+        alt={alt}
+        className="max-h-full max-w-full object-contain opacity-50 group-hover:opacity-100 transition-opacity duration-300"
+        style={{
+          filter: 'grayscale(100%)',
+          transition: 'all 0.3s ease'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.filter = 'grayscale(0%)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.filter = 'grayscale(100%)';
+        }}
+        loading="lazy"
+      />
     </div>
   );
 
   // Create the logo sequence that will repeat
-  const logoSequence = [
-    { variant: 'a' as const, text: 'Webflow' },
-    { variant: 'b' as const, text: 'Relume' },
-    { variant: 'a' as const, text: 'Webflow' },
-    { variant: 'b' as const, text: 'Relume' },
-    { variant: 'a' as const, text: 'Webflow' },
-    { variant: 'b' as const, text: 'Relume' },
-    { variant: 'a' as const, text: 'Webflow' }
-  ];
+  const logoSequence = logos;
 
   return (
     <section className="relative w-full overflow-hidden py-8 md:py-12">
@@ -121,23 +98,23 @@ export default function LogoCarousel() {
             }}
           >
             {/* First set of logos */}
-            {logoSequence.map((logo, index) => (
+            {logoSequence.map((logoUrl, index) => (
               <div key={`set1-${index}`} className="flex items-center gap-8 md:gap-12">
-                <PlaceholderLogo variant={logo.variant} />
+                <MediaLogo src={logoUrl} alt={`Media logo ${index + 1}`} />
               </div>
             ))}
             
             {/* Second set of logos (duplicate for seamless loop) */}
-            {logoSequence.map((logo, index) => (
+            {logoSequence.map((logoUrl, index) => (
               <div key={`set2-${index}`} className="flex items-center gap-8 md:gap-12">
-                <PlaceholderLogo variant={logo.variant} />
+                <MediaLogo src={logoUrl} alt={`Media logo ${index + 1}`} />
               </div>
             ))}
             
             {/* Third set of logos (duplicate for seamless loop) */}
-            {logoSequence.map((logo, index) => (
+            {logoSequence.map((logoUrl, index) => (
               <div key={`set3-${index}`} className="flex items-center gap-8 md:gap-12">
-                <PlaceholderLogo variant={logo.variant} />
+                <MediaLogo src={logoUrl} alt={`Media logo ${index + 1}`} />
               </div>
             ))}
           </div>
