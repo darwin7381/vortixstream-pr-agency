@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "./ui/button";
 import VortixLogoMark from '../assets/Vortix Logo mark.png';
 
@@ -62,43 +62,113 @@ function TypewriterText() {
   );
 }
 
-// Media Logo Cloud Component - 右側的媒體 logo 雲（擴大分布範圍）
+// Media Logo Cloud Component - 右側的媒體 logo 雲（環繞中心分布）
 function MediaLogoCloud() {
+  // 8 個不同的 logo，環繞中心分布，避開中心區域
   const mediaLogos = [
-    { name: 'CoinTelegraph', opacity: 0.4, size: 'sm', position: { top: '5%', left: '15%' } },
-    { name: 'CoinDesk', opacity: 0.5, size: 'md', position: { top: '8%', right: '20%' } },
-    { name: 'Cryp', opacity: 0.3, size: 'sm', position: { top: '20%', left: '-5%' } },
-    { name: 'BlockTempo', opacity: 0.6, size: 'lg', position: { top: '25%', right: '10%' } },
-    { name: 'NextAsia', opacity: 0.4, size: 'md', position: { top: '45%', left: '5%' } },
-    { name: 'TechCrunch', opacity: 0.5, size: 'sm', position: { top: '55%', right: '5%' } },
-    { name: 'Decrypt', opacity: 0.3, size: 'md', position: { top: '75%', left: '10%' } },
-    { name: 'TheBlock', opacity: 0.4, size: 'sm', position: { top: '82%', right: '25%' } },
-    { name: 'Yahoo', opacity: 0.35, size: 'lg', position: { top: '70%', right: '15%' } },
-    { name: 'VentureBeat', opacity: 0.35, size: 'md', position: { top: '35%', left: '-10%' } },
-    { name: 'Benzinga', opacity: 0.4, size: 'sm', position: { top: '60%', right: '-5%' } },
-    { name: 'CryptoNews', opacity: 0.3, size: 'md', position: { top: '90%', left: '25%' } },
+    { 
+      url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/blocktempo%20logo_white_%E6%A9%AB.png',
+      name: 'BlockTempo', 
+      opacity: 0.5, 
+      size: 'lg', 
+      position: { top: '8%', right: '22%' } 
+    },
+    { 
+      url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(57).png',
+      name: 'The Block', 
+      opacity: 0.45, 
+      size: 'md', 
+      position: { top: '20%', left: '-8%' } 
+    },
+    { 
+      url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/Logo.png',
+      name: 'Investing.com', 
+      opacity: 0.4, 
+      size: 'sm', 
+      position: { top: '30%', right: '2%' } 
+    },
+    { 
+      url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(58).png',
+      name: 'CoinTelegraph', 
+      opacity: 0.55, 
+      size: 'lg', 
+      position: { top: '52%', right: '-7%' } 
+    },
+    { 
+      url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(59).png',
+      name: 'CoinDesk', 
+      opacity: 0.5, 
+      size: 'md', 
+      position: { top: '62%', left: '-5%' } 
+    },
+    { 
+      url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(60).png',
+      name: 'Decrypt', 
+      opacity: 0.4, 
+      size: 'sm', 
+      position: { top: '75%', right: '12%' } 
+    },
+    { 
+      url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(61).png',
+      name: 'Bitcoin Magazine', 
+      opacity: 0.45, 
+      size: 'md', 
+      position: { top: '68%', right: '28%' } 
+    },
+    { 
+      url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/output-onlinepngtools%20(9).png',
+      name: 'Bitcoin.com', 
+      opacity: 0.38, 
+      size: 'lg', 
+      position: { top: '35%', left: '3%' } 
+    },
   ];
 
   return (
     <div className="absolute inset-0" style={{ width: '140%', height: '140%', left: '-20%', top: '-20%' }}>
-      {mediaLogos.map((logo, index) => (
-        <div
-          key={`${logo.name}-${index}`}
-          className={`absolute text-white font-['Space_Grotesk:Medium'] whitespace-nowrap
-            ${logo.size === 'sm' ? 'text-[9px] lg:text-[10px] xl:text-[11px] 2xl:text-[12px]' : ''}
-            ${logo.size === 'md' ? 'text-[11px] lg:text-[12px] xl:text-[13px] 2xl:text-[14px]' : ''}
-            ${logo.size === 'lg' ? 'text-[13px] lg:text-[14px] xl:text-[15px] 2xl:text-[16px]' : ''}
-          `}
-          style={{
-            ...logo.position,
-            animation: `float-particle ${5 + Math.random() * 3}s ease-in-out infinite`,
-            animationDelay: `${Math.random() * 2}s`,
-            opacity: logo.opacity
-          }}
-        >
-          {logo.name}
-        </div>
-      ))}
+      {mediaLogos.map((logo, index) => {
+        // 根據 size 設定尺寸（調大）
+        let maxWidth = '100px';
+        let maxHeight = '40px';
+        
+        if (logo.size === 'sm') {
+          maxWidth = '80px';
+          maxHeight = '32px';
+        } else if (logo.size === 'md') {
+          maxWidth = '100px';
+          maxHeight = '40px';
+        } else if (logo.size === 'lg') {
+          maxWidth = '120px';
+          maxHeight = '48px';
+        }
+        
+        return (
+          <div
+            key={`${logo.name}-${index}`}
+            className="absolute"
+            style={{
+              ...logo.position,
+              animation: `float-particle ${5 + Math.random() * 3}s ease-in-out infinite`,
+              animationDelay: `${Math.random() * 2}s`,
+              opacity: logo.opacity,
+              maxWidth,
+              maxHeight
+            }}
+          >
+            <img 
+              src={logo.url}
+              alt={logo.name}
+              className="w-full h-full object-contain"
+              style={{ 
+                display: 'block',
+                border: 'none',
+                textDecoration: 'none'
+              }}
+              loading="lazy"
+            />
+          </div>
+        );
+      })}
     </div>
   );
 }
