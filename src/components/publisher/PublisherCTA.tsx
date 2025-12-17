@@ -1,5 +1,5 @@
-import { Button } from './ui/button';
-import { publisherContent } from '../constants/publisherData';
+import { Button } from '../ui/button';
+import { publisherContent } from '../../constants/publisherData';
 
 export default function PublisherCTASection() {
   return (

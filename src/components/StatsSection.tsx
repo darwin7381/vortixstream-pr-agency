@@ -271,10 +271,11 @@ export default function StatsSection() {
             ))}
           </div>
 
-          {/* Differentiators Section - 列表式排列 */}
-          <div className="max-w-[900px] mx-auto">
-            <div className="space-y-3 sm:space-y-4">
-              {differentiators.map((item, index) => (
+          {/* Differentiators Section - 2欄網格佈局（前2個一排，後3個一排）*/}
+          <div className="max-w-[1100px] mx-auto">
+            {/* First Row - 2 items */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8 mb-4 md:mb-6 lg:mb-8">
+              {differentiators.slice(0, 2).map((item, index) => (
                 <div 
                   key={index}
                   ref={el => diffRefs.current[index] = el}
@@ -298,7 +299,48 @@ export default function StatsSection() {
                     
                     {/* Text */}
                     <div className="relative flex-1">
-                      <p className="text-[14px] sm:text-[15px] md:text-[17px] lg:text-[18px] text-white/90 leading-[1.5] font-['Noto_Sans:Regular'] group-hover:text-white transition-colors duration-300">
+                      <p className="text-[14px] sm:text-[15px] md:text-[16px] lg:text-[17px] text-white/90 leading-[1.5] font-['Noto_Sans:Regular'] group-hover:text-white transition-colors duration-300">
+                        {item}
+                      </p>
+                    </div>
+
+                    {/* Decorative Corner Dot */}
+                    <div className="absolute top-3 sm:top-4 right-3 sm:right-4 w-1 h-1 bg-white/20 rounded-full group-hover:bg-[#FF7400] group-hover:shadow-[0_0_6px_rgba(255,116,0,0.6)] transition-all duration-300" />
+                  </div>
+
+                  {/* Enhanced Border Left Accent */}
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-8 sm:h-10 bg-gradient-to-b from-[#FF7400] via-white to-[#1D3557] rounded-r-full opacity-50 group-hover:opacity-100 group-hover:w-1 group-hover:shadow-[0_0_12px_rgba(255,116,0,0.6)] transition-all duration-500" />
+                </div>
+              ))}
+            </div>
+
+            {/* Second Row - 3 items */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+              {differentiators.slice(2, 5).map((item, index) => (
+                <div 
+                  key={index + 2}
+                  ref={el => diffRefs.current[index + 2] = el}
+                  className={`group relative transition-all duration-1000 ease-out ${
+                    visibleDiff.has(index + 2) 
+                      ? 'opacity-100 translate-y-0 translate-x-0' 
+                      : 'opacity-0 translate-y-6 -translate-x-4'
+                  }`}
+                  style={{ transitionDelay: `${0.8 + (index + 2) * 0.15}s` }}
+                >
+                  {/* Card with minimal glassmorphism */}
+                  <div className="relative flex items-center gap-4 sm:gap-5 p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl bg-gradient-to-br from-white/[0.03] via-white/[0.05] to-white/[0.02] border border-white/5 hover:border-white/15 hover:from-white/[0.05] hover:to-white/[0.03] transition-all duration-500 hover:scale-[1.01] hover:-translate-y-0.5">
+                    
+                    {/* Subtle Inner Glow on Hover */}
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#FF7400]/5 via-transparent to-[#1D3557]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    
+                    {/* Check Icon */}
+                    <div className="relative flex-shrink-0">
+                      <CheckIcon />
+                    </div>
+                    
+                    {/* Text */}
+                    <div className="relative flex-1">
+                      <p className="text-[13px] sm:text-[14px] md:text-[15px] lg:text-[16px] text-white/90 leading-[1.5] font-['Noto_Sans:Regular'] group-hover:text-white transition-colors duration-300">
                         {item}
                       </p>
                     </div>

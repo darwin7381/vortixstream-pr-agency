@@ -4,7 +4,6 @@ import Navigation from './components/Navigation';
 import ScrollToTop from './components/ScrollToTop';
 import HeroNewSection from './components/HeroNewSection';
 import StatsSection from './components/StatsSection';
-import LogoCarousel from './components/LogoCarousel';
 import ServicesSection from './components/ServicesSection';
 import TrustedBySection from './components/TrustedBySection';
 import FeaturesSection from './components/FeaturesSection';
@@ -12,12 +11,14 @@ import TestimonialSection from './components/TestimonialSection';
 import EverythingYouNeedSection from './components/EverythingYouNeedSection';
 import FAQSection from './components/FAQSection';
 import Footer from './components/Footer';
-import PricingPage from './components/PricingPage';
-import OurClientsPage from './components/OurClientsPage';
-import PublisherPage from './components/PublisherPage';
-import AboutPage from './components/AboutPage';
+import PricingCards from './components/pricing/PricingCards';
+import PricingPage from './components/pricing/PricingPage';
+import PublisherFeatures from './components/publisher/PublisherFeatures';
+import PublisherPage from './components/publisher/PublisherPage';
+import OurClientsPage from './components/clients/OurClientsPage';
+import AboutPage from './components/about/AboutPage';
 import ServicesPage from './components/ServicesPage';
-import BlogPage from './components/BlogPage';
+import BlogPage from './components/blog/BlogPage';
 import ArticlePage from './components/ArticlePage';
 import MaterialSymbolDemo from './components/MaterialSymbolDemo';
 import LoginPage from './components/LoginPage';
@@ -30,24 +31,24 @@ function HomePage() {
   return (
     <>
       <HeroNewSection />
-      <LogoCarousel />
       <StatsSection />
       <ServicesSection />
       
-      {/* Packages Preview Section - 添加 id 用於桌面版 scroll */}
+      {/* Packages Preview Section - 只顯示價格卡片 */}
       <section id="packages-section">
-        <PricingPage showFooter={false} />
+        <PricingCards />
       </section>
       
-      {/* Our Clients Section - 使用原本的 TrustedBySection，添加 id 用於桌面版 scroll */}
+      {/* Our Clients Section */}
       <section id="clients-section">
         <TrustedBySection showTitle={true} />
       </section>
       
-      {/* Publisher Preview Section - 添加 id 用於桌面版 scroll */}
+      {/* Publisher Features Preview - 只顯示特點區域 */}
       <section id="publisher-section">
-        <PublisherPage showFooter={false} />
+        <PublisherFeatures />
       </section>
+      
       <FeaturesSection />
       <TestimonialSection />
       <EverythingYouNeedSection reverse={true} />

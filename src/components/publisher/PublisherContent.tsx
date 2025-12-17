@@ -1,7 +1,7 @@
-import { Button } from './ui/button';
-import { ImageWithFallback } from './figma/ImageWithFallback';
-import { MaterialSymbol } from './ui/material-symbol';
-import { publisherPlatformFeatures, paymentMethods, publisherContent } from '../constants/publisherData';
+import { Button } from '../ui/button';
+import { ImageWithFallback } from '../figma/ImageWithFallback';
+import { MaterialSymbol } from '../ui/material-symbol';
+import { publisherPlatformFeatures, paymentMethods, publisherContent } from '../../constants/publisherData';
 
 export default function PublisherContentSections() {
   return (

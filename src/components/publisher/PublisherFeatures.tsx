@@ -1,5 +1,5 @@
-import { ImageWithFallback } from './figma/ImageWithFallback';
-import { publisherFeatures, publisherContent } from '../constants/publisherData';
+import { ImageWithFallback } from '../figma/ImageWithFallback';
+import { publisherFeatures, publisherContent } from '../../constants/publisherData';
 
 export default function PublisherFeaturesSection() {
   return (
