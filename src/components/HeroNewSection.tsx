@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from "./ui/button";
 import VortixLogoMark from '../assets/Vortix Logo mark.png';
 
@@ -174,6 +175,7 @@ function MediaLogoCloud() {
 }
 
 export default function HeroNewSection() {
+  const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -182,6 +184,28 @@ export default function HeroNewSection() {
     }, 100);
     return () => clearTimeout(timer);
   }, []);
+
+  // View Packages 按鈕處理：桌面版滑動到區域，手機版跳轉到頁面
+  const handleViewPackages = () => {
+    const isMobile = window.innerWidth < 1024; // lg breakpoint
+    
+    if (isMobile) {
+      // 手機版：跳轉到 Pricing 頁面
+      navigate('/pricing');
+    } else {
+      // 桌面版：滑動到 packages-section
+      const packagesSection = document.getElementById('packages-section');
+      if (packagesSection) {
+        const navbarHeight = 72;
+        const targetPosition = packagesSection.offsetTop - navbarHeight - 20;
+        
+        window.scrollTo({
+          top: targetPosition,
+          behavior: 'smooth'
+        });
+      }
+    }
+  };
 
   return (
     <section className="relative w-full min-h-[100vh] bg-black overflow-hidden">
@@ -322,6 +346,7 @@ export default function HeroNewSection() {
                 >
                   {/* Primary CTA - View Packages */}
                   <Button 
+                    onClick={handleViewPackages}
                     className="group relative h-12 lg:h-14 px-4 sm:px-6 lg:px-8 text-sm sm:text-base lg:text-lg font-semibold !text-black hover:!text-black focus:!text-black bg-gradient-to-br from-[#FF7400] to-[#E6690A] border-0 rounded-[0.75rem] hover:-translate-y-[1px] focus:ring-2 focus:ring-[#FF7400]/40 focus:ring-offset-2 transition-all duration-300 ease-out overflow-hidden btn-brand-shadow flex-1"
                     style={{ 
                       textShadow: '0 1px 2px rgba(255,255,255,0.3)'

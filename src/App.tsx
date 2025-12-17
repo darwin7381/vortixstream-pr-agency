@@ -3,6 +3,7 @@ import { useAuth } from './hooks/useAuth';
 import Navigation from './components/Navigation';
 import ScrollToTop from './components/ScrollToTop';
 import HeroNewSection from './components/HeroNewSection';
+import LogoCarousel from './components/LogoCarousel';
 import StatsSection from './components/StatsSection';
 import ServicesSection from './components/ServicesSection';
 import TrustedBySection from './components/TrustedBySection';
@@ -31,6 +32,7 @@ function HomePage() {
   return (
     <>
       <HeroNewSection />
+      <LogoCarousel />
       <StatsSection />
       <ServicesSection />
       
