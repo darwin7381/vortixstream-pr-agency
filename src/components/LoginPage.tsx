@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -6,11 +7,11 @@ import { Eye, EyeOff, ArrowLeft, Lock, Mail } from 'lucide-react';
 import VortixLogoWhite from '../assets/VortixLogo White_Horizontal.png';
 
 interface LoginPageProps {
-  onNavigate: (route: string) => void;
   onLogin?: (email: string, password: string) => Promise<boolean>;
 }
 
-export default function LoginPage({ onNavigate, onLogin }: LoginPageProps) {
+export default function LoginPage({ onLogin }: LoginPageProps) {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -32,7 +33,7 @@ export default function LoginPage({ onNavigate, onLogin }: LoginPageProps) {
         const success = await onLogin(formData.email, formData.password);
         if (success) {
           // 登入成功，導航到首頁
-          onNavigate('home');
+          navigate('/');
         } else {
           // 登入失敗，顯示錯誤信息
           console.error('Login failed');
@@ -90,7 +91,7 @@ export default function LoginPage({ onNavigate, onLogin }: LoginPageProps) {
           
           {/* 返回按鈕 */}
           <button
-            onClick={() => onNavigate('home')}
+            onClick={() => navigate('/')}
             className="flex items-center gap-3 text-white/70 hover:text-white mb-8 transition-all duration-300 hover:gap-4 group"
           >
             <ArrowLeft size={20} className="transition-transform duration-300 group-hover:-translate-x-1" />
@@ -240,7 +241,7 @@ export default function LoginPage({ onNavigate, onLogin }: LoginPageProps) {
                       setIsLoading(true);
                       const success = await onLogin('demo@vortixstream.com', 'demo123');
                       if (success) {
-                        onNavigate('home');
+                        navigate('/');
                       }
                       setIsLoading(false);
                     }

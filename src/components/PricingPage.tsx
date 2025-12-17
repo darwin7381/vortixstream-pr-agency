@@ -8,7 +8,11 @@ import Footer from './Footer';
 import { pricingPlans } from '../constants/pricingData';
 import { faqs } from '../constants/faqData';
 
-export default function PricingPage() {
+interface PricingPageProps {
+  showFooter?: boolean;
+}
+
+export default function PricingPage({ showFooter = true }: PricingPageProps) {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -154,7 +158,7 @@ export default function PricingPage() {
       <PricingCommitment />
 
       {/* Footer */}
-      <Footer />
+      {showFooter && <Footer />}
     </div>
   );
 }

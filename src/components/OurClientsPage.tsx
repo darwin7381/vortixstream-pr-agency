@@ -5,7 +5,11 @@ import TrustedBySection from './TrustedBySection';
 import imgHeader69 from "figma:asset/011184c5e7bdd0650ef3ae611cc4753b68515de2.png";
 
 
-export default function OurClientsPage() {
+interface OurClientsPageProps {
+  showFooter?: boolean;
+}
+
+export default function OurClientsPage({ showFooter = true }: OurClientsPageProps) {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -210,7 +214,7 @@ export default function OurClientsPage() {
       </section>
 
       {/* Footer */}
-      <Footer />
+      {showFooter && <Footer />}
     </div>
   );
 }

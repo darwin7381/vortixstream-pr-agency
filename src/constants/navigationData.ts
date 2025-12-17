@@ -1,2 +1,2 @@
-export const navItems = ['Home', 'Services', 'Pricing', 'Our Client', 'Publisher'];
-export const resourceItems = ['About Us', 'Blog', 'Template'];
+export const navItems = ['Services', 'Packages', 'Our Client', 'Publisher', 'About'];
+export const resourceItems = ['Blog', 'Template'];

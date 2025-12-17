@@ -1,10 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { stats } from '../constants/statsData';
+import { aboutContent } from '../constants/aboutData';
 
 export default function StatsSection() {
   const [counters, setCounters] = useState([0, 0, 0]);
   const [isVisible, setIsVisible] = useState(false);
+  const [visibleDiff, setVisibleDiff] = useState(new Set());
   const sectionRef = useRef<HTMLDivElement>(null);
+  const diffRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  const differentiators = aboutContent.whyVortix.differentiators;
 
   // Intersection Observer for triggering animations
   useEffect(() => {
@@ -32,6 +37,9 @@ export default function StatsSection() {
     const steps = 60; // 60 steps for smooth animation
     const stepDuration = duration / steps;
 
+    // Initialize counters array with correct length
+    setCounters(new Array(stats.length).fill(0));
+
     stats.forEach((stat, index) => {
       let currentStep = 0;
       const increment = stat.targetNumber / steps;
@@ -52,6 +60,29 @@ export default function StatsSection() {
       }, stepDuration);
     });
   }, [isVisible]);
+
+  // Differentiators intersection observer
+  useEffect(() => {
+    const observers: IntersectionObserver[] = [];
+    
+    diffRefs.current.forEach((ref, index) => {
+      if (ref) {
+        const observer = new IntersectionObserver(
+          ([entry]) => {
+            if (entry.isIntersecting) {
+              setVisibleDiff(prev => new Set([...prev, index]));
+            }
+          },
+          { threshold: 0.3 }
+        );
+        
+        observer.observe(ref);
+        observers.push(observer);
+      }
+    });
+
+    return () => observers.forEach(observer => observer.disconnect());
+  }, []);
 
   // Icon components for each stat
   const StatIcon = ({ type }: { type: string }) => {
@@ -88,10 +119,34 @@ export default function StatsSection() {
             <circle cx="13" cy="8" r="1" fill="currentColor"/>
           </svg>
         );
+      case "globe":
+        return (
+          <svg className={iconClass} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5"/>
+            <path d="M2 12H22" stroke="currentColor" strokeWidth="1.5"/>
+            <path d="M12 2C14.5 4.5 16 8 16 12C16 16 14.5 19.5 12 22" stroke="currentColor" strokeWidth="1.5"/>
+            <path d="M12 2C9.5 4.5 8 8 8 12C8 16 9.5 19.5 12 22" stroke="currentColor" strokeWidth="1.5"/>
+          </svg>
+        );
       default:
         return null;
     }
   };
+
+  // Check icon for differentiators
+  const CheckIcon = () => (
+    <div className="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gradient-to-br from-[#FF7400] to-[#1D3557] flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+      <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" fill="none" viewBox="0 0 16 16">
+        <path
+          d="M13.5 4.5L6 12L2.5 8.5"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </div>
+  );
 
   return (
     <section ref={sectionRef} className="relative w-full overflow-hidden">
@@ -145,11 +200,11 @@ export default function StatsSection() {
       {/* Content */}
       <div className="relative z-10 container-global py-section-large">
           <h2 className="text-[24px] sm:text-[28px] md:text-[44px] font-medium text-white mb-8 sm:mb-10 md:mb-20 tracking-[-0.24px] sm:tracking-[-0.28px] md:tracking-[-0.44px] font-['Space_Grotesk:Medium'] text-left">
-            Impact at a Glance
+            Why Vortix Is Different
           </h2>
           
-          {/* Enhanced Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 lg:gap-12">
+          {/* Enhanced Stats Grid - Now supports 4 columns */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 lg:gap-10 mb-12 sm:mb-16 md:mb-20 lg:mb-24">
             {stats.map((stat, index) => (
               <div 
                 key={index} 
@@ -214,6 +269,49 @@ export default function StatsSection() {
                 <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 sm:w-1 h-10 sm:h-12 md:h-20 bg-gradient-to-b from-[#FF7400] via-white to-[#1D3557] rounded-r-full opacity-60 group-hover:opacity-100 group-hover:w-1 sm:group-hover:w-1.5 group-hover:shadow-[0_0_12px_rgba(255,116,0,0.6)] transition-all duration-500" />
               </div>
             ))}
+          </div>
+
+          {/* Differentiators Section - 列表式排列 */}
+          <div className="max-w-[900px] mx-auto">
+            <div className="space-y-3 sm:space-y-4">
+              {differentiators.map((item, index) => (
+                <div 
+                  key={index}
+                  ref={el => diffRefs.current[index] = el}
+                  className={`group relative transition-all duration-1000 ease-out ${
+                    visibleDiff.has(index) 
+                      ? 'opacity-100 translate-y-0 translate-x-0' 
+                      : 'opacity-0 translate-y-6 -translate-x-4'
+                  }`}
+                  style={{ transitionDelay: `${0.8 + index * 0.15}s` }}
+                >
+                  {/* Card with minimal glassmorphism */}
+                  <div className="relative flex items-center gap-4 sm:gap-5 p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl bg-gradient-to-br from-white/[0.03] via-white/[0.05] to-white/[0.02] border border-white/5 hover:border-white/15 hover:from-white/[0.05] hover:to-white/[0.03] transition-all duration-500 hover:scale-[1.01] hover:-translate-y-0.5">
+                    
+                    {/* Subtle Inner Glow on Hover */}
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#FF7400]/5 via-transparent to-[#1D3557]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    
+                    {/* Check Icon */}
+                    <div className="relative flex-shrink-0">
+                      <CheckIcon />
+                    </div>
+                    
+                    {/* Text */}
+                    <div className="relative flex-1">
+                      <p className="text-[14px] sm:text-[15px] md:text-[17px] lg:text-[18px] text-white/90 leading-[1.5] font-['Noto_Sans:Regular'] group-hover:text-white transition-colors duration-300">
+                        {item}
+                      </p>
+                    </div>
+
+                    {/* Decorative Corner Dot */}
+                    <div className="absolute top-3 sm:top-4 right-3 sm:right-4 w-1 h-1 bg-white/20 rounded-full group-hover:bg-[#FF7400] group-hover:shadow-[0_0_6px_rgba(255,116,0,0.6)] transition-all duration-300" />
+                  </div>
+
+                  {/* Enhanced Border Left Accent */}
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-8 sm:h-10 bg-gradient-to-b from-[#FF7400] via-white to-[#1D3557] rounded-r-full opacity-50 group-hover:opacity-100 group-hover:w-1 group-hover:shadow-[0_0_12px_rgba(255,116,0,0.6)] transition-all duration-500" />
+                </div>
+              ))}
+            </div>
           </div>
       </div>
     </section>

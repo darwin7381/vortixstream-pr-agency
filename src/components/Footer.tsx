@@ -1,17 +1,13 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Facebook, Instagram, Twitter, Linkedin, Youtube } from "lucide-react";
 import { mapLinks, newsCategoryLinks, policyLinks } from '../constants/footerData';
-import { Route } from '../hooks/useRouter';
 import VortixLogoWhite from '../assets/VortixLogo White_Horizontal.png';
 
-
-interface FooterProps {
-  onNavigate?: (route: Route) => void;
-}
-
-export default function Footer({ onNavigate }: FooterProps) {
+export default function Footer() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const socialLinks = [
@@ -33,9 +29,7 @@ export default function Footer({ onNavigate }: FooterProps) {
     }
     
     // Email 驗證通過，導航到成功頁面
-    if (onNavigate) {
-      onNavigate('newsletter-success');
-    }
+    navigate('/newsletter-success');
   };
 
   const CompanyLogo = () => (
@@ -107,21 +101,36 @@ export default function Footer({ onNavigate }: FooterProps) {
                 Map
               </h4>
               <div className="space-y-4">
-                {mapLinks.map((link) => (
-                  <a 
-                    key={link} 
-                    href="#" 
-                    onClick={(e) => {
-                      e.preventDefault();
-                      if (link === 'Concept' && onNavigate) {
-                        onNavigate('concept');
-                      }
-                    }}
-                    className="block text-white text-[14px] font-['Noto_Sans:Regular'] hover:text-gray-300 transition-colors leading-[1.4] cursor-pointer"
-                  >
-                    {link}
-                  </a>
-                ))}
+                {mapLinks.map((link) => {
+                  // Footer 連結映射 - 直接跳轉到詳細頁面
+                  const pathMap: { [key: string]: string } = {
+                    'Home': '/',
+                    'Services': '/services',
+                    'Packages': '/pricing',
+                    'Our Client': '/clients',
+                    'Publisher': '/publisher',
+                    'About': '/about',
+                    'Blog': '/blog'
+                  };
+                  
+                  const path = pathMap[link];
+                  
+                  return (
+                    <a 
+                      key={link} 
+                      href="#" 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (path) {
+                          navigate(path);
+                        }
+                      }}
+                      className="block text-white text-[14px] font-['Noto_Sans:Regular'] hover:text-gray-300 transition-colors leading-[1.4] cursor-pointer"
+                    >
+                      {link}
+                    </a>
+                  );
+                })}
               </div>
             </div>
 

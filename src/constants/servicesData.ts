@@ -1,15 +1,19 @@
 export const services = [
   {
-    title: "Blockchain / Crypto PR",
-    description: "Unique public relations strategies tailored for the Blockchain and Crypto sectors."
+    title: "Global Press Distribution",
+    description: "Targeted distribution across top crypto, tech and AI media."
   },
   {
-    title: "AI Product PR & Strategic Messaging",
-    description: "Specialized PR for AI startups, agent platforms, and emerging application solutions."
+    title: "Asia-Market Localization & Outreach",
+    description: "CN, KR, JP & SEA outreach with language + narrative adaptation."
   },
   {
-    title: "Global & Regional Media Distribution",
-    description: "Comprehensive press release distribution across tier-1 media outlets worldwide."
+    title: "PR & Narrative Strategy",
+    description: "Angle shaping, headline advice, and editorial review."
+  },
+  {
+    title: "Founder & Personal Branding PR",
+    description: "Articles, interviews and content for founder authority."
   },
   {
     title: "Influencer Marketing & Community Activation",

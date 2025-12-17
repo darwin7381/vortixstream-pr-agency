@@ -1,12 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Route } from '../hooks/useRouter';
+import { useNavigate } from 'react-router-dom';
 import { Check } from 'lucide-react';
 
-interface NewsletterSuccessPageProps {
-  onNavigate: (route: Route) => void;
-}
-
-export default function NewsletterSuccessPage({ onNavigate }: NewsletterSuccessPageProps) {
+export default function NewsletterSuccessPage() {
+  const navigate = useNavigate();
   const [countdown, setCountdown] = useState(5);
 
   useEffect(() => {
@@ -15,7 +12,7 @@ export default function NewsletterSuccessPage({ onNavigate }: NewsletterSuccessP
       setCountdown(prev => {
         if (prev <= 1) {
           // 倒數結束，跳轉回首頁
-          onNavigate('home');
+          navigate('/');
           return 0;
         }
         return prev - 1;
@@ -24,7 +21,7 @@ export default function NewsletterSuccessPage({ onNavigate }: NewsletterSuccessP
 
     // 清理定時器
     return () => clearInterval(timer);
-  }, [onNavigate]);
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden">

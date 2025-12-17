@@ -1,23 +1,30 @@
 export const stats = [
   { 
-    number: "200+", 
-    targetNumber: 200,
-    label: "Press Releases Sent / Year",
+    number: "900+", 
+    targetNumber: 900,
+    label: "Publications",
     icon: "document",
-    description: "Strategic media campaigns delivered annually"
+    description: "Media outlets in our global network"
   },
   { 
     number: "300+", 
     targetNumber: 300,
-    label: "Media Partners",
+    label: "Brands",
     icon: "network",
-    description: "Global network of trusted publications"
+    description: "Clients successfully served"
   },
   { 
-    number: "800+", 
-    targetNumber: 800,
-    label: "Campaigns Launched",
+    number: "20+", 
+    targetNumber: 20,
+    label: "Countries",
     icon: "rocket",
-    description: "Successful PR campaigns across all sectors"
+    description: "Global reach across continents"
+  },
+  { 
+    number: "1003M+", 
+    targetNumber: 1003,
+    label: "Media Reach",
+    icon: "globe",
+    description: "Total audience impressions delivered"
   }
 ];

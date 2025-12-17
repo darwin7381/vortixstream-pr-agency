@@ -5,7 +5,11 @@ import PublisherCTASection from './PublisherCTASection';
 import LogoCarousel from './LogoCarousel';
 import Footer from './Footer';
 
-export default function PublisherPage() {
+interface PublisherPageProps {
+  showFooter?: boolean;
+}
+
+export default function PublisherPage({ showFooter = true }: PublisherPageProps) {
   return (
     <div className="min-h-screen bg-black">
       {/* Hero Section */}
@@ -24,7 +28,7 @@ export default function PublisherPage() {
       <PublisherCTASection />
 
       {/* Footer */}
-      <Footer />
+      {showFooter && <Footer />}
     </div>
   );
 }

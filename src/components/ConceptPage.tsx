@@ -1,14 +1,11 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, TrendingUp, Globe, DollarSign, Users, Zap, Shield, Target, Award, Waves, Eye, Lightbulb, ArrowRight } from 'lucide-react';
 import { Button } from './ui/button';
-import { Route } from '../hooks/useRouter';
 import VortixLogoWhite from '../assets/VortixLogo White_Horizontal.png';
 
-interface ConceptPageProps {
-  onNavigate?: (route: Route) => void;
-}
-
-export default function ConceptPage({ onNavigate }: ConceptPageProps) {
+export default function ConceptPage() {
+  const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const slides = [
@@ -689,8 +686,8 @@ export default function ConceptPage({ onNavigate }: ConceptPageProps) {
               <div className="text-[#FF7400] text-base italic mb-4">
                 Let VortixPR be the current that carries your story to the world.
               </div>
-              <Button 
-                onClick={() => onNavigate?.('home')}
+              <Button
+                onClick={() => navigate('/')}
                 className="bg-[#FF7400] hover:bg-[#FF7400]/90 text-black font-semibold px-8 py-4 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-[#FF7400]/25"
               >
                 Return to Homepage

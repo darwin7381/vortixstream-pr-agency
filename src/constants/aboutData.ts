@@ -4,6 +4,16 @@ export const aboutContent = {
     description: "At VortixPR, we provide strategic PR and distribution services for growing Web3 and AI companies. Our mission is to maximize your news coverage and connect you with the right audience.",
     cta: "Sign Up"
   },
+  whyVortix: {
+    title: "Why Vortix Is Different",
+    differentiators: [
+      "Distribution + strategy under one roof",
+      "Asia-native editorial network",
+      "AI-backed narrative & LLM optimization",
+      "Transparent pricing, no hidden fees",
+      "Founder-friendly packages + add-ons"
+    ]
+  },
   team: {
     title: "Our Team", 
     subtitle: "Meet the passionate professionals behind VortixPR.",

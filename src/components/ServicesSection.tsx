@@ -147,7 +147,7 @@ export default function ServicesSection() {
               }`}
               style={{ transitionDelay: '0.7s' }}
             >
-              Our PR Solutions
+              What We Offer
             </h2>
             <p 
               className={`text-[12px] md:text-[18px] text-white font-['Noto_Sans:Regular'] transition-all duration-1300 ease-out ${

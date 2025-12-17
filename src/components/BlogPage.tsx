@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { MaterialSymbol } from './ui/material-symbol';
@@ -7,11 +8,8 @@ import Footer from './Footer';
 import { blogCategories, blogArticles, newsletterContent, paginationConfig } from '../constants/blogData';
 import { ChevronLeft, ChevronRight, Calendar, Clock } from 'lucide-react';
 
-interface BlogPageProps {
-  onNavigate?: (route: string) => void;
-}
-
-export default function BlogPage({ onNavigate }: BlogPageProps) {
+export default function BlogPage() {
+  const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState('All Articles');
   const [currentPage, setCurrentPage] = useState(1);
   const [email, setEmail] = useState('');
@@ -159,7 +157,7 @@ export default function BlogPage({ onNavigate }: BlogPageProps) {
               {currentArticles.map((article) => (
                 <article
                   key={article.id}
-                  onClick={() => onNavigate && onNavigate(`article-${article.id}`)}
+                  onClick={() => navigate(`/blog/${article.id}`)}
                   className="group bg-gradient-to-br from-white/[0.03] via-white/[0.01] to-transparent border border-white/10 rounded-xl overflow-hidden hover:bg-white/[0.05] hover:border-white/20 transition-all duration-500 hover:animate-[subtle-glow_2s_ease-in-out_infinite] hover:shadow-lg hover:shadow-white/5 cursor-pointer"
                 >
                   {/* Hover Gradient Overlay */}

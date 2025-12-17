@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { blogCategories, blogArticles } from '../constants/blogData';
 import { articlesContent, getArticleContent } from '../constants/articleContent';
 import { MaterialSymbol } from './ui/material-symbol';
@@ -7,17 +8,14 @@ import { ImageWithFallback } from './figma/ImageWithFallback';
 import Footer from './Footer';
 import { ArrowLeft, Calendar, Clock, User, Search, Tag } from 'lucide-react';
 
-interface ArticlePageProps {
-  articleId: number;
-  onNavigate: (route: string) => void;
-}
-
-export default function ArticlePage({ articleId, onNavigate }: ArticlePageProps) {
+export default function ArticlePage() {
+  const { articleId } = useParams<{ articleId: string }>();
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   
   // 獲取當前文章數據
-  const article = blogArticles.find(a => a.id === articleId);
-  const articleContent = getArticleContent(articleId);
+  const article = blogArticles.find(a => a.id === Number(articleId));
+  const articleContent = getArticleContent(Number(articleId));
   
   if (!article) {
     return (
@@ -25,7 +23,7 @@ export default function ArticlePage({ articleId, onNavigate }: ArticlePageProps)
         <div className="text-center">
           <h1 className="text-2xl mb-4">Article Not Found</h1>
           <button 
-            onClick={() => onNavigate('blog')}
+            onClick={() => navigate('/blog')}
             className="text-[#FF7400] hover:text-white transition-colors"
           >
             Back to Blog
@@ -99,8 +97,8 @@ export default function ArticlePage({ articleId, onNavigate }: ArticlePageProps)
           
           {/* Back to Blog 按鈕 */}
           <div className="mb-8">
-            <button 
-              onClick={() => onNavigate('blog')}
+            <button
+              onClick={() => navigate('/blog')}
               className="flex items-center gap-2 text-white/60 hover:text-white transition-colors duration-300 group"
             >
               <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform duration-300" />
@@ -135,7 +133,7 @@ export default function ArticlePage({ articleId, onNavigate }: ArticlePageProps)
                   {blogCategories.filter(cat => cat !== 'All Articles').map((category) => (
                     <button
                       key={category}
-                      onClick={() => onNavigate('blog')}
+                      onClick={() => navigate('/blog')}
                       className={`block w-full text-left px-3 py-2 text-[14px] rounded-lg transition-colors duration-300 ${
                         category === article.category
                           ? 'bg-[#FF7400] text-white'
@@ -155,7 +153,7 @@ export default function ArticlePage({ articleId, onNavigate }: ArticlePageProps)
                   {popularArticles.map((popularArticle) => (
                     <button
                       key={popularArticle.id}
-                      onClick={() => onNavigate(`article-${popularArticle.id}`)}
+                      onClick={() => navigate(`/blog/${popularArticle.id}`)}
                       className="flex gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors duration-300 text-left"
                     >
                       <div className="w-16 h-16 flex-shrink-0 bg-gray-900 rounded-lg overflow-hidden">
@@ -265,7 +263,7 @@ export default function ArticlePage({ articleId, onNavigate }: ArticlePageProps)
                     {relatedArticles.map((relatedArticle) => (
                       <button
                         key={relatedArticle.id}
-                        onClick={() => onNavigate(`article-${relatedArticle.id}`)}
+                        onClick={() => navigate(`/blog/${relatedArticle.id}`)}
                         className="bg-white/5 border border-white/10 rounded-xl overflow-hidden hover:bg-white/10 hover:border-white/20 transition-all duration-300 text-left"
                       >
                         <div className="aspect-[16/9] bg-gray-900">

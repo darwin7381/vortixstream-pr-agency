@@ -306,7 +306,7 @@ export default function HeroNewSection() {
                     style={{ transitionDelay: '1.3s' }}
                   >
                     <p className="text-[13px] sm:text-[14px] md:text-[15px] lg:text-[16px] xl:text-[17px] 2xl:text-[18px] text-white/70 font-['Noto_Sans:Regular'] leading-[1.5] sm:leading-[1.55] md:leading-[1.6]">
-                      Fast, reliable coverage — global & Asia — with optional narrative support and founder visibility. Our lean team handling distribution, strategy and AI-backed narrative checks.
+                      Fast, reliable coverage — global & Asia — with optional narrative support and founder visibility.
                     </p>
                   </div>
                 </div>

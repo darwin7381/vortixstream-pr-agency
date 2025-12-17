@@ -1,6 +1,7 @@
-import { useRouter } from './hooks/useRouter';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { useAuth } from './hooks/useAuth';
 import Navigation from './components/Navigation';
+import ScrollToTop from './components/ScrollToTop';
 import HeroNewSection from './components/HeroNewSection';
 import StatsSection from './components/StatsSection';
 import LogoCarousel from './components/LogoCarousel';
@@ -15,6 +16,7 @@ import PricingPage from './components/PricingPage';
 import OurClientsPage from './components/OurClientsPage';
 import PublisherPage from './components/PublisherPage';
 import AboutPage from './components/AboutPage';
+import ServicesPage from './components/ServicesPage';
 import BlogPage from './components/BlogPage';
 import ArticlePage from './components/ArticlePage';
 import MaterialSymbolDemo from './components/MaterialSymbolDemo';
@@ -22,17 +24,30 @@ import LoginPage from './components/LoginPage';
 import NewsletterSuccessPage from './components/NewsletterSuccessPage';
 import ConceptPage from './components/ConceptPage';
 import { faqs } from './constants/faqData';
-import { Route } from './hooks/useRouter';
 
 // Home Page Component
-function HomePage({ onNavigate }: { onNavigate: (route: Route) => void }) {
+function HomePage() {
   return (
     <>
       <HeroNewSection />
       <LogoCarousel />
       <StatsSection />
       <ServicesSection />
-      <TrustedBySection showTitle={true} />
+      
+      {/* Packages Preview Section - 添加 id 用於桌面版 scroll */}
+      <section id="packages-section">
+        <PricingPage showFooter={false} />
+      </section>
+      
+      {/* Our Clients Section - 使用原本的 TrustedBySection，添加 id 用於桌面版 scroll */}
+      <section id="clients-section">
+        <TrustedBySection showTitle={true} />
+      </section>
+      
+      {/* Publisher Preview Section - 添加 id 用於桌面版 scroll */}
+      <section id="publisher-section">
+        <PublisherPage showFooter={false} />
+      </section>
       <FeaturesSection />
       <TestimonialSection />
       <EverythingYouNeedSection reverse={true} />
@@ -42,47 +57,50 @@ function HomePage({ onNavigate }: { onNavigate: (route: Route) => void }) {
         maxWidth="default"
         showCTA={true}
       />
-      <Footer onNavigate={onNavigate} />
+      <Footer />
     </>
   );
 }
 
-// Main App Component with Global Navigation
-export default function App() {
-  const { currentRoute, navigate, getArticleId } = useRouter();
+// AppContent - 包含路由邏輯
+function AppContent() {
   const { user, login, logout, quickLogin } = useAuth();
-
-  // 檢查是否是文章頁面
-  const articleId = getArticleId(currentRoute);
-  const isArticlePage = articleId !== null;
+  const location = useLocation();
 
   return (
     <div className="min-h-screen bg-black">
+      {/* 自動滾動到頂部組件 */}
+      <ScrollToTop />
+      
       {/* Global Navigation - 固定在頂部，所有頁面共用 */}
-      <Navigation currentRoute={currentRoute} onNavigate={navigate} user={user} onLogout={logout} onQuickLogin={quickLogin} />
+      <Navigation user={user} onLogout={logout} onQuickLogin={quickLogin} />
       
       {/* Main Content Area - 為固定 navbar 添加 padding-top */}
       <div className="pt-14 sm:pt-16 md:pt-[72px] lg:pt-[72px]">
-        {/* Route-based Page Rendering */}
-        {currentRoute === 'home' && <HomePage onNavigate={navigate} />}
-        {currentRoute === 'pricing' && <PricingPage />}
-        {currentRoute === 'ourclients' && <OurClientsPage />}
-        {currentRoute === 'publisher' && <PublisherPage />}
-        {currentRoute === 'about' && <AboutPage />}
-        {currentRoute === 'blog' && <BlogPage onNavigate={navigate} />}
-        {currentRoute === 'login' && <LoginPage onNavigate={navigate} onLogin={login} />}
-        {currentRoute === 'newsletter-success' && <NewsletterSuccessPage onNavigate={navigate} />}
-        {currentRoute === 'concept' && <ConceptPage onNavigate={navigate} />}
-        {currentRoute === 'material-symbols' && <MaterialSymbolDemo />}
-        
-        {/* 文章頁面路由 */}
-        {isArticlePage && articleId && (
-          <ArticlePage articleId={articleId} onNavigate={navigate} />
-        )}
-        
-        {/* 未來可以在這裡添加更多頁面路由 */}
-        {/* {currentRoute === 'services' && <ServicesPage />} */}
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/clients" element={<OurClientsPage />} />
+          <Route path="/publisher" element={<PublisherPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/blog/:articleId" element={<ArticlePage />} />
+          <Route path="/login" element={<LoginPage onLogin={login} />} />
+          <Route path="/newsletter-success" element={<NewsletterSuccessPage />} />
+          <Route path="/concept" element={<ConceptPage />} />
+          <Route path="/material-symbols" element={<MaterialSymbolDemo />} />
+        </Routes>
       </div>
     </div>
+  );
+}
+
+// Main App Component with Router
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
   );
 }
