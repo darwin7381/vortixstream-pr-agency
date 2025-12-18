@@ -1,132 +1,10 @@
-import { useState, useRef, useMemo, Suspense, useEffect } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Points, PointMaterial } from '@react-three/drei';
-import * as THREE from 'three';
+import { useState, useEffect, useRef } from 'react';
 
-// 3D Neural Network (Clean & Premium)
-function NeuralNetwork({ count = 100 }) { // Increased count for density, better "cloud" look
-    const pointsRef = useRef<THREE.Points>(null);
-    const linesRef = useRef<THREE.LineSegments>(null);
-
-    // Generate Points & Connections
-    const { positions, linePositions } = useMemo(() => {
-        const pos = new Float32Array(count * 3);
-        const r = 8; // Wider spread to fill the container naturally
-        const vectors = [];
-
-        for (let i = 0; i < count; i++) {
-            const theta = THREE.MathUtils.randFloatSpread(360);
-            const phi = THREE.MathUtils.randFloatSpread(360);
-            const x = r * Math.sin(theta) * Math.cos(phi);
-            const y = r * Math.sin(theta) * Math.sin(phi);
-            const z = r * Math.cos(theta);
-
-            pos[i * 3] = x;
-            pos[i * 3 + 1] = y;
-            pos[i * 3 + 2] = z;
-            vectors.push(new THREE.Vector3(x, y, z));
-        }
-
-        const linePos = [];
-        // Slightly increased connection distance for more "network" feel without clutter
-        const distanceThreshold = 4.5;
-
-        for (let i = 0; i < count; i++) {
-            for (let j = i + 1; j < count; j++) {
-                if (vectors[i].distanceTo(vectors[j]) < distanceThreshold) {
-                    linePos.push(vectors[i].x, vectors[i].y, vectors[i].z);
-                    linePos.push(vectors[j].x, vectors[j].y, vectors[j].z);
-                }
-            }
-        }
-
-        return {
-            positions: pos,
-            linePositions: new Float32Array(linePos)
-        };
-    }, [count]);
-
-    useFrame((state, delta) => {
-        // Slower, more elegant rotation
-        if (pointsRef.current) {
-            pointsRef.current.rotation.y -= delta / 15;
-            pointsRef.current.rotation.x -= delta / 30;
-        }
-        if (linesRef.current) {
-            linesRef.current.rotation.y -= delta / 15;
-            linesRef.current.rotation.x -= delta / 30;
-        }
-    });
-
-    return (
-        <group rotation={[0, 0, Math.PI / 4]}>
-            {/* Main Points - Violet */}
-            <Points ref={pointsRef} positions={positions} stride={3} frustumCulled={false}>
-                <PointMaterial
-                    transparent
-                    color="#A78BFA"
-                    size={0.15}
-                    sizeAttenuation={true}
-                    depthWrite={false}
-                    opacity={1}
-                />
-            </Points>
-
-            {/* Accent Points - Orange - Less quantity but bright */}
-            <Points positions={positions} stride={3} frustumCulled={false} scale={1.1}>
-                <PointMaterial
-                    transparent
-                    color="#FB923C"
-                    size={0.1}
-                    sizeAttenuation={true}
-                    depthWrite={false}
-                    opacity={0.8}
-                />
-            </Points>
-
-            {/* Network Lines - Subtle but visible */}
-            <lineSegments ref={linesRef}>
-                <bufferGeometry>
-                    <bufferAttribute
-                        attach="attributes-position"
-                        count={linePositions.length / 3}
-                        array={linePositions}
-                        itemSize={3}
-                    />
-                </bufferGeometry>
-                <lineBasicMaterial
-                    color="#8B5CF6"
-                    transparent
-                    opacity={0.15} // Reduced from 0.3 for subtler premium look
-                    depthWrite={false}
-                />
-            </lineSegments>
-        </group>
-    );
-}
-
-// "Glass" Card (Refined - No grid borders)
-const FeatureCard = ({ number, title, desc, delay }: any) => (
-    <div
-        className="group relative flex flex-col md:flex-row items-start gap-5 p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md hover:border-[#FF7400]/50 hover:bg-[#FF7400]/5 transition-all duration-500 overflow-hidden"
-        style={{ animationDelay: delay }}
-    >
-        <div className="relative w-12 h-12 shrink-0 rounded-xl bg-[#8B5CF6]/10 border border-[#8B5CF6]/20 flex items-center justify-center group-hover:bg-[#FF7400] group-hover:border-[#FF7400] transition-all duration-300">
-            <span className="text-xl font-mono font-bold text-white group-hover:text-white transition-colors duration-300">{number}</span>
-        </div>
-
-        <div className="relative z-10">
-            <h3 className="text-xl text-white font-['Space_Grotesk:Medium'] tracking-tight group-hover:text-[#FF7400] transition-colors duration-300">
-                {title}
-            </h3>
-            <p className="text-sm text-gray-200 font-['Noto_Sans:Regular'] mt-2 leading-relaxed font-medium">
-                {desc}
-            </p>
-        </div>
-
-        {/* Soft Glow only - No jagged corners */}
-        <div className="absolute -right-20 -top-20 w-40 h-40 bg-[#8B5CF6]/10 blur-[60px] group-hover:bg-[#FF7400]/10 transition-colors duration-500 pointer-events-none" />
-    </div>
+// Premium Check Icon
+const CheckIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 6L9 17L4 12" stroke="#FF7400" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
 );
 
 export default function LyroSection() {
@@ -144,82 +22,135 @@ export default function LyroSection() {
         return () => observer.disconnect();
     }, []);
 
-    // Clean, Deep Background
-    const backgroundGradient = `
-        radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
-        radial-gradient(circle at 90% 80%, rgba(255, 116, 0, 0.05) 0%, transparent 40%),
-        linear-gradient(180deg, #000000 0%, #050508 100%)
-    `;
-
     return (
-        <section
-            ref={sectionRef}
-            className="relative w-full py-24 lg:py-32 bg-black text-white overflow-hidden"
-        >
+        <section ref={sectionRef} className="relative w-full overflow-hidden py-section-large">
+
+            {/* --- INJECTED STYLES: PREMIUM BLUR MOTION --- */}
+            <style>{`
+                @keyframes blur-slide-up {
+                    0% { opacity: 0; transform: translateY(20px); filter: blur(10px); }
+                    100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+                }
+                @keyframes float-slow {
+                    0% { transform: translateY(0); }
+                    50% { transform: translateY(-10px); }
+                    100% { transform: translateY(0); }
+                }
+                .animate-reveal { animation: blur-slide-up 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+                .delay-100 { animation-delay: 100ms; }
+                .delay-200 { animation-delay: 200ms; }
+                .delay-300 { animation-delay: 300ms; }
+                .delay-500 { animation-delay: 500ms; }
+                .delay-700 { animation-delay: 700ms; }
+            `}</style>
+
+            {/* --- BACKGROUND: EXACT MATCH TO SERVICES SECTION --- */}
+            {/* Extended Cosmic Background with Smooth Transition */}
+            <div
+                className="absolute inset-0 opacity-100"
+                style={{
+                    background: `
+                    radial-gradient(circle at 15% 20%, rgba(29, 53, 87, 0.18) 0%, transparent 45%),
+                    radial-gradient(circle at 85% 30%, rgba(255, 116, 0, 0.12) 0%, transparent 50%),
+                    radial-gradient(circle at 50% 40%, rgba(29, 53, 87, 0.15) 0%, transparent 35%),
+                    radial-gradient(circle at 30% 70%, rgba(255, 116, 0, 0.08) 0%, transparent 40%),
+                    linear-gradient(135deg, #000000 0%, #16213e 15%, #1a1a2e 30%, #0f0f23 45%, #1a1a2e 60%, #161616 75%, #191919 90%, #191919 100%)
+                  `
+                }}
+            />
+            {/* Floating Particles (Atmosphere) */}
+            <div className="absolute inset-0 pointer-events-none">
+                {[...Array(25)].map((_, i) => (
+                    <div
+                        key={i}
+                        className="absolute w-1 h-1 bg-white rounded-full"
+                        style={{
+                            left: `${Math.random() * 100}%`,
+                            top: `${Math.random() * 100}%`,
+                            opacity: Math.random() * 0.2,
+                            animation: `float-slow ${4 + Math.random() * 4}s ease-in-out infinite`,
+                            animationDelay: `${Math.random() * 3}s`
+                        }}
+                    />
+                ))}
+            </div>
+            {/* Grid Overlay (Structure) */}
             <div
                 className="absolute inset-0 pointer-events-none"
-                style={{ background: backgroundGradient }}
+                style={{
+                    backgroundImage: `
+                    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)
+                  `,
+                    backgroundSize: '60px 60px',
+                    opacity: 0.6,
+                    mask: 'radial-gradient(circle at center, white 0%, transparent 80%)',
+                    WebkitMask: 'radial-gradient(circle at center, white 0%, transparent 80%)'
+                }}
             />
 
+
+            {/* --- CONTENT CONTAINER --- */}
             <div className="relative z-10 container-global">
                 <div className="container-large">
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
+                    {/* Header */}
+                    <div className={`mb-12 md:mb-16 opacity-0 ${isVisible ? 'animate-reveal' : ''}`}>
+                        <div className="inline-flex items-center gap-3 mb-4">
+                            <div className="w-2 h-2 rounded-full bg-[#FF7400] shadow-[0_0_10px_#FF7400] animate-pulse"></div>
+                            <span className="text-[14px] text-[#FF7400] font-mono tracking-widest uppercase font-bold">
+                                #lyro
+                            </span>
+                        </div>
+                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-medium text-white font-['Space_Grotesk:Medium'] tracking-tight">
+                            Lyro — Al Narrative Engine <span className="text-gray-500 font-light text-3xl md:text-4xl lg:text-5xl ml-2 opacity-80">(Coming Soon)</span>
+                        </h2>
+                    </div>
 
-                        {/* LEFT: Text Content */}
-                        <div className={`flex flex-col items-start space-y-8 transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'}`}>
+                    {/* Split Layout */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-start">
 
-                            {/* Badge - Clean */}
-                            <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-md">
-                                <div className="w-1.5 h-1.5 rounded-full bg-[#FF7400] animate-pulse"></div>
-                                <span className="text-[#FF7400] font-mono text-xs tracking-widest uppercase font-bold">Vortix Intelligence</span>
-                            </div>
-
-                            <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white font-['Space_Grotesk:Medium'] tracking-tight leading-[1.0] drop-shadow-xl text-left">
-                                Lyro AI <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] to-[#A78BFA]">
-                                    Narrative Engine
-                                </span>
-                            </h2>
-
-                            <div className="border-l-4 border-[#8B5CF6] pl-6 py-1">
-                                <p className="text-xl text-gray-200 font-['Noto_Sans:Regular'] leading-relaxed max-w-lg text-left font-medium">
-                                    Not just distribution—<span className="text-[#FF7400] font-bold">engineering</span>. Lyro acts as your pre-flight check, analyzing sentiment, clarity, and angle before your story ever hits the wire.
-                                </p>
-                            </div>
-
-                            <div className="grid gap-6 mt-6 w-full max-w-xl">
-                                <FeatureCard
-                                    number="01"
-                                    title="Narrative Optimization"
-                                    desc="Semantic analysis ensures your story resonates with key audiences."
-                                    delay="0.1s"
-                                />
-                                <FeatureCard
-                                    number="02"
-                                    title="Visibility Forecast"
-                                    desc="Predicts how well LLMs and Search Engines will index your news."
-                                    delay="0.2s"
-                                />
-                            </div>
+                        {/* Left: Paragraph */}
+                        <div className={`prose prose-lg prose-invert text-gray-200 opacity-0 ${isVisible ? 'animate-reveal delay-200' : ''}`}>
+                            <p className="text-xl md:text-2xl font-['Noto_Sans:Regular'] leading-relaxed opacity-90">
+                                Lyro is our internal AI tool that analyzes your announcement before distribution. It checks for clarity, angle suitability, and how well LLMs can surface your story in search, news, and AI feeds.
+                            </p>
                         </div>
 
-                        {/* RIGHT: 3D Visualization - Clear View */}
-                        <div className={`h-[600px] w-full relative transition-all duration-1000 delay-300 ease-out z-0 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'}`}>
+                        {/* Right: Bullets */}
+                        <div className="flex flex-col gap-8 opacity-0" style={{ animation: isVisible ? 'blur-slide-up 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 400ms' : 'none' }}>
+                            <div className="relative">
+                                {/* Label */}
+                                <h3 className="text-sm font-mono text-gray-400 uppercase tracking-widest mb-6 border-b border-white/10 pb-2 w-fit">
+                                    System Capabilities
+                                </h3>
 
-                            <Canvas camera={{ position: [0, 0, 14], fov: 35 }} gl={{ antialias: true, alpha: true }}>
-                                <ambientLight intensity={1} />
-                                <pointLight position={[10, 10, 10]} intensity={2} color="#8B5CF6" />
-                                <pointLight position={[-10, -5, 5]} intensity={2} color="#FF7400" />
-                                <Suspense fallback={null}>
-                                    <NeuralNetwork />
-                                </Suspense>
-                            </Canvas>
-
-                            {/* Removed all clutter overlays. Just pure code driven art. */}
+                                <ul className="space-y-6">
+                                    {[
+                                        "Narrative optimization",
+                                        "Media angle suggestions",
+                                        "LLM visibility forecasting",
+                                        "Asia geo-angle adjustments"
+                                    ].map((item, index) => (
+                                        <li
+                                            key={index}
+                                            className="group flex items-center gap-4 text-lg md:text-xl text-white font-['Space_Grotesk:Medium'] tracking-wide opacity-0"
+                                            style={{
+                                                animation: isVisible ? `blur-slide-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards ${600 + (index * 100)}ms` : 'none'
+                                            }}
+                                        >
+                                            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#FF7400]/10 flex items-center justify-center border border-[#FF7400]/20 transition-all duration-300 group-hover:bg-[#FF7400]/20 group-hover:border-[#FF7400]">
+                                                <CheckIcon />
+                                            </div>
+                                            <span className="transition-all duration-300 group-hover:text-gray-100">{item}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
                         </div>
 
                     </div>
+
                 </div>
             </div>
         </section>

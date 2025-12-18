@@ -89,3 +89,4 @@ import HeroNewSection from './components/HeroNewSection3D';
 - **生產環境**：使用 CSS 版本（目前）
 - **CORS 生效後**：測試 3D 版本效果
 - **最終選擇**：根據實際效果和效能決定
+
