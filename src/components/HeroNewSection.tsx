@@ -126,7 +126,7 @@ function MediaLogoCloud() {
   ];
 
   return (
-    <div className="absolute inset-0" style={{ width: '140%', height: '140%', left: '-20%', top: '-20%' }}>
+    <div className="absolute inset-0" style={{ width: '100%', height: '100%', left: '0%', top: '0%' }}>
       {mediaLogos.map((logo, index) => {
         // 根據 size 設定尺寸（調大）
         let maxWidth = '100px';
@@ -383,31 +383,31 @@ export default function HeroNewSection() {
 
             {/* Right Column - Visual Element (僅桌面版顯示) */}
             <div 
-              className={`relative hidden lg:flex items-center justify-center transition-all duration-1500 ease-out ${
+              className={`relative hidden lg:flex items-center justify-center w-full h-full transition-all duration-1500 ease-out ${
                 isLoaded 
                   ? 'opacity-100 scale-100' 
                   : 'opacity-0 scale-95'
               }`}
               style={{ transitionDelay: '0.8s' }}
             >
-              {/* Central Vortix Logo with Glow */}
-              <div className="relative">
-                {/* Glow Effect */}
-                <div className="absolute inset-0 bg-[#8B5CF6] rounded-full blur-[60px] lg:blur-[70px] xl:blur-[80px] opacity-25 lg:opacity-30 animate-pulse"></div>
-                
-                {/* Logo Container - 響應式大小 */}
-                <div className="relative w-[240px] h-[240px] lg:w-[280px] lg:h-[280px] xl:w-[320px] xl:h-[320px] 2xl:w-[360px] 2xl:h-[360px] flex items-center justify-center">
-                  <div className="relative w-[160px] h-[160px] lg:w-[200px] lg:h-[200px] xl:w-[240px] xl:h-[240px] 2xl:w-[280px] 2xl:h-[280px]">
-                    <img 
-                      src={VortixLogoMark}
-                      alt="Vortix"
-                      className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(139,92,246,0.5)]"
-                    />
-                  </div>
-                  
-                  {/* Orbiting Media Logos */}
-                  <MediaLogoCloud />
+              {/* Central Glow */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-[300px] h-[300px] bg-[#8B5CF6] rounded-full blur-[100px] opacity-20 animate-pulse"></div>
+              </div>
+              
+              {/* Logo Container - 填滿右側欄，使用 relative 定位 */}
+              <div className="relative w-full h-full flex items-center justify-center">
+                {/* 中央 Vortix Logo */}
+                <div className="relative z-20 w-[160px] h-[160px] lg:w-[200px] lg:h-[200px] xl:w-[240px] xl:h-[240px] 2xl:w-[280px] 2xl:h-[280px]">
+                  <img 
+                    src={VortixLogoMark}
+                    alt="Vortix"
+                    className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(139,92,246,0.5)]"
+                  />
                 </div>
+                
+                {/* Media Logo Cloud - 基於整個右側欄空間 */}
+                <MediaLogoCloud />
               </div>
             </div>
 

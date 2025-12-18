@@ -6,6 +6,7 @@ import HeroNewSection from './components/HeroNewSection';
 import LogoCarousel from './components/LogoCarousel';
 import StatsSection from './components/StatsSection';
 import ServicesSection from './components/ServicesSection';
+import LyroSection from './components/LyroSection';
 import TrustedBySection from './components/TrustedBySection';
 import FeaturesSection from './components/FeaturesSection';
 import TestimonialSection from './components/TestimonialSection';
@@ -35,26 +36,29 @@ function HomePage() {
       <LogoCarousel />
       <StatsSection />
       <ServicesSection />
-      
+
+      {/* Lyro AI Section */}
+      <LyroSection />
+
       {/* Packages Preview Section - 只顯示價格卡片 */}
       <section id="packages-section">
         <PricingCards />
       </section>
-      
+
       {/* Our Clients Section */}
       <section id="clients-section">
         <TrustedBySection showTitle={true} />
       </section>
-      
+
       {/* Publisher Features Preview - 只顯示特點區域 */}
       <section id="publisher-section">
         <PublisherFeatures />
       </section>
-      
+
       <FeaturesSection />
       <TestimonialSection />
       <EverythingYouNeedSection reverse={true} />
-      <FAQSection 
+      <FAQSection
         faqs={faqs}
         variant="default"
         maxWidth="default"
@@ -74,10 +78,10 @@ function AppContent() {
     <div className="min-h-screen bg-black">
       {/* 自動滾動到頂部組件 */}
       <ScrollToTop />
-      
+
       {/* Global Navigation - 固定在頂部，所有頁面共用 */}
       <Navigation user={user} onLogout={logout} onQuickLogin={quickLogin} />
-      
+
       {/* Main Content Area - 為固定 navbar 添加 padding-top */}
       <div className="pt-14 sm:pt-16 md:pt-[72px] lg:pt-[72px]">
         <Routes>
