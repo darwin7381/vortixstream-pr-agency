@@ -8,6 +8,7 @@ const CheckIcon = () => (
 );
 
 export default function LyroSection() {
+    // Kept for corner animations, but content is safe now
     const [isVisible, setIsVisible] = useState(false);
     const sectionRef = useRef<HTMLDivElement>(null);
 
@@ -23,29 +24,25 @@ export default function LyroSection() {
     }, []);
 
     return (
-        <section ref={sectionRef} className="relative w-full overflow-hidden py-section-large">
+        <section ref={sectionRef} className="relative w-full overflow-hidden py-section-large bg-[#050508]">
 
-            {/* --- INJECTED STYLES: PREMIUM BLUR MOTION --- */}
+            {/* --- INJECTED STYLES: TECH DECOR ONLY (Safe) --- */}
             <style>{`
-                @keyframes blur-slide-up {
-                    0% { opacity: 0; transform: translateY(20px); filter: blur(10px); }
-                    100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+                @keyframes rotate-slow {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
                 }
-                @keyframes float-slow {
-                    0% { transform: translateY(0); }
-                    50% { transform: translateY(-10px); }
-                    100% { transform: translateY(0); }
+                @keyframes scan-flash {
+                    0%, 100% { opacity: 0.3; }
+                    50% { opacity: 1; }
                 }
-                .animate-reveal { animation: blur-slide-up 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
-                .delay-100 { animation-delay: 100ms; }
-                .delay-200 { animation-delay: 200ms; }
-                .delay-300 { animation-delay: 300ms; }
-                .delay-500 { animation-delay: 500ms; }
-                .delay-700 { animation-delay: 700ms; }
+                .tech-ring {
+                    border: 1px dashed rgba(255, 255, 255, 0.08);
+                    border-radius: 50%;
+                }
             `}</style>
 
-            {/* --- BACKGROUND: EXACT MATCH TO SERVICES SECTION --- */}
-            {/* Extended Cosmic Background with Smooth Transition */}
+            {/* --- BACKGROUND STACK (Verified Services Gradient) --- */}
             <div
                 className="absolute inset-0 opacity-100"
                 style={{
@@ -53,79 +50,80 @@ export default function LyroSection() {
                     radial-gradient(circle at 15% 20%, rgba(29, 53, 87, 0.18) 0%, transparent 45%),
                     radial-gradient(circle at 85% 30%, rgba(255, 116, 0, 0.12) 0%, transparent 50%),
                     radial-gradient(circle at 50% 40%, rgba(29, 53, 87, 0.15) 0%, transparent 35%),
-                    radial-gradient(circle at 30% 70%, rgba(255, 116, 0, 0.08) 0%, transparent 40%),
                     linear-gradient(135deg, #000000 0%, #16213e 15%, #1a1a2e 30%, #0f0f23 45%, #1a1a2e 60%, #161616 75%, #191919 90%, #191919 100%)
                   `
                 }}
             />
-            {/* Floating Particles (Atmosphere) */}
-            <div className="absolute inset-0 pointer-events-none">
-                {[...Array(25)].map((_, i) => (
-                    <div
-                        key={i}
-                        className="absolute w-1 h-1 bg-white rounded-full"
-                        style={{
-                            left: `${Math.random() * 100}%`,
-                            top: `${Math.random() * 100}%`,
-                            opacity: Math.random() * 0.2,
-                            animation: `float-slow ${4 + Math.random() * 4}s ease-in-out infinite`,
-                            animationDelay: `${Math.random() * 3}s`
-                        }}
-                    />
-                ))}
-            </div>
-            {/* Grid Overlay (Structure) */}
-            <div
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                    backgroundImage: `
-                    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)
-                  `,
-                    backgroundSize: '60px 60px',
-                    opacity: 0.6,
-                    mask: 'radial-gradient(circle at center, white 0%, transparent 80%)',
-                    WebkitMask: 'radial-gradient(circle at center, white 0%, transparent 80%)'
-                }}
-            />
 
+            {/* THE ENGINE (Tech Rings) - Kept as they work well */}
+            <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[800px] h-[800px] pointer-events-none opacity-100">
+                <div
+                    className="absolute inset-0 tech-ring"
+                    style={{ animation: 'rotate-slow 60s linear infinite' }}
+                />
+                <div
+                    className="absolute inset-[15%] tech-ring"
+                    style={{ animation: 'rotate-slow 40s linear infinite reverse' }}
+                />
+            </div>
+            {/* Right Side Ring */}
+            <div className="absolute top-1/2 -right-[200px] -translate-y-1/2 w-[600px] h-[600px] pointer-events-none opacity-100">
+                <div
+                    className="absolute inset-0 tech-ring opacity-50"
+                    style={{ animation: 'rotate-slow 50s linear infinite' }}
+                />
+            </div>
+
+            {/* Grid Overlay */}
+            <div className="absolute inset-0 pointer-events-none">
+                <div
+                    className="absolute inset-0 pointer-events-none opacity-40"
+                    style={{
+                        backgroundImage: `linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)`,
+                        backgroundSize: '60px 60px',
+                        mask: 'radial-gradient(circle at center, white 0%, transparent 80%)',
+                        WebkitMask: 'radial-gradient(circle at center, white 0%, transparent 80%)'
+                    }}
+                />
+            </div>
 
             {/* --- CONTENT CONTAINER --- */}
             <div className="relative z-10 container-global">
-                <div className="container-large">
+                <div className="container-large relative">
 
-                    {/* Header */}
-                    <div className={`mb-12 md:mb-16 opacity-0 ${isVisible ? 'animate-reveal' : ''}`}>
+                    {/* Header - SOLID WHITE (Fixed Visibility) */}
+                    <div className="mb-12 md:mb-16">
                         <div className="inline-flex items-center gap-3 mb-4">
-                            <div className="w-2 h-2 rounded-full bg-[#FF7400] shadow-[0_0_10px_#FF7400] animate-pulse"></div>
+                            <div className="w-2 h-2 rounded-full bg-[#FF7400] shadow-[0_0_10px_#FF7400] animate-[scan-flash_3s_ease-in-out_infinite]"></div>
                             <span className="text-[14px] text-[#FF7400] font-mono tracking-widest uppercase font-bold">
-                                #lyro
+                                #lyro_engine
                             </span>
                         </div>
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-medium text-white font-['Space_Grotesk:Medium'] tracking-tight">
-                            Lyro — Al Narrative Engine <span className="text-gray-500 font-light text-3xl md:text-4xl lg:text-5xl ml-2 opacity-80">(Coming Soon)</span>
+                            Lyro — Al Narrative Engine
+                            <span className="block mt-2 text-gray-500 font-light text-3xl md:text-4xl lg:text-5xl opacity-80">(Coming Soon)</span>
                         </h2>
                     </div>
 
                     {/* Split Layout */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-start">
 
-                        {/* Left: Paragraph */}
-                        <div className={`prose prose-lg prose-invert text-gray-200 opacity-0 ${isVisible ? 'animate-reveal delay-200' : ''}`}>
-                            <p className="text-xl md:text-2xl font-['Noto_Sans:Regular'] leading-relaxed opacity-90">
+                        {/* Left: Paragraph - LIGHTER COLOR (Fixed Visibility) */}
+                        <div className="prose prose-lg prose-invert text-gray-100">
+                            <p className="text-xl md:text-2xl font-['Noto_Sans:Regular'] leading-relaxed opacity-100">
                                 Lyro is our internal AI tool that analyzes your announcement before distribution. It checks for clarity, angle suitability, and how well LLMs can surface your story in search, news, and AI feeds.
                             </p>
                         </div>
 
-                        {/* Right: Bullets */}
-                        <div className="flex flex-col gap-8 opacity-0" style={{ animation: isVisible ? 'blur-slide-up 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 400ms' : 'none' }}>
+                        {/* Right: Holographic Bullets - REMOVED OPACITY ENTRANCE */}
+                        <div className="flex flex-col gap-8">
                             <div className="relative">
                                 {/* Label */}
-                                <h3 className="text-sm font-mono text-gray-400 uppercase tracking-widest mb-6 border-b border-white/10 pb-2 w-fit">
-                                    System Capabilities
+                                <h3 className="text-sm font-mono text-gray-500 uppercase tracking-widest mb-6 border-b border-white/5 pb-2 w-fit">
+                                    System Capabilities ::
                                 </h3>
 
-                                <ul className="space-y-6">
+                                <ul className="space-y-4">
                                     {[
                                         "Narrative optimization",
                                         "Media angle suggestions",
@@ -134,15 +132,15 @@ export default function LyroSection() {
                                     ].map((item, index) => (
                                         <li
                                             key={index}
-                                            className="group flex items-center gap-4 text-lg md:text-xl text-white font-['Space_Grotesk:Medium'] tracking-wide opacity-0"
-                                            style={{
-                                                animation: isVisible ? `blur-slide-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards ${600 + (index * 100)}ms` : 'none'
-                                            }}
+                                            className="group relative flex items-center gap-5 p-4 rounded-lg overflow-hidden transition-all duration-300 hover:bg-white/[0.03] hover:border-white/10 border border-transparent cursor-default"
                                         >
-                                            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#FF7400]/10 flex items-center justify-center border border-[#FF7400]/20 transition-all duration-300 group-hover:bg-[#FF7400]/20 group-hover:border-[#FF7400]">
+                                            {/* Hover Glow Background */}
+                                            <div className="absolute inset-0 bg-gradient-to-r from-[#FF7400]/0 via-[#FF7400]/0 to-[#FF7400]/0 group-hover:via-[#FF7400]/5 transition-all duration-500" />
+
+                                            <div className="relative flex-shrink-0 w-8 h-8 rounded-full bg-[#FF7400]/10 flex items-center justify-center border border-[#FF7400]/20 transition-all duration-300 group-hover:bg-[#FF7400] group-hover:border-[#FF7400] group-hover:scale-110 group-hover:shadow-[0_0_15px_#FF7400]">
                                                 <CheckIcon />
                                             </div>
-                                            <span className="transition-all duration-300 group-hover:text-gray-100">{item}</span>
+                                            <span className="relative text-lg md:text-xl text-white font-['Space_Grotesk:Medium'] tracking-wide transition-all duration-300 group-hover:translate-x-1 group-hover:text-shadow-sm">{item}</span>
                                         </li>
                                     ))}
                                 </ul>

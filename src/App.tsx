@@ -22,6 +22,7 @@ import AboutPage from './components/about/AboutPage';
 import ServicesPage from './components/ServicesPage';
 import BlogPage from './components/blog/BlogPage';
 import ArticlePage from './components/ArticlePage';
+import TemplatePage from './components/template/TemplatePage';
 import MaterialSymbolDemo from './components/MaterialSymbolDemo';
 import LoginPage from './components/LoginPage';
 import NewsletterSuccessPage from './components/NewsletterSuccessPage';
@@ -93,9 +94,10 @@ function AppContent() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:articleId" element={<ArticlePage />} />
+          <Route path="/template" element={<TemplatePage />} />
+          <Route path="/concept" element={<ConceptPage />} />
           <Route path="/login" element={<LoginPage onLogin={login} />} />
           <Route path="/newsletter-success" element={<NewsletterSuccessPage />} />
-          <Route path="/concept" element={<ConceptPage />} />
           <Route path="/material-symbols" element={<MaterialSymbolDemo />} />
         </Routes>
       </div>

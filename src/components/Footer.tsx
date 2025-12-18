@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Facebook, Instagram, Twitter, Linkedin, Youtube } from "lucide-react";
-import { mapLinks, newsCategoryLinks, policyLinks } from '../constants/footerData';
+import { mapLinks, resourceLinks, policyLinks } from '../constants/footerData';
 import VortixLogoWhite from '../assets/VortixLogo White_Horizontal.png';
 
 export default function Footer() {
@@ -134,21 +134,38 @@ export default function Footer() {
               </div>
             </div>
 
-            {/* News Category Section */}
+            {/* Resources Section */}
             <div className="space-y-6">
               <h4 className="text-white text-[16px] font-['Noto_Sans:SemiBold'] font-semibold">
-                News Category
+                Resources
               </h4>
               <div className="space-y-4">
-                {newsCategoryLinks.map((link) => (
-                  <a 
-                    key={link} 
-                    href="#" 
-                    className="block text-white text-[14px] font-['Noto_Sans:Regular'] hover:text-gray-300 transition-colors leading-[1.4]"
-                  >
-                    {link}
-                  </a>
-                ))}
+                {resourceLinks.map((link) => {
+                  // Resources 連結映射
+                  const pathMap: { [key: string]: string } = {
+                    'Blog': '/blog',
+                    'Template': '/template',
+                    'Concept': '/concept'
+                  };
+                  
+                  const path = pathMap[link];
+                  
+                  return (
+                    <a 
+                      key={link} 
+                      href="#" 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (path && path !== '#') {
+                          navigate(path);
+                        }
+                      }}
+                      className="block text-white text-[14px] font-['Noto_Sans:Regular'] hover:text-gray-300 transition-colors leading-[1.4] cursor-pointer"
+                    >
+                      {link}
+                    </a>
+                  );
+                })}
               </div>
             </div>
 

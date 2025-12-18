@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { navItems, resourceItems } from '../constants/navigationData';
+import { navItems } from '../constants/navigationData';
 import { User as UserType } from '../hooks/useAuth';
 
 // VortixPR Logo - 使用本地資源
@@ -60,7 +60,6 @@ export default function Navigation({ user, onLogout, onQuickLogin }: NavigationP
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isMobileResourcesOpen, setIsMobileResourcesOpen] = useState(false);
 
   // 獲取當前路徑
   const currentPath = location.pathname;
@@ -128,17 +127,6 @@ export default function Navigation({ user, onLogout, onQuickLogin }: NavigationP
     setIsMobileMenuOpen(false);
   };
 
-  // 處理 Resources 下拉選單點擊
-  const handleResourceClick = (itemName: string) => {
-    if (itemName === 'Blog') {
-      navigate('/blog');
-    }
-    // 其他資源項目暫時無功能
-    // 關閉手機選單
-    setIsMobileMenuOpen(false);
-    setIsMobileResourcesOpen(false);
-  };
-
   return (
     <nav className="bg-black w-full fixed top-0 left-0 z-50 shadow-lg">
       {/* Desktop Navigation Bar */}
@@ -167,34 +155,6 @@ export default function Navigation({ user, onLogout, onQuickLogin }: NavigationP
               {item}
             </button>
           ))}
-          
-          {/* Desktop Resources Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger className={`flex items-center space-x-2 text-[16px] transition-all duration-500 ease-in-out hover:animate-[text-pulse_2s_ease-in-out_infinite] hover:[text-shadow:0_0_6px_rgba(255,255,255,0.3),0_0_12px_rgba(255,255,255,0.15),0_0_18px_rgba(255,255,255,0.08)] focus:outline-none py-2 ${
-              currentPath.startsWith('/blog') ? 'text-[#FF7400]' : 'text-white'
-            }`}>
-              <span>Resources</span>
-              <ChevronDown size={18} />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent 
-              align="end" 
-              className="bg-black border border-gray-600 min-w-[160px] mt-2 shadow-xl"
-            >
-              {resourceItems.map((item) => (
-                <DropdownMenuItem 
-                  key={item}
-                  onClick={() => handleResourceClick(item)}
-                  className={`cursor-pointer px-4 py-3 text-[14px] transition-colors duration-200 hover:bg-gray-800 ${
-                    (item === 'Blog' && currentPath.startsWith('/blog'))
-                      ? 'text-[#FF7400] bg-gray-800/50' 
-                      : 'text-white'
-                  }`}
-                >
-                  {item}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
         </div>
 
         {/* Desktop Actions */}
@@ -313,53 +273,6 @@ export default function Navigation({ user, onLogout, onQuickLogin }: NavigationP
                   {item}
                 </button>
               ))}
-              
-              {/* Resources Button with same spacing as other nav items */}
-              <div className="">
-              <button
-                onClick={() => setIsMobileResourcesOpen(!isMobileResourcesOpen)}
-                className={`flex items-center justify-between w-full text-[16px] py-3.5 px-3 rounded-lg hover:bg-white/5 transition-all duration-300 active:bg-white/10 ${
-                  currentPath.startsWith('/blog') ? 'text-[#FF7400] bg-[#FF7400]/5' : 'text-white'
-                }`}
-              >
-                <span className="font-medium">Resources</span>
-                <ChevronDown 
-                  size={16} 
-                  className={`transition-all duration-300 ${isMobileResourcesOpen ? 'rotate-180 text-[#FF7400]' : ''} ${
-                    currentPath.startsWith('/blog') ? 'text-[#FF7400]' : 'text-gray-400'
-                  }`}
-                />
-              </button>
-              
-              {isMobileResourcesOpen && (
-                <div className="mt-1 ml-2 mr-1 bg-gray-900/30 rounded-lg border border-gray-800/50 overflow-hidden">
-                  <div className="py-1">
-                    {resourceItems.map((item, index) => (
-                      <button
-                        key={item} 
-                        onClick={() => handleResourceClick(item)}
-                        className={`block w-full text-left text-[15px] py-3 px-4 transition-all duration-300 ease-in-out hover:bg-gray-800/50 active:bg-gray-700/50 ${
-                          index !== resourceItems.length - 1 ? 'border-b border-gray-800/30' : ''
-                        } ${
-                          (item === 'Blog' && currentPath.startsWith('/blog'))
-                            ? 'text-[#FF7400] bg-[#FF7400]/10 font-medium' 
-                            : 'text-gray-200 hover:text-white hover:animate-[text-pulse_2s_ease-in-out_infinite] hover:[text-shadow:0_0_4px_rgba(255,255,255,0.25),0_0_8px_rgba(255,255,255,0.12)]'
-                        }`}
-                      >
-                        <div className="flex items-center">
-                          <div className={`w-1.5 h-1.5 rounded-full mr-3 transition-colors duration-300 ${
-                            (item === 'Blog' && currentPath.startsWith('/blog'))
-                              ? 'bg-[#FF7400] shadow-sm shadow-[#FF7400]/50' 
-                              : 'bg-gray-600'
-                          }`} />
-                          {item}
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-              </div>
             </div>
             
             {/* Mobile Action Buttons */}
