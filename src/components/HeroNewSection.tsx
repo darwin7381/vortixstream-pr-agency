@@ -3,40 +3,25 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from "./ui/button";
 import VortixLogoMark from '../assets/Vortix Logo mark.png';
 
-// ========================================
-// 📌 這是 CSS 版本的 Hero Section（GitHub 遠端版本）
-// 若要使用 3D 版本：改用 HeroNewSection3D.tsx
-// ========================================
-
-// ========================================
-// 🎨 版本切換：CSS vs 3D
-// ========================================
-// 目前使用：CSS 版本 (MediaLogoCloud)
-// 若要切換到 3D 版本（需 CORS 設定完成）：
-// 1. 取消下面這行的註解
-// 2. 在 line 409 將 <MediaLogoCloud /> 改為 <Orbiting3DLogos />
-// ========================================
-// import { Orbiting3DLogos } from './Orbiting3DLogos';
-
 // Typewriter Text Component - 保留原有的打字機效果
 function TypewriterText() {
   const words = [
     "Web3 & AI"
   ];
-
+  
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [currentText, setCurrentText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
   const [isWaiting, setIsWaiting] = useState(false);
 
   // 找出最長的詞語來設定容器最小寬度
-  const longestWord = words.reduce((longest, word) =>
+  const longestWord = words.reduce((longest, word) => 
     word.length > longest.length ? word : longest, ''
   );
 
   useEffect(() => {
     const currentWord = words[currentWordIndex];
-
+    
     if (isWaiting) {
       const waitTimeout = setTimeout(() => {
         setIsWaiting(false);
@@ -78,84 +63,114 @@ function TypewriterText() {
   );
 }
 
-// Orbiting Logos Component - 環繞動畫版本
-function OrbitingLogos() {
+// Media Logo Cloud Component - 右側的媒體 logo 雲（環繞中心分布）
+function MediaLogoCloud() {
+  // 8 個不同的 logo，環繞中心分布，避開中心區域
   const mediaLogos = [
-    { url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/blocktempo%20logo_white_%E6%A9%AB.png', name: 'BlockTempo', size: 'md', orbit: 1, radius: 180, duration: '20s', startAngle: 0 },
-    { url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(57).png', name: 'The Block', size: 'md', orbit: 2, radius: 200, duration: '25s', startAngle: 45 },
-    { url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/Logo.png', name: 'Investing.com', size: 'sm', orbit: 1, radius: 160, duration: '18s', startAngle: 90 },
-    { url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(58).png', name: 'CoinTelegraph', size: 'md', orbit: 2, radius: 220, duration: '28s', startAngle: 135 },
-    { url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(59).png', name: 'CoinDesk', size: 'md', orbit: 1, radius: 190, duration: '22s', startAngle: 180 },
-    { url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(60).png', name: 'Decrypt', size: 'sm', orbit: 2, radius: 170, duration: '24s', startAngle: 225 },
-    { url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(61).png', name: 'Bitcoin Mag', size: 'md', orbit: 1, radius: 210, duration: '26s', startAngle: 270 },
-    { url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/output-onlinepngtools%20(9).png', name: 'Bitcoin.com', size: 'md', orbit: 2, radius: 195, duration: '23s', startAngle: 315 },
+    { 
+      url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/blocktempo%20logo_white_%E6%A9%AB.png',
+      name: 'BlockTempo', 
+      opacity: 0.5, 
+      size: 'lg', 
+      position: { top: '8%', right: '22%' } 
+    },
+    { 
+      url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(57).png',
+      name: 'The Block', 
+      opacity: 0.45, 
+      size: 'md', 
+      position: { top: '20%', left: '-8%' } 
+    },
+    { 
+      url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/Logo.png',
+      name: 'Investing.com', 
+      opacity: 0.4, 
+      size: 'sm', 
+      position: { top: '30%', right: '2%' } 
+    },
+    { 
+      url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(58).png',
+      name: 'CoinTelegraph', 
+      opacity: 0.55, 
+      size: 'lg', 
+      position: { top: '52%', right: '-7%' } 
+    },
+    { 
+      url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(59).png',
+      name: 'CoinDesk', 
+      opacity: 0.5, 
+      size: 'md', 
+      position: { top: '62%', left: '-5%' } 
+    },
+    { 
+      url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(60).png',
+      name: 'Decrypt', 
+      opacity: 0.4, 
+      size: 'sm', 
+      position: { top: '75%', right: '12%' } 
+    },
+    { 
+      url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(61).png',
+      name: 'Bitcoin Magazine', 
+      opacity: 0.45, 
+      size: 'md', 
+      position: { top: '68%', right: '28%' } 
+    },
+    { 
+      url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/output-onlinepngtools%20(9).png',
+      name: 'Bitcoin.com', 
+      opacity: 0.38, 
+      size: 'lg', 
+      position: { top: '35%', left: '3%' } 
+    },
   ];
 
   return (
-    <div className="absolute inset-0 pointer-events-none z-10">
-      {mediaLogos.map((logo, index) => (
-        <OrbitingLogoItem key={index} logo={logo} index={index} />
-      ))}
-    </div>
-  );
-}
-
-// Individual Orbiting Logo Item - 加入環繞動畫
-function OrbitingLogoItem({ logo, index }: { logo: any; index: number }) {
-  const [imageError, setImageError] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
-
-  return (
-    <>
-      {/* 注入環繞動畫 CSS - 修正居中問題 */}
-      <style>{`
-        @keyframes orbit-${index} {
-          0% {
-            transform: translate(-50%, -50%) rotate(${logo.startAngle}deg) translateX(${logo.radius}px) rotate(-${logo.startAngle}deg);
-          }
-          100% {
-            transform: translate(-50%, -50%) rotate(${logo.startAngle + 360}deg) translateX(${logo.radius}px) rotate(-${logo.startAngle + 360}deg);
-          }
-        }
-      `}</style>
-
-      <div
-        className="absolute top-1/2 left-1/2"
-        style={{
-          animation: `orbit-${index} ${logo.duration} linear infinite`,
-        }}
-      >
-        {!imageError ? (
-          <img
-            src={logo.url}
-            alt={logo.name}
-            className={`object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)] hover:scale-110 hover:drop-shadow-[0_8px_24px_rgba(139,92,246,0.5)] transition-all duration-300 ${
-              logo.size === 'md' ? 'w-[110px] h-[36px]' : 'w-[105px] h-[34px]'
-            }`}
-            style={{ 
-              opacity: imageLoaded ? 0.9 : 0,
-              transition: 'opacity 0.3s',
-            }}
-            onLoad={() => setImageLoaded(true)}
-            onError={() => {
-              console.error(`✗ Image failed: ${logo.name}`);
-              setImageError(true);
-            }}
-            loading="eager"
-          />
-        ) : (
-          <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-lg px-3 py-2">
-            <span className="text-white font-semibold text-xs whitespace-nowrap">{logo.name}</span>
-          </div>
-        )}
+    <div className="absolute inset-0" style={{ width: '140%', height: '140%', left: '-20%', top: '-20%' }}>
+      {mediaLogos.map((logo, index) => {
+        // 根據 size 設定尺寸（調大）
+        let maxWidth = '100px';
+        let maxHeight = '40px';
         
-        {!imageLoaded && !imageError && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-6 h-6 border-2 border-white/30 border-t-white/90 rounded-full animate-spin"></div>
+        if (logo.size === 'sm') {
+          maxWidth = '80px';
+          maxHeight = '32px';
+        } else if (logo.size === 'md') {
+          maxWidth = '100px';
+          maxHeight = '40px';
+        } else if (logo.size === 'lg') {
+          maxWidth = '120px';
+          maxHeight = '48px';
+        }
+        
+        return (
+          <div
+            key={`${logo.name}-${index}`}
+            className="absolute"
+            style={{
+              ...logo.position,
+              animation: `float-particle ${5 + Math.random() * 3}s ease-in-out infinite`,
+              animationDelay: `${Math.random() * 2}s`,
+              opacity: logo.opacity,
+              maxWidth,
+              maxHeight
+            }}
+          >
+            <img 
+              src={logo.url}
+              alt={logo.name}
+              className="w-full h-full object-contain"
+              style={{ 
+                display: 'block',
+                border: 'none',
+                textDecoration: 'none'
+              }}
+              loading="lazy"
+            />
           </div>
-        )}
-      </div>
-    </>
+        );
+      })}
+    </div>
   );
 }
 
@@ -164,14 +179,16 @@ export default function HeroNewSection() {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // Force load state immediately for visual check
-    setIsLoaded(true);
+    const timer = setTimeout(() => {
+      setIsLoaded(true);
+    }, 100);
+    return () => clearTimeout(timer);
   }, []);
 
   // View Packages 按鈕處理：桌面版滑動到區域，手機版跳轉到頁面
   const handleViewPackages = () => {
     const isMobile = window.innerWidth < 1024; // lg breakpoint
-
+    
     if (isMobile) {
       // 手機版：跳轉到 Pricing 頁面
       navigate('/pricing');
@@ -181,7 +198,7 @@ export default function HeroNewSection() {
       if (packagesSection) {
         const navbarHeight = 72;
         const targetPosition = packagesSection.offsetTop - navbarHeight - 20;
-
+        
         window.scrollTo({
           top: targetPosition,
           behavior: 'smooth'
@@ -191,9 +208,9 @@ export default function HeroNewSection() {
   };
 
   return (
-    <section className="relative w-full min-h-[100vh] bg-black overflow-hidden group">
+    <section className="relative w-full min-h-[100vh] bg-black overflow-hidden">
       {/* Background Gradient - 響應式調整 */}
-      <div
+      <div 
         className="absolute inset-0"
         style={{
           background: `
@@ -205,7 +222,7 @@ export default function HeroNewSection() {
       />
 
       {/* Subtle Grid Pattern */}
-      <div
+      <div 
         className="absolute inset-0 opacity-[0.02]"
         style={{
           backgroundImage: `
@@ -233,24 +250,24 @@ export default function HeroNewSection() {
         ))}
       </div>
 
-
       {/* Main Content Container */}
-      <div className="relative z-20 h-full overflow-hidden pointer-events-none">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 h-full max-w-[1440px] pointer-events-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-center min-h-[100vh] py-16 sm:py-20 md:py-24 lg:py-28 relative">
-
+      <div className="relative z-10 h-full">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 h-full max-w-[1440px]">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-center min-h-[100vh] py-16 sm:py-20 md:py-24 lg:py-28">
+            
             {/* Left Column - Text Content & Buttons */}
-            <div className="w-full relative">
+            <div className="w-full">
               {/* Content Wrapper - 限制最大寬度 */}
               <div className="max-w-[560px]">
                 {/* Text Content */}
                 <div className="space-y-4 sm:space-y-5 md:space-y-6 lg:space-y-7 xl:space-y-8">
                   {/* Small Label */}
-                  <div
-                    className={`transition-all duration-1300 ease-out ${isLoaded
-                      ? 'opacity-100 translate-y-0'
-                      : 'opacity-0 translate-y-4'
-                      }`}
+                  <div 
+                    className={`transition-all duration-1300 ease-out ${
+                      isLoaded 
+                        ? 'opacity-100 translate-y-0' 
+                        : 'opacity-0 translate-y-4'
+                    }`}
                     style={{ transitionDelay: '0.2s' }}
                   >
                     <p className="text-[10px] sm:text-[11px] md:text-[12px] lg:text-[13px] text-white/60 font-['Noto_Sans:Regular'] tracking-[0.12em] uppercase">
@@ -261,36 +278,39 @@ export default function HeroNewSection() {
                   {/* Main Headline */}
                   <div className="space-y-1 sm:space-y-2">
                     <h1 className="text-[32px] sm:text-[40px] md:text-[48px] lg:text-[52px] xl:text-[60px] 2xl:text-[68px] font-medium leading-[1.05] sm:leading-[1.08] md:leading-[1.1] tracking-[-0.02em] font-['Space_Grotesk:Medium']">
-                      <span
-                        className={`block text-white transition-all duration-1500 ease-out ${isLoaded
-                          ? 'opacity-100 translate-y-0'
-                          : 'opacity-0 translate-y-6'
-                          }`}
-                        style={{
+                      <span 
+                        className={`block text-white transition-all duration-1500 ease-out ${
+                          isLoaded 
+                            ? 'opacity-100 translate-y-0' 
+                            : 'opacity-0 translate-y-6'
+                        }`}
+                        style={{ 
                           transitionDelay: '0.4s',
                           filter: isLoaded ? 'blur(0px)' : 'blur(2px)'
                         }}
                       >
                         Strategic PR & Global
                       </span>
-                      <span
-                        className={`block text-white transition-all duration-1500 ease-out ${isLoaded
-                          ? 'opacity-100 translate-y-0'
-                          : 'opacity-0 translate-y-6'
-                          }`}
-                        style={{
+                      <span 
+                        className={`block text-white transition-all duration-1500 ease-out ${
+                          isLoaded 
+                            ? 'opacity-100 translate-y-0' 
+                            : 'opacity-0 translate-y-6'
+                        }`}
+                        style={{ 
                           transitionDelay: '0.7s',
                           filter: isLoaded ? 'blur(0px)' : 'blur(2px)'
                         }}
                       >
                         Press Distribution for
                       </span>
-                      <span
-                        className={`block transition-all duration-1500 ease-out ${isLoaded
-                          ? 'opacity-100 translate-y-0'
-                          : 'opacity-0 translate-y-6'
-                          }`}
-                        style={{
+                      <span 
+                        className={`block transition-all duration-1500 ease-out ${
+                          isLoaded 
+                            ? 'opacity-100 translate-y-0' 
+                            : 'opacity-0 translate-y-6'
+                        }`}
+                        style={{ 
                           transitionDelay: '1.0s',
                           filter: isLoaded ? 'blur(0px)' : 'blur(2px)'
                         }}
@@ -301,11 +321,12 @@ export default function HeroNewSection() {
                   </div>
 
                   {/* Description */}
-                  <div
-                    className={`transition-all duration-1300 ease-out ${isLoaded
-                      ? 'opacity-100 translate-y-0'
-                      : 'opacity-0 translate-y-4'
-                      }`}
+                  <div 
+                    className={`transition-all duration-1300 ease-out ${
+                      isLoaded 
+                        ? 'opacity-100 translate-y-0' 
+                        : 'opacity-0 translate-y-4'
+                    }`}
                     style={{ transitionDelay: '1.3s' }}
                   >
                     <p className="text-[13px] sm:text-[14px] md:text-[15px] lg:text-[16px] xl:text-[17px] 2xl:text-[18px] text-white/70 font-['Noto_Sans:Regular'] leading-[1.5] sm:leading-[1.55] md:leading-[1.6]">
@@ -313,26 +334,27 @@ export default function HeroNewSection() {
                     </p>
                   </div>
                 </div>
-
-                {/* CTA Buttons - Completely Re-implemented */}
-                <div
-                  className={`flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-start justify-start mt-6 md:mt-8 transition-all duration-1300 ease-out ${isLoaded
-                    ? 'opacity-100 translate-y-0'
-                    : 'opacity-0 translate-y-8'
-                    }`}
+                
+                {/* CTA Buttons - 完全重新實現 */}
+                <div 
+                  className={`flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-start justify-start mt-6 md:mt-8 transition-all duration-1300 ease-out ${
+                    isLoaded 
+                      ? 'opacity-100 translate-y-0' 
+                      : 'opacity-0 translate-y-8'
+                  }`}
                   style={{ transitionDelay: '1.6s' }}
                 >
                   {/* Primary CTA - View Packages */}
-                  <Button
+                  <Button 
                     onClick={handleViewPackages}
                     className="group relative h-12 lg:h-14 px-4 sm:px-6 lg:px-8 text-sm sm:text-base lg:text-lg font-semibold !text-black hover:!text-black focus:!text-black bg-gradient-to-br from-[#FF7400] to-[#E6690A] border-0 rounded-[0.75rem] hover:-translate-y-[1px] focus:ring-2 focus:ring-[#FF7400]/40 focus:ring-offset-2 transition-all duration-300 ease-out overflow-hidden btn-brand-shadow flex-1"
-                    style={{
+                    style={{ 
                       textShadow: '0 1px 2px rgba(255,255,255,0.3)'
                     }}
                   >
                     <span className="relative z-10 flex items-center gap-2 !text-black hover:!text-black focus:!text-black transition-colors duration-300">
                       View Packages
-                      <span
+                      <span 
                         className="material-symbols-outlined text-[16px] sm:text-[18px] lg:text-[20px] !text-black hover:!text-black focus:!text-black group-hover:animate-[arrow-slide_300ms_ease-out_forwards] transition-all duration-300"
                         style={{ fontVariationSettings: "'FILL' 0, 'wght' 600, 'GRAD' 0, 'opsz' 24" }}
                       >
@@ -344,7 +366,7 @@ export default function HeroNewSection() {
                   </Button>
 
                   {/* Secondary CTA - Submit Press Release */}
-                  <Button
+                  <Button 
                     variant="outline"
                     className="group relative h-12 lg:h-14 px-4 sm:px-6 lg:px-8 text-sm sm:text-base lg:text-lg font-semibold !text-white hover:!text-white focus:!text-white bg-transparent border border-white/30 rounded-[0.75rem] hover:bg-white/8 hover:border-white/50 hover:-translate-y-[1px] focus:ring-2 focus:ring-[#FF7400]/40 focus:ring-offset-2 transition-all duration-300 ease-out overflow-hidden flex-1"
                     onClick={() => window.open('#', '_blank')} // 這裡填入實際的表單連結
@@ -359,33 +381,36 @@ export default function HeroNewSection() {
               </div>
             </div>
 
-            {/* Right Column - Orbiting Animation (Now INSIDE the grid) 
-                This solves the positioning issue by using the natural grid layout.
-            */}
-            {/* Right Column - Organic 3D Floating Cloud 
-                - Fixed height to prevent section from being too tall
-                - Using fixed dimensions for better control
-            */}
-            <div className="hidden lg:flex relative w-full items-center justify-center z-10">
-              {/* Container - fixed reasonable size to prevent overflow */}
-              <div className="relative w-full h-[500px] max-w-[600px] flex items-center justify-center">
-
-                {/* Central Glow */}
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[60%] h-[60%] bg-[#8B5CF6] rounded-full blur-[100px] opacity-20 animate-pulse"></div>
-
-                {/* Central Main Logo */}
-                <div className="relative z-20 w-[180px] h-[180px] flex items-center justify-center">
-                  <img
-                    src={VortixLogoMark}
-                    alt="Vortix"
-                    className="w-full h-full object-contain drop-shadow-[0_0_60px_rgba(139,92,246,0.5)]"
-                  />
+            {/* Right Column - Visual Element (僅桌面版顯示) */}
+            <div 
+              className={`relative hidden lg:flex items-center justify-center transition-all duration-1500 ease-out ${
+                isLoaded 
+                  ? 'opacity-100 scale-100' 
+                  : 'opacity-0 scale-95'
+              }`}
+              style={{ transitionDelay: '0.8s' }}
+            >
+              {/* Central Vortix Logo with Glow */}
+              <div className="relative">
+                {/* Glow Effect */}
+                <div className="absolute inset-0 bg-[#8B5CF6] rounded-full blur-[60px] lg:blur-[70px] xl:blur-[80px] opacity-25 lg:opacity-30 animate-pulse"></div>
+                
+                {/* Logo Container - 響應式大小 */}
+                <div className="relative w-[240px] h-[240px] lg:w-[280px] lg:h-[280px] xl:w-[320px] xl:h-[320px] 2xl:w-[360px] 2xl:h-[360px] flex items-center justify-center">
+                  <div className="relative w-[160px] h-[160px] lg:w-[200px] lg:h-[200px] xl:w-[240px] xl:h-[240px] 2xl:w-[280px] 2xl:h-[280px]">
+                    <img 
+                      src={VortixLogoMark}
+                      alt="Vortix"
+                      className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(139,92,246,0.5)]"
+                    />
+                  </div>
+                  
+                  {/* Orbiting Media Logos */}
+                  <MediaLogoCloud />
                 </div>
-
-                {/* Orbiting Logos - CSS 動畫版本 */}
-                <OrbitingLogos />
               </div>
             </div>
+
           </div>
         </div>
       </div>
