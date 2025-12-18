@@ -39,7 +39,9 @@ function HomePage() {
       <ServicesSection />
 
       {/* Lyro AI Section */}
-      <LyroSection />
+      <section id="lyro-section">
+        <LyroSection />
+      </section>
 
       {/* Packages Preview Section - 只顯示價格卡片 */}
       <section id="packages-section">
