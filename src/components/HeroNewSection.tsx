@@ -107,7 +107,7 @@ function MediaLogoCloud() {
       name: 'Decrypt', 
       opacity: 0.4, 
       size: 'sm', 
-      position: { top: '75%', right: '12%' } 
+      position: { top: '80%', right: '12%' } 
     },
     { 
       url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(61).png',
@@ -121,7 +121,7 @@ function MediaLogoCloud() {
       name: 'Bitcoin.com', 
       opacity: 0.38, 
       size: 'lg', 
-      position: { top: '35%', left: '3%' } 
+      position: { top: '35%', left: '13%' } 
     },
   ];
 
@@ -139,8 +139,8 @@ function MediaLogoCloud() {
           maxWidth = '100px';
           maxHeight = '40px';
         } else if (logo.size === 'lg') {
-          maxWidth = '120px';
-          maxHeight = '48px';
+          maxWidth = '115px';
+          maxHeight = '50px';
         }
         
         return (

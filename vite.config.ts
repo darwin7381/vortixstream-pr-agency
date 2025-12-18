@@ -68,5 +68,10 @@
     server: {
       port: 3000,
       open: true,
+      watch: {
+        // 強制使用輪詢模式，確保檔案變更被偵測到
+        usePolling: true,
+        interval: 100,
+      },
     },
   });
