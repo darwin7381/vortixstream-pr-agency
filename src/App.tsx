@@ -62,6 +62,9 @@ function HomePage() {
         <PricingCardsV2 />
       </section>
 
+      <FeaturesSection />
+      <EverythingYouNeedSection reverse={true} />
+
       {/* Our Clients Section */}
       <section id="clients-section">
         <TrustedBySection showTitle={true} />
@@ -72,9 +75,7 @@ function HomePage() {
         <PublisherFeatures />
       </section>
 
-      <FeaturesSection />
       <TestimonialSection />
-      <EverythingYouNeedSection reverse={true} />
       <FAQSection
         faqs={faqs}
         variant="default"

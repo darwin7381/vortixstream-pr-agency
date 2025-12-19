@@ -14,7 +14,6 @@ const avatarImages = [
 
 export default function TestimonialSection() {
   const [currentPage, setCurrentPage] = useState(0);
-  const [isLoaded, setIsLoaded] = useState(false);
 
   // 桌面版每頁顯示3個卡片，手機版每頁顯示1個
   const getItemsPerPage = () => {
@@ -40,7 +39,6 @@ export default function TestimonialSection() {
     };
 
     window.addEventListener('resize', handleResize);
-    setIsLoaded(true);
     return () => window.removeEventListener('resize', handleResize);
   }, [currentPage]);
 
@@ -52,12 +50,6 @@ export default function TestimonialSection() {
 
     return () => clearInterval(interval);
   }, [totalPages]);
-
-  // 獲取當前頁面的評價數據
-  const getCurrentTestimonials = () => {
-    const startIndex = currentPage * itemsPerPage;
-    return testimonials.slice(startIndex, startIndex + itemsPerPage);
-  };
 
   // 導航功能
   const goToNext = () => {
@@ -87,12 +79,7 @@ export default function TestimonialSection() {
   // 渲染單個評價卡片
   const TestimonialCard = ({ testimonial, index }: { testimonial: any; index: number }) => (
     <div 
-      className={`bg-gray-800/40 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 lg:p-8 transition-all duration-700 ease-out ${
-        isLoaded 
-          ? 'opacity-100 translate-y-0' 
-          : 'opacity-0 translate-y-8'
-      }`}
-      style={{ transitionDelay: `${index * 200}ms` }}
+      className="bg-gray-800/40 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 lg:p-8"
     >
       <FiveStars />
       
@@ -131,15 +118,34 @@ export default function TestimonialSection() {
           {/* 輪播容器 */}
           <div className="relative">
             
-            {/* 卡片網格 */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-8">
-              {getCurrentTestimonials().map((testimonial, index) => (
-                <TestimonialCard
-                  key={`${currentPage}-${index}`}
-                  testimonial={testimonial}
-                  index={index}
-                />
-              ))}
+            {/* 卡片滑動容器 - 使用 overflow-hidden */}
+            <div className="overflow-hidden mb-8">
+              <div 
+                className="flex transition-transform duration-700 ease-out"
+                style={{
+                  transform: `translateX(-${currentPage * 100}%)`,
+                }}
+              >
+                {/* 根據桌面版/手機版分組渲染 */}
+                {Array.from({ length: totalPages }).map((_, pageIndex) => (
+                  <div 
+                    key={pageIndex}
+                    className="w-full flex-shrink-0"
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+                      {testimonials
+                        .slice(pageIndex * itemsPerPage, pageIndex * itemsPerPage + itemsPerPage)
+                        .map((testimonial, index) => (
+                          <TestimonialCard
+                            key={testimonials.indexOf(testimonial)}
+                            testimonial={testimonial}
+                            index={index}
+                          />
+                        ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* 導航按鈕 - 桌面版 */}
