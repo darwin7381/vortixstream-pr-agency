@@ -92,7 +92,7 @@ export default function PricingCardsV2() {
         />
 
         {/* Content */}
-        <div className="relative z-10 container-large px-[17px] md:px-0">
+        <div className="relative z-10 container-large px-[17px] md:px-[17px]">
           {/* Section Header */}
           <div 
             className={`text-center max-w-4xl mx-auto mb-12 md:mb-20 transition-all duration-1000 ${

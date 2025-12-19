@@ -220,7 +220,9 @@ export const pricingPackagesV2: PackageCategory[] = [
                 'Market research insights'
               ]
             }
-          ]
+          ],
+          note: 'Ideal for projects targeting Southeast Asian markets.',
+          ctaText: 'Get Started'
         }
       },
       {

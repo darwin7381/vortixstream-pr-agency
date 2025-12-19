@@ -68,40 +68,48 @@ export default function PackageDetailModal({
             </p>
             
             {/* Badge and Logo Row */}
-            <div className="flex items-center gap-4">
-              {pkg.badge && (
-                <div className="px-3 py-1 rounded-full border border-[#FF7400]/30 bg-gradient-to-r from-[#FF7400]/10 to-[#1D3557]/5">
-                  <span className="text-white/90 text-[10px] font-semibold uppercase tracking-wide">
-                    {pkg.badge}
-                  </span>
+            {(pkg.badge || pkg.guaranteedPublications) && (
+              <div className="flex items-center gap-4 mb-6">
+                {pkg.badge && (
+                  <div 
+                    className="px-3 py-1 rounded-full bg-gradient-to-r from-[#FF7400]/10 to-[#1D3557]/5 relative"
+                    style={{
+                      border: '2px solid transparent',
+                      backgroundImage: 'linear-gradient(#0a0a0a, #0a0a0a), linear-gradient(102deg, #FF7400 0%, #1D3557 100%)',
+                      backgroundOrigin: 'border-box',
+                      backgroundClip: 'padding-box, border-box'
+                    }}
+                  >
+                    <span className="text-white/90 text-[10px] font-semibold uppercase tracking-wide">
+                      {pkg.badge}
+                    </span>
+                  </div>
+                )}
+                {/* MPOST Logo */}
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 bg-gradient-to-r from-[#FF7400] to-[#1D3557] rounded flex items-center justify-center">
+                    <span className="text-white text-xs font-bold">M</span>
+                  </div>
+                  <span className="text-white/60 text-sm font-bold">MPOST</span>
                 </div>
-              )}
-              {/* MPOST Logo */}
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-gradient-to-r from-[#FF7400] to-[#1D3557] rounded flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">M</span>
-                </div>
-                <span className="text-white/60 text-sm font-bold">MPOST</span>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Main Features with Green Checkmarks */}
           <div className="space-y-3 mb-8">
             {pkg.features.map((feature, index) => (
-              <div key={index} className="flex items-start gap-3">
-                <div className="mt-0.5">
-                  <svg className="w-5 h-5" viewBox="0 0 20 20" fill="none">
-                    <path 
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" 
-                      fill="#22C55E"
-                      fillRule="evenodd" 
-                      clipRule="evenodd"
-                      strokeWidth="0.5"
-                      stroke="#22C55E"
-                    />
-                  </svg>
-                </div>
+              <div key={index} className="flex items-center gap-3">
+                <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 20 20" fill="none">
+                  <path 
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" 
+                    fill="#22C55E"
+                    fillRule="evenodd" 
+                    clipRule="evenodd"
+                    strokeWidth="0.5"
+                    stroke="#22C55E"
+                  />
+                </svg>
                 <p className="text-white text-base leading-relaxed">
                   {feature}
                 </p>
@@ -122,8 +130,8 @@ export default function PackageDetailModal({
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2.5">
                     {section.items.map((item, itemIndex) => (
-                      <div key={itemIndex} className="flex items-start gap-3">
-                        <div className="w-1.5 h-1.5 bg-[#FF7400] rounded-full mt-1.5 flex-shrink-0" />
+                      <div key={itemIndex} className="flex items-center gap-3">
+                        <div className="w-1.5 h-1.5 bg-[#FF7400] rounded-full flex-shrink-0" />
                         <p className="text-white/70 text-sm leading-relaxed">
                           {item}
                         </p>

@@ -39,14 +39,14 @@ export default function PackageCardV2({
       <div className="space-y-2.5 mb-5">
         {pkg.features.slice(0, 3).map((feature, index) => (
           <div key={index} className="flex items-start gap-2.5">
-            <div className="w-1 h-1 bg-green-500 rounded-full mt-2 flex-shrink-0" />
+            <div className="w-1.5 h-1.5 bg-white/40 rounded-full mt-1.5 flex-shrink-0" />
             <p className="text-white/70 text-sm leading-relaxed">
               {feature}
             </p>
           </div>
         ))}
         {pkg.features.length > 3 && (
-          <p className="text-white/40 text-sm pl-3.5">
+          <p className="text-white/40 text-sm pl-4">
             +{pkg.features.length - 3} more features
           </p>
         )}
