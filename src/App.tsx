@@ -14,7 +14,9 @@ import EverythingYouNeedSection from './components/EverythingYouNeedSection';
 import FAQSection from './components/FAQSection';
 import Footer from './components/Footer';
 import PricingCards from './components/pricing/PricingCards';
+import PricingCardsV2 from './components/pricing/PricingCardsV2';
 import PricingPage from './components/pricing/PricingPage';
+import PricingPageV2 from './components/pricing/PricingPageV2';
 import PublisherFeatures from './components/publisher/PublisherFeatures';
 import PublisherPage from './components/publisher/PublisherPage';
 import OurClientsPage from './components/clients/OurClientsPage';
@@ -35,7 +37,9 @@ function HomePage() {
     <>
       <HeroNewSection />
       <LogoCarousel />
-      <StatsSection />
+      <section id="about-section">
+        <StatsSection />
+      </section>
       <ServicesSection />
 
       {/* Lyro AI Section */}
@@ -43,9 +47,9 @@ function HomePage() {
         <LyroSection />
       </section>
 
-      {/* Packages Preview Section - 只顯示價格卡片 */}
+      {/* Packages Preview Section - V2 版本 */}
       <section id="packages-section">
-        <PricingCards />
+        <PricingCardsV2 />
       </section>
 
       {/* Our Clients Section */}
@@ -91,6 +95,7 @@ function AppContent() {
           <Route path="/" element={<HomePage />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/pricing-v2" element={<PricingPageV2 />} />
           <Route path="/clients" element={<OurClientsPage />} />
           <Route path="/publisher" element={<PublisherPage />} />
           <Route path="/about" element={<AboutPage />} />

@@ -69,6 +69,22 @@ export default function StatsSection() {
 
   return (
     <section ref={sectionRef} className="relative w-full overflow-hidden">
+      {/* Floating Animation Styles */}
+      <style>{`
+        @keyframes gentle-float {
+          0%, 100% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-8px);
+          }
+        }
+        
+        .float-card {
+          animation: gentle-float 4s ease-in-out infinite;
+        }
+      `}</style>
+
       {/* Enhanced Animated Cosmic Background */}
       <div 
         className="absolute inset-0 opacity-100"
@@ -137,10 +153,13 @@ export default function StatsSection() {
                   ref={el => diffRefs.current[index] = el}
                   className={`group relative transition-all duration-1000 ease-out ${
                     visibleDiff.has(index) 
-                      ? 'opacity-100 translate-y-0 translate-x-0' 
+                      ? 'opacity-100 translate-y-0 translate-x-0 float-card' 
                       : 'opacity-0 translate-y-6 -translate-x-4'
                   }`}
-                  style={{ transitionDelay: `${0.8 + index * 0.15}s` }}
+                  style={{ 
+                    transitionDelay: `${0.8 + index * 0.15}s`,
+                    animationDelay: `${index * 0.3}s`
+                  }}
                 >
                   {/* Card with minimal glassmorphism */}
                   <div className="relative flex items-center gap-4 sm:gap-5 p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl bg-gradient-to-br from-white/[0.03] via-white/[0.05] to-white/[0.02] border border-white/5 hover:border-white/15 hover:from-white/[0.05] hover:to-white/[0.03] transition-all duration-500 hover:scale-[1.01] hover:-translate-y-0.5">
@@ -178,10 +197,13 @@ export default function StatsSection() {
                   ref={el => diffRefs.current[index + 2] = el}
                   className={`group relative transition-all duration-1000 ease-out ${
                     visibleDiff.has(index + 2) 
-                      ? 'opacity-100 translate-y-0 translate-x-0' 
+                      ? 'opacity-100 translate-y-0 translate-x-0 float-card' 
                       : 'opacity-0 translate-y-6 -translate-x-4'
                   }`}
-                  style={{ transitionDelay: `${0.8 + (index + 2) * 0.15}s` }}
+                  style={{ 
+                    transitionDelay: `${0.8 + (index + 2) * 0.15}s`,
+                    animationDelay: `${(index + 2) * 0.3}s`
+                  }}
                 >
                   {/* Card with minimal glassmorphism */}
                   <div className="relative flex items-center gap-4 sm:gap-5 p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl bg-gradient-to-br from-white/[0.03] via-white/[0.05] to-white/[0.02] border border-white/5 hover:border-white/15 hover:from-white/[0.05] hover:to-white/[0.03] transition-all duration-500 hover:scale-[1.01] hover:-translate-y-0.5">

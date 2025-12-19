@@ -68,19 +68,14 @@ export default function Navigation({ user, onLogout, onQuickLogin }: NavigationP
   const handleNavClick = (itemName: string) => {
     const isDesktop = window.innerWidth >= 1024; // lg breakpoint
     
-    // About 永遠跳轉到詳細頁面
-    if (itemName === 'About') {
-      navigate('/about');
-      setIsMobileMenuOpen(false);
-      return;
-    }
-    
     // 處理有首頁預覽區域的項目
     const sectionMap: { [key: string]: { id: string; path: string } } = {
       'Services': { id: 'services-section', path: '/services' },
       'Packages': { id: 'packages-section', path: '/pricing' },
+      'About': { id: 'about-section', path: '/about' },
+      'Publisher': { id: 'publisher-section', path: '/publisher' },
       'Our Client': { id: 'clients-section', path: '/clients' },
-      'Publisher': { id: 'publisher-section', path: '/publisher' }
+      'Lyro': { id: 'lyro-section', path: '/lyro' }
     };
     
     const config = sectionMap[itemName];
@@ -145,9 +140,10 @@ export default function Navigation({ user, onLogout, onQuickLogin }: NavigationP
               className={`text-white text-[16px] transition-all duration-500 ease-in-out hover:animate-[text-pulse_2s_ease-in-out_infinite] hover:[text-shadow:0_0_6px_rgba(255,255,255,0.3),0_0_12px_rgba(255,255,255,0.15),0_0_18px_rgba(255,255,255,0.08)] relative py-2 ${
                 (item === 'Services' && (currentPath === '/services' || (currentPath === '/' && document.getElementById('services-section')))) ||
                 (item === 'Packages' && (currentPath === '/pricing' || (currentPath === '/' && document.getElementById('packages-section')))) ||
-                (item === 'Our Client' && (currentPath === '/clients' || (currentPath === '/' && document.getElementById('clients-section')))) ||
+                (item === 'About' && (currentPath === '/about' || (currentPath === '/' && document.getElementById('about-section')))) ||
                 (item === 'Publisher' && (currentPath === '/publisher' || (currentPath === '/' && document.getElementById('publisher-section')))) ||
-                (item === 'About' && currentPath === '/about')
+                (item === 'Our Client' && (currentPath === '/clients' || (currentPath === '/' && document.getElementById('clients-section')))) ||
+                (item === 'Lyro' && (currentPath === '/lyro' || (currentPath === '/' && document.getElementById('lyro-section'))))
                   ? 'text-[#FF7400]' 
                   : 'text-white'
               }`}
@@ -265,6 +261,7 @@ export default function Navigation({ user, onLogout, onQuickLogin }: NavigationP
                     (item === 'Packages' && currentPath === '/pricing') ||
                     (item === 'Our Client' && currentPath === '/clients') ||
                     (item === 'Publisher' && currentPath === '/publisher') ||
+                    (item === 'Lyro' && currentPath === '/lyro') ||
                     (item === 'About' && currentPath === '/about')
                       ? 'text-[#FF7400] bg-[#FF7400]/5' 
                       : 'text-white'
