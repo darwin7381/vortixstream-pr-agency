@@ -1,6 +1,7 @@
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from './hooks/useAuth';
 import Navigation from './components/Navigation';
+import { handleContactClick } from './utils/navigationHelpers';
 import ScrollToTop from './components/ScrollToTop';
 import HeroNewSection from './components/HeroNewSection';
 import LogoCarousel from './components/LogoCarousel';
@@ -12,6 +13,7 @@ import FeaturesSection from './components/FeaturesSection';
 import TestimonialSection from './components/TestimonialSection';
 import EverythingYouNeedSection from './components/EverythingYouNeedSection';
 import FAQSection from './components/FAQSection';
+import PricingContactForm from './components/PricingContactForm';
 import Footer from './components/Footer';
 import PricingCards from './components/pricing/PricingCards';
 import PricingCardsV2 from './components/pricing/PricingCardsV2';
@@ -29,10 +31,18 @@ import MaterialSymbolDemo from './components/MaterialSymbolDemo';
 import LoginPage from './components/LoginPage';
 import NewsletterSuccessPage from './components/NewsletterSuccessPage';
 import ConceptPage from './components/ConceptPage';
+import ContactPage from './components/ContactPage';
 import { faqs } from './constants/faqData';
 
 // Home Page Component
 function HomePage() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleCTAClick = () => {
+    handleContactClick(navigate, location.pathname);
+  };
+
   return (
     <>
       <HeroNewSection />
@@ -40,7 +50,7 @@ function HomePage() {
       <section id="about-section">
         <StatsSection />
       </section>
-      <ServicesSection />
+      <ServicesSection onContactClick={handleCTAClick} />
 
       {/* Lyro AI Section */}
       <section id="lyro-section">
@@ -70,7 +80,15 @@ function HomePage() {
         variant="default"
         maxWidth="default"
         showCTA={true}
+        onPrimaryAction={handleCTAClick}
+        onSecondaryAction={handleCTAClick}
       />
+
+      {/* Contact Us Section */}
+      <section id="contact-section">
+        <PricingContactForm />
+      </section>
+
       <Footer />
     </>
   );
@@ -99,6 +117,7 @@ function AppContent() {
           <Route path="/clients" element={<OurClientsPage />} />
           <Route path="/publisher" element={<PublisherPage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:articleId" element={<ArticlePage />} />
           <Route path="/template" element={<TemplatePage />} />

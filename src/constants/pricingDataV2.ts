@@ -6,6 +6,10 @@ export interface Package {
   features: string[];
   badge?: string;
   guaranteedPublications?: number;
+  mediaLogos?: {
+    url: string;
+    name: string;
+  }[];
   detailedInfo?: {
     sections: {
       title: string;
@@ -36,6 +40,16 @@ export const pricingPackagesV2: PackageCategory[] = [
         description: 'LAUNCH-READY VISIBILITY',
         badge: '10 GUARANTEED PUBLICATIONS',
         guaranteedPublications: 10,
+        mediaLogos: [
+          {
+            url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(58).png',
+            name: 'CoinTelegraph'
+          },
+          {
+            url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(59).png',
+            name: 'CoinDesk'
+          }
+        ],
         features: [
           'Distribution to 10 curated crypto & tech outlets',
           'Homepage placement where available',
@@ -80,6 +94,22 @@ export const pricingPackagesV2: PackageCategory[] = [
         name: 'Global Core',
         price: 'From $3,800',
         description: 'Balanced coverage for product launches and major ecosystem news.',
+        badge: '30+ GUARANTEED PUBLICATIONS',
+        guaranteedPublications: 30,
+        mediaLogos: [
+          {
+            url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/blocktempo%20logo_white_%E6%A9%AB.png',
+            name: 'BlockTempo'
+          },
+          {
+            url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/Logo.png',
+            name: 'Investing.com'
+          },
+          {
+            url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(60).png',
+            name: 'Decrypt'
+          }
+        ],
         features: [
           'Distribution to 30+ tier 1-2 outlets',
           'Multi-wave scheduling',
@@ -119,7 +149,9 @@ export const pricingPackagesV2: PackageCategory[] = [
                 'Real-time distribution updates'
               ]
             }
-          ]
+          ],
+          note: 'Ideal for product launches and major announcements.',
+          ctaText: 'Get Started'
         }
       },
       {
@@ -127,6 +159,14 @@ export const pricingPackagesV2: PackageCategory[] = [
         name: 'Global Premium',
         price: 'From $8,000',
         description: 'Tier-1 focus, extended coverage and multi-wave scheduling.',
+        badge: '50+ TIER-1 PUBLICATIONS',
+        guaranteedPublications: 50,
+        mediaLogos: [
+          {
+            url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/output-onlinepngtools%20(9).png',
+            name: 'Bitcoin.com'
+          }
+        ],
         features: [
           '50+ tier-1 focused distribution',
           'Exclusive outlet relationships',
@@ -166,7 +206,9 @@ export const pricingPackagesV2: PackageCategory[] = [
                 'Quarterly performance review'
               ]
             }
-          ]
+          ],
+          note: 'Maximum visibility for high-impact announcements and campaigns.',
+          ctaText: 'Get Started'
         }
       }
     ]
@@ -181,6 +223,13 @@ export const pricingPackagesV2: PackageCategory[] = [
         name: 'Southeast Asia',
         price: '$2,000',
         description: 'Regional narrative-optimized PR across key SEA outlets.',
+        badge: 'SEA REGIONAL COVERAGE',
+        mediaLogos: [
+          {
+            url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(61).png',
+            name: 'Bitcoin Magazine'
+          }
+        ],
         features: [
           'Distribution to major SEA crypto media',
           'Localized messaging for regional markets',
@@ -230,6 +279,13 @@ export const pricingPackagesV2: PackageCategory[] = [
         name: 'Korea & Japan',
         price: '$5,000',
         description: 'Includes both language translation and narrative adaptation.',
+        badge: 'DUAL-MARKET COVERAGE',
+        mediaLogos: [
+          {
+            url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(57).png',
+            name: 'The Block'
+          }
+        ],
         features: [
           'Full Korean translation & distribution',
           'Full Japanese translation & distribution',
@@ -268,7 +324,9 @@ export const pricingPackagesV2: PackageCategory[] = [
                 'Combined reporting dashboard'
               ]
             }
-          ]
+          ],
+          note: 'Essential for projects targeting Korean and Japanese markets.',
+          ctaText: 'Get Started'
         }
       },
       {
@@ -276,6 +334,13 @@ export const pricingPackagesV2: PackageCategory[] = [
         name: 'Chinese Speaking',
         price: '$5,000',
         description: '6-outlet distribution with Mandarin narrative adaptation.',
+        badge: '6 CHINESE OUTLETS',
+        mediaLogos: [
+          {
+            url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/blocktempo%20logo_white_%E6%A9%AB.png',
+            name: 'BlockTempo'
+          }
+        ],
         features: [
           'Professional Mandarin translation',
           '6 major Chinese crypto outlets',
@@ -316,7 +381,9 @@ export const pricingPackagesV2: PackageCategory[] = [
                 'Regional terminology usage'
               ]
             }
-          ]
+          ],
+          note: 'Perfect for projects targeting Chinese-speaking markets globally.',
+          ctaText: 'Get Started'
         }
       }
     ]
@@ -331,6 +398,13 @@ export const pricingPackagesV2: PackageCategory[] = [
         name: 'Starter',
         price: '$2,000',
         description: 'Personal branding narrative + 1–2 articles and AI visibility support.',
+        badge: 'FOUNDER BRANDING',
+        mediaLogos: [
+          {
+            url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(60).png',
+            name: 'Decrypt'
+          }
+        ],
         features: [
           'Personal brand narrative development',
           '1-2 thought leadership articles',
@@ -369,7 +443,9 @@ export const pricingPackagesV2: PackageCategory[] = [
                 'Media training basics'
               ]
             }
-          ]
+          ],
+          note: 'Build your personal brand and establish thought leadership.',
+          ctaText: 'Get Started'
         }
       },
       {
@@ -377,6 +453,13 @@ export const pricingPackagesV2: PackageCategory[] = [
         name: 'Key Leader',
         price: '$2,000',
         description: 'Narrative, 2–3 articles, 1 interview + 1 shorts, plus AI visibility.',
+        badge: 'LEADERSHIP PACKAGE',
+        mediaLogos: [
+          {
+            url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(61).png',
+            name: 'Bitcoin Magazine'
+          }
+        ],
         features: [
           'Comprehensive leader narrative',
           '2-3 thought leadership articles',
@@ -416,7 +499,9 @@ export const pricingPackagesV2: PackageCategory[] = [
                 'Industry recognition strategy'
               ]
             }
-          ]
+          ],
+          note: 'Elevate your leadership presence and industry recognition.',
+          ctaText: 'Get Started'
         }
       }
     ]

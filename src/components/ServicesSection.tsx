@@ -4,7 +4,11 @@ import { ChevronRight } from "lucide-react";
 import { services } from '../constants/servicesData';
 import catAstronautImage from "figma:asset/b7052d9717896b616452306e15a912bfa180d66c.png";
 
-export default function ServicesSection() {
+interface ServicesSectionProps {
+  onContactClick?: () => void;
+}
+
+export default function ServicesSection({ onContactClick }: ServicesSectionProps = {}) {
   const [isVisible, setIsVisible] = useState(false);
   const [visibleItems, setVisibleItems] = useState(new Set());
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -363,10 +367,18 @@ export default function ServicesSection() {
 
           {/* Actions */}
           <div className="flex flex-row gap-6 items-center justify-center">
-            <Button variant="outline" className="border-2 border-white text-white bg-transparent hover:bg-white hover:text-black text-[12px] md:text-[16px] py-[20px]">
+            <Button 
+              onClick={onContactClick}
+              variant="outline" 
+              className="border-2 border-white text-white bg-transparent hover:bg-white hover:text-black text-[12px] md:text-[16px] py-[20px]"
+            >
               Get Started
             </Button>
-            <Button variant="ghost" className="text-white transition-all duration-500 ease-in-out hover:bg-transparent hover:text-[#FF7400] hover:animate-[text-pulse_2s_ease-in-out_infinite] hover:[text-shadow:0_0_6px_rgba(255,116,0,0.4),0_0_12px_rgba(255,116,0,0.2),0_0_18px_rgba(255,116,0,0.1)] text-[12px] md:text-[16px] py-[20px]">
+            <Button 
+              onClick={onContactClick}
+              variant="ghost" 
+              className="text-white transition-all duration-500 ease-in-out hover:bg-transparent hover:text-[#FF7400] hover:animate-[text-pulse_2s_ease-in-out_infinite] hover:[text-shadow:0_0_6px_rgba(255,116,0,0.4),0_0_12px_rgba(255,116,0,0.2),0_0_18px_rgba(255,116,0,0.1)] text-[12px] md:text-[16px] py-[20px]"
+            >
               Contact Us
               <ChevronRight className="ml-2 h-4 w-4" />
             </Button>

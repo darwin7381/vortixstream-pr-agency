@@ -1,9 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import PackageCardV2 from './PackageCardV2';
 import PackageDetailModal from './PackageDetailModal';
 import { pricingPackagesV2, Package } from '../../constants/pricingDataV2';
+import { handleContactClick } from '../../utils/navigationHelpers';
 
 export default function PricingCardsV2() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isVisible, setIsVisible] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -200,6 +204,7 @@ export default function PricingCardsV2() {
                 Every project is unique. Let's discuss how we can tailor our services to meet your specific needs and goals.
               </p>
               <button
+                onClick={() => handleContactClick(navigate, location.pathname)}
                 className="
                   px-8 py-3 rounded-lg font-medium text-white text-sm
                   border border-[#FF7400]

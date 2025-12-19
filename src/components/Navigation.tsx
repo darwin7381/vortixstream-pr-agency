@@ -74,7 +74,7 @@ export default function Navigation({ user, onLogout, onQuickLogin }: NavigationP
       'Packages': { id: 'packages-section', path: '/pricing' },
       'About': { id: 'about-section', path: '/about' },
       'Publisher': { id: 'publisher-section', path: '/publisher' },
-      'Our Client': { id: 'clients-section', path: '/clients' },
+      'Contact': { id: 'contact-section', path: '/contact' },
       'Lyro': { id: 'lyro-section', path: '/lyro' }
     };
     
@@ -142,13 +142,27 @@ export default function Navigation({ user, onLogout, onQuickLogin }: NavigationP
                 (item === 'Packages' && (currentPath === '/pricing' || (currentPath === '/' && document.getElementById('packages-section')))) ||
                 (item === 'About' && (currentPath === '/about' || (currentPath === '/' && document.getElementById('about-section')))) ||
                 (item === 'Publisher' && (currentPath === '/publisher' || (currentPath === '/' && document.getElementById('publisher-section')))) ||
-                (item === 'Our Client' && (currentPath === '/clients' || (currentPath === '/' && document.getElementById('clients-section')))) ||
+                (item === 'Contact' && (currentPath === '/contact' || (currentPath === '/' && document.getElementById('contact-section')))) ||
                 (item === 'Lyro' && (currentPath === '/lyro' || (currentPath === '/' && document.getElementById('lyro-section'))))
                   ? 'text-[#FF7400]' 
                   : 'text-white'
               }`}
             >
               {item}
+              {item === 'Lyro' && (
+                <span 
+                  className="absolute -top-0.5 -right-5 text-[10px] font-bold"
+                  style={{ 
+                    background: 'linear-gradient(135deg, #FF7400 0%, #1D3557 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                    letterSpacing: '0.3px'
+                  }}
+                >
+                  AI
+                </span>
+              )}
             </button>
           ))}
         </div>
@@ -256,10 +270,10 @@ export default function Navigation({ user, onLogout, onQuickLogin }: NavigationP
                 <button
                   key={item}
                   onClick={() => handleNavClick(item)}
-                  className={`block w-full text-left text-[16px] py-3.5 px-3 rounded-lg hover:bg-white/5 transition-all duration-300 ease-in-out hover:animate-[text-pulse_2s_ease-in-out_infinite] hover:[text-shadow:0_0_6px_rgba(255,255,255,0.3),0_0_12px_rgba(255,255,255,0.15),0_0_18px_rgba(255,255,255,0.08)] active:bg-white/10 font-medium ${
+                  className={`block w-full text-left text-[16px] py-3.5 px-3 rounded-lg hover:bg-white/5 transition-all duration-300 ease-in-out hover:animate-[text-pulse_2s_ease-in-out_infinite] hover:[text-shadow:0_0_6px_rgba(255,255,255,0.3),0_0_12px_rgba(255,255,255,0.15),0_0_18px_rgba(255,255,255,0.08)] active:bg-white/10 font-medium relative ${
                     (item === 'Services' && currentPath === '/services') ||
                     (item === 'Packages' && currentPath === '/pricing') ||
-                    (item === 'Our Client' && currentPath === '/clients') ||
+                    (item === 'Contact' && currentPath === '/contact') ||
                     (item === 'Publisher' && currentPath === '/publisher') ||
                     (item === 'Lyro' && currentPath === '/lyro') ||
                     (item === 'About' && currentPath === '/about')
@@ -268,6 +282,20 @@ export default function Navigation({ user, onLogout, onQuickLogin }: NavigationP
                   }`}
                 >
                   {item}
+                  {item === 'Lyro' && (
+                    <span 
+                      className="absolute top-3 left-16 text-[10px] font-bold"
+                      style={{ 
+                        background: 'linear-gradient(135deg, #FF7400 0%, #1D3557 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                        letterSpacing: '0.3px'
+                      }}
+                    >
+                      AI
+                    </span>
+                  )}
                 </button>
               ))}
             </div>

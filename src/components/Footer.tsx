@@ -110,7 +110,7 @@ export default function Footer() {
                     'Our Client': '/clients',
                     'Publisher': '/publisher',
                     'About': '/about',
-                    'Blog': '/blog'
+                    'Contact': '/contact'
                   };
                   
                   const path = pathMap[link];

@@ -38,8 +38,8 @@ export default function PackageCardV2({
       {/* Features List - Show only first 3-4 features */}
       <div className="space-y-2.5 mb-5">
         {pkg.features.slice(0, 3).map((feature, index) => (
-          <div key={index} className="flex items-start gap-2.5">
-            <div className="w-1.5 h-1.5 bg-white/40 rounded-full mt-1.5 flex-shrink-0" />
+          <div key={index} className="flex items-center gap-2.5">
+            <div className="w-1.5 h-1.5 bg-white/40 rounded-full flex-shrink-0" />
             <p className="text-white/70 text-sm leading-relaxed">
               {feature}
             </p>

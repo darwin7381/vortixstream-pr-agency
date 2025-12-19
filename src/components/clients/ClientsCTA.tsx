@@ -1,8 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '../ui/button';
+import { handleGetStartedClick } from '../../utils/navigationHelpers';
 import imgHeader69 from "figma:asset/011184c5e7bdd0650ef3ae611cc4753b68515de2.png";
 
 export default function ClientsCTA() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -107,6 +111,7 @@ export default function ClientsCTA() {
             style={{ transitionDelay: '1.1s' }}
           >
             <Button 
+              onClick={() => handleGetStartedClick(navigate, location.pathname)}
               className="
                 border border-[#FF7400] text-white overflow-hidden
                 px-8 py-[20px] rounded-md transition-all duration-300
@@ -127,3 +132,4 @@ export default function ClientsCTA() {
     </section>
   );
 }
+

@@ -1,6 +1,8 @@
 import { X } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Package } from '../../constants/pricingDataV2';
 import { Button } from '../ui/button';
+import { handleGetStartedClick } from '../../utils/navigationHelpers';
 
 interface PackageDetailModalProps {
   package: Package;
@@ -13,6 +15,8 @@ export default function PackageDetailModal({
   isOpen, 
   onClose 
 }: PackageDetailModalProps) {
+  const navigate = useNavigate();
+  const location = useLocation();
   if (!isOpen) return null;
 
   return (
@@ -67,9 +71,9 @@ export default function PackageDetailModal({
               {pkg.description}
             </p>
             
-            {/* Badge and Logo Row */}
-            {(pkg.badge || pkg.guaranteedPublications) && (
-              <div className="flex items-center gap-4 mb-6">
+            {/* Badge and Media Logos Row */}
+            {(pkg.badge || pkg.mediaLogos) && (
+              <div className="flex items-center gap-3 mb-6 flex-wrap">
                 {pkg.badge && (
                   <div 
                     className="px-3 py-1 rounded-full bg-gradient-to-r from-[#FF7400]/10 to-[#1D3557]/5 relative"
@@ -85,13 +89,18 @@ export default function PackageDetailModal({
                     </span>
                   </div>
                 )}
-                {/* MPOST Logo */}
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 bg-gradient-to-r from-[#FF7400] to-[#1D3557] rounded flex items-center justify-center">
-                    <span className="text-white text-xs font-bold">M</span>
-                  </div>
-                  <span className="text-white/60 text-sm font-bold">MPOST</span>
-                </div>
+                {/* Media Logos */}
+                {pkg.mediaLogos && pkg.mediaLogos.map((logo, index) => (
+                  <img 
+                    key={index}
+                    src={logo.url}
+                    alt={logo.name}
+                    className="h-8 w-auto object-contain opacity-60"
+                    style={{
+                      filter: 'brightness(1.2)'
+                    }}
+                  />
+                ))}
               </div>
             )}
           </div>
@@ -150,6 +159,10 @@ export default function PackageDetailModal({
                 {pkg.detailedInfo.note}
               </p>
               <Button
+                onClick={() => {
+                  handleGetStartedClick(navigate, location.pathname);
+                  onClose();
+                }}
                 className="
                   border border-[#FF7400] text-white overflow-hidden flex-shrink-0
                   py-3 px-8 rounded-lg transition-all duration-300
@@ -172,6 +185,10 @@ export default function PackageDetailModal({
           {/* CTA Button Only (if no note) */}
           {!pkg.detailedInfo?.note && (
             <Button
+              onClick={() => {
+                handleGetStartedClick(navigate, location.pathname);
+                onClose();
+              }}
               className="
                 w-full border border-[#FF7400] text-white overflow-hidden
                 py-3 px-8 rounded-lg transition-all duration-300
