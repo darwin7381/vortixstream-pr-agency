@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { Button } from "./ui/button";
 import { features } from '../constants/servicesData';
 import svgPaths from "../imports/svg-f7gq800qcd";
-import imgCatAstronaut from "figma:asset/4eceab4e09474aa3440b73556b34f4f370792e86.png";
+
+const imgCatAstronaut = 'https://img.vortixpr.com/VortixPR_Website/Left_Point_Cat-2.png';
 
 export default function FeaturesSection() {
   const [isVisible, setIsVisible] = useState(false);

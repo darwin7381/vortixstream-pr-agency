@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '../ui/button';
 import { handleGetStartedClick } from '../../utils/navigationHelpers';
-import imgHeader69 from "figma:asset/011184c5e7bdd0650ef3ae611cc4753b68515de2.png";
+
+const imgHeader69 = 'https://img.vortixpr.com/VortixPR_Website/target_circle_bgc.png';
 
 export default function ClientsCTA() {
   const navigate = useNavigate();
@@ -132,6 +133,7 @@ export default function ClientsCTA() {
     </section>
   );
 }
+
 
 
 

@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { Button } from './ui/button';
 import Footer from './Footer';
 import TrustedBySection from './TrustedBySection';
-import imgHeader69 from "figma:asset/011184c5e7bdd0650ef3ae611cc4753b68515de2.png";
+
+const imgHeader69 = 'https://img.vortixpr.com/VortixPR_Website/target_circle_bgc.png';
 
 
 interface OurClientsPageProps {

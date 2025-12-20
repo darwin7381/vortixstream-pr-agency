@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import imgHeader69 from "figma:asset/011184c5e7bdd0650ef3ae611cc4753b68515de2.png";
+
+const imgHeader69 = 'https://img.vortixpr.com/VortixPR_Website/target_circle_bgc.png';
 
 export default function ContactHero() {
   const [isVisible, setIsVisible] = useState(false);
@@ -166,6 +167,7 @@ export default function ContactHero() {
     </section>
   );
 }
+
 
 
 

@@ -9,7 +9,6 @@ import StatsSection from './components/StatsSection';
 import ServicesSection from './components/ServicesSection';
 import LyroSection from './components/LyroSection';
 import TrustedBySection from './components/TrustedBySection';
-import FeaturesSection from './components/FeaturesSection';
 import TestimonialSection from './components/TestimonialSection';
 import EverythingYouNeedSection from './components/EverythingYouNeedSection';
 import FAQSection from './components/FAQSection';
@@ -62,7 +61,6 @@ function HomePage() {
         <PricingCardsV2 />
       </section>
 
-      <FeaturesSection />
       <EverythingYouNeedSection reverse={true} />
 
       {/* Our Clients Section */}

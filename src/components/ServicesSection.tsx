@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Button } from "./ui/button";
 import { ChevronRight } from "lucide-react";
 import { services } from '../constants/servicesData';
-import catAstronautImage from "figma:asset/b7052d9717896b616452306e15a912bfa180d66c.png";
+const catAstronautImage = "https://img.vortixpr.com/VortixPR_Website/austronaut_cat_profile_pic.png";
 
 interface ServicesSectionProps {
   onContactClick?: () => void;

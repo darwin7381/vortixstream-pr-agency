@@ -1,6 +1,7 @@
 import svgPaths from "./svg-wyz0y0lpct";
 import imgCompanyLogo from "figma:asset/02c3e5f2002e51a1d0215f19a569aa7fce8ebe6a.png";
-import imgHeader5 from "figma:asset/7a3cf72794ede6f0d72d00cf4c95706206092950.png";
+
+const imgHeader5 = 'https://img.vortixpr.com/VortixPR_Website/look_left_bg_cat%20(1).png';
 import imgStats10 from "figma:asset/c5c61078af5a4706e5515dbeabfaecc55c76e542.png";
 import imgPlaceholderImage from "figma:asset/b7052d9717896b616452306e15a912bfa180d66c.png";
 import imgPlaceholderImage1 from "figma:asset/c79d7f21c404cf28a35c0be8bcf6afb7466c18e7.png";

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from "./ui/button";
-import imgHeader5 from "figma:asset/7a3cf72794ede6f0d72d00cf4c95706206092950.png";
+
+const imgHeader5 = 'https://img.vortixpr.com/VortixPR_Website/look_left_bg_cat%20(1).png';
 
 // Typewriter Text Component - 優化穩定性
 function TypewriterText() {

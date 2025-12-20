@@ -70,7 +70,7 @@ function MediaLogoCloud() {
     { 
       url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/blocktempo%20logo_white_%E6%A9%AB.png',
       name: 'BlockTempo', 
-      opacity: 0.5, 
+      opacity: 0.6, 
       size: 'lg', 
       position: { top: '8%', right: '22%' } 
     },
@@ -101,6 +101,13 @@ function MediaLogoCloud() {
       opacity: 0.5, 
       size: 'md', 
       position: { top: '62%', left: '-5%' } 
+    },
+    { 
+      url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/business-insider.png',
+      name: 'Business Insider', 
+      opacity: 0.42, 
+      size: 'sm', 
+      position: { top: '84', left: '20%' } 
     },
     { 
       url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(60).png',

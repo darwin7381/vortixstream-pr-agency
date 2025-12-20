@@ -1,6 +1,7 @@
 import svgPaths from "./svg-awezy83eon";
 import imgCompanyLogo from "figma:asset/02c3e5f2002e51a1d0215f19a569aa7fce8ebe6a.png";
-import imgHeader69 from "figma:asset/011184c5e7bdd0650ef3ae611cc4753b68515de2.png";
+
+const imgHeader69 = 'https://img.vortixpr.com/VortixPR_Website/target_circle_bgc.png';
 
 function CompanyLogo() {
   return (
