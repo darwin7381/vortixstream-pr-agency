@@ -1,10 +1,20 @@
 import { useState, useEffect, useRef } from 'react';
+import svgPaths from "../imports/svg-f7gq800qcd";
 
-// Premium Check Icon
+const imgCatAstronaut = "https://img.vortixpr.com/VortixPR_Website/Left_Point_Cat-2.png";
+
+// Check Icon - Using FeaturesSection style
 const CheckIcon = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M20 6L9 17L4 12" stroke="#FF7400" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
+    <div className="size-4">
+        <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 16 16">
+            <path
+                clipRule="evenodd"
+                d={svgPaths.p24ff3080}
+                fill="white"
+                fillRule="evenodd"
+            />
+        </svg>
+    </div>
 );
 
 export default function LyroSection() {
@@ -47,9 +57,71 @@ export default function LyroSection() {
                     0%, 100% { opacity: 0.3; }
                     50% { opacity: 1; }
                 }
+                @keyframes lyro-finger-pulse {
+                    0%, 100% {
+                        opacity: 0.3;
+                        transform: scale(0.8);
+                        box-shadow: 
+                            0 0 8px rgba(255, 116, 0, 0.4),
+                            0 0 16px rgba(255, 116, 0, 0.2),
+                            0 0 24px rgba(255, 116, 0, 0.1);
+                    }
+                    50% {
+                        opacity: 0.8;
+                        transform: scale(1.2);
+                        box-shadow: 
+                            0 0 12px rgba(255, 116, 0, 0.6),
+                            0 0 24px rgba(255, 116, 0, 0.3),
+                            0 0 36px rgba(255, 116, 0, 0.15),
+                            0 0 48px rgba(255, 116, 0, 0.08);
+                    }
+                }
                 .tech-ring {
                     border: 1px dashed rgba(255, 255, 255, 0.2); 
                     border-radius: 50%;
+                }
+                
+                /* Lyro 區域專用的手指脈衝定位 - 鏡像貓咪 */
+                /* 計算公式：鏡像後位置 = 圖片寬度 - 原本位置 */
+                .lyro-finger-pulse-container {
+                    position: absolute;
+                    pointer-events: none;
+                }
+                
+                /* 小螢幕手機版 (< 768px) - 圖片 100.1%, 原本 22%, 鏡像後 78.1% */
+                @media (max-width: 767px) {
+                    .lyro-finger-pulse-container {
+                        top: calc(33% - 80px) !important;
+                        right: 78.1% !important;
+                        transform: translateX(50%) translateY(-50%);
+                    }
+                }
+                
+                /* 中螢幕平板版 (768px - 1023px) - 圖片 63%, 原本 16%, 鏡像後 47% */
+                @media (min-width: 768px) and (max-width: 1023px) {
+                    .lyro-finger-pulse-container {
+                        top: calc(37% - 160px) !important;
+                        right: 47% !important;
+                        transform: translateX(50%) translateY(-50%);
+                    }
+                }
+                
+                /* 大螢幕桌面版 (≥ 1024px) - 圖片 50.4%, 原本 12%, 鏡像後 38.4% */
+                @media (min-width: 1024px) {
+                    .lyro-finger-pulse-container {
+                        top: calc(40% - 160px) !important;
+                        right: 38.4% !important;
+                        transform: translateX(50%) translateY(-50%);
+                    }
+                }
+                
+                /* 超大螢幕優化 (≥ 1440px) - 圖片 50.4%, 原本 11%, 鏡像後 39.4% */
+                @media (min-width: 1440px) {
+                    .lyro-finger-pulse-container {
+                        top: calc(39% - 160px) !important;
+                        right: 39.4% !important;
+                        transform: translateX(50%) translateY(-50%);
+                    }
                 }
             `}</style>
 
@@ -93,95 +165,135 @@ export default function LyroSection() {
                 />
             </div>
 
+            {/* Background Image Layer - Cat Astronaut (鏡像版本 - 還是在右側) */}
+            <div 
+                className="absolute inset-0 w-full h-full bg-no-repeat cat-astronaut-bg"
+                style={{ 
+                    backgroundImage: `url('${imgCatAstronaut}')`,
+                    backgroundPosition: 'center right',
+                    zIndex: 1
+                }}
+            />
+
+            {/* Lyro 區域的貓咪太空人手指脈衝光效果 */}
+            <div 
+                className={`lyro-finger-pulse-container transition-opacity duration-1500 ${
+                    isVisible ? 'opacity-100' : 'opacity-0'
+                }`}
+                style={{ zIndex: 15, transitionDelay: '1.6s' }}
+            >
+                {/* 外層光暈 */}
+                <div 
+                    className="absolute -inset-3 rounded-full animate-[finger-pulse_3.5s_ease-in-out_infinite]"
+                    style={{
+                        background: `radial-gradient(circle, rgba(255, 116, 0, 0.15) 0%, rgba(255, 116, 0, 0.08) 40%, transparent 70%)`,
+                        animationDelay: '0s'
+                    }}
+                />
+                
+                {/* 中層光暈 */}
+                <div 
+                    className="absolute -inset-2 rounded-full animate-[finger-pulse_3.5s_ease-in-out_infinite]"
+                    style={{
+                        background: `radial-gradient(circle, rgba(255, 116, 0, 0.25) 0%, rgba(255, 116, 0, 0.12) 50%, transparent 80%)`,
+                        animationDelay: '0.5s'
+                    }}
+                />
+                
+                {/* 內層核心光點 */}
+                <div 
+                    className="w-3 h-3 rounded-full animate-[finger-pulse_3.5s_ease-in-out_infinite]"
+                    style={{
+                        background: `radial-gradient(circle, rgba(255, 116, 0, 0.8) 0%, rgba(255, 116, 0, 0.4) 60%, transparent 100%)`,
+                        animationDelay: '1s'
+                    }}
+                />
+            </div>
+
             {/* --- CONTENT --- */}
             <div className="relative z-10 container-global">
                 <div className="container-large relative">
+                    <div className="max-w-[600px] lg:max-w-[650px]">
 
-                    {/* Header */}
-                    <div className="mb-12 md:mb-16">
-                        <div
-                            className="inline-flex items-center gap-3 mb-4"
-                            style={{
-                                animation: isVisible ? 'cinematic-fade-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards' : 'none',
-                                opacity: 0
-                            }}
-                        >
-                            <div className="w-2 h-2 rounded-full bg-[#FF7400] shadow-[0_0_10px_#FF7400] animate-pulse"></div>
-                            <span className="text-[14px] text-[#FF7400] font-mono tracking-widest uppercase font-bold">
-                                #lyro_engine
-                            </span>
+                        {/* Header */}
+                        <div className="mb-12 md:mb-16">
+                            <div
+                                className="inline-flex items-center gap-3 mb-4"
+                                style={{
+                                    animation: isVisible ? 'cinematic-fade-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards' : 'none',
+                                    opacity: 0
+                                }}
+                            >
+                                <div className="w-2 h-2 rounded-full bg-[#FF7400] shadow-[0_0_10px_#FF7400] animate-pulse"></div>
+                                <span className="text-[14px] text-[#FF7400] font-mono tracking-widest uppercase font-bold">
+                                    #lyro_engine
+                                </span>
+                            </div>
+
+                            <h2
+                                className="text-[40px] md:text-[52px] font-medium text-white font-['Space_Grotesk:Medium'] tracking-[-0.4px] md:tracking-[-0.52px] drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]"
+                                style={{
+                                    animation: isVisible ? 'cinematic-fade-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 100ms' : 'none',
+                                    opacity: 0
+                                }}
+                            >
+                                Lyro — AI Narrative Engine
+                                <span className="block mt-2 text-[#94A3B8] font-light text-[24px] md:text-[32px]">(Coming Soon)</span>
+                            </h2>
                         </div>
 
-                        <h2
-                            className="text-4xl md:text-5xl lg:text-6xl font-medium text-white font-['Space_Grotesk:Medium'] tracking-tight drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]"
-                            style={{
-                                animation: isVisible ? 'cinematic-fade-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 100ms' : 'none',
-                                opacity: 0
-                            }}
-                        >
-                            Lyro — Al Narrative Engine
-                            <span className="block mt-2 text-[#94A3B8] font-light text-3xl md:text-4xl lg:text-5xl">(Coming Soon)</span>
-                        </h2>
-                    </div>
-
-                    {/* Split Layout */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-start">
-
-                        {/* Left: Paragraph - FORCED WHITE */}
+                        {/* Description - Smaller text */}
                         <div
-                            className="max-w-xl"
+                            className="mb-8"
                             style={{
                                 animation: isVisible ? 'cinematic-fade-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 200ms' : 'none',
                                 opacity: 0
                             }}
                         >
-                            {/* INLINE COLOR STYLE TO FORCE VISIBILITY */}
                             <p
-                                className="text-xl md:text-2xl font-['Noto_Sans:Regular'] leading-relaxed drop-shadow-md"
+                                className="text-[12px] md:text-[16px] font-['Noto_Sans:Regular'] leading-relaxed drop-shadow-md"
                                 style={{ color: '#ffffff', textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}
                             >
                                 Lyro is our internal AI tool that analyzes your announcement before distribution. It checks for clarity, angle suitability, and how well LLMs can surface your story in search, news, and AI feeds.
                             </p>
                         </div>
 
-                        {/* Right: Floating Holographic List */}
-                        <div className="flex flex-col gap-8">
-                            <div className="relative">
-                                <h3
-                                    className="text-sm font-mono text-gray-400 uppercase tracking-widest mb-6 border-b border-white/20 pb-2 w-fit"
-                                    style={{
-                                        animation: isVisible ? 'cinematic-fade-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 300ms' : 'none',
-                                        opacity: 0
-                                    }}
-                                >
-                                    System Capabilities ::
-                                </h3>
+                        {/* System Capabilities */}
+                        <div className="flex flex-col gap-6">
+                            <h3
+                                className="text-sm font-mono text-gray-400 uppercase tracking-widest"
+                                style={{
+                                    animation: isVisible ? 'cinematic-fade-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 300ms' : 'none',
+                                    opacity: 0
+                                }}
+                            >
+                                System Capabilities ::
+                            </h3>
 
-                                <ul className="space-y-4">
-                                    {[
-                                        "Narrative optimization",
-                                        "Media angle suggestions",
-                                        "LLM visibility forecasting",
-                                        "Asia geo-angle adjustments"
-                                    ].map((item, index) => (
-                                        <li
-                                            key={index}
-                                            className="group relative flex items-center gap-5 p-4 rounded-xl transition-all duration-300 hover:bg-white/[0.05] border border-transparent hover:border-white/20"
-                                            style={{
-                                                animation: isVisible ? `cinematic-fade-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards ${400 + (index * 100)}ms, float-y 6s ease-in-out infinite ${index * 1}s` : 'none',
-                                                opacity: 0
-                                            }}
-                                        >
-                                            <div className="relative flex-shrink-0 w-8 h-8 rounded-full bg-[#FF7400]/10 flex items-center justify-center border border-[#FF7400]/20 transition-all duration-300 group-hover:bg-[#FF7400] group-hover:scale-110 group-hover:shadow-[0_0_20px_#FF7400]">
-                                                <CheckIcon />
-                                            </div>
-                                            <span className="relative text-lg md:text-xl text-white font-['Space_Grotesk:Medium'] tracking-wide transition-transform duration-300 group-hover:translate-x-2">
-                                                {item}
-                                            </span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
+                            <ul className="space-y-4">
+                                {[
+                                    "Narrative optimization",
+                                    "Media angle suggestions",
+                                    "LLM visibility forecasting",
+                                    "Asia geo-angle adjustments"
+                                ].map((item, index) => (
+                                    <li
+                                        key={index}
+                                        className="group relative inline-flex items-center gap-6 p-4 rounded-xl transition-all duration-300 hover:bg-white/[0.05] border border-white/20"
+                                        style={{
+                                            animation: isVisible ? `cinematic-fade-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards ${400 + (index * 100)}ms, float-y 6s ease-in-out infinite ${index * 1}s` : 'none',
+                                            opacity: 0
+                                        }}
+                                    >
+                                        <div className="flex-shrink-0">
+                                            <CheckIcon />
+                                        </div>
+                                        <span className="relative text-[12px] md:text-[16px] text-white font-['Noto_Sans:Regular'] transition-transform duration-300 group-hover:translate-x-2">
+                                            {item}
+                                        </span>
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
 
                     </div>
