@@ -2,15 +2,35 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import PackageCardV2 from './PackageCardV2';
 import PackageDetailModal from './PackageDetailModal';
-import { pricingPackagesV2, Package } from '../../constants/pricingDataV2';
+import { Package } from '../../constants/pricingDataV2';
 import { handleContactClick } from '../../utils/navigationHelpers';
+import { prPackagesAPI, type PRPackageCategory } from '../../api/client';
 
 export default function PricingCardsV2() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isVisible, setIsVisible] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
+  const [pricingPackagesV2, setPricingPackagesV2] = useState<PRPackageCategory[]>([]);
+  const [loading, setLoading] = useState(true);
   const sectionRef = useRef<HTMLDivElement>(null);
+
+  // Fetch PR Packages from API
+  useEffect(() => {
+    const fetchPackages = async () => {
+      setLoading(true);
+      try {
+        const data = await prPackagesAPI.getPackagesByCategory();
+        setPricingPackagesV2(data);
+      } catch (error) {
+        console.error('Failed to fetch PR packages:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPackages();
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(

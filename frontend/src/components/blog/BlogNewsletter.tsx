@@ -2,26 +2,37 @@ import { useState } from 'react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { newsletterContent } from '../../constants/blogData';
+import { newsletterAPI } from '../../api/client';
 
 export default function BlogNewsletter() {
   const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email.trim()) {
-      console.log('Subscribing email:', email);
-      setEmail('');
-      
-      // Show success message
-      const button = e.currentTarget.querySelector('button[type="submit"]') as HTMLButtonElement;
-      if (button) {
-        const originalText = button.textContent;
-        button.textContent = 'Subscribed!';
-        button.disabled = true;
-        setTimeout(() => {
-          button.textContent = originalText;
-          button.disabled = false;
-        }, 2000);
+    if (email.trim() && !loading) {
+      setLoading(true);
+      try {
+        await newsletterAPI.subscribe(email, 'blog');
+        console.log('Successfully subscribed:', email);
+        setEmail('');
+        
+        // Show success message
+        const button = e.currentTarget.querySelector('button[type="submit"]') as HTMLButtonElement;
+        if (button) {
+          const originalText = button.textContent;
+          button.textContent = 'Subscribed!';
+          button.disabled = true;
+          setTimeout(() => {
+            button.textContent = originalText;
+            button.disabled = false;
+          }, 2000);
+        }
+      } catch (error) {
+        console.error('Failed to subscribe:', error);
+        alert('訂閱失敗，請稍後再試');
+      } finally {
+        setLoading(false);
       }
     }
   };

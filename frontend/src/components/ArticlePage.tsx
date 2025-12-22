@@ -1,23 +1,67 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { blogCategories, blogArticles } from '../constants/blogData';
-import { articlesContent, getArticleContent } from '../constants/articleContent';
+import { blogCategories } from '../constants/blogData';
 import { MaterialSymbol } from './ui/material-symbol';
 import { Input } from './ui/input';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import Footer from './Footer';
 import { ArrowLeft, Calendar, Clock, User, Search, Tag } from 'lucide-react';
+import { blogAPI, type BlogPost } from '../api/client';
 
 export default function ArticlePage() {
   const { articleId } = useParams<{ articleId: string }>();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
+  const [article, setArticle] = useState<BlogPost | null>(null);
+  const [relatedArticles, setRelatedArticles] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   
-  // 獲取當前文章數據
-  const article = blogArticles.find(a => a.id === Number(articleId));
-  const articleContent = getArticleContent(Number(articleId));
+  // 從 API 獲取文章
+  useEffect(() => {
+    const fetchArticle = async () => {
+      if (!articleId) return;
+      
+      setLoading(true);
+      setError(false);
+      
+      try {
+        // 取得當前文章
+        const articleData = await blogAPI.getPost(articleId);
+        setArticle(articleData);
+        
+        // 取得相關文章（同分類）
+        const relatedResponse = await blogAPI.getPosts({
+          category: articleData.category,
+          page_size: 4
+        });
+        // 排除當前文章
+        const related = relatedResponse.posts.filter(p => p.slug !== articleId).slice(0, 3);
+        setRelatedArticles(related);
+        
+      } catch (err) {
+        console.error('Failed to fetch article:', err);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchArticle();
+  }, [articleId]);
   
-  if (!article) {
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FF7400] mx-auto mb-4"></div>
+          <p>載入中...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  if (error || !article) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
         <div className="text-center">
@@ -33,60 +77,21 @@ export default function ArticlePage() {
     );
   }
 
-  // 獲取熱門文章（前3篇，排除當前文章）
-  const popularArticles = blogArticles
-    .filter(a => a.id !== articleId)
-    .slice(0, 3);
+  // 獲取熱門文章（目前使用相關文章）
+  const popularArticles = relatedArticles;
 
-  // 獲取相關文章
-  const relatedArticles = articleContent.relatedArticles
-    ? blogArticles.filter(a => articleContent.relatedArticles.includes(a.id))
-    : blogArticles.filter(a => a.category === article.category && a.id !== articleId).slice(0, 3);
-
-  // 渲染文章內容
-  const renderContent = (contentItem: any, index: number) => {
-    switch (contentItem.type) {
-      case 'paragraph':
-        return (
-          <p key={index} className="text-white/80 text-[16px] leading-relaxed mb-6">
-            {contentItem.text}
-          </p>
-        );
-      
-      case 'heading':
-        const HeadingTag = `h${contentItem.level}` as keyof JSX.IntrinsicElements;
-        const headingClasses = {
-          1: 'text-[32px] lg:text-[40px] font-medium text-white mb-8 mt-12',
-          2: 'text-[24px] lg:text-[28px] font-medium text-white mb-6 mt-10',
-          3: 'text-[20px] lg:text-[22px] font-medium text-white mb-4 mt-8'
-        };
-        return (
-          <HeadingTag key={index} className={headingClasses[contentItem.level as keyof typeof headingClasses]}>
-            {contentItem.text}
-          </HeadingTag>
-        );
-      
-      case 'image':
-        return (
-          <div key={index} className="my-8 lg:my-12">
-            <div className="aspect-[16/9] bg-gray-900 rounded-xl overflow-hidden mb-4">
-              <ImageWithFallback
-                src={contentItem.src}
-                alt={contentItem.alt}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            {contentItem.caption && (
-              <p className="text-white/60 text-[14px] italic text-center">
-                {contentItem.caption}
-              </p>
-            )}
-          </div>
-        );
-      
-      default:
-        return null;
-    }
+  // 渲染 Markdown 格式的內容（簡單版）
+  const renderMarkdownContent = () => {
+    if (!article.content) return null;
+    
+    return (
+      <div className="prose prose-invert max-w-none">
+        <div 
+          className="text-white/80 text-[16px] lg:text-[18px] leading-relaxed whitespace-pre-wrap"
+          dangerouslySetInnerHTML={{ __html: article.content.replace(/\n/g, '<br />') }}
+        />
+      </div>
+    );
   };
 
   return (
@@ -153,12 +158,12 @@ export default function ArticlePage() {
                   {popularArticles.map((popularArticle) => (
                     <button
                       key={popularArticle.id}
-                      onClick={() => navigate(`/blog/${popularArticle.id}`)}
+                      onClick={() => navigate(`/blog/${popularArticle.slug}`)}
                       className="flex gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors duration-300 text-left"
                     >
                       <div className="w-16 h-16 flex-shrink-0 bg-gray-900 rounded-lg overflow-hidden">
                         <ImageWithFallback
-                          src={popularArticle.image}
+                          src={popularArticle.image_url || ''}
                           alt={popularArticle.title}
                           className="w-full h-full object-cover"
                         />
@@ -168,7 +173,7 @@ export default function ArticlePage() {
                           {popularArticle.title}
                         </h4>
                         <p className="text-white/40 text-[12px]">
-                          {popularArticle.date}
+                          {new Date(popularArticle.published_at || popularArticle.created_at).toLocaleDateString()}
                         </p>
                       </div>
                     </button>
@@ -204,54 +209,34 @@ export default function ArticlePage() {
                 <div className="flex flex-wrap items-center gap-4 lg:gap-6 text-white/60 text-[14px] lg:text-[16px]">
                   <div className="flex items-center gap-2">
                     <User size={16} />
-                    <span>{articleContent.author || 'VortixPR Team'}</span>
+                    <span>{article.author}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Calendar size={16} />
-                    <span>{article.date}</span>
+                    <span>{new Date(article.published_at || article.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Clock size={16} />
-                    <span>{article.readTime}</span>
+                    <span>{article.read_time} min read</span>
                   </div>
                 </div>
               </div>
 
               {/* 封面圖片 */}
-              <div className="aspect-[16/9] bg-gray-900 rounded-xl overflow-hidden mb-8 lg:mb-12">
-                <ImageWithFallback
-                  src={article.image}
-                  alt={article.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+              {article.image_url && (
+                <div className="aspect-[16/9] bg-gray-900 rounded-xl overflow-hidden mb-8 lg:mb-12">
+                  <ImageWithFallback
+                    src={article.image_url}
+                    alt={article.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
 
               {/* 文章內容 */}
               <div className="prose prose-invert max-w-none">
-                <div className="text-white/80 text-[16px] lg:text-[18px] leading-relaxed">
-                  {articleContent.content?.map((item, index) => renderContent(item, index))}
-                </div>
+                {renderMarkdownContent()}
               </div>
-
-              {/* 文章標籤 */}
-              {articleContent.tags && articleContent.tags.length > 0 && (
-                <div className="mt-12 pt-8 border-t border-white/10">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Tag size={16} className="text-white/60" />
-                    <span className="text-white/60 text-[14px]">Tags</span>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {articleContent.tags.map((tag, index) => (
-                      <span
-                        key={index}
-                        className="px-3 py-1 bg-white/5 border border-white/20 text-white/70 text-[12px] rounded-full"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
 
               {/* 相關文章 */}
               {relatedArticles.length > 0 && (
@@ -263,12 +248,12 @@ export default function ArticlePage() {
                     {relatedArticles.map((relatedArticle) => (
                       <button
                         key={relatedArticle.id}
-                        onClick={() => navigate(`/blog/${relatedArticle.id}`)}
+                        onClick={() => navigate(`/blog/${relatedArticle.slug}`)}
                         className="bg-white/5 border border-white/10 rounded-xl overflow-hidden hover:bg-white/10 hover:border-white/20 transition-all duration-300 text-left"
                       >
                         <div className="aspect-[16/9] bg-gray-900">
                           <ImageWithFallback
-                            src={relatedArticle.image}
+                            src={relatedArticle.image_url || ''}
                             alt={relatedArticle.title}
                             className="w-full h-full object-cover"
                           />
@@ -283,8 +268,8 @@ export default function ArticlePage() {
                             {relatedArticle.title}
                           </h4>
                           <div className="flex items-center gap-3 text-white/60 text-[12px]">
-                            <span>{relatedArticle.date}</span>
-                            <span>{relatedArticle.readTime}</span>
+                            <span>{new Date(relatedArticle.published_at || relatedArticle.created_at).toLocaleDateString()}</span>
+                            <span>{relatedArticle.read_time} min read</span>
                           </div>
                         </div>
                       </button>

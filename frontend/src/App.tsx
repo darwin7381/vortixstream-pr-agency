@@ -31,6 +31,11 @@ import LoginPage from './components/LoginPage';
 import NewsletterSuccessPage from './components/NewsletterSuccessPage';
 import ConceptPage from './components/ConceptPage';
 import ContactPage from './components/ContactPage';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminBlogList from './pages/admin/AdminBlogList';
+import AdminBlogEdit from './pages/admin/AdminBlogEdit';
+import AdminPricing from './pages/admin/AdminPricing';
+import AdminPRPackages from './pages/admin/AdminPRPackages';
 import { faqs } from './constants/faqData';
 
 // Home Page Component
@@ -124,6 +129,14 @@ function AppContent() {
           <Route path="/login" element={<LoginPage onLogin={login} />} />
           <Route path="/newsletter-success" element={<NewsletterSuccessPage />} />
           <Route path="/material-symbols" element={<MaterialSymbolDemo />} />
+          
+          {/* 管理後台路由 */}
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/blog" element={<AdminBlogList />} />
+          <Route path="/admin/blog/new" element={<AdminBlogEdit />} />
+          <Route path="/admin/blog/edit/:id" element={<AdminBlogEdit />} />
+          <Route path="/admin/pricing" element={<AdminPricing />} />
+          <Route path="/admin/pr-packages" element={<AdminPRPackages />} />
         </Routes>
       </div>
     </div>

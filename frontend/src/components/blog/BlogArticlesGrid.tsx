@@ -1,33 +1,54 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MaterialSymbol } from '../ui/material-symbol';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
-import { blogCategories, blogArticles, paginationConfig } from '../../constants/blogData';
+import { blogCategories, paginationConfig } from '../../constants/blogData';
 import { ChevronLeft, ChevronRight, Calendar, Clock } from 'lucide-react';
+import { blogAPI, type BlogPost } from '../../api/client';
 
 export default function BlogArticlesGrid() {
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState('All Articles');
   const [currentPage, setCurrentPage] = useState(1);
+  const [articles, setArticles] = useState<BlogPost[]>([]);
+  const [totalArticles, setTotalArticles] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-  // Filter articles based on active category
-  const filteredArticles = useMemo(() => {
-    return activeCategory === 'All Articles' 
-      ? blogArticles 
-      : blogArticles.filter(article => article.category === activeCategory);
-  }, [activeCategory]);
+  // Fetch articles from API
+  useEffect(() => {
+    const fetchArticles = async () => {
+      setLoading(true);
+      try {
+        const response = await blogAPI.getPosts({
+          page: currentPage,
+          page_size: paginationConfig.articlesPerPage,
+          category: activeCategory === 'All Articles' ? undefined : activeCategory,
+        });
+        setArticles(response.posts);
+        setTotalArticles(response.total);
+        setTotalPages(response.total_pages);
+      } catch (error) {
+        console.error('Failed to fetch blog posts:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Calculate pagination
-  const totalPages = Math.ceil(filteredArticles.length / paginationConfig.articlesPerPage);
-  const startIndex = (currentPage - 1) * paginationConfig.articlesPerPage;
-  const endIndex = startIndex + paginationConfig.articlesPerPage;
-  const currentArticles = filteredArticles.slice(startIndex, endIndex);
+    fetchArticles();
+  }, [activeCategory, currentPage]);
+
+  const currentArticles = articles;
 
   // Reset to page 1 when category changes
   const handleCategoryChange = (category: string) => {
     setActiveCategory(category);
     setCurrentPage(1);
   };
+
+  // Calculate start and end index for display
+  const startIndex = (currentPage - 1) * paginationConfig.articlesPerPage;
+  const endIndex = startIndex + articles.length;
 
   // Handle page navigation
   const handlePageChange = (page: number) => {
@@ -69,12 +90,16 @@ export default function BlogArticlesGrid() {
 
           {/* Results Info */}
           <div className="text-center mb-8">
-            <p className="text-white/60 text-[14px] md:text-[16px]">
-              {activeCategory === 'All Articles' 
-                ? `Showing ${startIndex + 1}-${Math.min(endIndex, filteredArticles.length)} of ${filteredArticles.length} articles`
-                : `${filteredArticles.length} articles in "${activeCategory}"`
-              }
-            </p>
+            {loading ? (
+              <p className="text-white/60 text-[14px] md:text-[16px]">載入中...</p>
+            ) : (
+              <p className="text-white/60 text-[14px] md:text-[16px]">
+                {activeCategory === 'All Articles' 
+                  ? `Showing ${startIndex + 1}-${endIndex} of ${totalArticles} articles`
+                  : `${totalArticles} articles in "${activeCategory}"`
+                }
+              </p>
+            )}
           </div>
 
           {/* Articles Grid */}
@@ -82,7 +107,7 @@ export default function BlogArticlesGrid() {
             {currentArticles.map((article) => (
               <article
                 key={article.id}
-                onClick={() => navigate(`/blog/${article.id}`)}
+                onClick={() => navigate(`/blog/${article.slug}`)}
                 className="group bg-gradient-to-br from-white/[0.03] via-white/[0.01] to-transparent border border-white/10 rounded-xl overflow-hidden hover:bg-white/[0.05] hover:border-white/20 transition-all duration-500 hover:animate-[subtle-glow_2s_ease-in-out_infinite] hover:shadow-lg hover:shadow-white/5 cursor-pointer"
               >
                 {/* Hover Gradient Overlay */}
@@ -92,7 +117,7 @@ export default function BlogArticlesGrid() {
                   {/* Article Image */}
                   <div className="aspect-[4/3] bg-gray-900 relative overflow-hidden">
                     <ImageWithFallback
-                      src={article.image}
+                      src={article.image_url || ''}
                       alt={article.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
@@ -108,7 +133,7 @@ export default function BlogArticlesGrid() {
                     <div className="absolute top-4 right-4">
                       <span className="bg-black/50 backdrop-blur-sm text-white text-[10px] md:text-[12px] px-3 py-1 rounded-full font-medium flex items-center gap-1">
                         <Clock size={12} />
-                        {article.readTime}
+                        {article.read_time} min read
                       </span>
                     </div>
                   </div>
@@ -128,7 +153,7 @@ export default function BlogArticlesGrid() {
                     {/* Date */}
                     <div className="flex items-center text-white/60 text-[12px] md:text-[14px]">
                       <Calendar size={14} className="mr-2 flex-shrink-0" />
-                      <span>{new Date(article.date).toLocaleDateString('en-US', { 
+                      <span>{new Date(article.published_at || article.created_at).toLocaleDateString('en-US', { 
                         year: 'numeric', 
                         month: 'short', 
                         day: 'numeric' 
