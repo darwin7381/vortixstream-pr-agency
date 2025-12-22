@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { publisherFeatures, publisherContent, publisherStats } from '../../constants/publisherData';
 import svgPaths from "../../imports/svg-f7gq800qcd";
+import PublisherApplicationModal from './PublisherApplicationModal';
 
 const CheckIcon = () => (
   <div className="size-4 flex-shrink-0">
@@ -17,6 +18,7 @@ const CheckIcon = () => (
 
 export default function PublisherFeaturesSection() {
   const [visibleDiff, setVisibleDiff] = useState(new Set());
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
   const diffRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -131,6 +133,7 @@ export default function PublisherFeaturesSection() {
 
               <div className="inline-block">
                 <button 
+                  onClick={() => setIsModalOpen(true)}
                   className="relative flex justify-center items-center gap-2 px-6 py-[20px] rounded-md border border-[#FF7400] text-white transition-all duration-200 hover:before:absolute hover:before:inset-0 hover:before:bg-black/20 hover:before:rounded-md text-[12px] md:text-[16px] font-semibold"
                   style={{ 
                     background: 'linear-gradient(102deg, #FF7400 0%, #1D3557 100%)' 
@@ -260,6 +263,12 @@ export default function PublisherFeaturesSection() {
 
         </div>
       </div>
+
+      {/* Publisher Application Modal */}
+      <PublisherApplicationModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </section>
   );
 }
