@@ -25,15 +25,15 @@ export default function PackageDetailModal({
       onClick={onClose}
     >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/85 backdrop-blur-sm" />
+      <div className="absolute inset-0 glass-backdrop" />
 
       {/* Modal Content */}
       <div 
         className="
-          relative bg-gradient-to-br from-[#0a0a0a] to-black
-          border-2 border-white/20 rounded-2xl 
+          relative glass-modal
+          border border-white/30 rounded-2xl 
           max-w-2xl w-full
-          shadow-[0_0_50px_rgba(255,116,0,0.15)]
+          shadow-[0_8px_32px_rgba(0,0,0,0.6),0_0_80px_rgba(255,255,255,0.05),inset_0_0_0_1px_rgba(255,255,255,0.1)]
           flex flex-col
         "
         style={{ maxHeight: '85vh' }}
@@ -79,7 +79,7 @@ export default function PackageDetailModal({
                     className="px-3 py-1 rounded-full bg-gradient-to-r from-[#FF7400]/10 to-[#1D3557]/5 relative"
                     style={{
                       border: '2px solid transparent',
-                      backgroundImage: 'linear-gradient(#0a0a0a, #0a0a0a), linear-gradient(102deg, #FF7400 0%, #1D3557 100%)',
+                      backgroundImage: 'linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), linear-gradient(102deg, #FF7400 0%, #1D3557 100%)',
                       backgroundOrigin: 'border-box',
                       backgroundClip: 'padding-box, border-box'
                     }}

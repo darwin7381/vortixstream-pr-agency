@@ -66,6 +66,13 @@ export default {
       boxShadow: {
         'brand': '0 12px 28px -12px hsl(27, 100%, 40%, 0.45)',
       },
+      backdropBlur: {
+        'sm': '8px',
+        'md': '12px',
+        'lg': '16px',
+        'xl': '24px',
+        '2xl': '40px',
+      },
     },
   },
   plugins: [],
