@@ -85,13 +85,13 @@ export default function StatsCardCompact({ stats }: StatCardCompactProps) {
             <div className="flex items-center gap-4 sm:block sm:gap-0">
               {/* Number Display with Animation - 較小尺寸 */}
               <div className="relative min-w-[30%] sm:min-w-0 flex-shrink-0 sm:flex-shrink-1 mb-0 sm:mb-3 md:mb-4 lg:mb-5">
-                <div className="text-[40px] sm:text-[36px] md:text-[44px] lg:text-[52px] font-bold text-white leading-[1.1] font-['Roboto:Bold'] transition-all duration-300 group-hover:text-white group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">
+                <div className="text-[40px] sm:text-[36px] md:text-[44px] lg:text-[52px] font-bold text-white leading-[1.1] font-sans font-bold transition-all duration-300 group-hover:text-white group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">
                   {isVisible ? counters[index] : 0}
                   <span className="text-[0.7em] ml-1">{stat.suffix}</span>
                 </div>
                 
                 {/* Number Glow Effect */}
-                <div className="absolute inset-0 text-[40px] sm:text-[36px] md:text-[44px] lg:text-[52px] font-bold leading-[1.1] font-['Roboto:Bold'] opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur-sm">
+                <div className="absolute inset-0 text-[40px] sm:text-[36px] md:text-[44px] lg:text-[52px] font-bold leading-[1.1] font-sans font-bold opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur-sm">
                   {isVisible ? counters[index] : 0}
                   <span className="text-[0.7em] ml-1">{stat.suffix}</span>
                 </div>
@@ -99,10 +99,10 @@ export default function StatsCardCompact({ stats }: StatCardCompactProps) {
 
               {/* Label and Description */}
               <div className="relative flex-1 sm:flex-grow space-y-1 sm:space-y-1.5 flex flex-col justify-center sm:justify-end">
-                <h3 className="text-[13px] sm:text-[14px] md:text-[16px] lg:text-[17px] font-semibold text-white/95 tracking-[-0.13px] sm:tracking-[-0.14px] md:tracking-[-0.16px] lg:tracking-[-0.17px] font-['Space_Grotesk:SemiBold'] leading-[1.3] group-hover:text-white transition-colors duration-300">
+                <h3 className="text-[13px] sm:text-[14px] md:text-[16px] lg:text-[17px] font-semibold text-white/95 tracking-[-0.13px] sm:tracking-[-0.14px] md:tracking-[-0.16px] lg:tracking-[-0.17px] font-heading font-semibold leading-[1.3] group-hover:text-white transition-colors duration-300">
                   {stat.label}
                 </h3>
-                <p className="text-[10px] sm:text-[11px] md:text-[13px] text-white/70 font-['Noto_Sans:Regular'] leading-[1.4] group-hover:text-white/85 transition-colors duration-300">
+                <p className="text-[10px] sm:text-[11px] md:text-[13px] text-white/70 font-sans leading-[1.4] group-hover:text-white/85 transition-colors duration-300">
                   {stat.description}
                 </p>
               </div>

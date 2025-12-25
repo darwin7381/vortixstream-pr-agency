@@ -13,11 +13,11 @@ export default function LogoCarousel() {
   ];
 
   const MediaLogo = ({ src, alt }: { src: string; alt: string }) => (
-    <div className="h-12 md:h-16 w-[120px] md:w-[160px] flex-shrink-0 flex items-center justify-center group cursor-pointer">
+    <div className="h-12 md:h-16 w-auto flex-shrink-0 flex items-center justify-center group cursor-pointer">
       <img 
         src={src} 
         alt={alt}
-        className="max-h-full max-w-full object-contain opacity-50 group-hover:opacity-100 transition-opacity duration-300"
+        className="h-full w-auto object-contain opacity-50 group-hover:opacity-100 transition-opacity duration-300"
         style={{
           filter: 'grayscale(100%)',
           transition: 'all 0.3s ease'
@@ -83,7 +83,7 @@ export default function LogoCarousel() {
       <div className="relative z-10">
         {/* Small Subtitle - Following Project Design Pattern */}
         <div className="text-center mb-6 md:mb-8 px-5 md:px-16">
-          <p className="text-[11px] md:text-[16px] text-white/70 font-['Noto_Sans:Regular'] leading-[1.4]">
+          <p className="text-[11px] md:text-[16px] text-white/70 font-sans leading-[1.4]">
             Selected crypto, tech, AI and regional outlets we work with.
           </p>
         </div>

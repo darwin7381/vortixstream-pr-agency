@@ -69,18 +69,18 @@ export default function TemplateContent() {
 
                 {/* Category Badge */}
                 <div className="inline-block mb-4">
-                  <span className="text-[12px] font-['Noto_Sans:SemiBold'] font-semibold text-[#FF7400] bg-[#FF7400]/10 px-3 py-1 rounded-full border border-[#FF7400]/20">
+                  <span className="text-[12px] font-sans font-semibold font-semibold text-[#FF7400] bg-[#FF7400]/10 px-3 py-1 rounded-full border border-[#FF7400]/20">
                     {template.category}
                   </span>
                 </div>
 
                 {/* Title */}
-                <h3 className="text-white text-[22px] font-['Noto_Sans:Bold'] font-bold mb-3">
+                <h3 className="text-white text-[22px] font-sans font-bold font-bold mb-3">
                   {template.title}
                 </h3>
 
                 {/* Description */}
-                <p className="text-white/70 text-[14px] font-['Noto_Sans:Regular'] leading-relaxed mb-6">
+                <p className="text-white/70 text-[14px] font-sans leading-relaxed mb-6">
                   {template.description}
                 </p>
 
@@ -99,10 +99,10 @@ export default function TemplateContent() {
         {/* CTA Section */}
         <div className="mt-20 text-center max-w-3xl mx-auto">
           <div className="bg-gradient-to-br from-[#FF7400]/10 to-[#1D3557]/10 border border-[#FF7400]/20 rounded-2xl p-10">
-            <h3 className="text-white text-[28px] md:text-[32px] font-['Noto_Sans:Bold'] font-bold mb-4">
+            <h3 className="text-white text-[28px] md:text-[32px] font-sans font-bold font-bold mb-4">
               Need Custom Templates?
             </h3>
-            <p className="text-white/80 text-[16px] font-['Noto_Sans:Regular'] leading-relaxed mb-6">
+            <p className="text-white/80 text-[16px] font-sans leading-relaxed mb-6">
               Our team can create customized PR templates tailored to your brand voice and specific communication needs.
             </p>
             <Button

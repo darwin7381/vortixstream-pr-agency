@@ -142,3 +142,4 @@ open http://localhost:8000/docs
 - 資料庫自動初始化
 - 可以開始前端整合
 
+

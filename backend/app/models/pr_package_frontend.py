@@ -44,3 +44,4 @@ class PRPackageCategoryFrontend(BaseModel):
     badges: Optional[List[str]] = None
     packages: List[PRPackageFrontend]
 
+

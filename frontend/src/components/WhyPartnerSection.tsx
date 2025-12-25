@@ -277,7 +277,7 @@ export default function WhyPartnerSection() {
                 {/* Enhanced Header */}
                 <div className="max-w-3xl mx-auto text-center mb-20">
                     <h2
-                        className="text-4xl md:text-5xl lg:text-6xl font-medium font-['Space_Grotesk'] text-white tracking-tight mb-6 relative"
+                        className="text-4xl md:text-5xl lg:text-6xl font-medium font-heading text-white tracking-tight mb-6 relative"
                         style={{
                             animation: isVisible ? 'float-in-up 1s ease-out forwards' : 'none',
                             opacity: 0
@@ -308,7 +308,7 @@ export default function WhyPartnerSection() {
                         </span>
                     </h2>
                     <p
-                        className="text-lg md:text-xl text-white/70 font-['Noto_Sans'] leading-relaxed max-w-2xl mx-auto"
+                        className="text-lg md:text-xl text-white/70 font-sans leading-relaxed max-w-2xl mx-auto"
                         style={{
                             animation: isVisible ? 'float-in-up 1s ease-out forwards 300ms' : 'none',
                             opacity: 0
@@ -406,18 +406,18 @@ export default function WhyPartnerSection() {
                                     {/* Text Content */}
                                     <div className="space-y-3">
                                         <h3 
-                                            className="text-2xl lg:text-3xl font-medium font-['Space_Grotesk'] text-white group-hover:text-[#FF7400] transition-colors duration-300"
+                                            className="text-2xl lg:text-3xl font-medium font-heading text-white group-hover:text-[#FF7400] transition-colors duration-300"
                                         >
                                             {feature.title}
                                         </h3>
-                                        <p className="text-base lg:text-lg text-white/70 leading-relaxed font-['Noto_Sans'] group-hover:text-white/90 transition-colors duration-300">
+                                        <p className="text-base lg:text-lg text-white/70 leading-relaxed font-sans group-hover:text-white/90 transition-colors duration-300">
                                             {feature.description}
                                         </p>
                                     </div>
                                     
                                     {/* Hover Arrow Indicator */}
                                     <div className="mt-2 flex items-center gap-2 text-[#FF7400] opacity-0 group-hover:opacity-100 transform translate-x-0 group-hover:translate-x-2 transition-all duration-300">
-                                        <span className="text-sm font-medium font-['Noto_Sans']">Learn more</span>
+                                        <span className="text-sm font-medium font-sans">Learn more</span>
                                         <svg 
                                             className="w-4 h-4" 
                                             fill="none" 
@@ -446,11 +446,11 @@ export default function WhyPartnerSection() {
                         opacity: 0
                     }}
                 >
-                    <p className="text-white/60 font-['Noto_Sans'] mb-6">
+                    <p className="text-white/60 font-sans mb-6">
                         Ready to amplify your content reach?
                     </p>
                     <button 
-                        className="group relative px-8 py-4 bg-gradient-to-r from-[#FF7400] to-[#E6690A] rounded-xl text-white font-semibold font-['Noto_Sans'] overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-[0_0_40px_rgba(255,116,0,0.4)]"
+                        className="group relative px-8 py-4 bg-gradient-to-r from-[#FF7400] to-[#E6690A] rounded-xl text-white font-semibold font-sans overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-[0_0_40px_rgba(255,116,0,0.4)]"
                     >
                         <span className="relative z-10">Become a Publisher Partner</span>
                         <div className="absolute inset-0 bg-gradient-to-r from-[#E6690A] to-[#FF7400] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

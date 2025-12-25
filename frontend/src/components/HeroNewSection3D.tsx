@@ -280,14 +280,14 @@ export default function HeroNewSection() {
                     }`}
                     style={{ transitionDelay: '0.2s' }}
                   >
-                    <p className="text-[10px] sm:text-[11px] md:text-[12px] lg:text-[13px] text-white/60 font-['Noto_Sans:Regular'] tracking-[0.12em] uppercase">
+                    <p className="text-[10px] sm:text-[11px] md:text-[12px] lg:text-[13px] text-white/60 font-sans tracking-[0.12em] uppercase">
                       PR & Distribution for Web3 + AI
                     </p>
                   </div>
 
                   {/* Main Headline */}
                   <div className="space-y-1 sm:space-y-2">
-                    <h1 className="text-[32px] sm:text-[40px] md:text-[48px] lg:text-[52px] xl:text-[60px] 2xl:text-[68px] font-medium leading-[1.05] sm:leading-[1.08] md:leading-[1.1] tracking-[-0.02em] font-['Space_Grotesk:Medium']">
+                    <h1 className="text-[32px] sm:text-[40px] md:text-[48px] lg:text-[52px] xl:text-[60px] 2xl:text-[68px] font-medium leading-[1.05] sm:leading-[1.08] md:leading-[1.1] tracking-[-0.02em] font-heading font-medium">
                       <span 
                         className={`block text-white transition-all duration-1500 ease-out ${
                           isLoaded 
@@ -339,7 +339,7 @@ export default function HeroNewSection() {
                     }`}
                     style={{ transitionDelay: '1.3s' }}
                   >
-                    <p className="text-[13px] sm:text-[14px] md:text-[15px] lg:text-[16px] xl:text-[17px] 2xl:text-[18px] text-white/70 font-['Noto_Sans:Regular'] leading-[1.5] sm:leading-[1.55] md:leading-[1.6]">
+                    <p className="text-[13px] sm:text-[14px] md:text-[15px] lg:text-[16px] xl:text-[17px] 2xl:text-[18px] text-white/70 font-sans leading-[1.5] sm:leading-[1.55] md:leading-[1.6]">
                       Fast, reliable coverage — global & Asia — with optional narrative support and founder visibility.
                     </p>
                   </div>

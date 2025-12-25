@@ -215,8 +215,8 @@ export default function HeroNewSection() {
   };
 
   return (
-    <section className="relative w-full min-h-[100vh] bg-black overflow-hidden">
-      {/* Background Gradient - 響應式調整 */}
+    <section className="relative w-full bg-black overflow-hidden">
+      {/* Background Gradient */}
       <div 
         className="absolute inset-0"
         style={{
@@ -224,19 +224,8 @@ export default function HeroNewSection() {
             radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
             radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
             linear-gradient(135deg, #000000 0%, #0a0a0f 50%, #000000 100%)
-          `
-        }}
-      />
-
-      {/* Subtle Grid Pattern */}
-      <div 
-        className="absolute inset-0 opacity-[0.02]"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
           `,
-          backgroundSize: '50px 50px'
+          zIndex: 0
         }}
       />
 
@@ -257,10 +246,23 @@ export default function HeroNewSection() {
         ))}
       </div>
 
+      {/* Subtle Grid Pattern */}
+      <div 
+        className="absolute inset-0 opacity-40 pointer-events-none"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(255,255,255,0.25) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.25) 1px, transparent 1px)
+          `,
+          backgroundSize: '50px 50px',
+          zIndex: 5
+        }}
+      />
+
       {/* Main Content Container */}
-      <div className="relative z-10 h-full">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 h-full max-w-[1440px]">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-center min-h-[100vh] py-16 sm:py-20 md:py-24 lg:py-28">
+      <div className="relative z-10">
+        <div className="container-global">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-center py-16 sm:py-20 md:py-24 lg:py-28">
             
             {/* Left Column - Text Content & Buttons */}
             <div className="w-full">
@@ -277,14 +279,14 @@ export default function HeroNewSection() {
                     }`}
                     style={{ transitionDelay: '0.2s' }}
                   >
-                    <p className="text-[10px] sm:text-[11px] md:text-[12px] lg:text-[13px] text-white/60 font-['Noto_Sans:Regular'] tracking-[0.12em] uppercase">
+                    <p className="text-[10px] sm:text-[11px] md:text-[12px] lg:text-[12px] text-white/60 font-sans tracking-[0.12em] uppercase">
                       PR & Distribution for Web3 + AI
                     </p>
                   </div>
 
                   {/* Main Headline */}
                   <div className="space-y-1 sm:space-y-2">
-                    <h1 className="text-[32px] sm:text-[40px] md:text-[48px] lg:text-[52px] xl:text-[60px] 2xl:text-[68px] font-medium leading-[1.05] sm:leading-[1.08] md:leading-[1.1] tracking-[-0.02em] font-['Space_Grotesk:Medium']">
+                    <h1 className="text-[32px] sm:text-[38px] md:text-[44px] lg:text-[48px] xl:text-[52px] 2xl:text-[56px] font-medium leading-[1.3] sm:leading-[1.32] md:leading-[1.35] lg:leading-[1.38] tracking-[-0.02em] font-heading font-medium">
                       <span 
                         className={`block text-white transition-all duration-1500 ease-out ${
                           isLoaded 
@@ -336,7 +338,7 @@ export default function HeroNewSection() {
                     }`}
                     style={{ transitionDelay: '1.3s' }}
                   >
-                    <p className="text-[13px] sm:text-[14px] md:text-[15px] lg:text-[16px] xl:text-[17px] 2xl:text-[18px] text-white/70 font-['Noto_Sans:Regular'] leading-[1.5] sm:leading-[1.55] md:leading-[1.6]">
+                    <p className="text-[13px] sm:text-[14px] md:text-[15px] lg:text-[15px] xl:text-[16px] text-white/70 font-sans leading-[1.5] sm:leading-[1.55] md:leading-[1.6]">
                       Fast, reliable coverage — global & Asia — with optional narrative support and founder visibility.
                     </p>
                   </div>
@@ -354,7 +356,7 @@ export default function HeroNewSection() {
                   {/* Primary CTA - View Packages */}
                   <Button 
                     onClick={handleViewPackages}
-                    className="group relative h-12 lg:h-14 px-4 sm:px-6 lg:px-8 text-sm sm:text-base lg:text-lg font-semibold !text-black hover:!text-black focus:!text-black bg-gradient-to-br from-[#FF7400] to-[#E6690A] border-0 rounded-[0.75rem] hover:-translate-y-[1px] focus:ring-2 focus:ring-[#FF7400]/40 focus:ring-offset-2 transition-all duration-300 ease-out overflow-hidden btn-brand-shadow flex-1"
+                    className="group relative h-12 lg:h-14 px-4 sm:px-5 lg:px-7 text-[13px] sm:text-[14px] lg:text-[15px] font-semibold !text-black hover:!text-black focus:!text-black bg-gradient-to-br from-[#FF7400] to-[#E6690A] border-0 rounded-[0.75rem] hover:-translate-y-[1px] focus:ring-2 focus:ring-[#FF7400]/40 focus:ring-offset-2 transition-all duration-300 ease-out overflow-hidden btn-brand-shadow flex-1"
                     style={{ 
                       textShadow: '0 1px 2px rgba(255,255,255,0.3)'
                     }}
@@ -362,7 +364,7 @@ export default function HeroNewSection() {
                     <span className="relative z-10 flex items-center gap-2 !text-black hover:!text-black focus:!text-black transition-colors duration-300">
                       View Packages
                       <span 
-                        className="material-symbols-outlined text-[16px] sm:text-[18px] lg:text-[20px] !text-black hover:!text-black focus:!text-black group-hover:animate-[arrow-slide_300ms_ease-out_forwards] transition-all duration-300"
+                        className="material-symbols-outlined text-[14px] sm:text-[16px] lg:text-[18px] !text-black hover:!text-black focus:!text-black group-hover:animate-[arrow-slide_300ms_ease-out_forwards] transition-all duration-300"
                         style={{ fontVariationSettings: "'FILL' 0, 'wght' 600, 'GRAD' 0, 'opsz' 24" }}
                       >
                         arrow_forward
@@ -375,7 +377,7 @@ export default function HeroNewSection() {
                   {/* Secondary CTA - Submit Press Release */}
                   <Button 
                     variant="outline"
-                    className="group relative h-12 lg:h-14 px-4 sm:px-6 lg:px-8 text-sm sm:text-base lg:text-lg font-semibold !text-white hover:!text-white focus:!text-white bg-transparent border border-white/30 rounded-[0.75rem] hover:bg-white/8 hover:border-white/50 hover:-translate-y-[1px] focus:ring-2 focus:ring-[#FF7400]/40 focus:ring-offset-2 transition-all duration-300 ease-out overflow-hidden flex-1"
+                    className="group relative h-12 lg:h-14 px-4 sm:px-5 lg:px-7 text-[13px] sm:text-[14px] lg:text-[15px] font-semibold !text-white hover:!text-white focus:!text-white bg-transparent border border-white/30 rounded-[0.75rem] hover:bg-white/8 hover:border-white/50 hover:-translate-y-[1px] focus:ring-2 focus:ring-[#FF7400]/40 focus:ring-offset-2 transition-all duration-300 ease-out overflow-hidden flex-1"
                     onClick={() => window.open('#', '_blank')} // 這裡填入實際的表單連結
                   >
                     <span className="relative z-10 !text-white hover:!text-white focus:!text-white transition-colors duration-300">
@@ -397,9 +399,9 @@ export default function HeroNewSection() {
               }`}
               style={{ transitionDelay: '0.8s' }}
             >
-              {/* Central Glow */}
+              {/* Central Glow - 縮小範圍 */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-[300px] h-[300px] bg-[#8B5CF6] rounded-full blur-[100px] opacity-20 animate-pulse"></div>
+                <div className="w-[200px] h-[200px] bg-[#8B5CF6] rounded-full blur-[60px] opacity-15 animate-pulse"></div>
               </div>
               
               {/* Logo Container - 填滿右側欄，使用 relative 定位 */}

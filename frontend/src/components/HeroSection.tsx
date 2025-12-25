@@ -90,7 +90,7 @@ export default function HeroSection() {
             <div className="space-y-5 md:space-y-6 text-white">
               {/* Main Headline with Staggered Animation - 設定固定高度避免跳動 */}
               <div className="min-h-[160px] md:min-h-[240px] flex flex-col justify-center">
-                <h1 className="text-[44px] md:text-[72px] font-medium leading-[1.2] tracking-[-0.44px] md:tracking-[-0.72px] font-['Space_Grotesk:Medium']">
+                <h1 className="text-[44px] md:text-[72px] font-medium leading-[1.2] tracking-[-0.44px] md:tracking-[-0.72px] font-heading font-medium">
                   <span 
                     className={`block transition-all duration-1500 ease-out ${
                       isLoaded 
@@ -136,7 +136,7 @@ export default function HeroSection() {
               {/* Description with Delayed Entrance - 設定固定高度容器 */}
               <div className="min-h-[60px] md:min-h-[80px] flex items-start">
                 <p 
-                  className={`text-[12px] md:text-[18px] leading-[1.5] font-normal font-['Noto_Sans:Regular'] transition-all duration-1300 ease-out ${
+                  className={`text-[12px] md:text-[18px] leading-[1.5] font-normal font-sans transition-all duration-1300 ease-out ${
                     isLoaded 
                       ? 'opacity-100 translate-y-0' 
                       : 'opacity-0 translate-y-6'

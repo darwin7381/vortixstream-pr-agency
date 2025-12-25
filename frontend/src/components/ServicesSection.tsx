@@ -139,12 +139,12 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
               }`}
               style={{ transitionDelay: '0.3s' }}
             >
-              <span className="text-[16px] font-semibold text-white font-['Noto_Sans:SemiBold']">
+              <span className="text-[16px] font-semibold text-white font-sans font-semibold">
                 Services
               </span>
             </div>
             <h2 
-              className={`text-[40px] md:text-[52px] font-medium text-white mb-5 md:mb-6 tracking-[-0.4px] md:tracking-[-0.52px] font-['Space_Grotesk:Medium'] transition-all duration-1400 ease-out ${
+              className={`text-[40px] md:text-[52px] font-medium text-white mb-5 md:mb-6 tracking-[-0.4px] md:tracking-[-0.52px] font-heading font-medium transition-all duration-1400 ease-out ${
                 isVisible 
                   ? 'opacity-100 translate-y-0' 
                   : 'opacity-0 translate-y-6'
@@ -154,7 +154,7 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
               What We Offer
             </h2>
             <p 
-              className={`text-[12px] md:text-[18px] text-white font-['Noto_Sans:Regular'] transition-all duration-1300 ease-out ${
+              className={`text-[12px] md:text-[18px] text-white font-sans transition-all duration-1300 ease-out ${
                 isVisible 
                   ? 'opacity-100 translate-y-0' 
                   : 'opacity-0 translate-y-4'
@@ -183,10 +183,10 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
                   <div className="flex justify-center mb-5">
                     <ServiceIcon />
                   </div>
-                  <h3 className="text-[24px] font-medium text-white mb-3 tracking-[-0.24px] font-['Space_Grotesk:Medium']">
+                  <h3 className="text-[24px] font-medium text-white mb-3 tracking-[-0.24px] font-heading font-medium">
                     {services[0].title}
                   </h3>
-                  <p className="text-[14px] text-white font-['Noto_Sans:Regular']">
+                  <p className="text-[14px] text-white font-sans">
                     {services[0].description}
                   </p>
                 </div>
@@ -204,10 +204,10 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
                   <div className="flex justify-center mb-5">
                     <ServiceIcon />
                   </div>
-                  <h3 className="text-[24px] font-medium text-white mb-3 tracking-[-0.24px] font-['Space_Grotesk:Medium']">
+                  <h3 className="text-[24px] font-medium text-white mb-3 tracking-[-0.24px] font-heading font-medium">
                     {services[1].title}
                   </h3>
-                  <p className="text-[14px] text-white font-['Noto_Sans:Regular']">
+                  <p className="text-[14px] text-white font-sans">
                     {services[1].description}
                   </p>
                 </div>
@@ -267,10 +267,10 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
                   <div className="flex justify-center mb-5">
                     <ServiceIcon />
                   </div>
-                  <h3 className="text-[24px] font-medium text-white mb-3 tracking-[-0.24px] font-['Space_Grotesk:Medium']">
+                  <h3 className="text-[24px] font-medium text-white mb-3 tracking-[-0.24px] font-heading font-medium">
                     {services[2].title}
                   </h3>
-                  <p className="text-[14px] text-white font-['Noto_Sans:Regular']">
+                  <p className="text-[14px] text-white font-sans">
                     {services[2].description}
                   </p>
                 </div>
@@ -288,10 +288,10 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
                   <div className="flex justify-center mb-5">
                     <ServiceIcon />
                   </div>
-                  <h3 className="text-[24px] font-medium text-white mb-3 tracking-[-0.24px] font-['Space_Grotesk:Medium']">
+                  <h3 className="text-[24px] font-medium text-white mb-3 tracking-[-0.24px] font-heading font-medium">
                     {services[3].title}
                   </h3>
-                  <p className="text-[14px] text-white font-['Noto_Sans:Regular']">
+                  <p className="text-[14px] text-white font-sans">
                     {services[3].description}
                   </p>
                 </div>
@@ -316,10 +316,10 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
                   <div className="flex justify-center mb-5">
                     <ServiceIcon />
                   </div>
-                  <h3 className="text-[20px] font-medium text-white mb-3 tracking-[-0.2px] font-['Space_Grotesk:Medium']">
+                  <h3 className="text-[20px] font-medium text-white mb-3 tracking-[-0.2px] font-heading font-medium">
                     {service.title}
                   </h3>
-                  <p className="text-[12px] text-white font-['Noto_Sans:Regular']">
+                  <p className="text-[12px] text-white font-sans">
                     {service.description}
                   </p>
                 </div>

@@ -92,11 +92,11 @@ export default function NewsletterSuccessPage() {
 
           {/* Success Message */}
           <div className="space-y-6">
-            <h1 className="text-[32px] sm:text-[40px] md:text-[56px] lg:text-[64px] font-bold text-white leading-[1.1] font-['Space_Grotesk:Bold'] tracking-[-0.32px] sm:tracking-[-0.4px] md:tracking-[-0.56px] lg:tracking-[-0.64px]">
+            <h1 className="text-[32px] sm:text-[40px] md:text-[56px] lg:text-[64px] font-bold text-white leading-[1.1] font-heading font-bold tracking-[-0.32px] sm:tracking-[-0.4px] md:tracking-[-0.56px] lg:tracking-[-0.64px]">
               Successfully Subscribed!
             </h1>
             
-            <p className="text-[16px] sm:text-[18px] md:text-[20px] text-white/80 font-['Noto_Sans:Regular'] leading-[1.5] max-w-lg mx-auto">
+            <p className="text-[16px] sm:text-[18px] md:text-[20px] text-white/80 font-sans leading-[1.5] max-w-lg mx-auto">
               Thank you for subscribing to our newsletter. You'll receive updates about our latest features and releases.
             </p>
           </div>
@@ -117,14 +117,14 @@ export default function NewsletterSuccessPage() {
                   />
                   
                   {/* Countdown Number */}
-                  <span className="text-[24px] sm:text-[28px] font-bold text-white font-['Roboto:Bold']">
+                  <span className="text-[24px] sm:text-[28px] font-bold text-white font-sans font-bold">
                     {countdown}
                   </span>
                 </div>
               </div>
             </div>
             
-            <p className="text-[14px] sm:text-[16px] text-white/60 font-['Noto_Sans:Regular']">
+            <p className="text-[14px] sm:text-[16px] text-white/60 font-sans">
               Redirecting to homepage in {countdown} second{countdown !== 1 ? 's' : ''}...
             </p>
           </div>
@@ -133,7 +133,7 @@ export default function NewsletterSuccessPage() {
           <div className="pt-4">
             <button
               onClick={() => onNavigate('home')}
-              className="text-[14px] sm:text-[16px] text-white/60 hover:text-white underline font-['Noto_Sans:Regular'] transition-colors duration-300"
+              className="text-[14px] sm:text-[16px] text-white/60 hover:text-white underline font-sans transition-colors duration-300"
             >
               Return to homepage now
             </button>

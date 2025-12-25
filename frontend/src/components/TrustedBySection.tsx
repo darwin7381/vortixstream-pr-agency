@@ -154,7 +154,7 @@ export default function TrustedBySection({
               }`}
               style={{ transitionDelay: '0.4s' }}
             >
-              <p className="text-[12px] md:text-[18px] font-bold text-white font-['Noto_Sans:Bold']">
+              <p className="text-[12px] md:text-[18px] font-bold text-white font-sans font-bold">
                 {title}
               </p>
             </div>

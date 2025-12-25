@@ -108,10 +108,10 @@ export default function FAQSection({
         <div className="max-w-[1280px] mx-auto">
           {/* Section Header */}
           <div className="text-center mb-12 md:mb-20 max-w-[768px] mx-auto">
-            <h2 className="text-[40px] md:text-[52px] font-medium text-white mb-5 md:mb-6 tracking-[-0.4px] md:tracking-[-0.52px] font-['Space_Grotesk:Medium']">
+            <h2 className="text-[40px] md:text-[52px] font-medium text-white mb-5 md:mb-6 tracking-[-0.4px] md:tracking-[-0.52px] font-heading font-medium">
               {title}
             </h2>
-            <p className="text-[12px] md:text-[18px] text-white font-['Noto_Sans:Regular']">
+            <p className="text-[12px] md:text-[18px] text-white font-sans">
               {description}
             </p>
           </div>
@@ -161,12 +161,12 @@ export default function FAQSection({
                     className="border border-white/10 rounded-xl bg-white/5 backdrop-blur-sm hover:bg-white/8 hover:border-white/20 transition-all duration-300 group"
                   >
                     <AccordionTrigger className="px-6 py-4 md:px-8 md:py-6 text-left hover:no-underline group-hover:text-white/90">
-                      <span className="text-[14px] md:text-[18px] font-semibold text-white font-['Noto_Sans:SemiBold'] leading-[1.4]">
+                      <span className="text-[14px] md:text-[18px] font-semibold text-white font-sans font-semibold leading-[1.4]">
                         {faq.question}
                       </span>
                     </AccordionTrigger>
                     <AccordionContent className="px-6 pb-4 md:px-8 md:pb-6">
-                      <p className="text-[12px] md:text-[16px] text-white/80 font-['Noto_Sans:Regular'] leading-[1.6]">
+                      <p className="text-[12px] md:text-[16px] text-white/80 font-sans leading-[1.6]">
                         {faq.answer}
                       </p>
                     </AccordionContent>
@@ -180,10 +180,10 @@ export default function FAQSection({
           {showCTA && (
             <div className="text-center">
               <div className="max-w-[600px] mx-auto mb-8">
-                <h3 className="text-[24px] md:text-[32px] font-medium text-white mb-4 tracking-[-0.24px] md:tracking-[-0.32px] font-['Space_Grotesk:Medium']">
+                <h3 className="text-[24px] md:text-[32px] font-medium text-white mb-4 tracking-[-0.24px] md:tracking-[-0.32px] font-heading font-medium">
                   {ctaTitle}
                 </h3>
-                <p className="text-[12px] md:text-[16px] text-white/80 font-['Noto_Sans:Regular'] leading-[1.6]">
+                <p className="text-[12px] md:text-[16px] text-white/80 font-sans leading-[1.6]">
                   {ctaDescription}
                 </p>
               </div>

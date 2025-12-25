@@ -42,3 +42,4 @@ class Settings(BaseSettings):
 # 全域設定實例
 settings = Settings()
 
+

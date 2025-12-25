@@ -21,3 +21,4 @@ class ContactSubmission(ContactSubmissionCreate):
     class Config:
         from_attributes = True
 
+

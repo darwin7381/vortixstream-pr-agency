@@ -61,7 +61,7 @@ export default function Footer() {
             {/* Newsletter Section - Left side, 40% width */}
             <div className="space-y-8">
               <CompanyLogo />
-              <p className="text-white text-[14px] font-['Noto_Sans:Regular'] leading-[1.5] max-w-[320px]">
+              <p className="text-white text-[14px] font-sans leading-[1.5] max-w-[320px]">
                 Join our newsletter to stay up to date on features and releases.
               </p>
               
@@ -84,12 +84,12 @@ export default function Footer() {
                     </Button>
                   </div>
                   {error && (
-                    <p className="text-red-400 text-[12px] font-['Noto_Sans:Regular'] leading-[1.4] animate-pulse">
+                    <p className="text-red-400 text-[12px] font-sans leading-[1.4] animate-pulse">
                       {error}
                     </p>
                   )}
                 </div>
-                <p className="text-white text-[12px] font-['Noto_Sans:Regular'] leading-[1.4] max-w-[320px]">
+                <p className="text-white text-[12px] font-sans leading-[1.4] max-w-[320px]">
                   By subscribing you agree to with our <span className="underline cursor-pointer">Privacy Policy</span> and provide consent to receive updates from our company.
                 </p>
               </div>
@@ -97,7 +97,7 @@ export default function Footer() {
 
             {/* Map Section */}
             <div className="space-y-6">
-              <h4 className="text-white text-[16px] font-['Noto_Sans:SemiBold'] font-semibold">
+              <h4 className="text-white text-[16px] font-sans font-semibold font-semibold">
                 Map
               </h4>
               <div className="space-y-4">
@@ -125,7 +125,7 @@ export default function Footer() {
                           navigate(path);
                         }
                       }}
-                      className="block text-white text-[14px] font-['Noto_Sans:Regular'] hover:text-gray-300 transition-colors leading-[1.4] cursor-pointer"
+                      className="block text-white text-[14px] font-sans hover:text-gray-300 transition-colors leading-[1.4] cursor-pointer"
                     >
                       {link}
                     </a>
@@ -136,7 +136,7 @@ export default function Footer() {
 
             {/* Resources Section */}
             <div className="space-y-6">
-              <h4 className="text-white text-[16px] font-['Noto_Sans:SemiBold'] font-semibold">
+              <h4 className="text-white text-[16px] font-sans font-semibold font-semibold">
                 Resources
               </h4>
               <div className="space-y-4">
@@ -160,7 +160,7 @@ export default function Footer() {
                           navigate(path);
                         }
                       }}
-                      className="block text-white text-[14px] font-['Noto_Sans:Regular'] hover:text-gray-300 transition-colors leading-[1.4] cursor-pointer"
+                      className="block text-white text-[14px] font-sans hover:text-gray-300 transition-colors leading-[1.4] cursor-pointer"
                     >
                       {link}
                     </a>
@@ -171,7 +171,7 @@ export default function Footer() {
 
             {/* Follow Us Section */}
             <div className="space-y-6">
-              <h4 className="text-white text-[16px] font-['Noto_Sans:SemiBold'] font-semibold">
+              <h4 className="text-white text-[16px] font-sans font-semibold font-semibold">
                 Follow us
               </h4>
               <div className="space-y-4">
@@ -179,7 +179,7 @@ export default function Footer() {
                   <a 
                     key={name}
                     href="#" 
-                    className="flex items-center gap-3 text-white text-[14px] font-['Noto_Sans:Regular'] hover:text-gray-300 transition-colors leading-[1.4]"
+                    className="flex items-center gap-3 text-white text-[14px] font-sans hover:text-gray-300 transition-colors leading-[1.4]"
                   >
                     <Icon size={16} className="flex-shrink-0" />
                     {name}
@@ -192,7 +192,7 @@ export default function Footer() {
           {/* Footer Bottom */}
           <div className="border-t border-white pt-8">
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 lg:gap-8">
-              <p className="text-white text-[14px] font-['Noto_Sans:Regular']">
+              <p className="text-white text-[14px] font-sans">
                 © 2025 VortixPR. All rights reserved.
               </p>
               
@@ -201,7 +201,7 @@ export default function Footer() {
                   <a 
                     key={link} 
                     href="#" 
-                    className="text-white text-[14px] font-['Noto_Sans:Regular'] underline hover:text-gray-300 transition-colors"
+                    className="text-white text-[14px] font-sans underline hover:text-gray-300 transition-colors"
                   >
                     {link}
                   </a>

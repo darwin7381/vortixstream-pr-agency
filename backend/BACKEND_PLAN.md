@@ -586,3 +586,4 @@ PUT    /api/publisher/applications/:id  # 更新狀態（需認證）
 - 使用 FastAPI 的自動 API 文件（/docs）
 - 預留 AI 功能擴展空間
 
+

@@ -47,3 +47,4 @@ class PricingPackage(PricingPackageBase):
     class Config:
         from_attributes = True
 
+

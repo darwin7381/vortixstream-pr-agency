@@ -76,3 +76,4 @@ class PRPackageCategory(BaseModel):
     badges: List[str] = Field(default_factory=list)
     packages: List[PRPackage] = Field(default_factory=list)
 
+

@@ -134,7 +134,7 @@ export default function StatsSection() {
 
       {/* Content */}
       <div className="relative z-10 container-global py-section-large">
-          <h2 className="text-[24px] sm:text-[28px] md:text-[44px] font-medium text-white mb-8 sm:mb-10 md:mb-20 tracking-[-0.24px] sm:tracking-[-0.28px] md:tracking-[-0.44px] font-['Space_Grotesk:Medium'] text-left">
+          <h2 className="text-[24px] sm:text-[28px] md:text-[44px] font-medium text-white mb-8 sm:mb-10 md:mb-20 tracking-[-0.24px] sm:tracking-[-0.28px] md:tracking-[-0.44px] font-heading font-medium text-left">
             Why Vortix Is Different?
           </h2>
           
@@ -174,7 +174,7 @@ export default function StatsSection() {
                     
                     {/* Text */}
                     <div className="relative flex-1">
-                      <p className="text-[14px] sm:text-[15px] md:text-[16px] lg:text-[17px] text-white/90 leading-[1.5] font-['Noto_Sans:Regular'] group-hover:text-white transition-colors duration-300">
+                      <p className="text-[14px] sm:text-[15px] md:text-[16px] lg:text-[17px] text-white/90 leading-[1.5] font-sans group-hover:text-white transition-colors duration-300">
                         {item}
                       </p>
                     </div>
@@ -218,7 +218,7 @@ export default function StatsSection() {
                     
                     {/* Text */}
                     <div className="relative flex-1">
-                      <p className="text-[13px] sm:text-[14px] md:text-[15px] lg:text-[16px] text-white/90 leading-[1.5] font-['Noto_Sans:Regular'] group-hover:text-white transition-colors duration-300">
+                      <p className="text-[13px] sm:text-[14px] md:text-[15px] lg:text-[16px] text-white/90 leading-[1.5] font-sans group-hover:text-white transition-colors duration-300">
                         {item}
                       </p>
                     </div>

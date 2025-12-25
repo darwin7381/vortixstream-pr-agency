@@ -179,12 +179,12 @@ export default function FeaturesSection() {
                     }`}
                     style={{ transitionDelay: '0.4s' }}
                   >
-                    <span className="text-[16px] font-semibold text-white font-['Noto_Sans:SemiBold']">
+                    <span className="text-[16px] font-semibold text-white font-sans font-semibold">
                       Maximize
                     </span>
                   </div>
                   <h2 
-                    className={`text-[40px] md:text-[52px] lg:text-[56px] font-medium text-white tracking-[-0.4px] md:tracking-[-0.52px] lg:tracking-[-0.56px] font-['Space_Grotesk:Medium'] leading-[1.1] transition-all duration-1500 ease-out ${
+                    className={`text-[40px] md:text-[52px] lg:text-[56px] font-medium text-white tracking-[-0.4px] md:tracking-[-0.52px] lg:tracking-[-0.56px] font-heading font-medium leading-[1.1] transition-all duration-1500 ease-out ${
                       isVisible 
                         ? 'opacity-100 translate-y-0 translate-x-0' 
                         : 'opacity-0 translate-y-6 -translate-x-4'
@@ -194,7 +194,7 @@ export default function FeaturesSection() {
                     Elevate Your Crypto News Coverage Today
                   </h2>
                   <p 
-                    className={`text-[12px] md:text-[18px] lg:text-[20px] text-white font-['Noto_Sans:Regular'] leading-[1.6] max-w-[500px] transition-all duration-1300 ease-out ${
+                    className={`text-[12px] md:text-[18px] lg:text-[20px] text-white font-sans leading-[1.6] max-w-[500px] transition-all duration-1300 ease-out ${
                       isVisible 
                         ? 'opacity-100 translate-y-0 translate-x-0' 
                         : 'opacity-0 translate-y-4 -translate-x-2'
@@ -220,7 +220,7 @@ export default function FeaturesSection() {
                       <div className="flex-shrink-0 mt-1">
                         <CheckIcon />
                       </div>
-                      <p className="text-[12px] md:text-[16px] lg:text-[18px] text-white font-['Noto_Sans:Regular'] leading-[1.5]">
+                      <p className="text-[12px] md:text-[16px] lg:text-[18px] text-white font-sans leading-[1.5]">
                         {feature}
                       </p>
                     </div>

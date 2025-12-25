@@ -231,7 +231,7 @@ export default function LyroSection() {
                             </div>
 
                             <h2
-                                className="text-[40px] md:text-[52px] font-medium text-white font-['Space_Grotesk:Medium'] tracking-[-0.4px] md:tracking-[-0.52px] drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]"
+                                className="text-[40px] md:text-[52px] font-medium text-white font-heading font-medium tracking-[-0.4px] md:tracking-[-0.52px] drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]"
                                 style={{
                                     animation: isVisible ? 'cinematic-fade-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 100ms' : 'none',
                                     opacity: 0
@@ -251,7 +251,7 @@ export default function LyroSection() {
                             }}
                         >
                             <p
-                                className="text-[12px] md:text-[16px] font-['Noto_Sans:Regular'] leading-relaxed drop-shadow-md"
+                                className="text-[12px] md:text-[16px] font-sans leading-relaxed drop-shadow-md"
                                 style={{ color: '#ffffff', textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}
                             >
                                 Lyro is our internal AI tool that analyzes your announcement before distribution. It checks for clarity, angle suitability, and how well LLMs can surface your story in search, news, and AI feeds.
@@ -288,7 +288,7 @@ export default function LyroSection() {
                                         <div className="flex-shrink-0">
                                             <CheckIcon />
                                         </div>
-                                        <span className="relative text-[12px] md:text-[16px] text-white font-['Noto_Sans:Regular'] transition-transform duration-300 group-hover:translate-x-2">
+                                        <span className="relative text-[12px] md:text-[16px] text-white font-sans transition-transform duration-300 group-hover:translate-x-2">
                                             {item}
                                         </span>
                                     </li>
