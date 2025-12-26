@@ -22,7 +22,7 @@
 #### Blog
 ```
 GET  /api/public/blog/posts              # 文章列表（分頁、搜尋、分類）
-GET  /api/public/blog/posts/{slug}       # 單篇文章
+GET  /api/public/blog/posts/{slug}       # 單篇文章（通過 slug）
 GET  /api/public/blog/categories         # 分類列表
 ```
 
@@ -64,6 +64,7 @@ POST /api/write/publisher/apply          # 提交 Publisher 申請
 
 #### Blog 管理
 ```
+GET    /api/admin/blog/posts/by-id/{id}  # 取得單篇文章（通過 ID）
 POST   /api/admin/blog/posts             # 創建文章
 PUT    /api/admin/blog/posts/{id}        # 更新文章
 DELETE /api/admin/blog/posts/{id}        # 刪除文章
@@ -71,6 +72,7 @@ DELETE /api/admin/blog/posts/{id}        # 刪除文章
 
 #### Pricing 管理
 ```
+GET    /api/admin/pricing/packages/by-id/{id}  # 取得單個方案（通過 ID）
 POST   /api/admin/pricing/packages       # 創建方案
 PUT    /api/admin/pricing/packages/{id}  # 更新方案
 DELETE /api/admin/pricing/packages/{id}  # 刪除方案
@@ -78,15 +80,38 @@ DELETE /api/admin/pricing/packages/{id}  # 刪除方案
 
 #### PR Packages 管理
 ```
+GET    /api/admin/pr-packages/all        # 取得所有 Packages（不分類組織）
+GET    /api/admin/pr-packages/by-id/{id} # 取得單個 Package（通過 ID）
 POST   /api/admin/pr-packages/           # 創建 PR Package
+PUT    /api/admin/pr-packages/{id}       # 更新 PR Package
 DELETE /api/admin/pr-packages/{id}       # 刪除 PR Package
+PATCH  /api/admin/pr-packages/{id}/category  # 更新 Package 的分類和順序
 ```
 
-#### 內容管理
+#### PR Package 分類管理
 ```
-GET  /api/admin/contact/submissions      # 查看聯絡表單提交
-GET  /api/admin/newsletter/subscribers   # 查看訂閱者列表
-GET  /api/admin/publisher/applications   # 查看 Publisher 申請
+GET    /api/admin/pr-package-categories/           # 取得所有分類（含 packages 列表）
+GET    /api/admin/pr-package-categories/{category_id}  # 取得單個分類
+POST   /api/admin/pr-package-categories/           # 創建分類
+PUT    /api/admin/pr-package-categories/{category_id}  # 更新分類
+DELETE /api/admin/pr-package-categories/{category_id}  # 刪除分類（如有 packages 則禁止）
+```
+
+#### Contact 管理
+```
+GET    /api/admin/contact/submissions    # 查看聯絡表單提交列表
+GET    /api/admin/contact/submissions/{id}     # 查看單個提交
+PATCH  /api/admin/contact/submissions/{id}/status  # 更新提交狀態
+DELETE /api/admin/contact/submissions/{id}     # 刪除提交
+```
+
+#### Newsletter 管理
+```
+GET    /api/admin/newsletter/subscribers         # 查看訂閱者列表
+GET    /api/admin/newsletter/subscribers/{id}    # 查看單個訂閱者
+GET    /api/admin/newsletter/stats               # 取得訂閱統計
+PATCH  /api/admin/newsletter/subscribers/{id}/status  # 更新訂閱者狀態
+DELETE /api/admin/newsletter/subscribers/{id}    # 刪除訂閱者
 ```
 
 ---
@@ -214,13 +239,22 @@ Write APIs (10%):
 
 ### 後端
 - [x] API 路徑重構為 /public/, /write/, /admin/
+- [x] 創建 Admin API routers（blog_admin, pricing_admin, pr_package_admin, contact_admin, newsletter_admin）
 - [x] 更新所有 router 註冊
-- [x] 測試所有 API 端點
+- [x] 從 Public API 移除寫入操作
+- [ ] 測試所有 API 端點
 - [ ] 未來加入認證中間件（/admin/）
 
 ### 前端
 - [x] 更新 API Client 使用新路徑
-- [x] 測試所有 API 呼叫
+- [x] 添加 Admin API 方法（CRUD 操作）
+- [x] 創建完整的後台管理介面
+  - [x] Blog 管理（列表、新增、編輯、刪除）
+  - [x] Pricing 管理（查看）
+  - [x] PR Packages 管理（查看）
+  - [x] Contact 管理（列表、狀態更新、刪除）
+  - [x] Newsletter 管理（列表、統計、狀態更新、刪除）
+- [ ] 測試所有管理功能
 
 ### 部署
 - [ ] 設定 Cloudflare Workers
@@ -269,5 +303,6 @@ A:
   - 認證？是（只有管理員可刪除）
   → 放在 /api/admin/
 ```
+
 
 

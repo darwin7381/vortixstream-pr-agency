@@ -48,3 +48,4 @@ class PricingPackage(PricingPackageBase):
         from_attributes = True
 
 
+

@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import AdminLayout from '../../components/admin/AdminLayout';
+import { blogAPI } from '../../api/client';
 import { ArrowLeft, Save } from 'lucide-react';
 
 const categories = [
@@ -16,6 +17,7 @@ export default function AdminBlogEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(!!id); // 只有編輯模式需要載入
 
   const [formData, setFormData] = useState({
     title: '',
@@ -28,29 +30,50 @@ export default function AdminBlogEdit() {
     status: 'draft',
   });
 
+  // 載入現有文章數據（編輯模式）
+  useEffect(() => {
+    if (id) {
+      loadPost();
+    }
+  }, [id]);
+
+  const loadPost = async () => {
+    try {
+      const post = await blogAPI.getPostById(Number(id));
+      setFormData({
+        title: post.title,
+        category: post.category,
+        excerpt: post.excerpt,
+        content: post.content,
+        author: post.author,
+        read_time: post.read_time,
+        image_url: post.image_url || '',
+        status: post.status,
+      });
+    } catch (error) {
+      console.error('Failed to load post:', error);
+      alert('載入文章失敗');
+      navigate('/admin/blog');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
 
     try {
-      const url = id
-        ? `http://localhost:8000/api/public/blog/posts/${id}`
-        : 'http://localhost:8000/api/public/blog/posts';
-
-      const method = id ? 'PUT' : 'POST';
-
-      const response = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        alert(id ? '文章已更新' : '文章已建立');
-        navigate('/admin/blog');
+      if (id) {
+        // 更新現有文章
+        await blogAPI.updatePost(Number(id), formData);
+        alert('文章已更新');
       } else {
-        alert('操作失敗');
+        // 創建新文章
+        await blogAPI.createPost(formData as any);
+        alert('文章已建立');
       }
+      navigate('/admin/blog');
     } catch (error) {
       console.error('Failed to save:', error);
       alert('儲存失敗');
@@ -58,6 +81,16 @@ export default function AdminBlogEdit() {
       setSaving(false);
     }
   };
+
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="p-8 flex items-center justify-center min-h-[400px]">
+          <div className="text-gray-600">載入中...</div>
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>

@@ -22,3 +22,4 @@ class ContactSubmission(ContactSubmissionCreate):
         from_attributes = True
 
 
+

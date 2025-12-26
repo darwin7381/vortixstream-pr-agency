@@ -28,3 +28,4 @@ passlib[bcrypt]==1.7.4
 fastapi-cors==0.0.6
 
 
+

@@ -27,13 +27,9 @@ export default function AdminBlogList() {
   const handleDelete = async (post: BlogPost) => {
     if (confirm(`確定要刪除「${post.title}」嗎？`)) {
       try {
-        const response = await fetch(`http://localhost:8000/api/public/blog/posts/${post.id}`, {
-          method: 'DELETE',
-        });
-        if (response.ok) {
-          alert('文章已刪除');
-          fetchPosts();
-        }
+        await blogAPI.deletePost(post.id);
+        alert('文章已刪除');
+        fetchPosts();
       } catch (error) {
         console.error('Failed to delete:', error);
         alert('刪除失敗');

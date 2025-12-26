@@ -4,7 +4,11 @@ import logging
 
 from .config import settings
 from .core.database import db
-from .api import blog, pricing, contact, newsletter, pr_package
+from .api import (
+    blog, pricing, contact, newsletter, pr_package,
+    blog_admin, pricing_admin, pr_package_admin, contact_admin, newsletter_admin,
+    pr_category_admin
+)
 
 # 設定 logging
 logging.basicConfig(
@@ -90,14 +94,22 @@ async def health_check():
 
 # 註冊 API routers - 按快取策略分類
 
-# Public APIs（可大量快取）
+# Public APIs（可大量快取 - 只讀操作）
 app.include_router(blog.router, prefix="/api/public", tags=["Public - Blog"])
 app.include_router(pricing.router, prefix="/api/public", tags=["Public - Pricing"])
 app.include_router(pr_package.router, prefix="/api/public", tags=["Public - PR Packages"])
 
-# Write APIs（寫入操作，不快取）
+# Write APIs（寫入操作，不快取 - 一般用戶可用）
 app.include_router(contact.router, prefix="/api/write", tags=["Write - Contact"])
 app.include_router(newsletter.router, prefix="/api/write", tags=["Write - Newsletter"])
+
+# Admin APIs（管理操作，需認證，不快取）
+app.include_router(blog_admin.router, prefix="/api/admin", tags=["Admin - Blog"])
+app.include_router(pricing_admin.router, prefix="/api/admin", tags=["Admin - Pricing"])
+app.include_router(pr_package_admin.router, prefix="/api/admin", tags=["Admin - PR Packages"])
+app.include_router(pr_category_admin.router, prefix="/api/admin", tags=["Admin - PR Categories"])
+app.include_router(contact_admin.router, prefix="/api/admin", tags=["Admin - Contact"])
+app.include_router(newsletter_admin.router, prefix="/api/admin", tags=["Admin - Newsletter"])
 
 
 if __name__ == "__main__":

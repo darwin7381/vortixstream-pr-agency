@@ -1,8 +1,7 @@
 from fastapi import APIRouter, HTTPException, Request
-from typing import List
 
 from ..core.database import db
-from ..models.newsletter import NewsletterSubscribe, NewsletterSubscriber
+from ..models.newsletter import NewsletterSubscribe
 
 router = APIRouter(prefix="/newsletter")
 
@@ -69,23 +68,4 @@ async def unsubscribe_newsletter(email: str):
         raise HTTPException(status_code=404, detail="Subscription not found")
     
     return {"message": "Unsubscribed successfully"}
-
-
-@router.get("/subscribers", response_model=List[NewsletterSubscriber])
-async def get_subscribers(status: str = "active", limit: int = 100):
-    """取得訂閱者列表（需要認證 - 未來實作）"""
-    
-    async with db.pool.acquire() as conn:
-        rows = await conn.fetch(
-            """
-            SELECT * FROM newsletter_subscribers
-            WHERE status = $1
-            ORDER BY subscribed_at DESC
-            LIMIT $2
-            """,
-            status,
-            limit
-        )
-    
-    return [dict(row) for row in rows]
 

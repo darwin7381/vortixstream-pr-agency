@@ -1,26 +1,43 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { prPackagesAPI } from '../../api/client';
-import { Package, Image, FileText } from 'lucide-react';
+import { Package, Image, FileText, Plus, Edit, Trash2, Folder } from 'lucide-react';
 
 export default function AdminPRPackages() {
+  const navigate = useNavigate();
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchPackages = async () => {
-      try {
-        const data = await prPackagesAPI.getPackagesByCategory();
-        setCategories(data);
-      } catch (error) {
-        console.error('Failed to fetch PR packages:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchPackages();
   }, []);
+
+  const fetchPackages = async () => {
+    try {
+      const data = await prPackagesAPI.getPackagesByCategory('all');
+      setCategories(data);
+    } catch (error) {
+      console.error('Failed to fetch PR packages:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (pkgSlug: string, pkgName: string) => {
+    if (confirm(`確定要刪除「${pkgName}」嗎？`)) {
+      try {
+        // 先通過 slug 獲取完整的 package 數據來得到實際的數據庫 ID
+        const pkg = await prPackagesAPI.getPackage(pkgSlug);
+        await prPackagesAPI.deletePackage((pkg as any).id);
+        alert('Package 已刪除');
+        fetchPackages();
+      } catch (error) {
+        console.error('Failed to delete:', error);
+        alert('刪除失敗');
+      }
+    }
+  };
 
   if (loading) {
     return (
@@ -35,9 +52,27 @@ export default function AdminPRPackages() {
   return (
     <AdminLayout>
       <div className="p-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">PR Packages 管理</h1>
-          <p className="text-gray-600 mt-2">{categories.length} 個分類，共 {totalPackages} 個 packages</p>
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">PR Packages 管理</h1>
+            <p className="text-gray-600 mt-2">{categories.length} 個分類，共 {totalPackages} 個 packages</p>
+          </div>
+          <div className="flex gap-3">
+            <button
+              onClick={() => navigate('/admin/pr-packages/categories')}
+              className="flex items-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors shadow-sm"
+            >
+              <Folder size={20} />
+              管理分類
+            </button>
+            <button
+              onClick={() => navigate('/admin/pr-packages/new')}
+              className="flex items-center gap-2 bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors shadow-sm"
+            >
+              <Plus size={20} />
+              新增 Package
+            </button>
+          </div>
         </div>
 
         <div className="space-y-8">
@@ -45,19 +80,24 @@ export default function AdminPRPackages() {
             <div key={category.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               {/* 分類標題 */}
               <div className="mb-6 pb-4 border-b border-gray-200">
-                <h2 className="text-2xl font-bold text-gray-900 mb-3">{category.title}</h2>
-                {category.badges && category.badges.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
-                    {category.badges.map((badge: string, idx: number) => (
-                      <span
-                        key={idx}
-                        className="inline-flex px-3 py-1 bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 text-sm font-medium rounded-full"
-                      >
-                        {badge}
-                      </span>
-                    ))}
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-3">{category.title}</h2>
+                    {category.badges && category.badges.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {category.badges.map((badge: string, idx: number) => (
+                          <span
+                            key={idx}
+                            className="inline-flex px-3 py-1 bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 text-sm font-medium rounded-full"
+                          >
+                            {badge}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                )}
+                  <span className="text-sm text-gray-500">ID: {category.id}</span>
+                </div>
               </div>
 
               {/* Packages 列表 */}
@@ -65,10 +105,28 @@ export default function AdminPRPackages() {
                 {category.packages.map((pkg: any, pkgIdx: number) => (
                   <div
                     key={pkg.id}
-                    className="border-2 border-gray-200 rounded-xl p-5 hover:border-orange-500 hover:shadow-md transition-all"
+                    className="border-2 border-gray-200 rounded-xl p-5 hover:border-orange-500 hover:shadow-md transition-all relative"
                   >
+                    {/* 操作按鈕 */}
+                    <div className="absolute top-3 right-3 flex gap-1">
+                      <button
+                        onClick={() => navigate(`/admin/pr-packages/edit/${pkg.id}`)}
+                        className="p-1.5 text-orange-600 hover:bg-orange-100 rounded-lg transition-colors"
+                        title="編輯"
+                      >
+                        <Edit size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(pkg.id, pkg.name)}
+                        className="p-1.5 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
+                        title="刪除"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+
                     {/* Package 標題 */}
-                    <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-start justify-between mb-4 pr-16">
                       <div className="flex-1">
                         <h3 className="text-xl font-bold text-gray-900 mb-1">{pkg.name}</h3>
                         {pkg.badge && (

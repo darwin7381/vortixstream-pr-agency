@@ -1,30 +1,36 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import AdminLayout from '../../components/admin/AdminLayout';
-import { blogAPI, pricingAPI, prPackagesAPI } from '../../api/client';
-import { FileText, DollarSign, Package, TrendingUp } from 'lucide-react';
+import { blogAPI, pricingAPI, prPackagesAPI, contactAdminAPI, newsletterAdminAPI } from '../../api/client';
+import { FileText, DollarSign, Package, Mail, MessageSquare, Users } from 'lucide-react';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
     blogCount: 0,
     pricingCount: 0,
     prPackagesCount: 0,
+    contactCount: 0,
+    newsletterCount: 0,
   });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [blogData, pricingData, prPackagesData] = await Promise.all([
+        const [blogData, pricingData, prPackagesData, contactData, newsletterStats] = await Promise.all([
           blogAPI.getPosts({ page: 1, page_size: 1 }),
           pricingAPI.getPackages(),
           prPackagesAPI.getPackagesByCategory(),
+          contactAdminAPI.getSubmissions({ limit: 1 }),
+          newsletterAdminAPI.getStats(),
         ]);
 
         setStats({
           blogCount: blogData.total,
           pricingCount: pricingData.length,
           prPackagesCount: prPackagesData.reduce((sum, cat) => sum + cat.packages.length, 0),
+          contactCount: contactData.length,
+          newsletterCount: newsletterStats.active_count,
         });
       } catch (error) {
         console.error('Failed to fetch stats:', error);
@@ -45,7 +51,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* 統計卡片 */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between">
               <div>
@@ -81,12 +87,36 @@ export default function AdminDashboard() {
               </div>
             </div>
           </div>
+
+          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">聯絡提交</p>
+                <p className="text-3xl font-bold text-gray-900 mt-2">{loading ? '-' : stats.contactCount}</p>
+              </div>
+              <div className="p-3 bg-purple-100 rounded-lg">
+                <MessageSquare className="text-purple-600" size={28} />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">Newsletter</p>
+                <p className="text-3xl font-bold text-gray-900 mt-2">{loading ? '-' : stats.newsletterCount}</p>
+              </div>
+              <div className="p-3 bg-pink-100 rounded-lg">
+                <Users className="text-pink-600" size={28} />
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* 快速操作 */}
         <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
           <h2 className="text-xl font-semibold text-gray-900 mb-6">快速操作</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <Link
               to="/admin/blog/new"
               className="flex items-center gap-4 p-5 border-2 border-gray-200 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition-all group"
@@ -136,6 +166,32 @@ export default function AdminDashboard() {
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">PR Packages</h3>
                 <p className="text-sm text-gray-600">檢視 PR 套餐</p>
+              </div>
+            </Link>
+
+            <Link
+              to="/admin/contact"
+              className="flex items-center gap-4 p-5 border-2 border-gray-200 rounded-lg hover:border-pink-500 hover:bg-pink-50 transition-all group"
+            >
+              <div className="p-3 bg-pink-100 rounded-lg group-hover:bg-pink-200 transition-colors">
+                <MessageSquare className="text-pink-600" size={24} />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">聯絡表單</h3>
+                <p className="text-sm text-gray-600">查看和回覆用戶訊息</p>
+              </div>
+            </Link>
+
+            <Link
+              to="/admin/newsletter"
+              className="flex items-center gap-4 p-5 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-all group"
+            >
+              <div className="p-3 bg-indigo-100 rounded-lg group-hover:bg-indigo-200 transition-colors">
+                <Mail className="text-indigo-600" size={24} />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Newsletter</h3>
+                <p className="text-sm text-gray-600">管理訂閱者列表</p>
               </div>
             </Link>
           </div>

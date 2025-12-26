@@ -35,7 +35,12 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminBlogList from './pages/admin/AdminBlogList';
 import AdminBlogEdit from './pages/admin/AdminBlogEdit';
 import AdminPricing from './pages/admin/AdminPricing';
+import AdminPricingEdit from './pages/admin/AdminPricingEdit';
 import AdminPRPackages from './pages/admin/AdminPRPackages';
+import AdminPRPackagesEdit from './pages/admin/AdminPRPackagesEdit';
+import AdminPRPackagesCategories from './pages/admin/AdminPRPackagesCategories';
+import AdminContactList from './pages/admin/AdminContactList';
+import AdminNewsletterList from './pages/admin/AdminNewsletterList';
 import { faqs } from './constants/faqData';
 
 // Home Page Component
@@ -136,7 +141,14 @@ function AppContent() {
           <Route path="/admin/blog/new" element={<AdminBlogEdit />} />
           <Route path="/admin/blog/edit/:id" element={<AdminBlogEdit />} />
           <Route path="/admin/pricing" element={<AdminPricing />} />
+          <Route path="/admin/pricing/new" element={<AdminPricingEdit />} />
+          <Route path="/admin/pricing/edit/:id" element={<AdminPricingEdit />} />
           <Route path="/admin/pr-packages" element={<AdminPRPackages />} />
+          <Route path="/admin/pr-packages/new" element={<AdminPRPackagesEdit />} />
+          <Route path="/admin/pr-packages/edit/:id" element={<AdminPRPackagesEdit />} />
+          <Route path="/admin/pr-packages/categories" element={<AdminPRPackagesCategories />} />
+          <Route path="/admin/contact" element={<AdminContactList />} />
+          <Route path="/admin/newsletter" element={<AdminNewsletterList />} />
         </Routes>
       </div>
     </div>

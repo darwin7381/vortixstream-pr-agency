@@ -1,5 +1,4 @@
-from fastapi import APIRouter, HTTPException, Request
-from typing import List
+from fastapi import APIRouter, Request
 
 from ..core.database import db
 from ..models.contact import ContactSubmissionCreate, ContactSubmission
@@ -36,36 +35,4 @@ async def submit_contact_form(submission: ContactSubmissionCreate, request: Requ
     # TODO: 發送 Email 通知給管理員
     
     return dict(row)
-
-
-@router.get("/submissions", response_model=List[ContactSubmission])
-async def get_contact_submissions(
-    status: str = "all",
-    limit: int = 50
-):
-    """取得聯絡表單提交列表（需要認證 - 未來實作）"""
-    
-    async with db.pool.acquire() as conn:
-        if status == "all":
-            rows = await conn.fetch(
-                """
-                SELECT * FROM contact_submissions
-                ORDER BY created_at DESC
-                LIMIT $1
-                """,
-                limit
-            )
-        else:
-            rows = await conn.fetch(
-                """
-                SELECT * FROM contact_submissions
-                WHERE status = $1
-                ORDER BY created_at DESC
-                LIMIT $2
-                """,
-                status,
-                limit
-            )
-    
-    return [dict(row) for row in rows]
 
