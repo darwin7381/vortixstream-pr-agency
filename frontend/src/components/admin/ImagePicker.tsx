@@ -21,7 +21,7 @@ interface ImagePickerProps {
   defaultFolder?: string; // 預設資料夾，但可切換
 }
 
-const ADMIN_API = 'http://localhost:8000/api/admin';
+const ADMIN_API = `${import.meta.env.VITE_API_URL || 'http://localhost:8000/api'}/admin`;
 
 export default function ImagePicker({ isOpen, onClose, onSelect, currentUrl, defaultFolder }: ImagePickerProps) {
   const [files, setFiles] = useState<MediaFile[]>([]);
