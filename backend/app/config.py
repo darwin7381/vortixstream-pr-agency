@@ -9,7 +9,10 @@ class Settings(BaseSettings):
     DATABASE_URL: str
     
     # CORS
-    ALLOWED_ORIGINS: str = "http://localhost:5173"
+    ALLOWED_ORIGINS: str = "http://localhost:3000"
+    
+    # Frontend URL
+    FRONTEND_URL: str = "http://localhost:3000"
     
     # Resend (郵件服務 - 可選)
     RESEND_API_KEY: str = ""
@@ -27,6 +30,14 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "change-this-in-production"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    
+    # Google OAuth
+    GOOGLE_CLIENT_ID: str = ""
+    GOOGLE_CLIENT_SECRET: str = ""
+    GOOGLE_REDIRECT_URI: str = "http://localhost:8000/api/auth/google/callback"
+    
+    # Super Admin（啟動時自動提升為管理員）
+    SUPER_ADMIN_EMAIL: str = ""
     
     # Environment
     ENVIRONMENT: str = "development"

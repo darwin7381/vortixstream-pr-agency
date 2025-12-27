@@ -20,9 +20,10 @@ httpx==0.28.1
 python-slugify==8.0.4
 python-multipart==0.0.20
 
-# Security (for future auth)
+# Security
 python-jose[cryptography]==3.3.0
-passlib[bcrypt]==1.7.4
+passlib==1.7.4
+bcrypt==4.0.1
 
 # CORS
 fastapi-cors==0.0.6

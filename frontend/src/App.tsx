@@ -29,6 +29,8 @@ import ArticlePage from './components/ArticlePage';
 import TemplatePage from './components/template/TemplatePage';
 import MaterialSymbolDemo from './components/MaterialSymbolDemo';
 import LoginPage from './components/LoginPage';
+import { GoogleCallback } from './pages/GoogleCallback';
+import { ProtectedRoute } from './components/ProtectedRoute';
 import NewsletterSuccessPage from './components/NewsletterSuccessPage';
 import ConceptPage from './components/ConceptPage';
 import ContactPage from './components/ContactPage';
@@ -43,6 +45,8 @@ import AdminPRPackagesCategories from './pages/admin/AdminPRPackagesCategories';
 import AdminContactList from './pages/admin/AdminContactList';
 import AdminNewsletterList from './pages/admin/AdminNewsletterList';
 import AdminMedia from './pages/admin/AdminMedia';
+import AdminUsers from './pages/admin/AdminUsers';
+import AdminInvitations from './pages/admin/AdminInvitations';
 import { faqs } from './constants/faqData';
 
 // Home Page Component
@@ -136,25 +140,29 @@ function AppContent() {
           <Route path="/blog/:articleId" element={<ArticlePage />} />
           <Route path="/template" element={<TemplatePage />} />
           <Route path="/concept" element={<ConceptPage />} />
-          <Route path="/login" element={<LoginPage onLogin={login} />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<LoginPage />} />
+          <Route path="/auth/google/callback" element={<GoogleCallback />} />
           <Route path="/newsletter-success" element={<NewsletterSuccessPage />} />
           <Route path="/material-symbols" element={<MaterialSymbolDemo />} />
           
-          {/* 管理後台路由 */}
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/blog" element={<AdminBlogList />} />
-          <Route path="/admin/blog/new" element={<AdminBlogEdit />} />
-          <Route path="/admin/blog/edit/:id" element={<AdminBlogEdit />} />
-          <Route path="/admin/pricing" element={<AdminPricing />} />
-          <Route path="/admin/pricing/new" element={<AdminPricingEdit />} />
-          <Route path="/admin/pricing/edit/:id" element={<AdminPricingEdit />} />
-          <Route path="/admin/pr-packages" element={<AdminPRPackages />} />
-          <Route path="/admin/pr-packages/new" element={<AdminPRPackagesEdit />} />
-          <Route path="/admin/pr-packages/edit/:id" element={<AdminPRPackagesEdit />} />
-          <Route path="/admin/pr-packages/categories" element={<AdminPRPackagesCategories />} />
-          <Route path="/admin/contact" element={<AdminContactList />} />
-          <Route path="/admin/newsletter" element={<AdminNewsletterList />} />
-          <Route path="/admin/media" element={<AdminMedia />} />
+          {/* 管理後台路由（需要管理員權限） */}
+          <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminDashboard /></ProtectedRoute>} />
+          <Route path="/admin/blog" element={<ProtectedRoute requireAdmin><AdminBlogList /></ProtectedRoute>} />
+          <Route path="/admin/blog/new" element={<ProtectedRoute requireAdmin><AdminBlogEdit /></ProtectedRoute>} />
+          <Route path="/admin/blog/edit/:id" element={<ProtectedRoute requireAdmin><AdminBlogEdit /></ProtectedRoute>} />
+          <Route path="/admin/pricing" element={<ProtectedRoute requireAdmin><AdminPricing /></ProtectedRoute>} />
+          <Route path="/admin/pricing/new" element={<ProtectedRoute requireAdmin><AdminPricingEdit /></ProtectedRoute>} />
+          <Route path="/admin/pricing/edit/:id" element={<ProtectedRoute requireAdmin><AdminPricingEdit /></ProtectedRoute>} />
+          <Route path="/admin/pr-packages" element={<ProtectedRoute requireAdmin><AdminPRPackages /></ProtectedRoute>} />
+          <Route path="/admin/pr-packages/new" element={<ProtectedRoute requireAdmin><AdminPRPackagesEdit /></ProtectedRoute>} />
+          <Route path="/admin/pr-packages/edit/:id" element={<ProtectedRoute requireAdmin><AdminPRPackagesEdit /></ProtectedRoute>} />
+          <Route path="/admin/pr-packages/categories" element={<ProtectedRoute requireAdmin><AdminPRPackagesCategories /></ProtectedRoute>} />
+          <Route path="/admin/contact" element={<ProtectedRoute requireAdmin><AdminContactList /></ProtectedRoute>} />
+          <Route path="/admin/newsletter" element={<ProtectedRoute requireAdmin><AdminNewsletterList /></ProtectedRoute>} />
+          <Route path="/admin/media" element={<ProtectedRoute requireAdmin><AdminMedia /></ProtectedRoute>} />
+          <Route path="/admin/users" element={<ProtectedRoute requireAdmin><AdminUsers /></ProtectedRoute>} />
+          <Route path="/admin/invitations" element={<ProtectedRoute requireAdmin><AdminInvitations /></ProtectedRoute>} />
         </Routes>
       </div>
     </div>

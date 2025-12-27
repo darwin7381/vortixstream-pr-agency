@@ -7,7 +7,7 @@ from .core.database import db
 from .api import (
     blog, pricing, contact, newsletter, pr_package,
     blog_admin, pricing_admin, pr_package_admin, contact_admin, newsletter_admin,
-    pr_category_admin, media_admin
+    pr_category_admin, media_admin, auth, user_admin, invitation_admin, invitation_public
 )
 
 # 設定 logging
@@ -99,6 +99,10 @@ app.include_router(blog.router, prefix="/api/public", tags=["Public - Blog"])
 app.include_router(pricing.router, prefix="/api/public", tags=["Public - Pricing"])
 app.include_router(pr_package.router, prefix="/api/public", tags=["Public - PR Packages"])
 
+# Auth APIs（認證相關）
+app.include_router(auth.router, tags=["Authentication"])
+app.include_router(invitation_public.router, tags=["Authentication"])
+
 # Write APIs（寫入操作，不快取 - 一般用戶可用）
 app.include_router(contact.router, prefix="/api/write", tags=["Write - Contact"])
 app.include_router(newsletter.router, prefix="/api/write", tags=["Write - Newsletter"])
@@ -111,6 +115,8 @@ app.include_router(pr_category_admin.router, prefix="/api/admin", tags=["Admin -
 app.include_router(contact_admin.router, prefix="/api/admin", tags=["Admin - Contact"])
 app.include_router(newsletter_admin.router, prefix="/api/admin", tags=["Admin - Newsletter"])
 app.include_router(media_admin.router, prefix="/api/admin", tags=["Admin - Media"])
+app.include_router(user_admin.router, tags=["Admin - Users"])
+app.include_router(invitation_admin.router, tags=["Admin - Invitations"])
 
 
 if __name__ == "__main__":

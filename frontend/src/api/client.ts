@@ -608,3 +608,119 @@ export const prCategoryAdminAPI = {
   },
 };
 
+// ==================== Auth Types ====================
+
+export type UserRole = 'user' | 'publisher' | 'admin' | 'super_admin';
+
+export interface User {
+  id: number;
+  email: string;
+  name: string;
+  avatar_url: string | null;
+  role: UserRole;
+  is_verified: boolean;
+  created_at: string;
+}
+
+export interface TokenResponse {
+  access_token: string;
+  refresh_token: string;
+  token_type: string;
+  user: User;
+}
+
+// ==================== Auth API ====================
+
+export const authAPI = {
+  /**
+   * 註冊新用戶
+   */
+  async register(data: {
+    email: string;
+    password: string;
+    name: string;
+  }, invitationToken?: string): Promise<TokenResponse> {
+    const url = invitationToken 
+      ? `${API_BASE_URL}/auth/register?invitation_token=${invitationToken}`
+      : `${API_BASE_URL}/auth/register`;
+    
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || 'Failed to register');
+    }
+    return response.json();
+  },
+
+  /**
+   * 登入
+   */
+  async login(data: {
+    email: string;
+    password: string;
+  }): Promise<TokenResponse> {
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || 'Failed to login');
+    }
+    return response.json();
+  },
+
+  /**
+   * 獲取當前用戶資料
+   */
+  async getMe(token: string): Promise<User> {
+    const response = await fetch(`${API_BASE_URL}/auth/me`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Failed to get user data');
+    }
+    return response.json();
+  },
+
+  /**
+   * 刷新 Token
+   */
+  async refreshToken(refreshToken: string): Promise<TokenResponse> {
+    const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh_token: refreshToken }),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to refresh token');
+    }
+    return response.json();
+  },
+
+  /**
+   * Google OAuth - 獲取登入 URL
+   */
+  async getGoogleLoginUrl(): Promise<{ url: string }> {
+    const response = await fetch(`${API_BASE_URL}/auth/google/login`);
+    if (!response.ok) {
+      throw new Error('Failed to get Google login URL');
+    }
+    return response.json();
+  },
+
+  /**
+   * Google OAuth - 處理回調（由後端處理，前端只需導向）
+   */
+  googleCallback(code: string): string {
+    return `${API_BASE_URL}/auth/google/callback?code=${code}`;
+  },
+};
+

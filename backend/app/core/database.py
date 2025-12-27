@@ -40,6 +40,67 @@ class Database:
         """初始化所有資料表（冪等性 - 可重複執行）"""
         async with self.pool.acquire() as conn:
             
+            # ==================== Users ====================
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS users (
+                    id SERIAL PRIMARY KEY,
+                    email VARCHAR(255) UNIQUE NOT NULL,
+                    hashed_password VARCHAR(255),
+                    name VARCHAR(100) NOT NULL,
+                    avatar_url TEXT,
+                    
+                    -- Auth Provider (email, google, github)
+                    provider VARCHAR(50) DEFAULT 'email',
+                    provider_id VARCHAR(255),
+                    
+                    -- Role (user, publisher, admin, super_admin)
+                    role VARCHAR(20) DEFAULT 'user',
+                    
+                    -- Status
+                    is_active BOOLEAN DEFAULT TRUE,
+                    is_verified BOOLEAN DEFAULT FALSE,
+                    
+                    -- Timestamps
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    updated_at TIMESTAMP DEFAULT NOW(),
+                    last_login_at TIMESTAMP
+                );
+                
+                CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+                CREATE INDEX IF NOT EXISTS idx_users_provider ON users(provider, provider_id);
+                CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
+            """)
+            
+            # ==================== User Invitations ====================
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS user_invitations (
+                    id SERIAL PRIMARY KEY,
+                    email VARCHAR(255) NOT NULL,
+                    role VARCHAR(20) NOT NULL,
+                    
+                    -- 邀請 Token
+                    token VARCHAR(255) UNIQUE NOT NULL,
+                    
+                    -- 邀請者（ON DELETE SET NULL - 刪除邀請者時不影響邀請記錄）
+                    invited_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+                    
+                    -- 狀態 (pending, accepted, expired, cancelled)
+                    status VARCHAR(20) DEFAULT 'pending',
+                    
+                    -- 過期時間（7 天）
+                    expires_at TIMESTAMP NOT NULL,
+                    
+                    -- Timestamps
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    accepted_at TIMESTAMP,
+                    accepted_by INTEGER REFERENCES users(id) ON DELETE SET NULL
+                );
+                
+                CREATE INDEX IF NOT EXISTS idx_invitations_email ON user_invitations(email);
+                CREATE INDEX IF NOT EXISTS idx_invitations_token ON user_invitations(token);
+                CREATE INDEX IF NOT EXISTS idx_invitations_status ON user_invitations(status);
+            """)
+            
             # ==================== Blog Posts ====================
             await conn.execute("""
                 CREATE TABLE IF NOT EXISTS blog_posts (
@@ -284,6 +345,9 @@ class Database:
             
             # 插入初始資料（如果需要）
             await self._init_seed_data(conn)
+            
+            # 提升 Super Admin（每次啟動時檢查）
+            await self._promote_super_admin(conn)
     
     async def _init_seed_data(self, conn):
         """插入初始資料（僅在資料表為空時）"""
@@ -317,6 +381,49 @@ class Database:
             )
             
             logger.info("✅ Pricing packages seeded")
+    
+    async def _promote_super_admin(self, conn):
+        """
+        提升 Super Admin（安全、冪等）
+        
+        原則：
+        1. ✅ 只有當 SUPER_ADMIN_EMAIL 有設定時才執行
+        2. ✅ 只有當用戶存在時才更新（不會失敗）
+        3. ✅ 冪等性 - 多次執行結果相同
+        4. ✅ 生產環境安全 - 不會破壞任何資料
+        """
+        from ..config import settings
+        
+        # 如果沒有設定 SUPER_ADMIN_EMAIL，跳過
+        if not settings.SUPER_ADMIN_EMAIL or settings.SUPER_ADMIN_EMAIL.strip() == "":
+            return
+        
+        super_admin_email = settings.SUPER_ADMIN_EMAIL.strip().lower()
+        
+        # 檢查用戶是否存在
+        user = await conn.fetchrow("""
+            SELECT id, email, role FROM users 
+            WHERE LOWER(email) = $1
+        """, super_admin_email)
+        
+        if user:
+            # 如果已經是 super_admin，跳過
+            if user["role"] == "super_admin":
+                logger.info(f"✅ Super Admin already set: {user['email']}")
+                return
+            
+            # 強制提升為 super_admin（即使已經是 admin）
+            await conn.execute("""
+                UPDATE users 
+                SET role = 'super_admin', updated_at = NOW()
+                WHERE id = $1
+            """, user["id"])
+            
+            logger.info(f"🔑 Promoted to Super Admin: {user['email']} (from {user['role']})")
+        else:
+            # 用戶不存在，記錄訊息但不報錯
+            logger.warning(f"⚠️  Super Admin email not found in database: {super_admin_email}")
+            logger.warning(f"💡 Please register this email first, then restart the app")
 
 
 # 全域資料庫實例

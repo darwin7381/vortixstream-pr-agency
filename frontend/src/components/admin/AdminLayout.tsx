@@ -1,5 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../hooks/useAuth';
 import { 
   LayoutDashboard, 
   FileText, 
@@ -20,7 +21,8 @@ import {
   LogOut,
   UserCircle,
   Moon,
-  Sun
+  Sun,
+  Users
 } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 import VortixLogoWhite from '../../assets/VortixLogo White_Horizontal.png';
@@ -40,8 +42,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
+  const { user, logout } = useAuth();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [expandedMenus, setExpandedMenus] = useState<string[]>(['PR Packages']);
+  const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   
@@ -49,6 +52,25 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     // 精確匹配路徑
     return location.pathname === path;
   };
+
+  // 檢查路徑是否在某個父選單下
+  const isPathInMenu = (menuLabel: string, children?: NavItem[]): boolean => {
+    if (!children) return false;
+    return children.some(child => child.path && location.pathname.startsWith(child.path));
+  };
+
+  // 根據當前路徑自動展開相應的父選單
+  useEffect(() => {
+    const menusToExpand: string[] = [];
+    
+    navStructure.forEach(item => {
+      if (item.children && isPathInMenu(item.label, item.children)) {
+        menusToExpand.push(item.label);
+      }
+    });
+    
+    setExpandedMenus(menusToExpand);
+  }, [location.pathname]);
 
   const toggleMenu = (menuKey: string) => {
     setExpandedMenus(prev => 
@@ -60,11 +82,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
-    if (!sidebarCollapsed) {
-      setExpandedMenus([]);
-    } else {
-      setExpandedMenus(['PR Packages']);
-    }
   };
   
   const navStructure: NavItem[] = [
@@ -105,6 +122,14 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       label: 'Newsletter', 
       icon: Mail, 
       path: '/admin/newsletter' 
+    },
+    {
+      label: '用戶管理',
+      icon: Users,
+      children: [
+        { label: '用戶列表', icon: List, path: '/admin/users' },
+        { label: '邀請管理', icon: Mail, path: '/admin/invitations' },
+      ]
     },
   ];
 
@@ -311,12 +336,20 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 className="flex items-center gap-3 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg px-3 py-2 transition-colors"
               >
                 <div className="text-right hidden sm:block">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">Admin User</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">管理員</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.name || 'Admin User'}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {user?.role === 'super_admin' ? '超級管理員' : 
+                     user?.role === 'admin' ? '管理員' :
+                     user?.role === 'publisher' ? '出版商' : '用戶'}
+                  </p>
                 </div>
-                <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md">
-                  A
-                </div>
+                {user?.avatar ? (
+                  <img src={user.avatar} alt={user.name} className="w-10 h-10 rounded-full shadow-md" />
+                ) : (
+                  <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md">
+                    {user?.name?.charAt(0).toUpperCase() || 'A'}
+                  </div>
+                )}
                 <ChevronDown size={16} className="text-gray-600 dark:text-gray-400" />
               </button>
               
@@ -326,10 +359,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                   <div className="fixed inset-0 z-40" onClick={() => setShowUserMenu(false)}></div>
                   <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 py-2 z-50">
                     <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-                      <p className="text-sm font-semibold text-gray-900 dark:text-white">Admin User</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">admin@vortixpr.com</p>
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white">{user?.name}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{user?.email}</p>
                       <span className="inline-block mt-2 px-2 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 text-xs font-medium rounded">
-                        管理員
+                        {user?.role === 'super_admin' ? '超級管理員' : 
+                         user?.role === 'admin' ? '管理員' :
+                         user?.role === 'publisher' ? '出版商' : '用戶'}
                       </span>
                     </div>
                     <div className="py-2">
@@ -338,6 +373,13 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                           setShowUserMenu(false);
                           navigate('/');
                         }}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors"
+                      >
+                        <Home size={18} />
+                        <span className="text-sm font-medium">返回前台網站</span>
+                      </button>
+                      <button
+                        onClick={() => setShowUserMenu(false)}
                         className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors"
                       >
                         <UserCircle size={18} />

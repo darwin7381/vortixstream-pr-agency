@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, ChevronDown, User, Settings, LogOut, CreditCard } from "lucide-react";
+import { Menu, X, ChevronDown, User, Settings, LogOut, CreditCard, LayoutDashboard } from "lucide-react";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import {
@@ -197,9 +197,26 @@ export default function Navigation({ user, onLogout, onQuickLogin }: NavigationP
                   <p className="text-white font-medium text-sm">{user.name}</p>
                   <p className="text-gray-400 text-xs truncate">{user.email}</p>
                   <div className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium mt-2 bg-[#FF7400]/10 text-[#FF7400] border border-[#FF7400]/20">
-                    {user.role === 'publisher' ? 'Publisher' : 'User'}
+                    {user.role === 'super_admin' ? 'Super Admin' : 
+                     user.role === 'admin' ? 'Admin' :
+                     user.role === 'publisher' ? 'Publisher' : 'User'}
                   </div>
                 </div>
+                
+                {/* Admin Dashboard 連結（僅管理員可見） */}
+                {(user.role === 'admin' || user.role === 'super_admin') && (
+                  <>
+                    <DropdownMenuItem 
+                      onClick={() => navigate('/admin')}
+                      className="cursor-pointer px-4 py-3 text-sm text-white hover:bg-gray-800 flex items-center gap-3"
+                    >
+                      <LayoutDashboard size={16} />
+                      Admin Dashboard
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator className="bg-gray-800" />
+                  </>
+                )}
+                
                 <DropdownMenuItem className="cursor-pointer px-4 py-3 text-sm text-white hover:bg-gray-800 flex items-center gap-3">
                   <User size={16} />
                   Profile Settings
