@@ -217,6 +217,69 @@ class Database:
                 CREATE INDEX IF NOT EXISTS idx_pr_packages_order ON pr_packages(category_order, display_order);
             """)
             
+            # Media Files Table（媒體檔案管理）
+        await conn.execute("""
+            CREATE TABLE IF NOT EXISTS media_files (
+                id SERIAL PRIMARY KEY,
+                filename VARCHAR(255) NOT NULL,
+                original_filename VARCHAR(255) NOT NULL,
+                file_key VARCHAR(500) UNIQUE NOT NULL,
+                file_url TEXT NOT NULL,
+                file_size INTEGER NOT NULL,
+                mime_type VARCHAR(100) NOT NULL,
+                folder VARCHAR(100) DEFAULT 'uploads',
+                width INTEGER,
+                height INTEGER,
+                alt_text VARCHAR(500),
+                caption TEXT,
+                uploaded_by VARCHAR(100),
+                created_at TIMESTAMP DEFAULT NOW(),
+                updated_at TIMESTAMP DEFAULT NOW()
+            )
+        """)
+        
+            # Media Files Indexes
+            await conn.execute("""
+                CREATE INDEX IF NOT EXISTS idx_media_folder 
+                ON media_files(folder)
+            """)
+            await conn.execute("""
+                CREATE INDEX IF NOT EXISTS idx_media_created 
+                ON media_files(created_at DESC)
+            """)
+            await conn.execute("""
+                CREATE INDEX IF NOT EXISTS idx_media_mime 
+                ON media_files(mime_type)
+            """)
+            
+            # ==================== PR Package Categories ====================
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS pr_package_categories (
+                    id SERIAL PRIMARY KEY,
+                    category_id VARCHAR(50) UNIQUE NOT NULL,
+                    title VARCHAR(100) NOT NULL,
+                    badges JSONB DEFAULT '[]'::jsonb,
+                    display_order INTEGER DEFAULT 0,
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    updated_at TIMESTAMP DEFAULT NOW()
+                )
+            """)
+            
+            await conn.execute("""
+                CREATE INDEX IF NOT EXISTS idx_pr_categories_display_order 
+                ON pr_package_categories(display_order)
+            """)
+            
+            # 插入預設分類（如果不存在）
+            await conn.execute("""
+                INSERT INTO pr_package_categories (category_id, title, badges, display_order)
+                VALUES 
+                    ('global-pr', 'GLOBAL PR', '["🚀 Launches", "💰 Funding", "🤝 Partnerships"]'::jsonb, 1),
+                    ('asia-packages', 'ASIA PACKAGES', '["🇨🇳 CN", "🇰🇷 KR", "🇯🇵 JP", "🌏 SEA"]'::jsonb, 2),
+                    ('founder-pr', 'FOUNDER PR', '["👤 Founders", "💼 CMOs", "⭐ Key Leaders"]'::jsonb, 3)
+                ON CONFLICT (category_id) DO NOTHING
+            """)
+            
             logger.info("✅ All tables initialized")
             
             # 插入初始資料（如果需要）
