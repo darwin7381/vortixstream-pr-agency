@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import AdminLayout from '../../components/admin/AdminLayout';
+import ImageInputField from '../../components/admin/ImageInputField';
 import { pricingAPI, type PricingPackage } from '../../api/client';
 import { ArrowLeft, Save, Plus, X } from 'lucide-react';
 

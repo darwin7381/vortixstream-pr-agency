@@ -22,6 +22,13 @@ class Settings(BaseSettings):
     RESEND_API_KEY: str = ""
     FROM_EMAIL: str = "onboarding@resend.dev"
     
+    # Cloudflare R2 (圖片存儲)
+    R2_ACCOUNT_ID: str = ""
+    R2_ACCESS_KEY_ID: str = ""
+    R2_SECRET_ACCESS_KEY: str = ""
+    R2_BUCKET_NAME: str = ""
+    R2_PUBLIC_URL: str = ""
+    
     # Security
     SECRET_KEY: str = "change-this-in-production"
     ALGORITHM: str = "HS256"

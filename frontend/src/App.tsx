@@ -41,6 +41,7 @@ import AdminPRPackagesEdit from './pages/admin/AdminPRPackagesEdit';
 import AdminPRPackagesCategories from './pages/admin/AdminPRPackagesCategories';
 import AdminContactList from './pages/admin/AdminContactList';
 import AdminNewsletterList from './pages/admin/AdminNewsletterList';
+import AdminMedia from './pages/admin/AdminMedia';
 import { faqs } from './constants/faqData';
 
 // Home Page Component
@@ -149,6 +150,7 @@ function AppContent() {
           <Route path="/admin/pr-packages/categories" element={<AdminPRPackagesCategories />} />
           <Route path="/admin/contact" element={<AdminContactList />} />
           <Route path="/admin/newsletter" element={<AdminNewsletterList />} />
+          <Route path="/admin/media" element={<AdminMedia />} />
         </Routes>
       </div>
     </div>

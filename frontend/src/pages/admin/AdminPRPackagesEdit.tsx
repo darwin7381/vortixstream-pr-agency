@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import AdminLayout from '../../components/admin/AdminLayout';
+import MediaLogosInput from '../../components/admin/MediaLogosInput';
 import { prPackagesAPI } from '../../api/client';
 import { ArrowLeft, Save, Plus, X } from 'lucide-react';
-
-// 注意：這裡需要從 API 載入
-// TODO: 創建 GET /api/admin/pr-package-categories/ API
 
 const CATEGORIES = [
   { id: 'global-pr', title: 'GLOBAL PR' },
@@ -117,27 +115,6 @@ export default function AdminPRPackagesEdit() {
     }
   };
 
-  // Media Logos 管理
-  const addMediaLogo = () => {
-    setFormData({
-      ...formData,
-      media_logos: [...formData.media_logos, { url: '', name: '' }],
-    });
-  };
-
-  const updateMediaLogo = (index: number, field: 'url' | 'name', value: string) => {
-    const newLogos = [...formData.media_logos];
-    newLogos[index][field] = value;
-    setFormData({ ...formData, media_logos: newLogos });
-  };
-
-  const removeMediaLogo = (index: number) => {
-    const newLogos = formData.media_logos.filter((_, i) => i !== index);
-    setFormData({
-      ...formData,
-      media_logos: newLogos.length > 0 ? newLogos : [{ url: '', name: '' }],
-    });
-  };
 
   // Features 管理
   const addFeature = () => {
@@ -345,49 +322,12 @@ export default function AdminPRPackagesEdit() {
               </div>
             </div>
 
-            {/* Media Logos */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <label className="block text-sm font-medium text-gray-700">Media Logos</label>
-                <button
-                  type="button"
-                  onClick={addMediaLogo}
-                  className="flex items-center gap-1 text-sm text-orange-600 hover:text-orange-700"
-                >
-                  <Plus size={16} />
-                  新增 Logo
-                </button>
-              </div>
-              <div className="space-y-3">
-                {formData.media_logos.map((logo, index) => (
-                  <div key={index} className="flex gap-2">
-                    <input
-                      type="text"
-                      value={logo.name}
-                      onChange={(e) => updateMediaLogo(index, 'name', e.target.value)}
-                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg"
-                      placeholder="Logo 名稱"
-                    />
-                    <input
-                      type="url"
-                      value={logo.url}
-                      onChange={(e) => updateMediaLogo(index, 'url', e.target.value)}
-                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg"
-                      placeholder="Logo URL"
-                    />
-                    {formData.media_logos.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeMediaLogo(index)}
-                        className="p-2 text-red-600 hover:bg-red-100 rounded-lg"
-                      >
-                        <X size={20} />
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
+            {/* Media Logos - 使用獨立組件 */}
+            <MediaLogosInput
+              logos={formData.media_logos}
+              onChange={(logos) => setFormData({ ...formData, media_logos: logos })}
+              folder="pr-packages"
+            />
 
             {/* Features */}
             <div>

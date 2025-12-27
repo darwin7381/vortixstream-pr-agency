@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import AdminLayout from '../../components/admin/AdminLayout';
+import ImageInputField from '../../components/admin/ImageInputField';
 import { blogAPI } from '../../api/client';
 import { ArrowLeft, Save } from 'lucide-react';
 
@@ -171,19 +172,14 @@ export default function AdminBlogEdit() {
               />
             </div>
 
-            {/* 圖片 URL */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                圖片 URL
-              </label>
-              <input
-                type="url"
-                value={formData.image_url}
-                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
-                placeholder="https://images.unsplash.com/..."
-              />
-            </div>
+            {/* 圖片 URL - 使用圖片選擇器 */}
+            <ImageInputField
+              label="圖片 URL"
+              value={formData.image_url}
+              onChange={(url) => setFormData({ ...formData, image_url: url })}
+              folder="blog"
+              placeholder="選擇或上傳 Blog 文章圖片"
+            />
 
             <div className="grid grid-cols-3 gap-4">
               {/* 閱讀時間 */}

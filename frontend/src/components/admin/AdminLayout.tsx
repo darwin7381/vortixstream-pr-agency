@@ -12,7 +12,8 @@ import {
   List,
   Menu,
   X,
-  Home
+  Home,
+  Image
 } from 'lucide-react';
 
 interface AdminLayoutProps {
@@ -79,6 +80,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         { label: 'Packages 列表', icon: List, path: '/admin/pr-packages' },
         { label: '分類管理', icon: Folder, path: '/admin/pr-packages/categories' },
       ]
+    },
+    { 
+      label: '媒體圖庫', 
+      icon: Image, 
+      path: '/admin/media' 
     },
     { 
       label: '聯絡表單', 
