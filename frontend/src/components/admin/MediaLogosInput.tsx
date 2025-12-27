@@ -54,11 +54,11 @@ export default function MediaLogosInput({ logos, onChange, folder = 'pr-packages
   return (
     <div>
       <div className="flex items-center justify-between mb-3">
-        <label className="block text-sm font-medium text-gray-700">Media Logos</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Media Logos</label>
         <button
           type="button"
           onClick={addLogo}
-          className="flex items-center gap-1 text-sm text-orange-600 hover:text-orange-700"
+          className="flex items-center gap-1 text-sm text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-500"
         >
           <Plus size={16} />
           新增 Logo
@@ -67,9 +67,9 @@ export default function MediaLogosInput({ logos, onChange, folder = 'pr-packages
 
       <div className="space-y-3">
         {logos.map((logo, index) => (
-          <div key={index} className="flex gap-3 items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
+          <div key={index} className="flex gap-3 items-center p-3 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
             {/* Logo 預覽 - 更大更清楚 */}
-            <div className="w-32 h-16 flex-shrink-0 bg-white rounded border border-gray-300 flex items-center justify-center overflow-hidden"
+            <div className="w-32 h-16 flex-shrink-0 bg-white dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 flex items-center justify-center overflow-hidden"
               style={{
                 backgroundImage: `
                   linear-gradient(45deg, #f3f4f6 25%, transparent 25%),
@@ -88,7 +88,7 @@ export default function MediaLogosInput({ logos, onChange, folder = 'pr-packages
                   className="max-w-full max-h-full object-contain p-1"
                 />
               ) : (
-                <ImageIcon size={24} className="text-gray-300" />
+                <ImageIcon size={24} className="text-gray-300 dark:text-gray-600" />
               )}
             </div>
 
@@ -98,11 +98,11 @@ export default function MediaLogosInput({ logos, onChange, folder = 'pr-packages
                 type="text"
                 value={logo.name}
                 onChange={(e) => updateLogo(index, 'name', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                 placeholder="Logo 名稱（例如：TechCrunch）"
               />
               {logo.url && (
-                <p className="text-xs text-gray-500 mt-1 truncate" title={logo.url}>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate" title={logo.url}>
                   {logo.url}
                 </p>
               )}
@@ -123,7 +123,7 @@ export default function MediaLogosInput({ logos, onChange, folder = 'pr-packages
               <button
                 type="button"
                 onClick={() => removeLogo(index)}
-                className="p-2 text-red-600 hover:bg-red-100 rounded-lg"
+                className="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg"
                 title="刪除"
               >
                 <X size={20} />
@@ -133,7 +133,7 @@ export default function MediaLogosInput({ logos, onChange, folder = 'pr-packages
         ))}
       </div>
 
-      <p className="text-xs text-gray-500 mt-2">
+      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
         💡 提示：點擊「選擇圖片」從圖庫選擇或上傳新 Logo
       </p>
 

@@ -185,7 +185,7 @@ export default function AdminPRPackagesCategories() {
       <div className="p-8">
         <button
           onClick={() => navigate('/admin/pr-packages')}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors"
+          className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-6 transition-colors"
         >
           <ArrowLeft size={20} />
           返回 PR Packages
@@ -193,8 +193,8 @@ export default function AdminPRPackagesCategories() {
 
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">PR Package 分類管理</h1>
-            <p className="text-gray-600 mt-2">管理分類、徽章和 Packages 分配</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">PR Package 分類管理</h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-2">管理分類、徽章和 Packages 分配</p>
           </div>
           <button
             onClick={() => setShowNewForm(true)}
@@ -207,33 +207,33 @@ export default function AdminPRPackagesCategories() {
 
         {/* 新增分類表單 */}
         {showNewForm && (
-          <div className="bg-white rounded-xl shadow-sm border-2 border-orange-500 p-6 mb-6">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">新增分類</h3>
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border-2 border-orange-500 p-6 mb-6">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">新增分類</h3>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     分類 ID *
                   </label>
                   <input
                     type="text"
                     value={editForm.category_id}
                     onChange={(e) => setEditForm({ ...editForm, category_id: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                     placeholder="例如：startup-pr"
                   />
-                  <p className="text-xs text-gray-500 mt-1">只能使用小寫字母、數字和連字號</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">只能使用小寫字母、數字和連字號</p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     分類標題 *
                   </label>
                   <input
                     type="text"
                     value={editForm.title}
                     onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                     placeholder="例如：STARTUP PR"
                   />
                 </div>
@@ -241,11 +241,11 @@ export default function AdminPRPackagesCategories() {
 
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <label className="block text-sm font-medium text-gray-700">徽章</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">徽章</label>
                   <button
                     type="button"
                     onClick={addBadge}
-                    className="text-sm text-orange-600 hover:text-orange-700"
+                    className="text-sm text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-500"
                   >
                     + 新增徽章
                   </button>
@@ -257,7 +257,7 @@ export default function AdminPRPackagesCategories() {
                         type="text"
                         value={badge}
                         onChange={(e) => updateBadge(index, e.target.value)}
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg"
+                        className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                         placeholder="例如：🚀 Launches"
                         aria-label={`徽章 ${index + 1}`}
                       />
@@ -265,7 +265,7 @@ export default function AdminPRPackagesCategories() {
                         <button
                           type="button"
                           onClick={() => removeBadge(index)}
-                          className="p-2 text-red-600 hover:bg-red-100 rounded-lg"
+                          className="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg"
                           title="刪除此徽章"
                         >
                           <X size={20} />
@@ -277,13 +277,13 @@ export default function AdminPRPackagesCategories() {
               </div>
 
               <div>
-                <label htmlFor="display-order-new" className="block text-sm font-medium text-gray-700 mb-2">顯示順序</label>
+                <label htmlFor="display-order-new" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">顯示順序</label>
                 <input
                   id="display-order-new"
                   type="number"
                   value={editForm.display_order}
                   onChange={(e) => setEditForm({ ...editForm, display_order: Number(e.target.value) })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                 />
               </div>
 
@@ -297,7 +297,7 @@ export default function AdminPRPackagesCategories() {
                 </button>
                 <button
                   onClick={handleCancel}
-                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600"
                 >
                   取消
                 </button>
@@ -311,17 +311,17 @@ export default function AdminPRPackagesCategories() {
           {categories.map((category) => (
             <div
               key={category.category_id}
-              className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6"
             >
               {editingId === category.category_id ? (
                 // 編輯模式
                 <div className="space-y-6">
                   {/* 基本資訊編輯 */}
-                  <div className="space-y-4 pb-6 border-b border-gray-200">
-                    <h3 className="text-xl font-bold text-gray-900">編輯分類基本資訊</h3>
+                  <div className="space-y-4 pb-6 border-b border-gray-200 dark:border-gray-700">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">編輯分類基本資訊</h3>
                     
                     <div>
-                      <label htmlFor="category-title-edit" className="block text-sm font-medium text-gray-700 mb-2">
+                      <label htmlFor="category-title-edit" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         分類標題 *
                       </label>
                       <input
@@ -329,17 +329,17 @@ export default function AdminPRPackagesCategories() {
                         type="text"
                         value={editForm.title}
                         onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                       />
                     </div>
 
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <label className="block text-sm font-medium text-gray-700">徽章</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">徽章</label>
                         <button
                           type="button"
                           onClick={addBadge}
-                          className="text-sm text-orange-600 hover:text-orange-700"
+                          className="text-sm text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-500"
                         >
                           + 新增徽章
                         </button>
@@ -351,7 +351,7 @@ export default function AdminPRPackagesCategories() {
                               type="text"
                               value={badge}
                               onChange={(e) => updateBadge(index, e.target.value)}
-                              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg"
+                              className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                               placeholder="例如：🚀 Launches"
                               aria-label={`徽章 ${index + 1}`}
                             />
@@ -359,7 +359,7 @@ export default function AdminPRPackagesCategories() {
                               <button
                                 type="button"
                                 onClick={() => removeBadge(index)}
-                                className="p-2 text-red-600 hover:bg-red-100 rounded-lg"
+                                className="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg"
                                 title="刪除此徽章"
                               >
                                 <X size={20} />
@@ -371,13 +371,13 @@ export default function AdminPRPackagesCategories() {
                     </div>
 
                     <div>
-                      <label htmlFor="display-order-edit" className="block text-sm font-medium text-gray-700 mb-2">顯示順序</label>
+                      <label htmlFor="display-order-edit" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">顯示順序</label>
                       <input
                         id="display-order-edit"
                         type="number"
                         value={editForm.display_order}
                         onChange={(e) => setEditForm({ ...editForm, display_order: Number(e.target.value) })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                       />
                     </div>
                   </div>
@@ -385,10 +385,10 @@ export default function AdminPRPackagesCategories() {
                   {/* Package 管理 */}
                   <div>
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-xl font-bold text-gray-900">管理 Packages</h3>
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white">管理 Packages</h3>
                       <button
                         onClick={() => setShowPackageManager(showPackageManager === category.category_id ? null : category.category_id)}
-                        className="flex items-center gap-2 text-orange-600 hover:bg-orange-100 px-4 py-2 rounded-lg transition-colors"
+                        className="flex items-center gap-2 text-orange-600 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/30 px-4 py-2 rounded-lg transition-colors"
                       >
                         <Plus size={18} />
                         從其他分類添加 Package
@@ -397,7 +397,7 @@ export default function AdminPRPackagesCategories() {
 
                     {/* 當前分類的 Packages */}
                     <div className="space-y-3 mb-4">
-                      <p className="text-sm font-medium text-gray-700">
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
                         當前分類的 Packages（{category.packages.length} 個）
                       </p>
                       {category.packages.length > 0 ? (
@@ -405,15 +405,15 @@ export default function AdminPRPackagesCategories() {
                           {category.packages.map((pkg, index) => (
                             <div
                               key={pkg.id}
-                              className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200"
+                              className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700"
                             >
                               <div className="flex items-center gap-3 flex-1">
-                                <span className="text-sm font-medium text-gray-500">#{index + 1}</span>
+                                <span className="text-sm font-medium text-gray-500 dark:text-gray-400">#{index + 1}</span>
                                 <div className="flex-1">
-                                  <p className="font-semibold text-gray-900">{pkg.name}</p>
-                                  <p className="text-sm text-gray-500">{pkg.price}</p>
+                                  <p className="font-semibold text-gray-900 dark:text-white">{pkg.name}</p>
+                                  <p className="text-sm text-gray-500 dark:text-gray-400">{pkg.price}</p>
                                   {pkg.badge && (
-                                    <span className="text-xs text-orange-600 font-semibold">
+                                    <span className="text-xs text-orange-600 dark:text-orange-400 font-semibold">
                                       {pkg.badge}
                                     </span>
                                   )}
@@ -425,7 +425,7 @@ export default function AdminPRPackagesCategories() {
                                 <button
                                   onClick={() => movePackageUp(category.category_id, index)}
                                   disabled={index === 0}
-                                  className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors disabled:opacity-30"
+                                  className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-colors disabled:opacity-30"
                                   title="上移"
                                 >
                                   <MoveUp size={18} />
@@ -433,7 +433,7 @@ export default function AdminPRPackagesCategories() {
                                 <button
                                   onClick={() => movePackageDown(category.category_id, index)}
                                   disabled={index === category.packages.length - 1}
-                                  className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors disabled:opacity-30"
+                                  className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-colors disabled:opacity-30"
                                   title="下移"
                                 >
                                   <MoveDown size={18} />
@@ -442,7 +442,7 @@ export default function AdminPRPackagesCategories() {
                                 {/* 編輯和移除按鈕 */}
                                 <button
                                   onClick={() => navigate(`/admin/pr-packages/edit/${pkg.slug}`)}
-                                  className="p-2 text-orange-600 hover:bg-orange-100 rounded-lg transition-colors"
+                                  className="p-2 text-orange-600 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/30 rounded-lg transition-colors"
                                   title="編輯"
                                 >
                                   <Edit size={18} />
@@ -454,7 +454,7 @@ export default function AdminPRPackagesCategories() {
                                       alert('移除功能需要設定目標分類');
                                     }
                                   }}
-                                  className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
+                                  className="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors"
                                   title="從此分類移除"
                                 >
                                   <X size={18} />
@@ -464,14 +464,14 @@ export default function AdminPRPackagesCategories() {
                           ))}
                         </div>
                       ) : (
-                        <p className="text-gray-500 text-sm py-4">此分類暫無 Packages</p>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm py-4">此分類暫無 Packages</p>
                       )}
                     </div>
 
                     {/* 可添加的 Packages */}
                     {showPackageManager === category.category_id && (
-                      <div className="mt-4 p-4 bg-blue-50 rounded-lg border-2 border-blue-200">
-                        <p className="text-sm font-medium text-blue-900 mb-3">
+                      <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-2 border-blue-200 dark:border-blue-800">
+                        <p className="text-sm font-medium text-blue-900 dark:text-blue-300 mb-3">
                           從其他分類選擇 Package 添加到「{category.title}」
                         </p>
                         <div className="space-y-2 max-h-96 overflow-y-auto">
@@ -480,11 +480,11 @@ export default function AdminPRPackagesCategories() {
                             .map((pkg) => (
                               <div
                                 key={pkg.id}
-                                className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200"
+                                className="flex items-center justify-between p-3 bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600"
                               >
                                 <div className="flex-1">
-                                  <p className="font-medium text-gray-900">{pkg.name}</p>
-                                  <p className="text-xs text-gray-500">
+                                  <p className="font-medium text-gray-900 dark:text-white">{pkg.name}</p>
+                                  <p className="text-xs text-gray-500 dark:text-gray-400">
                                     當前分類：{categories.find(c => c.category_id === pkg.category_id)?.title || pkg.category_id}
                                   </p>
                                 </div>
@@ -494,7 +494,7 @@ export default function AdminPRPackagesCategories() {
                                       movePackageToCategory(pkg.id, category.category_id, category.packages.length);
                                     }
                                   }}
-                                  className="flex items-center gap-2 text-green-600 hover:bg-green-100 px-4 py-2 rounded-lg transition-colors"
+                                  className="flex items-center gap-2 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30 px-4 py-2 rounded-lg transition-colors"
                                 >
                                   <ArrowRight size={18} />
                                   添加到此分類
@@ -502,7 +502,7 @@ export default function AdminPRPackagesCategories() {
                               </div>
                             ))}
                           {allPackages.filter(pkg => pkg.category_id !== category.category_id).length === 0 && (
-                            <p className="text-gray-500 text-sm py-4 text-center">
+                            <p className="text-gray-500 dark:text-gray-400 text-sm py-4 text-center">
                               沒有可添加的 Packages
                             </p>
                           )}
@@ -512,7 +512,7 @@ export default function AdminPRPackagesCategories() {
                   </div>
 
                   {/* 操作按鈕 */}
-                  <div className="flex gap-3 pt-4 border-t border-gray-200">
+                  <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
                     <button
                       onClick={handleSave}
                       className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
@@ -522,7 +522,7 @@ export default function AdminPRPackagesCategories() {
                     </button>
                     <button
                       onClick={handleCancel}
-                      className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                      className="px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600"
                     >
                       取消
                     </button>
@@ -533,23 +533,23 @@ export default function AdminPRPackagesCategories() {
                 <div>
                   <div className="flex items-start justify-between mb-4">
                     <div>
-                      <h3 className="text-2xl font-bold text-gray-900 mb-2">{category.title}</h3>
-                      <p className="text-sm text-gray-500">ID: {category.category_id}</p>
-                      <p className="text-sm text-gray-500 mt-1">
+                      <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{category.title}</h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">ID: {category.category_id}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                         包含 {category.packages_count} 個 packages
                       </p>
                     </div>
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleEdit(category)}
-                        className="flex items-center gap-2 text-orange-600 hover:bg-orange-100 px-4 py-2 rounded-lg transition-colors"
+                        className="flex items-center gap-2 text-orange-600 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/30 px-4 py-2 rounded-lg transition-colors"
                       >
                         <Edit size={18} />
                         編輯
                       </button>
                       <button
                         onClick={() => handleDelete(category.category_id, category.title)}
-                        className="flex items-center gap-2 text-red-600 hover:bg-red-100 px-4 py-2 rounded-lg transition-colors"
+                        className="flex items-center gap-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 px-4 py-2 rounded-lg transition-colors"
                       >
                         <Trash2 size={18} />
                         刪除
@@ -559,12 +559,12 @@ export default function AdminPRPackagesCategories() {
 
                   {category.badges.length > 0 && (
                     <div className="mb-4">
-                      <p className="text-sm font-medium text-gray-700 mb-2">徽章：</p>
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">徽章：</p>
                       <div className="flex flex-wrap gap-2">
                         {category.badges.map((badge, idx) => (
                           <span
                             key={idx}
-                            className="inline-flex px-3 py-1 bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 text-sm font-medium rounded-full"
+                            className="inline-flex px-3 py-1 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-full"
                           >
                             {badge}
                           </span>
@@ -575,8 +575,8 @@ export default function AdminPRPackagesCategories() {
 
                   {/* 顯示該分類下的 Packages */}
                   {category.packages_count > 0 && (
-                    <div className="mt-4 pt-4 border-t border-gray-200">
-                      <p className="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
+                    <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
                         <Package size={16} />
                         包含的 Packages：
                       </p>
@@ -584,20 +584,20 @@ export default function AdminPRPackagesCategories() {
                         {category.packages.map((pkg) => (
                           <div
                             key={pkg.id}
-                            className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200"
+                            className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700"
                           >
                             <div className="flex-1">
-                              <p className="font-medium text-gray-900 text-sm">{pkg.name}</p>
-                              <p className="text-xs text-gray-500">{pkg.price}</p>
+                              <p className="font-medium text-gray-900 dark:text-white text-sm">{pkg.name}</p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400">{pkg.price}</p>
                               {pkg.badge && (
-                                <span className="text-xs text-orange-600 font-semibold">
+                                <span className="text-xs text-orange-600 dark:text-orange-400 font-semibold">
                                   {pkg.badge}
                                 </span>
                               )}
                             </div>
                             <button
                               onClick={() => navigate(`/admin/pr-packages/edit/${pkg.slug}`)}
-                              className="p-1 text-orange-600 hover:bg-orange-100 rounded"
+                              className="p-1 text-orange-600 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/30 rounded"
                               title="編輯"
                             >
                               <Edit size={14} />
@@ -608,8 +608,8 @@ export default function AdminPRPackagesCategories() {
                     </div>
                   )}
 
-                  <div className="mt-4 pt-4 border-t border-gray-200">
-                    <p className="text-sm text-gray-500">顯示順序: {category.display_order}</p>
+                  <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">顯示順序: {category.display_order}</p>
                   </div>
                 </div>
               )}

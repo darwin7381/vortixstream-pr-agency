@@ -102,7 +102,7 @@ export default function AdminPricingEdit() {
     return (
       <AdminLayout>
         <div className="p-8 flex items-center justify-center min-h-[400px]">
-          <div className="text-gray-600">載入中...</div>
+          <div className="text-gray-600 dark:text-gray-400">載入中...</div>
         </div>
       </AdminLayout>
     );
@@ -113,21 +113,21 @@ export default function AdminPricingEdit() {
       <div className="p-8">
         <button
           onClick={() => navigate('/admin/pricing')}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors"
+          className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-6 transition-colors"
         >
           <ArrowLeft size={20} />
           返回列表
         </button>
 
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
           {id ? '編輯' : '新增'}定價方案
         </h1>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 max-w-4xl">
+        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-8 max-w-4xl">
           <div className="space-y-6">
             {/* 方案名稱 */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 方案名稱 *
               </label>
               <input
@@ -135,14 +135,14 @@ export default function AdminPricingEdit() {
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 placeholder="例如：基礎方案"
               />
             </div>
 
             {/* 描述 */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 描述 *
               </label>
               <textarea
@@ -150,7 +150,7 @@ export default function AdminPricingEdit() {
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 rows={3}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-orange-500"
                 placeholder="簡短描述此方案..."
               />
             </div>
@@ -158,23 +158,23 @@ export default function AdminPricingEdit() {
             {/* 價格和計費週期 */}
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">價格 *</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">價格 *</label>
                 <input
                   type="text"
                   required
                   value={formData.price}
                   onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                   placeholder="999"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">幣別</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">幣別</label>
                 <select
                   value={formData.currency}
                   onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                 >
                   <option value="USD">USD</option>
                   <option value="TWD">TWD</option>
@@ -183,11 +183,11 @@ export default function AdminPricingEdit() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">計費週期</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">計費週期</label>
                 <select
                   value={formData.billing_period}
                   onChange={(e) => setFormData({ ...formData, billing_period: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                 >
                   <option value="monthly">月付</option>
                   <option value="yearly">年付</option>
@@ -199,13 +199,13 @@ export default function AdminPricingEdit() {
             {/* 功能列表 */}
             <div>
               <div className="flex items-center justify-between mb-3">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   包含功能 *
                 </label>
                 <button
                   type="button"
                   onClick={addFeature}
-                  className="flex items-center gap-1 text-sm text-orange-600 hover:text-orange-700"
+                  className="flex items-center gap-1 text-sm text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-500"
                 >
                   <Plus size={16} />
                   新增功能
@@ -218,14 +218,14 @@ export default function AdminPricingEdit() {
                       type="text"
                       value={feature}
                       onChange={(e) => updateFeature(index, e.target.value)}
-                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+                      className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-orange-500"
                       placeholder={`功能 ${index + 1}`}
                     />
                     {formData.features.length > 1 && (
                       <button
                         type="button"
                         onClick={() => removeFeature(index)}
-                        className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
+                        className="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors"
                       >
                         <X size={20} />
                       </button>
@@ -238,25 +238,25 @@ export default function AdminPricingEdit() {
             {/* 其他設定 */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   徽章文字（選填）
                 </label>
                 <input
                   type="text"
                   value={formData.badge_text}
                   onChange={(e) => setFormData({ ...formData, badge_text: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                   placeholder="例如：最受歡迎"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">顯示順序</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">顯示順序</label>
                 <input
                   type="number"
                   value={formData.display_order}
                   onChange={(e) => setFormData({ ...formData, display_order: Number(e.target.value) })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                 />
               </div>
             </div>
@@ -271,17 +271,17 @@ export default function AdminPricingEdit() {
                   onChange={(e) => setFormData({ ...formData, is_popular: e.target.checked })}
                   className="w-5 h-5 text-orange-600 rounded focus:ring-orange-500"
                 />
-                <label htmlFor="is_popular" className="text-sm font-medium text-gray-700">
+                <label htmlFor="is_popular" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   標記為熱門方案
                 </label>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">狀態</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">狀態</label>
                 <select
                   value={formData.status}
                   onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                 >
                   <option value="active">啟用</option>
                   <option value="inactive">停用</option>
@@ -302,7 +302,7 @@ export default function AdminPricingEdit() {
               <button
                 type="button"
                 onClick={() => navigate('/admin/pricing')}
-                className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="px-6 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600"
               >
                 取消
               </button>

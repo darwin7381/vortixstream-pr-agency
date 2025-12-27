@@ -198,22 +198,22 @@ export default function AdminPRPackagesEdit() {
       <div className="p-8">
         <button
           onClick={() => navigate('/admin/pr-packages')}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors"
+          className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-6 transition-colors"
         >
           <ArrowLeft size={20} />
           返回列表
         </button>
 
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
           {id ? '編輯' : '新增'} PR Package
         </h1>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 max-w-6xl">
+        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-8 max-w-6xl">
           <div className="space-y-8">
             {/* 基本資訊 */}
             <div className="grid grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Package 名稱 *
                 </label>
                 <input
@@ -221,19 +221,19 @@ export default function AdminPRPackagesEdit() {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-orange-500"
                   placeholder="例如：Global Startup Launch"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">價格 *</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">價格 *</label>
                 <input
                   type="text"
                   required
                   value={formData.price}
                   onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                   placeholder="例如：$2,999"
                 />
               </div>
@@ -242,23 +242,23 @@ export default function AdminPRPackagesEdit() {
             {/* 描述和分類 */}
             <div className="grid grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">描述 *</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">描述 *</label>
                 <textarea
                   required
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   rows={3}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                 />
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">分類 *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">分類 *</label>
                   <select
                     value={formData.category_id}
                     onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                   >
                     {CATEGORIES.map((cat) => (
                       <option key={cat.id} value={cat.id}>
@@ -269,12 +269,12 @@ export default function AdminPRPackagesEdit() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">徽章</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">徽章</label>
                   <input
                     type="text"
                     value={formData.badge}
                     onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                     placeholder="例如：BEST VALUE"
                   />
                 </div>
@@ -284,7 +284,7 @@ export default function AdminPRPackagesEdit() {
             {/* 保證發布數和排序 */}
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   保證發布數
                 </label>
                 <input
@@ -293,28 +293,28 @@ export default function AdminPRPackagesEdit() {
                   onChange={(e) =>
                     setFormData({ ...formData, guaranteed_publications: Number(e.target.value) })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">顯示順序</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">顯示順序</label>
                 <input
                   type="number"
                   value={formData.display_order}
                   onChange={(e) =>
                     setFormData({ ...formData, display_order: Number(e.target.value) })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">狀態</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">狀態</label>
                 <select
                   value={formData.status}
                   onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                 >
                   <option value="active">啟用</option>
                   <option value="inactive">停用</option>
@@ -332,11 +332,11 @@ export default function AdminPRPackagesEdit() {
             {/* Features */}
             <div>
               <div className="flex items-center justify-between mb-3">
-                <label className="block text-sm font-medium text-gray-700">主要功能 *</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">主要功能 *</label>
                 <button
                   type="button"
                   onClick={addFeature}
-                  className="flex items-center gap-1 text-sm text-orange-600"
+                  className="flex items-center gap-1 text-sm text-orange-600 dark:text-orange-400"
                 >
                   <Plus size={16} />
                   新增功能
@@ -349,14 +349,14 @@ export default function AdminPRPackagesEdit() {
                       type="text"
                       value={feature}
                       onChange={(e) => updateFeature(index, e.target.value)}
-                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg"
+                      className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                       placeholder={`功能 ${index + 1}`}
                     />
                     {formData.features.length > 1 && (
                       <button
                         type="button"
                         onClick={() => removeFeature(index)}
-                        className="p-2 text-red-600 hover:bg-red-100 rounded-lg"
+                        className="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg"
                       >
                         <X size={20} />
                       </button>
@@ -369,11 +369,11 @@ export default function AdminPRPackagesEdit() {
             {/* Detailed Info Sections */}
             <div>
               <div className="flex items-center justify-between mb-3">
-                <label className="block text-sm font-medium text-gray-700">詳細資訊區塊</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">詳細資訊區塊</label>
                 <button
                   type="button"
                   onClick={addSection}
-                  className="flex items-center gap-1 text-sm text-orange-600"
+                  className="flex items-center gap-1 text-sm text-orange-600 dark:text-orange-400"
                 >
                   <Plus size={16} />
                   新增區塊
@@ -381,20 +381,20 @@ export default function AdminPRPackagesEdit() {
               </div>
               <div className="space-y-4">
                 {formData.detailed_info.sections.map((section, sectionIndex) => (
-                  <div key={sectionIndex} className="p-4 border-2 border-gray-200 rounded-lg">
+                  <div key={sectionIndex} className="p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg">
                     <div className="flex gap-2 mb-3">
                       <input
                         type="text"
                         value={section.title}
                         onChange={(e) => updateSectionTitle(sectionIndex, e.target.value)}
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg font-medium"
+                        className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg font-medium"
                         placeholder="區塊標題"
                       />
                       {formData.detailed_info.sections.length > 1 && (
                         <button
                           type="button"
                           onClick={() => removeSection(sectionIndex)}
-                          className="p-2 text-red-600 hover:bg-red-100 rounded-lg"
+                          className="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg"
                         >
                           <X size={20} />
                         </button>
@@ -407,14 +407,14 @@ export default function AdminPRPackagesEdit() {
                             type="text"
                             value={item}
                             onChange={(e) => updateSectionItem(sectionIndex, itemIndex, e.target.value)}
-                            className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm"
+                            className="flex-1 px-3 py-2 border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg text-sm"
                             placeholder={`項目 ${itemIndex + 1}`}
                           />
                           {section.items.length > 1 && (
                             <button
                               type="button"
                               onClick={() => removeSectionItem(sectionIndex, itemIndex)}
-                              className="p-2 text-red-600 hover:bg-red-100 rounded-lg"
+                              className="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg"
                             >
                               <X size={16} />
                             </button>
@@ -424,7 +424,7 @@ export default function AdminPRPackagesEdit() {
                       <button
                         type="button"
                         onClick={() => addSectionItem(sectionIndex)}
-                        className="text-sm text-orange-600 hover:text-orange-700"
+                        className="text-sm text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-500"
                       >
                         + 新增項目
                       </button>
@@ -437,7 +437,7 @@ export default function AdminPRPackagesEdit() {
             {/* Note and CTA */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">備註</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">備註</label>
                 <textarea
                   value={formData.detailed_info.note}
                   onChange={(e) =>
@@ -447,12 +447,12 @@ export default function AdminPRPackagesEdit() {
                     })
                   }
                   rows={3}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">CTA 文字</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">CTA 文字</label>
                 <input
                   type="text"
                   value={formData.detailed_info.cta_text}
@@ -462,7 +462,7 @@ export default function AdminPRPackagesEdit() {
                       detailed_info: { ...formData.detailed_info, cta_text: e.target.value },
                     })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                   placeholder="例如：立即開始"
                 />
               </div>
@@ -481,7 +481,7 @@ export default function AdminPRPackagesEdit() {
               <button
                 type="button"
                 onClick={() => navigate('/admin/pr-packages')}
-                className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="px-6 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600"
               >
                 取消
               </button>

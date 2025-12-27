@@ -87,7 +87,7 @@ export default function AdminBlogEdit() {
     return (
       <AdminLayout>
         <div className="p-8 flex items-center justify-center min-h-[400px]">
-          <div className="text-gray-600">載入中...</div>
+          <div className="text-gray-600 dark:text-gray-400">載入中...</div>
         </div>
       </AdminLayout>
     );
@@ -98,21 +98,21 @@ export default function AdminBlogEdit() {
       <div className="p-8">
         <button
           onClick={() => navigate('/admin/blog')}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors"
+          className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-6 transition-colors"
         >
           <ArrowLeft size={20} />
           返回列表
         </button>
 
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
           {id ? '編輯' : '新增'}文章
         </h1>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 max-w-4xl">
+        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-8 max-w-4xl">
           <div className="space-y-6">
             {/* 標題 */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 標題 *
               </label>
               <input
@@ -120,20 +120,20 @@ export default function AdminBlogEdit() {
                 required
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               />
             </div>
 
             {/* 分類 */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 分類 *
               </label>
               <select
                 required
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-orange-500"
               >
                 {categories.map((cat) => (
                   <option key={cat} value={cat}>
@@ -145,7 +145,7 @@ export default function AdminBlogEdit() {
 
             {/* 摘要 */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 摘要 *
               </label>
               <textarea
@@ -153,13 +153,13 @@ export default function AdminBlogEdit() {
                 value={formData.excerpt}
                 onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
                 rows={3}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-orange-500"
               />
             </div>
 
             {/* 內容 */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 內容 * (支援 Markdown)
               </label>
               <textarea
@@ -167,7 +167,7 @@ export default function AdminBlogEdit() {
                 value={formData.content}
                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                 rows={15}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 font-mono text-sm"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-orange-500 font-mono text-sm"
                 placeholder="# 標題&#10;&#10;內容..."
               />
             </div>
@@ -184,7 +184,7 @@ export default function AdminBlogEdit() {
             <div className="grid grid-cols-3 gap-4">
               {/* 閱讀時間 */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   閱讀時間（分鐘）
                 </label>
                 <input
@@ -193,28 +193,28 @@ export default function AdminBlogEdit() {
                   onChange={(e) =>
                     setFormData({ ...formData, read_time: Number(e.target.value) })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                 />
               </div>
 
               {/* 作者 */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">作者</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">作者</label>
                 <input
                   type="text"
                   value={formData.author}
                   onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                 />
               </div>
 
               {/* 狀態 */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">狀態</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">狀態</label>
                 <select
                   value={formData.status}
                   onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                 >
                   <option value="draft">草稿</option>
                   <option value="published">已發布</option>
@@ -236,7 +236,7 @@ export default function AdminBlogEdit() {
               <button
                 type="button"
                 onClick={() => navigate('/admin/blog')}
-                className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="px-6 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600"
               >
                 取消
               </button>

@@ -255,7 +255,7 @@ export default function AdminMedia() {
     return (
       <AdminLayout>
         <div className="p-8 flex items-center justify-center min-h-[400px]">
-          <div className="text-gray-600">載入中...</div>
+          <div className="text-gray-600 dark:text-gray-400">載入中...</div>
         </div>
       </AdminLayout>
     );
@@ -267,8 +267,8 @@ export default function AdminMedia() {
         {/* 標題和統計 */}
         <div className="mb-8 flex items-start justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">媒體圖庫</h1>
-            <p className="text-gray-600">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">媒體圖庫</h1>
+            <p className="text-gray-600 dark:text-gray-400">
               共 {stats?.total_files || 0} 個檔案 · {formatFileSize(stats?.total_size || 0)} · {folders.length} 個資料夾
             </p>
           </div>
@@ -301,9 +301,9 @@ export default function AdminMedia() {
         {/* 新建資料夾對話框 */}
         {showNewFolderDialog && (
           <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center" onClick={() => setShowNewFolderDialog(false)}>
-            <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl" onClick={(e) => e.stopPropagation()}>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">新建資料夾</h3>
-              <p className="text-sm text-gray-600 mb-4">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">新建資料夾</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
                 資料夾會立即創建並出現在列表中。建議使用英文小寫和連字號（例如：my-folder）。
               </p>
               <input
@@ -311,7 +311,7 @@ export default function AdminMedia() {
                 value={newFolderName}
                 onChange={(e) => setNewFolderName(e.target.value)}
                 placeholder="資料夾名稱（例如：banners）"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-4 focus:ring-2 focus:ring-orange-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg mb-4 focus:ring-2 focus:ring-orange-500"
                 onKeyPress={(e) => e.key === 'Enter' && handleCreateFolder()}
                 aria-label="新資料夾名稱"
                 autoFocus
@@ -330,7 +330,7 @@ export default function AdminMedia() {
                     setShowNewFolderDialog(false);
                     setNewFolderName('');
                   }}
-                  className="flex-1 border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50"
+                  className="flex-1 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600"
                   type="button"
                 >
                   取消
@@ -341,7 +341,7 @@ export default function AdminMedia() {
         )}
 
         {/* 篩選和搜尋 */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-6">
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <div className="flex gap-2 flex-wrap">
               <button
@@ -349,7 +349,7 @@ export default function AdminMedia() {
                 className={`px-4 py-2 rounded-lg transition-colors ${
                   selectedFolder === 'all'
                     ? 'bg-orange-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                 }`}
               >
                 全部 ({stats?.total_files || 0})
@@ -361,7 +361,7 @@ export default function AdminMedia() {
                   className={`px-4 py-2 rounded-lg transition-colors ${
                     selectedFolder === folder.folder
                       ? 'bg-orange-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                   }`}
                 >
                   {folder.folder} ({folder.file_count})
@@ -377,21 +377,21 @@ export default function AdminMedia() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="搜尋檔案名稱..."
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg w-64"
+                  className="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg w-64"
                 />
               </div>
               
-              <div className="flex border border-gray-300 rounded-lg">
+              <div className="flex border border-gray-300 dark:border-gray-600 rounded-lg">
                 <button
                   onClick={() => setViewMode('grid')}
-                  className={`p-2 ${viewMode === 'grid' ? 'bg-gray-100' : ''}`}
+                  className={`p-2 ${viewMode === 'grid' ? 'bg-gray-100 dark:bg-gray-700' : ''}`}
                   title="網格檢視"
                 >
                   <Grid size={18} />
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`p-2 ${viewMode === 'list' ? 'bg-gray-100' : ''}`}
+                  className={`p-2 ${viewMode === 'list' ? 'bg-gray-100 dark:bg-gray-700' : ''}`}
                   title="列表檢視"
                 >
                   <ListIcon size={18} />
@@ -407,9 +407,9 @@ export default function AdminMedia() {
             {filteredFiles.map((file) => (
               <div
                 key={file.id}
-                className="group relative bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-all"
+                className="group relative bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-all"
               >
-                <div className="aspect-square bg-gray-100 flex items-center justify-center overflow-hidden">
+                <div className="aspect-square bg-gray-100 dark:bg-gray-900 flex items-center justify-center overflow-hidden">
                   <img
                     src={file.file_url}
                     alt={file.alt_text || file.original_filename}
@@ -421,14 +421,14 @@ export default function AdminMedia() {
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                   <button
                     onClick={() => setViewingImage(file)}
-                    className="bg-white text-gray-900 p-2 rounded-lg hover:bg-gray-100"
+                    className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
                     title="放大查看"
                   >
                     <ZoomIn size={18} />
                   </button>
                   <button
                     onClick={() => handleCopyUrl(file.file_url)}
-                    className="bg-white text-gray-900 p-2 rounded-lg hover:bg-gray-100"
+                    className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
                     title="複製 URL"
                   >
                     <Copy size={18} />
@@ -443,10 +443,10 @@ export default function AdminMedia() {
                 </div>
                 
                 <div className="p-3">
-                  <p className="text-sm font-medium text-gray-900 truncate" title={file.original_filename}>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white truncate" title={file.original_filename}>
                     {file.original_filename}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     {formatFileSize(file.file_size)} · {file.folder}
                   </p>
                 </div>
@@ -455,21 +455,21 @@ export default function AdminMedia() {
           </div>
         ) : (
           // 列表檢視
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
                 <tr>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">預覽</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">檔名</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">資料夾</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">大小</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">上傳時間</th>
-                  <th className="px-6 py-4 text-right text-xs font-semibold text-gray-700 uppercase">操作</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">預覽</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">檔名</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">資料夾</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">大小</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">上傳時間</th>
+                  <th className="px-6 py-4 text-right text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">操作</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredFiles.map((file) => (
-                  <tr key={file.id} className="hover:bg-gray-50">
+                  <tr key={file.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                     <td className="px-6 py-4">
                       <img
                         src={file.file_url}
@@ -479,41 +479,41 @@ export default function AdminMedia() {
                       />
                     </td>
                     <td className="px-6 py-4">
-                      <p className="font-medium text-gray-900">{file.original_filename}</p>
+                      <p className="font-medium text-gray-900 dark:text-white">{file.original_filename}</p>
                       {file.alt_text && (
-                        <p className="text-sm text-gray-500">{file.alt_text}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{file.alt_text}</p>
                       )}
                     </td>
                     <td className="px-6 py-4">
-                      <span className="px-2 py-1 bg-gray-100 text-gray-700 text-sm rounded">
+                      <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm rounded">
                         {file.folder}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">
+                    <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
                       {formatFileSize(file.file_size)}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">
+                    <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
                       {new Date(file.created_at).toLocaleString('zh-TW')}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => setViewingImage(file)}
-                          className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg"
+                          className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg"
                           title="放大查看"
                         >
                           <ZoomIn size={18} />
                         </button>
                         <button
                           onClick={() => handleCopyUrl(file.file_url)}
-                          className="p-2 text-green-600 hover:bg-green-100 rounded-lg"
+                          className="p-2 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30 rounded-lg"
                           title="複製 URL"
                         >
                           <Copy size={18} />
                         </button>
                         <button
                           onClick={() => handleDelete(file)}
-                          className="p-2 text-red-600 hover:bg-red-100 rounded-lg"
+                          className="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg"
                           title="刪除"
                         >
                           <Trash2 size={18} />
@@ -528,12 +528,12 @@ export default function AdminMedia() {
         )}
 
         {filteredFiles.length === 0 && (
-          <div className="text-center py-16 bg-white rounded-xl border border-gray-200">
-            <Search className="mx-auto text-gray-300 mb-4" size={64} />
-            <p className="text-gray-500 text-lg mb-2">
+          <div className="text-center py-16 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+            <Search className="mx-auto text-gray-300 dark:text-gray-600 mb-4" size={64} />
+            <p className="text-gray-500 dark:text-gray-400 text-lg mb-2">
               {searchTerm ? '沒有找到符合的檔案' : '此資料夾還沒有圖片'}
             </p>
-            <p className="text-gray-400 text-sm">
+            <p className="text-gray-400 dark:text-gray-500 text-sm">
               拖曳圖片到上方區域或點擊按鈕上傳
             </p>
           </div>

@@ -98,40 +98,40 @@ export default function ImagePicker({ isOpen, onClose, onSelect, currentUrl, def
 
   return (
     <div 
-      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 flex items-center justify-center p-4"
       onClick={onClose}
     >
       <div 
-        className="bg-white rounded-xl shadow-2xl max-w-6xl w-full max-h-[90vh] flex flex-col"
+        className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-6xl w-full max-h-[90vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 標題列 */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">選擇圖片</h2>
-            <p className="text-sm text-gray-600 mt-1">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">選擇圖片</h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
               {filteredFiles.length} 個檔案可用
               {currentFolder !== 'all' && ` · 資料夾：${currentFolder}`}
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white rounded-lg transition-colors"
           >
             <X size={24} />
           </button>
         </div>
 
         {/* 工具列 */}
-        <div className="p-6 border-b border-gray-200">
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-4 mb-4">
             {/* 資料夾選擇 */}
             <div className="flex items-center gap-2">
-              <Folder size={18} className="text-gray-600" />
+              <Folder size={18} className="text-gray-600 dark:text-gray-400" />
               <select
                 value={currentFolder}
                 onChange={(e) => setCurrentFolder(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg bg-white"
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                 aria-label="選擇資料夾"
               >
                 <option value="all">所有資料夾</option>
@@ -151,7 +151,7 @@ export default function ImagePicker({ isOpen, onClose, onSelect, currentUrl, def
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="搜尋檔案名稱..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
               />
             </div>
             
@@ -180,7 +180,7 @@ export default function ImagePicker({ isOpen, onClose, onSelect, currentUrl, def
         {/* 圖片網格 */}
         <div className="flex-1 overflow-y-auto p-6">
           {loading ? (
-            <div className="text-center py-12 text-gray-600">載入中...</div>
+            <div className="text-center py-12 text-gray-600 dark:text-gray-400">載入中...</div>
           ) : filteredFiles.length > 0 ? (
             <div className="grid grid-cols-4 gap-4">
               {filteredFiles.map((file) => (
@@ -189,12 +189,12 @@ export default function ImagePicker({ isOpen, onClose, onSelect, currentUrl, def
                   onClick={() => setSelectedUrl(file.file_url)}
                   className={`relative rounded-lg overflow-hidden cursor-pointer border-2 transition-all ${
                     selectedUrl === file.file_url
-                      ? 'border-orange-600 ring-2 ring-orange-200'
-                      : 'border-gray-200 hover:border-orange-400'
+                      ? 'border-orange-600 ring-2 ring-orange-200 dark:ring-orange-900'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-orange-400 dark:hover:border-orange-500'
                   }`}
                 >
                   {/* 圖片預覽 - 根據比例調整 */}
-                  <div className="aspect-video bg-gray-100 flex items-center justify-center p-2"
+                  <div className="aspect-video bg-gray-100 dark:bg-gray-700 flex items-center justify-center p-2"
                     style={{
                       backgroundImage: `
                         linear-gradient(45deg, #e5e7eb 25%, transparent 25%),
@@ -221,12 +221,12 @@ export default function ImagePicker({ isOpen, onClose, onSelect, currentUrl, def
                   )}
                   
                   {/* 檔案資訊 */}
-                  <div className="bg-white p-2 border-t border-gray-200">
-                    <p className="text-xs font-medium text-gray-900 truncate" title={file.original_filename}>
+                  <div className="bg-white dark:bg-gray-900 p-2 border-t border-gray-200 dark:border-gray-700">
+                    <p className="text-xs font-medium text-gray-900 dark:text-white truncate" title={file.original_filename}>
                       {file.original_filename}
                     </p>
                     {file.width && file.height && (
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
                         {file.width} × {file.height}
                       </p>
                     )}
@@ -236,11 +236,11 @@ export default function ImagePicker({ isOpen, onClose, onSelect, currentUrl, def
             </div>
           ) : (
             <div className="text-center py-12">
-              <Search className="mx-auto text-gray-300 mb-4" size={64} />
-              <p className="text-gray-500 text-lg mb-2">
+              <Search className="mx-auto text-gray-300 dark:text-gray-600 mb-4" size={64} />
+              <p className="text-gray-500 dark:text-gray-400 text-lg mb-2">
                 {searchTerm ? '沒有找到符合的圖片' : '此資料夾沒有圖片'}
               </p>
-              <p className="text-gray-400 text-sm">
+              <p className="text-gray-400 dark:text-gray-500 text-sm">
                 請切換資料夾或上傳新圖片
               </p>
             </div>
@@ -248,8 +248,8 @@ export default function ImagePicker({ isOpen, onClose, onSelect, currentUrl, def
         </div>
 
         {/* 底部操作列 */}
-        <div className="p-6 border-t border-gray-200 flex items-center justify-between">
-          <div className="text-sm text-gray-600">
+        <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+          <div className="text-sm text-gray-600 dark:text-gray-400">
             {selectedUrl && files.find(f => f.file_url === selectedUrl) && (
               <span className="font-medium">
                 已選擇：{files.find(f => f.file_url === selectedUrl)?.original_filename}
@@ -260,7 +260,7 @@ export default function ImagePicker({ isOpen, onClose, onSelect, currentUrl, def
           <div className="flex gap-3">
             <button
               onClick={onClose}
-              className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+              className="px-6 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600"
             >
               取消
             </button>

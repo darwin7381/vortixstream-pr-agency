@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from './hooks/useAuth';
+import { ThemeProvider } from './contexts/ThemeContext';
 import Navigation from './components/Navigation';
 import { handleContactClick } from './utils/navigationHelpers';
 import ScrollToTop from './components/ScrollToTop';
@@ -108,17 +109,20 @@ function HomePage() {
 function AppContent() {
   const { user, login, logout, quickLogin } = useAuth();
   const location = useLocation();
+  
+  // 判斷是否為後台路由
+  const isAdminRoute = location.pathname.startsWith('/admin');
 
   return (
     <div className="min-h-screen bg-black">
       {/* 自動滾動到頂部組件 */}
       <ScrollToTop />
 
-      {/* Global Navigation - 固定在頂部，所有頁面共用 */}
-      <Navigation user={user} onLogout={logout} onQuickLogin={quickLogin} />
+      {/* Global Navigation - 只在前台顯示 */}
+      {!isAdminRoute && <Navigation user={user} onLogout={logout} onQuickLogin={quickLogin} />}
 
-      {/* Main Content Area - 為固定 navbar 添加 padding-top */}
-      <div className="pt-14 sm:pt-16 md:pt-[72px] lg:pt-[72px]">
+      {/* Main Content Area - 只在前台添加 padding-top */}
+      <div className={isAdminRoute ? '' : 'pt-14 sm:pt-16 md:pt-[72px] lg:pt-[72px]'}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/services" element={<ServicesPage />} />
@@ -160,8 +164,10 @@ function AppContent() {
 // Main App Component with Router
 export default function App() {
   return (
-    <BrowserRouter>
-      <AppContent />
-    </BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
+        <AppContent />
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }

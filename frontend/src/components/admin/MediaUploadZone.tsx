@@ -36,33 +36,33 @@ export default function MediaUploadZone({
       onDragOver={onDragOver}
       onDragLeave={onDragLeave}
       onDrop={onDrop}
-      className={`bg-white rounded-xl shadow-sm border-2 border-dashed p-8 mb-6 transition-all ${
+      className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm border-2 border-dashed p-8 mb-6 transition-all ${
         isDragging
-          ? 'border-orange-500 bg-orange-50'
-          : 'border-gray-300 hover:border-gray-400'
+          ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20'
+          : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
       }`}
     >
       <div className="flex items-center gap-3 mb-6">
-        <div className={`p-3 rounded-lg ${isDragging ? 'bg-orange-100' : 'bg-gray-100'}`}>
-          <Upload size={32} className={isDragging ? 'text-orange-600' : 'text-gray-600'} />
+        <div className={`p-3 rounded-lg ${isDragging ? 'bg-orange-100 dark:bg-orange-900/30' : 'bg-gray-100 dark:bg-gray-700'}`}>
+          <Upload size={32} className={isDragging ? 'text-orange-600 dark:text-orange-400' : 'text-gray-600 dark:text-gray-400'} />
         </div>
         <div>
-          <h3 className="text-xl font-semibold text-gray-900">
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
             {isDragging ? '放開以上傳' : '拖曳圖片到這裡'}
           </h3>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             支援 JPG, PNG, GIF, WebP, SVG · 最大 10MB · 可多選
           </p>
         </div>
       </div>
 
       <div className="flex items-center gap-3">
-        <label className="text-sm font-medium text-gray-700">上傳到：</label>
+        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">上傳到：</label>
         
         <select
           value={uploadFolder}
           onChange={(e) => onFolderChange(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg bg-white"
+          className="px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
           aria-label="選擇上傳資料夾"
         >
           <option value="uploads">一般上傳</option>
@@ -82,7 +82,7 @@ export default function MediaUploadZone({
         
         <button
           onClick={onNewFolder}
-          className="flex items-center gap-2 text-orange-600 hover:bg-orange-50 px-4 py-2 rounded-lg border border-orange-200 transition-colors"
+          className="flex items-center gap-2 text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/20 px-4 py-2 rounded-lg border border-orange-200 dark:border-orange-700 transition-colors"
         >
           <FolderPlus size={18} />
           新建資料夾

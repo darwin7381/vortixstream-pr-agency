@@ -41,7 +41,7 @@ export default function ImageInputField({
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">
+      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
 
@@ -51,7 +51,7 @@ export default function ImageInputField({
           <img
             src={value}
             alt={label}
-            className="h-32 w-auto object-contain rounded-lg border border-gray-300"
+            className="h-32 w-auto object-contain rounded-lg border border-gray-300 dark:border-gray-600"
             onError={(e) => {
               (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"/>';
             }}
@@ -73,7 +73,7 @@ export default function ImageInputField({
           type="url"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+          className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-orange-500"
           placeholder={placeholder}
           required={required}
         />
@@ -87,7 +87,7 @@ export default function ImageInputField({
         </button>
       </div>
 
-      <p className="text-xs text-gray-500 mt-1">
+      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
         可以直接輸入 URL，或點擊「選擇圖片」從圖庫選擇/上傳
       </p>
 

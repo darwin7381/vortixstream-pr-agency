@@ -42,7 +42,7 @@ export default function AdminPricing() {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="p-8">載入中...</div>
+        <div className="p-8 text-gray-600 dark:text-gray-400">載入中...</div>
       </AdminLayout>
     );
   }
@@ -52,8 +52,8 @@ export default function AdminPricing() {
       <div className="p-8">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Pricing 方案管理</h1>
-            <p className="text-gray-600 mt-2">共 {packages.length} 個方案</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Pricing 方案管理</h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-2">共 {packages.length} 個方案</p>
           </div>
           <button
             onClick={() => navigate('/admin/pricing/new')}
@@ -68,7 +68,7 @@ export default function AdminPricing() {
           {packages.map((pkg) => (
             <div
               key={pkg.id}
-              className="bg-white rounded-xl shadow-sm border-2 border-gray-200 p-6 hover:border-orange-500 transition-all relative"
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border-2 border-gray-200 dark:border-gray-700 p-6 hover:border-orange-500 transition-all relative"
             >
               {pkg.is_popular && (
                 <div className="absolute -top-3 right-4">
@@ -83,40 +83,40 @@ export default function AdminPricing() {
               <div className="absolute top-4 right-4 flex gap-2">
                 <button
                   onClick={() => navigate(`/admin/pricing/edit/${pkg.id}`)}
-                  className="p-2 text-orange-600 hover:bg-orange-100 rounded-lg transition-colors"
+                  className="p-2 text-orange-600 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/30 rounded-lg transition-colors"
                   title="編輯"
                 >
                   <Edit size={18} />
                 </button>
                 <button
                   onClick={() => handleDelete(pkg)}
-                  className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
+                  className="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors"
                   title="刪除"
                 >
                   <Trash2 size={18} />
                 </button>
               </div>
 
-              <h3 className="text-2xl font-bold text-gray-900 mb-3 pr-20">{pkg.name}</h3>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3 pr-20">{pkg.name}</h3>
               
               <div className="mb-4">
-                <span className="text-4xl font-bold text-orange-600">${pkg.price}</span>
-                <span className="text-gray-600 ml-2">/ {pkg.billing_period === 'monthly' ? '月' : '年'}</span>
+                <span className="text-4xl font-bold text-orange-600 dark:text-orange-400">${pkg.price}</span>
+                <span className="text-gray-600 dark:text-gray-400 ml-2">/ {pkg.billing_period === 'monthly' ? '月' : '年'}</span>
               </div>
 
-              <p className="text-gray-600 mb-6">{pkg.description}</p>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">{pkg.description}</p>
 
               <div className="space-y-3">
-                <p className="text-sm font-semibold text-gray-700 uppercase tracking-wide">包含功能</p>
+                <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">包含功能</p>
                 {pkg.features.map((feature: string, idx: number) => (
                   <div key={idx} className="flex items-start gap-2">
-                    <Check size={18} className="text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm text-gray-700">{feature}</span>
+                    <Check size={18} className="text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">{feature}</span>
                   </div>
                 ))}
               </div>
 
-              <div className="mt-6 pt-4 border-t border-gray-200 flex justify-between text-sm text-gray-500">
+              <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-between text-sm text-gray-500 dark:text-gray-400">
                 <span>狀態: {pkg.status}</span>
                 <span>排序: {pkg.display_order}</span>
               </div>
@@ -126,10 +126,10 @@ export default function AdminPricing() {
 
         {packages.length === 0 && !loading && (
           <div className="text-center py-16">
-            <p className="text-gray-500 text-lg">暫無方案</p>
+            <p className="text-gray-500 dark:text-gray-400 text-lg">暫無方案</p>
             <button
               onClick={() => navigate('/admin/pricing/new')}
-              className="mt-4 text-orange-600 hover:text-orange-700 font-medium"
+              className="mt-4 text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-500 font-medium"
             >
               建立第一個方案
             </button>
