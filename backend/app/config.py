@@ -11,18 +11,12 @@ class Settings(BaseSettings):
     # CORS
     ALLOWED_ORIGINS: str = "http://localhost:5173"
     
-    # Email
-    SMTP_HOST: str = "smtp.gmail.com"
-    SMTP_PORT: int = 587
-    SMTP_USER: str = ""
-    SMTP_PASSWORD: str = ""
-    ADMIN_EMAIL: str = ""
-    
-    # Resend (郵件服務)
+    # Resend (郵件服務 - 可選)
     RESEND_API_KEY: str = ""
     FROM_EMAIL: str = "onboarding@resend.dev"
+    ADMIN_EMAIL: str = ""
     
-    # Cloudflare R2 (圖片存儲)
+    # Cloudflare R2 (圖片存儲 - 可選)
     R2_ACCOUNT_ID: str = ""
     R2_ACCESS_KEY_ID: str = ""
     R2_SECRET_ACCESS_KEY: str = ""

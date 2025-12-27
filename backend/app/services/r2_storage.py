@@ -18,19 +18,31 @@ class R2StorageService:
     
     def __init__(self):
         """初始化 R2 客戶端"""
+        # 檢查必要的環境變數
+        if not settings.R2_ACCOUNT_ID or not settings.R2_ACCESS_KEY_ID or not settings.R2_SECRET_ACCESS_KEY:
+            logger.warning("⚠️ R2 credentials not set - storage features disabled")
+            self.enabled = False
+            self.s3_client = None
+            return
+        
+        self.enabled = True
         self.endpoint_url = f'https://{settings.R2_ACCOUNT_ID}.r2.cloudflarestorage.com'
-        self.bucket_name = settings.R2_BUCKET_NAME
+        self.bucket_name = settings.R2_BUCKET_NAME or 'default-bucket'
         self.public_url = settings.R2_PUBLIC_URL
         
-        self.s3_client = boto3.client(
-            's3',
-            endpoint_url=self.endpoint_url,
-            aws_access_key_id=settings.R2_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.R2_SECRET_ACCESS_KEY,
-            region_name='auto'
-        )
-        
-        logger.info(f"📦 R2 Storage Service initialized - Bucket: {self.bucket_name}")
+        try:
+            self.s3_client = boto3.client(
+                's3',
+                endpoint_url=self.endpoint_url,
+                aws_access_key_id=settings.R2_ACCESS_KEY_ID,
+                aws_secret_access_key=settings.R2_SECRET_ACCESS_KEY,
+                region_name='auto'
+            )
+            logger.info(f"📦 R2 Storage Service initialized - Bucket: {self.bucket_name}")
+        except Exception as e:
+            logger.error(f"❌ Failed to initialize R2 client: {e}")
+            self.enabled = False
+            self.s3_client = None
     
     def upload_file(
         self,
@@ -41,6 +53,8 @@ class R2StorageService:
     ) -> dict:
         """
         上傳檔案到 R2
+        
+        如果 R2 未啟用，拋出錯誤
         
         Args:
             file_content: 檔案二進制內容
@@ -56,6 +70,9 @@ class R2StorageService:
                 'content_type': MIME 類型
             }
         """
+        if not self.enabled or not self.s3_client:
+            raise Exception("R2 Storage is not enabled. Please set R2 credentials.")
+        
         try:
             # 生成唯一的檔名（保留原始副檔名）
             file_ext = filename.rsplit('.', 1)[-1] if '.' in filename else ''
