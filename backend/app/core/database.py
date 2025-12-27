@@ -218,26 +218,26 @@ class Database:
             """)
             
             # Media Files Table（媒體檔案管理）
-        await conn.execute("""
-            CREATE TABLE IF NOT EXISTS media_files (
-                id SERIAL PRIMARY KEY,
-                filename VARCHAR(255) NOT NULL,
-                original_filename VARCHAR(255) NOT NULL,
-                file_key VARCHAR(500) UNIQUE NOT NULL,
-                file_url TEXT NOT NULL,
-                file_size INTEGER NOT NULL,
-                mime_type VARCHAR(100) NOT NULL,
-                folder VARCHAR(100) DEFAULT 'uploads',
-                width INTEGER,
-                height INTEGER,
-                alt_text VARCHAR(500),
-                caption TEXT,
-                uploaded_by VARCHAR(100),
-                created_at TIMESTAMP DEFAULT NOW(),
-                updated_at TIMESTAMP DEFAULT NOW()
-            )
-        """)
-        
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS media_files (
+                    id SERIAL PRIMARY KEY,
+                    filename VARCHAR(255) NOT NULL,
+                    original_filename VARCHAR(255) NOT NULL,
+                    file_key VARCHAR(500) UNIQUE NOT NULL,
+                    file_url TEXT NOT NULL,
+                    file_size INTEGER NOT NULL,
+                    mime_type VARCHAR(100) NOT NULL,
+                    folder VARCHAR(100) DEFAULT 'uploads',
+                    width INTEGER,
+                    height INTEGER,
+                    alt_text VARCHAR(500),
+                    caption TEXT,
+                    uploaded_by VARCHAR(100),
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    updated_at TIMESTAMP DEFAULT NOW()
+                )
+            """)
+            
             # Media Files Indexes
             await conn.execute("""
                 CREATE INDEX IF NOT EXISTS idx_media_folder 
