@@ -3,7 +3,7 @@ import AdminLayout from '../../components/admin/AdminLayout';
 import MediaUploadZone from '../../components/admin/MediaUploadZone';
 import ImageViewModal from '../../components/admin/ImageViewModal';
 import { 
-  Search, Trash2, Grid, List as ListIcon, Copy, ZoomIn
+  Search, Trash2, Grid, List as ListIcon, Copy, ZoomIn, RefreshCw
 } from 'lucide-react';
 
 interface MediaFile {
@@ -178,6 +178,32 @@ export default function AdminMedia() {
     alert('URL 已複製到剪貼板');
   };
 
+  const handleSyncFromR2 = async () => {
+    if (!confirm('確定要掃描 R2 並匯入檔案嗎？已存在的檔案會被跳過。')) return;
+    
+    setLoading(true);
+    
+    try {
+      const response = await fetch(`${ADMIN_API}/media/sync-from-r2`, {
+        method: 'POST',
+      });
+      
+      const result = await response.json();
+      
+      if (response.ok) {
+        alert(`同步完成！\n已匯入：${result.imported} 個檔案\n已跳過：${result.skipped} 個（已存在）\n總計：${result.total} 個檔案`);
+        fetchData();
+      } else {
+        throw new Error(result.detail || '同步失敗');
+      }
+    } catch (error: any) {
+      console.error('Sync failed:', error);
+      alert(`同步失敗：${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleCreateFolder = async () => {
     if (!newFolderName.trim()) return;
     
@@ -239,11 +265,22 @@ export default function AdminMedia() {
     <AdminLayout>
       <div className="p-8">
         {/* 標題和統計 */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">媒體圖庫</h1>
-          <p className="text-gray-600">
-            共 {stats?.total_files || 0} 個檔案 · {formatFileSize(stats?.total_size || 0)} · {folders.length} 個資料夾
-          </p>
+        <div className="mb-8 flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">媒體圖庫</h1>
+            <p className="text-gray-600">
+              共 {stats?.total_files || 0} 個檔案 · {formatFileSize(stats?.total_size || 0)} · {folders.length} 個資料夾
+            </p>
+          </div>
+          
+          <button
+            onClick={handleSyncFromR2}
+            disabled={loading || uploading}
+            className="flex items-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <RefreshCw size={20} />
+            掃描 R2 並匯入
+          </button>
         </div>
 
         {/* 拖曳上傳區域 */}

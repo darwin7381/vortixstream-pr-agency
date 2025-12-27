@@ -9,11 +9,11 @@ import {
   Mail,
   ChevronDown,
   Folder,
-  List,
   Menu,
   X,
   Home,
-  Image
+  Image,
+  List
 } from 'lucide-react';
 
 interface AdminLayoutProps {
@@ -34,9 +34,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const [expandedMenus, setExpandedMenus] = useState<string[]>(['PR Packages']);
   
   const isActive = (path: string) => {
-    if (path === '/admin' && location.pathname === '/admin') return true;
-    if (path !== '/admin' && location.pathname.startsWith(path)) return true;
-    return false;
+    // 精確匹配路徑
+    return location.pathname === path;
   };
 
   const toggleMenu = (menuKey: string) => {
@@ -49,7 +48,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
-    // 收合時自動收起所有子選單
     if (!sidebarCollapsed) {
       setExpandedMenus([]);
     } else {
@@ -98,13 +96,13 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     },
   ];
 
-  const renderNavItem = (item: NavItem, level: number = 0) => {
+  const renderNavItem = (item: NavItem) => {
     const Icon = item.icon;
     const hasChildren = item.children && item.children.length > 0;
     const isExpanded = expandedMenus.includes(item.label);
     const active = item.path ? isActive(item.path) : false;
 
-    // 檢查是否有任何子項目是活躍的
+    // 檢查是否有任何子項目是活躍的（用於父項目狀態）
     const hasActiveChild = hasChildren && item.children!.some(child => 
       child.path && isActive(child.path)
     );
@@ -112,52 +110,73 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     if (hasChildren) {
       return (
         <div key={item.label} className="space-y-1">
+          {/* 父項目 - 不可點擊，只能展開/收合 */}
           <button
             onClick={() => toggleMenu(item.label)}
-            className={`flex items-center justify-between w-full px-4 py-3 rounded-lg transition-all group ${
+            className={`flex items-center justify-between w-full px-4 py-3 rounded-lg transition-all ${
               hasActiveChild
-                ? 'bg-orange-600/20 text-orange-400 border border-orange-500/30'
+                ? 'bg-orange-600/10 text-orange-300'
                 : 'text-gray-300 hover:bg-gray-800 hover:text-white'
             }`}
             title={sidebarCollapsed ? item.label : undefined}
           >
             <div className={`flex items-center gap-3 ${sidebarCollapsed ? 'justify-center w-full' : ''}`}>
-              <Icon size={20} className={hasActiveChild ? 'text-orange-400' : ''} />
+              <Icon size={20} />
               {!sidebarCollapsed && <span className="font-medium">{item.label}</span>}
             </div>
             {!sidebarCollapsed && (
-              <div className={`transition-transform ${isExpanded ? 'rotate-0' : '-rotate-90'}`}>
-                <ChevronDown size={16} />
-              </div>
+              <ChevronDown 
+                size={16} 
+                className={`transition-transform ${isExpanded ? 'rotate-0' : '-rotate-90'}`}
+              />
             )}
           </button>
           
+          {/* 子項目列表 */}
           {isExpanded && !sidebarCollapsed && (
-            <div className="space-y-1 pl-4">
-              {item.children!.map(child => renderNavItem(child, level + 1))}
+            <div className="space-y-1">
+              {item.children!.map(child => {
+                const ChildIcon = child.icon;
+                const childActive = child.path ? isActive(child.path) : false;
+                
+                return (
+                  <Link
+                    key={child.path}
+                    to={child.path!}
+                    className={`flex items-center gap-3 pl-12 pr-4 py-2.5 rounded-lg transition-all ${
+                      childActive
+                        ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white shadow-lg'
+                        : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                    }`}
+                  >
+                    <ChildIcon size={18} />
+                    <span className="text-sm font-medium">{child.label}</span>
+                    {childActive && (
+                      <div className="ml-auto w-1 h-4 bg-white rounded-full"></div>
+                    )}
+                  </Link>
+                );
+              })}
             </div>
           )}
         </div>
       );
     }
 
+    // 一般項目（無子項目）
     return (
       <Link
         key={item.label}
         to={item.path!}
-        className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all group ${
+        className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
           active
             ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white shadow-lg'
-            : level === 0
-            ? 'text-gray-300 hover:bg-gray-800 hover:text-white'
-            : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+            : 'text-gray-300 hover:bg-gray-800 hover:text-white'
         }`}
         title={sidebarCollapsed ? item.label : undefined}
       >
-        <Icon size={20} className={active ? 'drop-shadow-md' : ''} />
-        {!sidebarCollapsed && (
-          <span className="font-medium">{item.label}</span>
-        )}
+        <Icon size={20} />
+        {!sidebarCollapsed && <span className="font-medium">{item.label}</span>}
         {active && !sidebarCollapsed && (
           <div className="ml-auto w-1 h-6 bg-white rounded-full"></div>
         )}
@@ -203,7 +222,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         <div className="p-4 border-t border-gray-800 space-y-2">
           <button
             onClick={() => navigate('/')}
-            className={`flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-all w-full group ${
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-all w-full ${
               sidebarCollapsed ? 'justify-center' : ''
             }`}
             title={sidebarCollapsed ? '返回前台' : undefined}

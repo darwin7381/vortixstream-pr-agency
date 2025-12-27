@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, UploadFile, File, Form, Query
 from typing import List, Optional
 from datetime import datetime
 import logging
+import mimetypes
 from PIL import Image
 import io
 
@@ -348,3 +349,114 @@ async def get_media_stats():
         )
     
     return dict(stats)
+
+
+@router.post("/sync-from-r2")
+async def sync_from_r2():
+    """
+    掃描 R2 並匯入所有檔案到資料庫
+    
+    - 掃描 R2 bucket 中的所有檔案
+    - 匯入到資料庫（已存在的會跳過）
+    - 返回匯入統計
+    """
+    try:
+        # 列出 R2 所有檔案
+        response = r2_storage.s3_client.list_objects_v2(
+            Bucket=r2_storage.bucket_name
+        )
+        
+        if 'Contents' not in response:
+            return {
+                "message": "R2 bucket 是空的",
+                "imported": 0,
+                "skipped": 0,
+                "total": 0
+            }
+        
+        total_files = len(response['Contents'])
+        imported_count = 0
+        skipped_count = 0
+        
+        async with db.pool.acquire() as conn:
+            for obj in response['Contents']:
+                file_key = obj['Key']
+                file_size = obj['Size']
+                last_modified = obj['LastModified']
+                
+                # 解析資料夾和檔名
+                if '/' in file_key:
+                    folder = '/'.join(file_key.split('/')[:-1])
+                    filename = file_key.split('/')[-1]
+                else:
+                    folder = 'uploads'
+                    filename = file_key
+                
+                # 跳過已存在的檔案
+                exists = await conn.fetchval(
+                    "SELECT id FROM media_files WHERE file_key = $1",
+                    file_key
+                )
+                
+                if exists:
+                    skipped_count += 1
+                    continue
+                
+                # 偵測 MIME 類型
+                mime_type, _ = mimetypes.guess_type(filename)
+                mime_type = mime_type or 'application/octet-stream'
+                
+                # 生成公開 URL
+                file_url = r2_storage.get_file_url(file_key)
+                
+                # 嘗試獲取圖片尺寸
+                width, height = None, None
+                if mime_type.startswith('image/'):
+                    try:
+                        obj_data = r2_storage.s3_client.get_object(
+                            Bucket=r2_storage.bucket_name,
+                            Key=file_key
+                        )
+                        content = obj_data['Body'].read()
+                        image = Image.open(io.BytesIO(content))
+                        width, height = image.size
+                    except:
+                        pass
+                
+                # 插入資料庫
+                await conn.execute(
+                    """
+                    INSERT INTO media_files (
+                        filename, original_filename, file_key, file_url,
+                        file_size, mime_type, folder, uploaded_by, created_at,
+                        width, height
+                    )
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+                    """,
+                    filename,
+                    filename,
+                    file_key,
+                    file_url,
+                    file_size,
+                    mime_type,
+                    folder,
+                    "synced",
+                    last_modified.replace(tzinfo=None),
+                    width,
+                    height
+                )
+                
+                imported_count += 1
+        
+        logger.info(f"✅ R2 sync completed: {imported_count} imported, {skipped_count} skipped")
+        
+        return {
+            "message": "同步完成",
+            "imported": imported_count,
+            "skipped": skipped_count,
+            "total": total_files
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ R2 sync failed: {e}")
+        raise HTTPException(status_code=500, detail=f"同步失敗：{str(e)}")
