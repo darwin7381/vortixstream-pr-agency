@@ -4,6 +4,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { MaterialSymbol } from './ui/material-symbol';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import { newsletterAPI } from '../api/client';
 import Footer from './Footer';
 import { blogCategories, blogArticles, newsletterContent, paginationConfig } from '../constants/blogData';
 import { ChevronLeft, ChevronRight, Calendar, Clock } from 'lucide-react';
@@ -50,23 +51,22 @@ export default function BlogPage() {
   };
 
   // Handle newsletter subscription
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     if (email.trim()) {
-      console.log('Subscribing email:', email);
-      // Here you would handle the actual subscription
-      setEmail('');
-      
-      // Show success message
-      const button = e.currentTarget.querySelector('button[type="submit"]') as HTMLButtonElement;
-      if (button) {
-        const originalText = button.textContent;
-        button.textContent = 'Subscribed!';
-        button.disabled = true;
-        setTimeout(() => {
-          button.textContent = originalText;
-          button.disabled = false;
-        }, 2000);
+      try {
+        await newsletterAPI.subscribe(email, 'blog-page');
+        console.log('Successfully subscribed:', email);
+        
+        // 清空表單
+        setEmail('');
+        
+        // 導航到成功頁面
+        navigate('/newsletter-success');
+        
+      } catch (error) {
+        console.error('Failed to subscribe:', error);
+        alert('訂閱失敗，請稍後再試');
       }
     }
   };

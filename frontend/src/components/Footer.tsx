@@ -4,12 +4,15 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Facebook, Instagram, Twitter, Linkedin, Youtube } from "lucide-react";
 import { mapLinks, resourceLinks, policyLinks } from '../constants/footerData';
+import { newsletterAPI } from '../api/client';
 import VortixLogoWhite from '../assets/VortixLogo White_Horizontal.png';
 
 export default function Footer() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const socialLinks = [
     { name: 'Facebook', icon: Facebook },
     { name: 'Instagram', icon: Instagram },
@@ -18,7 +21,7 @@ export default function Footer() {
     { name: 'Youtube', icon: Youtube }
   ];
 
-  const handleSubscribe = () => {
+  const handleSubscribe = async () => {
     // 清除之前的錯誤
     setError('');
     
@@ -28,8 +31,20 @@ export default function Footer() {
       return;
     }
     
-    // Email 驗證通過，導航到成功頁面
-    navigate('/newsletter-success');
+    setIsSubmitting(true);
+    
+    try {
+      // 調用後端 API 訂閱
+      await newsletterAPI.subscribe(email, 'footer');
+      
+      // Email 驗證通過，導航到成功頁面
+      navigate('/newsletter-success');
+    } catch (error) {
+      console.error('Failed to subscribe:', error);
+      setError('訂閱失敗，請稍後再試');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const CompanyLogo = () => (
@@ -78,9 +93,10 @@ export default function Footer() {
                     />
                     <Button 
                       onClick={handleSubscribe}
-                      className="bg-transparent border border-white text-white hover:bg-white hover:text-black text-[14px] px-6 py-3 rounded-md h-[44px] whitespace-nowrap transition-colors"
+                      disabled={isSubmitting}
+                      className="bg-transparent border border-white text-white hover:bg-white hover:text-black text-[14px] px-6 py-3 rounded-md h-[44px] whitespace-nowrap transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Subscribe
+                      {isSubmitting ? '訂閱中...' : 'Subscribe'}
                     </Button>
                   </div>
                   {error && (

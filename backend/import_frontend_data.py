@@ -196,8 +196,20 @@ PRICING_PLANS_OLD = [
 
 
 async def main():
+    import os
+    from dotenv import load_dotenv
+    
+    # 載入環境變數（本地開發時）
+    load_dotenv()
+    
+    # 從環境變數讀取資料庫 URL
+    database_url = os.getenv("DATABASE_URL", "postgresql://JL@localhost:5432/vortixpr")
+    
+    print(f"🔗 連接資料庫...")
+    print(f"   URL: {database_url[:30]}..." if len(database_url) > 30 else f"   URL: {database_url}")
+    
     # 連線到資料庫
-    conn = await asyncpg.connect("postgresql://JL@localhost:5432/vortixpr")
+    conn = await asyncpg.connect(database_url)
     
     print("🗑️  清空現有資料...")
     await conn.execute("DELETE FROM blog_posts")

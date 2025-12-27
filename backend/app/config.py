@@ -18,8 +18,9 @@ class Settings(BaseSettings):
     SMTP_PASSWORD: str = ""
     ADMIN_EMAIL: str = ""
     
-    # Or Resend
+    # Resend (郵件服務)
     RESEND_API_KEY: str = ""
+    FROM_EMAIL: str = "onboarding@resend.dev"
     
     # Security
     SECRET_KEY: str = "change-this-in-production"

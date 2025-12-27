@@ -1,8 +1,11 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 import { ChevronDown, Mail, MessageCircle, Send } from 'lucide-react';
+import { contactAPI } from '../api/client';
 
 export default function PricingContactForm() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -11,6 +14,7 @@ export default function PricingContactForm() {
     projectDescription: '',
     budgetRange: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -20,10 +24,42 @@ export default function PricingContactForm() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    console.log('Form submitted:', formData);
+    
+    if (isSubmitting) return;
+    
+    setIsSubmitting(true);
+    
+    try {
+      // 調用後端 API
+      await contactAPI.submit({
+        name: formData.fullName,
+        email: formData.email,
+        company: formData.company,
+        phone: '', // 這個表單沒有電話欄位
+        message: `產業: ${formData.industry}\n預算範圍: ${formData.budgetRange}\n\n專案描述:\n${formData.projectDescription}`
+      });
+      
+      // 成功後清空表單
+      setFormData({
+        fullName: '',
+        email: '',
+        company: '',
+        industry: '',
+        projectDescription: '',
+        budgetRange: ''
+      });
+      
+      // 顯示成功訊息
+      alert('感謝您的提交！我們會盡快與您聯繫。');
+      
+    } catch (error) {
+      console.error('Failed to submit contact form:', error);
+      alert('提交失敗，請稍後再試');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -154,18 +190,22 @@ export default function PricingContactForm() {
               <div className="pt-6">
                 <Button 
                   type="submit"
+                  disabled={isSubmitting}
                   className="
                     relative w-1/2 mx-auto border border-[#FF7400] text-white overflow-hidden
                     py-[10px] px-6 rounded-lg transition-all duration-300 flex justify-center items-center
                     hover:scale-105 hover:shadow-[0_0_25px_rgba(255,116,0,0.4)]
                     before:absolute before:inset-0 before:bg-black/20 before:opacity-0 before:transition-opacity before:duration-300
                     hover:before:opacity-100
+                    disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100
                   "
                   style={{ 
                     background: 'linear-gradient(102deg, #FF7400 0%, #1D3557 100%)' 
                   }}
                 >
-                  <span className="relative z-10">Request Custom Quote</span>
+                  <span className="relative z-10">
+                    {isSubmitting ? '發送中...' : 'Request Custom Quote'}
+                  </span>
                 </Button>
               </div>
             </form>

@@ -1,9 +1,12 @@
 from fastapi import APIRouter, HTTPException, Request
+import logging
 
 from ..core.database import db
 from ..models.newsletter import NewsletterSubscribe
+from ..services.email_service import email_service
 
 router = APIRouter(prefix="/newsletter")
+logger = logging.getLogger(__name__)
 
 
 @router.post("/subscribe", status_code=201)
@@ -30,6 +33,13 @@ async def subscribe_newsletter(subscription: NewsletterSubscribe, request: Reque
                     """,
                     subscription.email
                 )
+                
+                # 重新訂閱也發送歡迎郵件
+                try:
+                    await email_service.send_newsletter_welcome(subscription.email)
+                except Exception as e:
+                    logger.error(f"Failed to send welcome email: {e}")
+                
                 return {"message": "Re-subscribed successfully"}
             else:
                 return {"message": "Already subscribed"}
@@ -45,7 +55,12 @@ async def subscribe_newsletter(subscription: NewsletterSubscribe, request: Reque
             ip_address
         )
     
-    # TODO: 發送歡迎 Email
+    # 發送歡迎 Email
+    try:
+        await email_service.send_newsletter_welcome(subscription.email)
+    except Exception as e:
+        logger.error(f"Failed to send welcome email: {e}")
+        # 不影響訂閱，即使郵件發送失敗
     
     return {"message": "Subscribed successfully"}
 
