@@ -79,7 +79,6 @@ class Database:
                 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
                 CREATE INDEX IF NOT EXISTS idx_users_provider ON users(provider, provider_id);
                 CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
-                CREATE INDEX IF NOT EXISTS idx_users_account_status ON users(account_status);
             """)
             
             # ==================== Banned Emails ====================
@@ -391,6 +390,9 @@ class Database:
             
             logger.info("✅ All tables initialized")
             
+            # 安全地添加新欄位（向後兼容）
+            await self._add_new_columns(conn)
+            
             # 插入初始資料（如果需要）
             await self._init_seed_data(conn)
             
@@ -429,6 +431,53 @@ class Database:
             )
             
             logger.info("✅ Pricing packages seeded")
+    
+    async def _add_new_columns(self, conn):
+        """
+        安全地添加新欄位到現有表（符合 DATABASE_ARCHITECTURE.md 原則）
+        
+        原則：
+        1. ✅ 檢查欄位是否存在
+        2. ✅ 只在不存在時添加
+        3. ✅ 生產環境安全
+        4. ✅ 冪等性保證
+        """
+        
+        # 檢查 account_status 欄位是否存在
+        account_status_exists = await conn.fetchval("""
+            SELECT EXISTS (
+                SELECT 1 FROM information_schema.columns 
+                WHERE table_name='users' AND column_name='account_status'
+            )
+        """)
+        
+        if not account_status_exists:
+            logger.info("🔄 Adding account_status column to users table...")
+            await conn.execute("""
+                ALTER TABLE users ADD COLUMN account_status VARCHAR(20) DEFAULT 'active';
+                ALTER TABLE users ADD COLUMN deactivated_at TIMESTAMP;
+                ALTER TABLE users ADD COLUMN deactivation_reason TEXT;
+                ALTER TABLE users ADD COLUMN banned_at TIMESTAMP;
+                ALTER TABLE users ADD COLUMN banned_reason TEXT;
+                ALTER TABLE users ADD COLUMN banned_by INTEGER;
+            """)
+            
+            # 為現有用戶設定預設狀態
+            await conn.execute("""
+                UPDATE users 
+                SET account_status = CASE 
+                    WHEN is_active = TRUE THEN 'active'
+                    ELSE 'admin_suspended'
+                END
+                WHERE account_status IS NULL
+            """)
+            
+            # 添加索引（在確保欄位存在後）
+            await conn.execute("""
+                CREATE INDEX IF NOT EXISTS idx_users_account_status ON users(account_status)
+            """)
+            
+            logger.info("✅ account_status columns and index added")
     
     async def _promote_super_admin(self, conn):
         """
