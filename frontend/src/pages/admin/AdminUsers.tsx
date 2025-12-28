@@ -528,7 +528,7 @@ export default function AdminUsers() {
                       {/* 操作 */}
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-end gap-2">
-                          {user.account_status === 'active' ? (
+                          {(user.account_status === 'active' || !user.account_status || user.is_active !== false) ? (
                             <>
                               {/* 角色選擇器（僅啟用用戶） */}
                               <select

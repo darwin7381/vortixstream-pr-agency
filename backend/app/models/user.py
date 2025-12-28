@@ -62,7 +62,9 @@ class UserResponse(BaseModel):
     name: str
     avatar_url: Optional[str]
     role: UserRole
-    is_verified: bool
+    is_active: bool = True
+    is_verified: bool = False
+    account_status: str = "active"
     created_at: datetime
     
     class Config:
