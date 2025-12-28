@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
-import { User, Shield, Mail, Calendar, Search, UserCheck, UserX, Trash2, XCircle, RefreshCw } from 'lucide-react';
+import { User, Shield, Mail, Calendar, Search, UserCheck, UserX, Trash2, XCircle, RefreshCw, Ban } from 'lucide-react';
 
 type UserRole = 'user' | 'publisher' | 'admin' | 'super_admin';
 
@@ -12,6 +12,7 @@ interface UserData {
   role: UserRole;
   is_verified: boolean;
   is_active: boolean;
+  account_status: 'active' | 'user_deactivated' | 'admin_suspended' | 'banned';
   created_at: string;
 }
 
@@ -32,7 +33,7 @@ export default function AdminUsers() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
-  const [statusFilter, setStatusFilter] = useState<'active' | 'inactive'>('active');
+  const [statusFilter, setStatusFilter] = useState<string>('active');
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState<UserRole>('user');
@@ -73,7 +74,7 @@ export default function AdminUsers() {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/status?is_active=true`, {
+      const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/activate`, {
         method: 'PATCH',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -182,6 +183,54 @@ export default function AdminUsers() {
     } catch (error) {
       console.error('Failed to delete user:', error);
       alert('操作失敗');
+    }
+  };
+
+  const handleBanUser = async (userId: number, email: string) => {
+    const reason = prompt(`封禁用戶 ${email}\n\n請輸入封禁原因：`, '違反服務條款');
+    
+    if (!reason) return;
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/ban?reason=${encodeURIComponent(reason)}`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (response.ok) {
+        alert('用戶已封禁');
+        loadUsers();
+        loadStats();
+      } else {
+        const error = await response.json();
+        alert(error.detail || '封禁失敗');
+      }
+    } catch (error) {
+      console.error('Failed to ban user:', error);
+      alert('封禁失敗');
+    }
+  };
+
+  const handleUnbanUser = async (userId: number, email: string) => {
+    if (!confirm(`確定要解除對 ${email} 的封禁？`)) return;
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/unban`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (response.ok) {
+        alert('已解除封禁');
+        loadUsers();
+        loadStats();
+      } else {
+        const error = await response.json();
+        alert(error.detail || '解除封禁失敗');
+      }
+    } catch (error) {
+      console.error('Failed to unban user:', error);
+      alert('解除封禁失敗');
     }
   };
 
@@ -375,11 +424,12 @@ export default function AdminUsers() {
             {/* 狀態篩選 */}
             <select
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as 'active' | 'inactive')}
+              onChange={(e) => setStatusFilter(e.target.value)}
               className="px-4 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-sm focus:border-orange-500 transition-all min-w-[140px]"
             >
               <option value="active">✅ 啟用中</option>
-              <option value="inactive">🚫 已停用</option>
+              <option value="admin_suspended">🟡 已停用</option>
+              <option value="banned">🔴 已封禁</option>
             </select>
           </div>
         </div>
@@ -405,7 +455,8 @@ export default function AdminUsers() {
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                   {users.map((user) => (
                     <tr key={user.id} className={`hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
-                      user.is_active === false ? 'opacity-60' : ''
+                      user.account_status === 'banned' ? 'opacity-40 bg-red-900/5' :
+                      user.account_status === 'admin_suspended' ? 'opacity-60' : ''
                     }`}>
                       {/* 用戶資訊 */}
                       <td className="px-6 py-4">
@@ -442,8 +493,13 @@ export default function AdminUsers() {
                       {/* 狀態 */}
                       <td className="px-6 py-4">
                         <div className="flex flex-col gap-1.5">
-                          {user.is_active === false ? (
+                          {user.account_status === 'banned' ? (
                             <span className="inline-flex items-center gap-1 text-xs font-semibold text-red-600 dark:text-red-400">
+                              <Ban className="w-3.5 h-3.5" />
+                              已封禁
+                            </span>
+                          ) : user.account_status === 'admin_suspended' ? (
+                            <span className="inline-flex items-center gap-1 text-xs font-semibold text-orange-600 dark:text-orange-400">
                               <XCircle className="w-3.5 h-3.5" />
                               已停用
                             </span>
@@ -472,7 +528,7 @@ export default function AdminUsers() {
                       {/* 操作 */}
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-end gap-2">
-                          {user.is_active !== false ? (
+                          {user.account_status === 'active' ? (
                             <>
                               {/* 角色選擇器（僅啟用用戶） */}
                               <select
@@ -489,16 +545,38 @@ export default function AdminUsers() {
                               {/* 停用 */}
                               <button
                                 onClick={() => handleDeleteUser(user.id, user.email)}
-                                className="px-3 py-1.5 bg-red-100 dark:bg-red-500/10 text-red-700 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-500/20 border border-red-200 dark:border-red-500/20 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5"
+                                className="px-3 py-1.5 bg-yellow-100 dark:bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 hover:bg-yellow-200 dark:hover:bg-yellow-500/20 border border-yellow-200 dark:border-yellow-500/20 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5"
                                 title="停用用戶"
                               >
                                 <XCircle className="w-3.5 h-3.5" />
                                 停用
                               </button>
+
+                              {/* 封禁 */}
+                              <button
+                                onClick={() => handleBanUser(user.id, user.email)}
+                                className="px-3 py-1.5 bg-red-100 dark:bg-red-500/10 text-red-700 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-500/20 border border-red-200 dark:border-red-500/20 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5"
+                                title="封禁用戶"
+                              >
+                                <Ban className="w-3.5 h-3.5" />
+                                封禁
+                              </button>
+                            </>
+                          ) : user.account_status === 'banned' ? (
+                            <>
+                              {/* 解除封禁（僅 super_admin） */}
+                              <button
+                                onClick={() => handleUnbanUser(user.id, user.email)}
+                                className="px-3 py-1.5 bg-purple-100 dark:bg-purple-500/10 text-purple-700 dark:text-purple-400 hover:bg-purple-200 dark:hover:bg-purple-500/20 border border-purple-200 dark:border-purple-500/20 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5"
+                                title="解除封禁（需 Super Admin）"
+                              >
+                                <RefreshCw className="w-3.5 h-3.5" />
+                                解除封禁
+                              </button>
                             </>
                           ) : (
                             <>
-                              {/* 重新啟用 */}
+                              {/* 重新啟用（停用狀態） */}
                               <button
                                 onClick={() => handleReactivateUser(user.id, user.email)}
                                 className="px-3 py-1.5 bg-green-100 dark:bg-green-500/10 text-green-700 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-500/20 border border-green-200 dark:border-green-500/20 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5"

@@ -137,7 +137,7 @@ class EmailService:
                     </div>
                     
                     <div style="margin-top: 30px; text-align: center;">
-                        <a href="http://localhost:3001/admin/contact" 
+                        <a href="{settings.FRONTEND_URL}/admin/contact" 
                            style="display: inline-block; background: #ea580c; color: white; 
                                   padding: 12px 30px; text-decoration: none; border-radius: 8px;
                                   font-weight: 600;">
@@ -149,7 +149,7 @@ class EmailService:
                 <div class="footer">
                     <p>此郵件由 VortixPR 系統自動發送</p>
                     <p style="margin-top: 5px; font-size: 12px;">
-                        登入管理後台：<a href="http://localhost:3001/admin">http://localhost:3001/admin</a>
+                        登入管理後台：<a href="{settings.FRONTEND_URL}/admin">{settings.FRONTEND_URL}/admin</a>
                     </p>
                 </div>
             </body>
@@ -295,7 +295,7 @@ class EmailService:
                     
                     <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
                         如果您不想再收到我們的郵件，可以隨時
-                        <a href="http://localhost:3001/newsletter/unsubscribe" style="color: #ea580c;">取消訂閱</a>。
+                        <a href="{settings.FRONTEND_URL}/newsletter/unsubscribe" style="color: #ea580c;">取消訂閱</a>。
                     </p>
                 </div>
                 

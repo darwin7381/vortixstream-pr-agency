@@ -7,7 +7,8 @@ from .core.database import db
 from .api import (
     blog, pricing, contact, newsletter, pr_package,
     blog_admin, pricing_admin, pr_package_admin, contact_admin, newsletter_admin,
-    pr_category_admin, media_admin, auth, user_admin, invitation_admin, invitation_public
+    pr_category_admin, media_admin, auth, user_admin, invitation_admin, invitation_public,
+    settings_admin
 )
 
 # 設定 logging
@@ -117,6 +118,7 @@ app.include_router(newsletter_admin.router, prefix="/api/admin", tags=["Admin - 
 app.include_router(media_admin.router, prefix="/api/admin", tags=["Admin - Media"])
 app.include_router(user_admin.router, tags=["Admin - Users"])
 app.include_router(invitation_admin.router, tags=["Admin - Invitations"])
+app.include_router(settings_admin.router, tags=["Admin - Settings"])
 
 
 if __name__ == "__main__":

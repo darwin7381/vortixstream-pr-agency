@@ -47,6 +47,7 @@ import AdminNewsletterList from './pages/admin/AdminNewsletterList';
 import AdminMedia from './pages/admin/AdminMedia';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminInvitations from './pages/admin/AdminInvitations';
+import AdminSettings from './pages/admin/AdminSettings';
 import { faqs } from './constants/faqData';
 
 // Home Page Component
@@ -163,6 +164,7 @@ function AppContent() {
           <Route path="/admin/media" element={<ProtectedRoute requireAdmin><AdminMedia /></ProtectedRoute>} />
           <Route path="/admin/users" element={<ProtectedRoute requireAdmin><AdminUsers /></ProtectedRoute>} />
           <Route path="/admin/invitations" element={<ProtectedRoute requireAdmin><AdminInvitations /></ProtectedRoute>} />
+          <Route path="/admin/settings" element={<ProtectedRoute requireAdmin><AdminSettings /></ProtectedRoute>} />
         </Routes>
       </div>
     </div>

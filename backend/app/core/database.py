@@ -56,9 +56,19 @@ class Database:
                     -- Role (user, publisher, admin, super_admin)
                     role VARCHAR(20) DEFAULT 'user',
                     
-                    -- Status
+                    -- Account Status (active, user_deactivated, admin_suspended, banned)
+                    account_status VARCHAR(20) DEFAULT 'active',
+                    
+                    -- Legacy fields (保留向後兼容)
                     is_active BOOLEAN DEFAULT TRUE,
                     is_verified BOOLEAN DEFAULT FALSE,
+                    
+                    -- Status Details
+                    deactivated_at TIMESTAMP,
+                    deactivation_reason TEXT,
+                    banned_at TIMESTAMP,
+                    banned_reason TEXT,
+                    banned_by INTEGER,
                     
                     -- Timestamps
                     created_at TIMESTAMP DEFAULT NOW(),
@@ -69,6 +79,44 @@ class Database:
                 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
                 CREATE INDEX IF NOT EXISTS idx_users_provider ON users(provider, provider_id);
                 CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
+                CREATE INDEX IF NOT EXISTS idx_users_account_status ON users(account_status);
+            """)
+            
+            # ==================== Banned Emails ====================
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS banned_emails (
+                    id SERIAL PRIMARY KEY,
+                    email VARCHAR(255) UNIQUE NOT NULL,
+                    reason TEXT,
+                    banned_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+                    banned_at TIMESTAMP DEFAULT NOW()
+                );
+                
+                CREATE INDEX IF NOT EXISTS idx_banned_emails_email ON banned_emails(email);
+            """)
+            
+            # ==================== System Settings ====================
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS system_settings (
+                    id SERIAL PRIMARY KEY,
+                    setting_key VARCHAR(100) UNIQUE NOT NULL,
+                    setting_value TEXT NOT NULL,
+                    setting_type VARCHAR(20) DEFAULT 'string',
+                    description TEXT,
+                    updated_at TIMESTAMP DEFAULT NOW(),
+                    updated_by INTEGER REFERENCES users(id) ON DELETE SET NULL
+                );
+                
+                CREATE INDEX IF NOT EXISTS idx_settings_key ON system_settings(setting_key);
+            """)
+            
+            # 插入預設設定
+            await conn.execute("""
+                INSERT INTO system_settings (setting_key, setting_value, setting_type, description)
+                VALUES 
+                    ('auto_delete_deactivated_users', 'false', 'boolean', '是否自動刪除停用超過 N 天的用戶'),
+                    ('auto_delete_days', '30', 'integer', '自動刪除的天數（當啟用自動刪除時）')
+                ON CONFLICT (setting_key) DO NOTHING
             """)
             
             # ==================== User Invitations ====================

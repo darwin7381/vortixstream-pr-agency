@@ -39,21 +39,44 @@ async def register(user_data: UserRegister, invitation_token: Optional[str] = Qu
     async with db.pool.acquire() as conn:
         # 檢查 email 是否已存在
         existing_user = await conn.fetchrow(
-            "SELECT id, is_active FROM users WHERE email = $1",
+            "SELECT id, account_status FROM users WHERE email = $1",
             user_data.email
         )
         
+        # 檢查是否在封禁名單
+        is_banned_email = await conn.fetchval(
+            "SELECT EXISTS(SELECT 1 FROM banned_emails WHERE email = $1)",
+            user_data.email
+        )
+        
+        if is_banned_email:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="此 Email 已被封禁，無法註冊"
+            )
+        
         if existing_user:
-            if existing_user["is_active"]:
+            status = existing_user["account_status"]
+            
+            if status == 'active':
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail="此 Email 已被註冊"
                 )
-            else:
+            
+            elif status == 'banned':
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
-                    detail="此帳號已被停用，請聯絡管理員重新啟用"
+                    detail="此帳號已被封禁，無法註冊"
                 )
+            
+            elif status in ['user_deactivated', 'admin_suspended']:
+                # 停用帳號允許重新註冊（刪除舊記錄，創建新帳號）
+                await conn.execute("""
+                    DELETE FROM users WHERE id = $1
+                """, existing_user["id"])
+                
+                # 繼續創建新帳號（下方的邏輯）
         
         # 檢查是否有邀請（並取得邀請的角色）
         invitation_role = None
@@ -89,8 +112,8 @@ async def register(user_data: UserRegister, invitation_token: Optional[str] = Qu
         
         # 創建用戶（如果有邀請，使用邀請的角色）
         user = await conn.fetchrow("""
-            INSERT INTO users (email, hashed_password, name, provider, is_verified, role)
-            VALUES ($1, $2, $3, 'email', FALSE, $4)
+            INSERT INTO users (email, hashed_password, name, provider, is_verified, role, account_status, is_active)
+            VALUES ($1, $2, $3, 'email', FALSE, $4, 'active', TRUE)
             RETURNING id, email, name, avatar_url, role, is_verified, created_at
         """, user_data.email, hashed_pw, user_data.name, invitation_role or 'user')
         

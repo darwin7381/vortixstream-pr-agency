@@ -3,7 +3,8 @@ from typing import List, Optional
 from datetime import datetime
 
 from app.models.user import UserResponse
-from app.utils.security import require_admin, require_super_admin
+from app.utils.security import require_admin, require_super_admin, get_current_user
+from datetime import datetime
 from app.core.database import db
 
 router = APIRouter(prefix="/api/admin/users", tags=["Admin - Users"])
@@ -28,20 +29,20 @@ async def get_users(
     - limit: 限制數量
     """
     async with db.pool.acquire() as conn:
-        # 構建查詢（確保包含 is_active）
+        # 構建查詢（確保包含 is_active 和 account_status）
         query = """
-            SELECT id, email, name, avatar_url, provider, role, is_active, is_verified, created_at, last_login_at
+            SELECT id, email, name, avatar_url, provider, role, is_active, is_verified, account_status, created_at, last_login_at
             FROM users
             WHERE 1=1
         """
         params = []
         param_count = 0
         
-        # 狀態過濾
-        if status == "active":
-            query += " AND is_active = TRUE"
-        elif status == "inactive":
-            query += " AND is_active = FALSE"
+        # 狀態過濾（使用 account_status）
+        if status:
+            param_count += 1
+            query += f" AND account_status = ${param_count}"
+            params.append(status)
         
         # 角色過濾
         if role:
@@ -60,11 +61,9 @@ async def get_users(
         
         rows = await conn.fetch(query, *params)
         
-        # 注意：UserResponse 需要包含 is_active 欄位
+        # 構建回應（包含 account_status）
         users = []
         for row in rows:
-            user_dict = dict(row)
-            # 臨時處理：添加 is_active 到回應中
             users.append({
                 "id": row["id"],
                 "email": row["email"],
@@ -72,7 +71,8 @@ async def get_users(
                 "avatar_url": row["avatar_url"],
                 "role": row["role"],
                 "is_verified": row["is_verified"],
-                "is_active": row.get("is_active", True),
+                "is_active": row["is_active"],
+                "account_status": row["account_status"],
                 "created_at": row["created_at"]
             })
         
@@ -164,17 +164,15 @@ async def update_user_role(
 
 
 # ==================== 啟用/停用用戶 ====================
-@router.patch("/{user_id}/status")
-async def update_user_status(
+@router.patch("/{user_id}/activate")
+async def activate_user(
     user_id: int,
-    is_active: bool,
     current_user = Depends(require_admin)
 ):
-    """啟用或停用用戶帳號"""
+    """重新啟用用戶帳號"""
     async with db.pool.acquire() as conn:
-        # 檢查用戶是否存在
         user = await conn.fetchrow(
-            "SELECT id, email FROM users WHERE id = $1",
+            "SELECT id, email, account_status FROM users WHERE id = $1",
             user_id
         )
         
@@ -184,25 +182,25 @@ async def update_user_status(
                 detail="用戶不存在"
             )
         
-        # 防止停用自己
-        if user_id == current_user.user_id and not is_active:
+        if user["account_status"] == 'banned':
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="無法停用自己的帳號"
+                detail="被封禁的用戶無法啟用，請先解除封禁"
             )
         
-        # 更新狀態
+        # 重新啟用
         await conn.execute("""
             UPDATE users 
-            SET is_active = $1, updated_at = NOW()
-            WHERE id = $2
-        """, is_active, user_id)
+            SET account_status = 'active',
+                is_active = TRUE,
+                deactivated_at = NULL,
+                updated_at = NOW()
+            WHERE id = $1
+        """, user_id)
         
-        status_text = "啟用" if is_active else "停用"
         return {
-            "message": f"用戶 {user['email']} 已{status_text}",
-            "user_id": user_id,
-            "is_active": is_active
+            "message": f"用戶 {user['email']} 已重新啟用",
+            "user_id": user_id
         }
 
 
@@ -275,12 +273,15 @@ async def delete_user(
         else:
             await conn.execute("""
                 UPDATE users 
-                SET is_active = FALSE, updated_at = NOW()
+                SET account_status = 'admin_suspended',
+                    is_active = FALSE,
+                    deactivated_at = NOW(),
+                    updated_at = NOW()
                 WHERE id = $1
             """, user_id)
             
             return {
-                "message": f"用戶 {user['email']} 已停用（軟刪除）",
+                "message": f"用戶 {user['email']} 已停用",
                 "user_id": user_id,
                 "permanent": False,
                 "note": "用戶資料已保留，可隨時重新啟用"
@@ -308,4 +309,116 @@ async def get_user(
             )
         
         return UserResponse(**dict(user))
+
+
+# ==================== 封禁用戶 ====================
+@router.post("/{user_id}/ban")
+async def ban_user(
+    user_id: int,
+    reason: str = "違反服務條款",
+    current_user = Depends(require_admin)
+):
+    """
+    封禁用戶（永久封禁，無法重新註冊）
+    
+    權限：admin 或 super_admin
+    """
+    async with db.pool.acquire() as conn:
+        # 檢查用戶是否存在
+        user = await conn.fetchrow(
+            "SELECT id, email, account_status FROM users WHERE id = $1",
+            user_id
+        )
+        
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="用戶不存在"
+            )
+        
+        # 防止封禁自己
+        if user_id == current_user.user_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="無法封禁自己的帳號"
+            )
+        
+        # 更新用戶狀態為 banned
+        await conn.execute("""
+            UPDATE users 
+            SET account_status = 'banned',
+                is_active = FALSE,
+                banned_at = NOW(),
+                banned_reason = $1,
+                banned_by = $2,
+                updated_at = NOW()
+            WHERE id = $3
+        """, reason, current_user.user_id, user_id)
+        
+        # 添加到封禁名單
+        await conn.execute("""
+            INSERT INTO banned_emails (email, reason, banned_by)
+            VALUES ($1, $2, $3)
+            ON CONFLICT (email) DO UPDATE SET
+                reason = $2,
+                banned_by = $3,
+                banned_at = NOW()
+        """, user["email"], reason, current_user.user_id)
+        
+        return {
+            "message": f"用戶 {user['email']} 已被封禁",
+            "user_id": user_id,
+            "reason": reason
+        }
+
+
+# ==================== 解除封禁 ====================
+@router.delete("/{user_id}/unban")
+async def unban_user(
+    user_id: int,
+    current_user = Depends(require_super_admin)
+):
+    """
+    解除封禁（僅 super_admin）
+    """
+    async with db.pool.acquire() as conn:
+        # 檢查用戶
+        user = await conn.fetchrow(
+            "SELECT id, email, account_status FROM users WHERE id = $1",
+            user_id
+        )
+        
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="用戶不存在"
+            )
+        
+        if user["account_status"] != 'banned':
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="此用戶未被封禁"
+            )
+        
+        # 解除封禁
+        await conn.execute("""
+            UPDATE users 
+            SET account_status = 'active',
+                is_active = TRUE,
+                banned_at = NULL,
+                banned_reason = NULL,
+                banned_by = NULL,
+                updated_at = NOW()
+            WHERE id = $1
+        """, user_id)
+        
+        # 從封禁名單移除
+        await conn.execute("""
+            DELETE FROM banned_emails WHERE email = $1
+        """, user["email"])
+        
+        return {
+            "message": f"用戶 {user['email']} 已解除封禁",
+            "user_id": user_id
+        }
 

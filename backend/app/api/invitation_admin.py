@@ -46,17 +46,38 @@ async def create_invitation(
         )
     
     async with db.pool.acquire() as conn:
+        # 檢查是否在封禁名單
+        is_banned = await conn.fetchval(
+            "SELECT EXISTS(SELECT 1 FROM banned_emails WHERE email = $1)",
+            invitation.email
+        )
+        
+        if is_banned:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="此 Email 已被封禁，無法邀請"
+            )
+        
         # 檢查該 email 是否已註冊
         existing_user = await conn.fetchrow(
-            "SELECT id, email FROM users WHERE email = $1",
+            "SELECT id, email, account_status FROM users WHERE email = $1",
             invitation.email
         )
         
         if existing_user:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="此 Email 已註冊，無需邀請"
-            )
+            status = existing_user["account_status"]
+            
+            if status == 'active':
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="此用戶已註冊並啟用，無需邀請"
+                )
+            elif status == 'banned':
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="此用戶已被封禁，無法邀請"
+                )
+            # 如果是 user_deactivated 或 admin_suspended，允許邀請（會重新啟用）
         
         # 檢查是否已有待處理的邀請
         existing_invitation = await conn.fetchrow("""

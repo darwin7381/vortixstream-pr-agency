@@ -131,6 +131,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         { label: '邀請管理', icon: Mail, path: '/admin/invitations' },
       ]
     },
+    { 
+      label: '系統設定', 
+      icon: Settings, 
+      path: '/admin/settings' 
+    },
   ];
 
   const renderNavItem = (item: NavItem) => {

@@ -9,10 +9,10 @@ class Settings(BaseSettings):
     DATABASE_URL: str
     
     # CORS
-    ALLOWED_ORIGINS: str = "http://localhost:3000"
+    ALLOWED_ORIGINS: str
     
     # Frontend URL
-    FRONTEND_URL: str = "http://localhost:3000"
+    FRONTEND_URL: str
     
     # Resend (郵件服務 - 可選)
     RESEND_API_KEY: str = ""
@@ -34,7 +34,7 @@ class Settings(BaseSettings):
     # Google OAuth
     GOOGLE_CLIENT_ID: str = ""
     GOOGLE_CLIENT_SECRET: str = ""
-    GOOGLE_REDIRECT_URI: str = "http://localhost:8000/api/auth/google/callback"
+    GOOGLE_REDIRECT_URI: str = ""
     
     # Super Admin（啟動時自動提升為管理員）
     SUPER_ADMIN_EMAIL: str = ""
