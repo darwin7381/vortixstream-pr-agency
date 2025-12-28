@@ -209,6 +209,103 @@ async def init_tables(self):
 
 ---
 
+## ⚠️ 重要陷阱：CREATE TABLE IF NOT EXISTS + 新欄位索引
+
+### 常見錯誤（會導致啟動失敗）
+
+**❌ 錯誤做法**：
+```python
+await conn.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        email VARCHAR(255),
+        new_column VARCHAR(100)  -- 新增的欄位
+    );
+    
+    -- ❌ 陷阱！如果表已存在（沒有 new_column），這會失敗
+    CREATE INDEX idx_new_column ON users(new_column);
+""")
+```
+
+**問題**：
+1. 第一次運行：表不存在 → CREATE TABLE 執行 → new_column 被創建 → 索引成功
+2. 第二次運行（表已存在）：CREATE TABLE 跳過 → new_column 不存在 → 索引失敗 ❌
+
+**✅ 正確做法**：
+
+```python
+async def init_tables(self):
+    # 1. 創建表（只包含原始欄位，不包含新欄位）
+    await conn.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            email VARCHAR(255)
+        );
+        
+        -- ✅ 只為原始欄位創建索引
+        CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+    """)
+    
+    # 2. 在獨立方法中添加新欄位和索引
+    await self._add_new_columns(conn)
+
+async def _add_new_columns(self, conn):
+    # 檢查欄位是否存在
+    column_exists = await conn.fetchval("""
+        SELECT EXISTS (
+            SELECT 1 FROM information_schema.columns 
+            WHERE table_name='users' AND column_name='new_column'
+        )
+    """)
+    
+    if not column_exists:
+        # 添加欄位
+        await conn.execute("""
+            ALTER TABLE users ADD COLUMN new_column VARCHAR(100)
+        """)
+        
+        # 添加索引（確保欄位存在後）
+        await conn.execute("""
+            CREATE INDEX IF NOT EXISTS idx_new_column ON users(new_column)
+        """)
+```
+
+**關鍵原則**：
+- ✅ **CREATE TABLE 只定義穩定的欄位**（不會改變的）
+- ✅ **新增欄位用 ALTER TABLE**（獨立方法，有檢查）
+- ✅ **新欄位的索引在 ALTER TABLE 之後創建**
+- ✅ **分離關注點**：表創建 vs. 表擴展
+
+### 實際案例：VortixPR account_status 欄位
+
+**實現**：
+```python
+# init_tables()
+await conn.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        ...
+        role VARCHAR(20) DEFAULT 'user'
+        -- ❌ 不在這裡定義 account_status
+    );
+    
+    CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
+    -- ❌ 不在這裡創建 account_status 的索引
+""")
+
+# _add_new_columns()
+if not account_status_exists:
+    await conn.execute("""
+        ALTER TABLE users ADD COLUMN account_status VARCHAR(20) DEFAULT 'active';
+    """)
+    
+    # ✅ 欄位存在後才創建索引
+    await conn.execute("""
+        CREATE INDEX IF NOT EXISTS idx_users_account_status ON users(account_status)
+    """)
+```
+
+---
+
 ---
 
 ## 🎲 假資料與初始資料管理
