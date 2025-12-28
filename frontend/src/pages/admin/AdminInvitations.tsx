@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { Mail, Calendar, Clock, CheckCircle, XCircle, RotateCcw, Trash2, Shield } from 'lucide-react';
+import { API_BASE_URL } from '../../config/api';
 
 interface Invitation {
   id: number;
@@ -19,7 +20,6 @@ export default function AdminInvitations() {
   const [isLoading, setIsLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<string>('pending');
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
   const token = localStorage.getItem('access_token');
 
   useEffect(() => {

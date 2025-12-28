@@ -39,21 +39,22 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
       setMode('register');
       
       // 從後端取得邀請資訊
-      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
-      fetch(`${API_BASE_URL}/auth/invitation/${token}`)
-        .then(res => res.json())
-        .then(data => {
-          if (data.email) {
-            setInvitationInfo({
-              email: data.email,
-              role: data.role,
-              inviter: data.inviter_email || '團隊成員'
-            });
-            // 預先填入 email
-            setFormData(prev => ({ ...prev, email: data.email }));
-          }
-        })
-        .catch(err => console.error('Failed to load invitation:', err));
+      import('../../config/api').then(({ API_BASE_URL }) => {
+          fetch(`${API_BASE_URL}/auth/invitation/${token}`)
+          .then(res => res.json())
+          .then(data => {
+            if (data.email) {
+              setInvitationInfo({
+                email: data.email,
+                role: data.role,
+                inviter: data.inviter_email || '團隊成員'
+              });
+              // 預先填入 email
+              setFormData(prev => ({ ...prev, email: data.email }));
+            }
+          })
+          .catch(err => console.error('Failed to load invitation:', err));
+      });
     }
   }, []);
 

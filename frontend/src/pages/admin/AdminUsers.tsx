@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { User, Shield, Mail, Calendar, Search, UserCheck, UserX, Trash2, XCircle, RefreshCw, Ban } from 'lucide-react';
+import { API_BASE_URL } from '../../config/api';
 
 type UserRole = 'user' | 'publisher' | 'admin' | 'super_admin';
 
@@ -38,7 +39,6 @@ export default function AdminUsers() {
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState<UserRole>('user');
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
   const token = localStorage.getItem('access_token');
 
   useEffect(() => {

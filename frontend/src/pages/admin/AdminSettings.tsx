@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { Settings as SettingsIcon, Save, Info } from 'lucide-react';
+import { API_BASE_URL } from '../../config/api';
 
 interface Setting {
   setting_key: string;
@@ -18,7 +19,6 @@ export default function AdminSettings() {
   const [autoDelete, setAutoDelete] = useState(false);
   const [deleteDays, setDeleteDays] = useState('30');
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
   const token = localStorage.getItem('access_token');
 
   useEffect(() => {
