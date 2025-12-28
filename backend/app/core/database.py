@@ -481,15 +481,18 @@ class Database:
     
     async def _promote_super_admin(self, conn):
         """
-        提升 Super Admin（安全、冪等）
+        提升或創建 Super Admin（安全、冪等）
         
         原則：
         1. ✅ 只有當 SUPER_ADMIN_EMAIL 有設定時才執行
-        2. ✅ 只有當用戶存在時才更新（不會失敗）
-        3. ✅ 冪等性 - 多次執行結果相同
-        4. ✅ 生產環境安全 - 不會破壞任何資料
+        2. ✅ 如果用戶不存在 → 自動創建（使用預設密碼或 OAuth）
+        3. ✅ 如果用戶存在但非 super_admin → 強制提升
+        4. ✅ 冪等性 - 多次執行結果相同
+        5. ✅ 生產環境安全 - 不會破壞任何資料
         """
         from ..config import settings
+        from ..utils.security import hash_password
+        import secrets
         
         # 如果沒有設定 SUPER_ADMIN_EMAIL，跳過
         if not settings.SUPER_ADMIN_EMAIL or settings.SUPER_ADMIN_EMAIL.strip() == "":
@@ -499,28 +502,60 @@ class Database:
         
         # 檢查用戶是否存在
         user = await conn.fetchrow("""
-            SELECT id, email, role FROM users 
+            SELECT id, email, role, account_status FROM users 
             WHERE LOWER(email) = $1
         """, super_admin_email)
         
         if user:
-            # 如果已經是 super_admin，跳過
-            if user["role"] == "super_admin":
+            # 用戶存在
+            # 如果已經是 super_admin 且帳號正常，跳過
+            if user["role"] == "super_admin" and user["account_status"] == "active":
                 logger.info(f"✅ Super Admin already set: {user['email']}")
                 return
             
-            # 強制提升為 super_admin（即使已經是 admin）
+            # 強制提升為 super_admin 並啟用帳號（即使被停用或封禁）
             await conn.execute("""
                 UPDATE users 
-                SET role = 'super_admin', updated_at = NOW()
+                SET role = 'super_admin',
+                    account_status = 'active',
+                    is_active = TRUE,
+                    banned_at = NULL,
+                    banned_reason = NULL,
+                    updated_at = NOW()
                 WHERE id = $1
             """, user["id"])
             
-            logger.info(f"🔑 Promoted to Super Admin: {user['email']} (from {user['role']})")
+            # 如果在封禁名單，也移除
+            await conn.execute("""
+                DELETE FROM banned_emails WHERE email = $1
+            """, user["email"])
+            
+            logger.info(f"🔑 Promoted to Super Admin: {user['email']} (from {user['role']}, status: {user['account_status']})")
+        
         else:
-            # 用戶不存在，記錄訊息但不報錯
-            logger.warning(f"⚠️  Super Admin email not found in database: {super_admin_email}")
-            logger.warning(f"💡 Please register this email first, then restart the app")
+            # 用戶不存在 → 自動創建
+            # 生成隨機密碼（用戶需要通過「忘記密碼」重設，或使用 Google 登入）
+            random_password = secrets.token_urlsafe(32)
+            hashed_pw = hash_password(random_password)
+            
+            # 創建 Super Admin 帳號
+            new_user = await conn.fetchrow("""
+                INSERT INTO users (
+                    email, 
+                    hashed_password, 
+                    name, 
+                    role, 
+                    account_status,
+                    is_active,
+                    is_verified,
+                    provider
+                )
+                VALUES ($1, $2, $3, 'super_admin', 'active', TRUE, TRUE, 'email')
+                RETURNING id, email
+            """, super_admin_email, hashed_pw, super_admin_email.split('@')[0].title())
+            
+            logger.warning(f"🔑 Created new Super Admin account: {new_user['email']}")
+            logger.warning(f"⚠️  Please use 'Forgot Password' to set your password, or login with Google")
 
 
 # 全域資料庫實例
