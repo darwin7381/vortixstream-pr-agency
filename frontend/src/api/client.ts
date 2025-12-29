@@ -5,12 +5,11 @@
  * - /public/ - 公開資料（可快取）
  * - /write/ - 寫入操作（不快取）
  * - /admin/ - 管理操作（需認證，不快取）
+ * 
+ * 注意：統一使用 config/api.ts 中的配置
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
-const PUBLIC_API = `${API_BASE_URL}/public`;
-const WRITE_API = `${API_BASE_URL}/write`;
-const ADMIN_API = `${API_BASE_URL}/admin`;
+import { API_BASE_URL, PUBLIC_API, WRITE_API, ADMIN_API } from '../config/api';
 
 // ==================== Types ====================
 

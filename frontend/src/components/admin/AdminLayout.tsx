@@ -411,7 +411,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                         <span className="text-sm font-medium">返回前台網站</span>
                       </button>
                       <button
-                        onClick={() => setShowUserMenu(false)}
+                        onClick={() => {
+                          setShowUserMenu(false);
+                          logout();
+                          navigate('/');
+                        }}
                         className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 transition-colors"
                       >
                         <LogOut size={18} />
