@@ -61,11 +61,13 @@ class UserResponse(BaseModel):
     email: EmailStr
     name: str
     avatar_url: Optional[str]
+    provider: str = "email"
     role: UserRole
     is_active: bool = True
     is_verified: bool = False
     account_status: str = "active"
     created_at: datetime
+    last_login_at: Optional[datetime] = None
     
     class Config:
         from_attributes = True

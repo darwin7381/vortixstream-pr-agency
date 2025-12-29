@@ -60,7 +60,15 @@ export default function AdminUsers() {
       
       if (response.ok) {
         const data = await response.json();
+        console.log('===用戶列表 API 返回===', data);
+        if (data && data.length > 0) {
+          console.log('第一個用戶:', data[0]);
+          console.log('  account_status:', data[0].account_status);
+          console.log('  is_active:', data[0].is_active);
+        }
         setUsers(data);
+      } else {
+        console.error('API 錯誤:', response.status, response.statusText);
       }
     } catch (error) {
       console.error('Failed to load users:', error);
