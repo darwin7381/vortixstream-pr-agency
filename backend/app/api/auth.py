@@ -70,13 +70,59 @@ async def register(user_data: UserRegister, invitation_token: Optional[str] = Qu
                     detail="此帳號已被封禁，無法註冊"
                 )
             
-            elif status in ['user_deactivated', 'admin_suspended']:
-                # 停用帳號允許重新註冊（刪除舊記錄，創建新帳號）
+            elif status == 'admin_suspended':
+                # 管理員停用的，不允許重新註冊（只能由管理員重新啟用）
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="此帳號已被停用，請聯絡管理員重新啟用"
+                )
+            
+            elif status == 'user_deactivated':
+                # 用戶自主停用的，允許重新啟用（保留舊帳號，不刪除）
+                hashed_pw = hash_password(user_data.password)
+                
                 await conn.execute("""
-                    DELETE FROM users WHERE id = $1
+                    UPDATE users 
+                    SET account_status = 'active',
+                        is_active = TRUE,
+                        hashed_password = $1,
+                        name = $2,
+                        deactivated_at = NULL,
+                        updated_at = NOW()
+                    WHERE id = $3
+                """, hashed_pw, user_data.name, existing_user["id"])
+                
+                # 取得更新後的用戶資料
+                user = await conn.fetchrow("""
+                    SELECT id, email, name, avatar_url, role, is_verified, created_at
+                    FROM users WHERE id = $1
                 """, existing_user["id"])
                 
-                # 繼續創建新帳號（下方的邏輯）
+                # 直接跳到生成 token 的部分（不再執行創建用戶）
+                token_data = {
+                    "sub": str(user["id"]),
+                    "email": user["email"],
+                    "role": user["role"]
+                }
+                
+                access_token = create_access_token(token_data)
+                refresh_token = create_refresh_token(token_data)
+                
+                user_response = UserResponse(
+                    id=user["id"],
+                    email=user["email"],
+                    name=user["name"],
+                    avatar_url=user["avatar_url"],
+                    role=user["role"],
+                    is_verified=user["is_verified"],
+                    created_at=user["created_at"]
+                )
+                
+                return TokenResponse(
+                    access_token=access_token,
+                    refresh_token=refresh_token,
+                    user=user_response
+                )
         
         # 檢查是否有邀請（並取得邀請的角色）
         invitation_role = None

@@ -189,7 +189,7 @@ CREATE TABLE system_settings (
 
 ---
 
-## 🔄 完整的用戶生命週期
+## 🔄 完整的用戶生命週期（2025-12-28 最新）
 
 ### 註冊流程
 
@@ -197,14 +197,15 @@ CREATE TABLE system_settings (
 用戶註冊
   ↓
 檢查 banned_emails（封禁名單）
-  ├─ 在名單 → ❌ 拒絕
+  ├─ 在名單 → ❌ 拒絕「此帳號已被封禁」
   └─ 不在 → 繼續
   ↓
 檢查現有用戶
   ├─ 不存在 → ✅ 創建新用戶
-  ├─ account_status = 'active' → ❌ 已註冊
-  ├─ account_status = 'banned' → ❌ 已封禁
-  └─ account_status = 'admin_suspended' → ✅ 刪除舊記錄，創建新用戶
+  ├─ account_status = 'active' → ❌ 拒絕「已被註冊」
+  ├─ account_status = 'banned' → ❌ 拒絕「已被封禁」
+  ├─ account_status = 'admin_suspended' → ❌ 拒絕「請聯絡管理員」
+  └─ account_status = 'user_deactivated' → ✅ 重新啟用舊帳號（保留歷史）
   ↓
 返回 JWT tokens
 ```
@@ -235,6 +236,7 @@ CREATE TABLE system_settings (
 
 ### 停用流程
 
+#### 管理員停用（admin_suspended）
 ```
 管理員停用用戶
   ↓
@@ -243,12 +245,29 @@ CREATE TABLE system_settings (
 記錄 deactivated_at
   ↓
 用戶無法登入
-資料完全保留
+資料永久保留（不會自動刪除）
+  ↓
+只能：
+  ✅ 管理員重新啟用
+  ❌ 無法重新註冊
+  ✅ 可以接受邀請（會重新啟用）
+```
+
+#### 用戶自主停用（user_deactivated）
+```
+用戶要求刪除帳號（前台，未來實現）
+  ↓
+設定 account_status = 'user_deactivated'
+設定 is_active = FALSE
+記錄 deactivated_at
+  ↓
+用戶無法登入
+30 天內資料保留
   ↓
 可以：
-  ✅ 管理員重新啟用
-  ✅ 重新註冊（刪除舊記錄）
+  ✅ 30 天內重新註冊（重新啟用舊帳號）
   ✅ 接受邀請
+  ⏰ 超過 30 天自動刪除（如果設定啟用）
 ```
 
 ### 封禁流程
@@ -544,14 +563,19 @@ frontend/src/
 ### 短期（1-2 個月）
 - [ ] 忘記密碼功能
 - [ ] Email 驗證
-- [ ] 用戶自主停用（前台）
+- [ ] 用戶自主停用（前台「刪除帳號」功能）
 - [ ] 更多 OAuth（GitHub、Facebook）
 
 ### 中期（3-6 個月）
+- [ ] 背景任務（自動刪除 user_deactivated 超過 30 天的帳號）
+- [ ] **硬刪除功能**（永久刪除，需謹慎設計）
+  - [ ] 僅 super_admin 可執行
+  - [ ] 二次確認
+  - [ ] 處理所有關聯資料（外鍵）
+  - [ ] 記錄刪除日誌
 - [ ] 組織/團隊功能
 - [ ] 資源所有權
 - [ ] 操作日誌
-- [ ] 背景任務（自動刪除）
 
 ### 長期（視需求）
 - [ ] 完整 RBAC
