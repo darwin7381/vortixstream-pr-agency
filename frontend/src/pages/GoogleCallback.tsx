@@ -23,12 +23,8 @@ export const GoogleCallback = () => {
         localStorage.setItem('access_token', accessToken);
         localStorage.setItem('refresh_token', refreshToken);
         
-        // 跳轉到首頁
-        setTimeout(() => {
-          navigate('/');
-          // 刷新頁面以觸發 useAuth 重新載入用戶資料
-          window.location.reload();
-        }, 500);
+        // 跳轉到首頁並重新整理（同步登入狀態）
+        window.location.href = '/';
       } catch (error) {
         console.error('Google callback error:', error);
         setError(error instanceof Error ? error.message : 'Google 登入失敗');

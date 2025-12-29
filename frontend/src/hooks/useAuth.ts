@@ -26,8 +26,6 @@ export const useAuth = () => {
       if (token) {
         try {
           const userData = await authAPI.getMe(token);
-          console.log('=== useAuth 取得的用戶資料 ===', userData);
-          console.log('avatar_url:', userData.avatar_url);
           setUser({
             id: userData.id,
             name: userData.name,
@@ -36,7 +34,6 @@ export const useAuth = () => {
             role: userData.role,
             is_verified: userData.is_verified
           });
-          console.log('=== 設定的 user.avatar ===', userData.avatar_url || undefined);
         } catch (error) {
           // Token 無效，清除
           localStorage.removeItem('access_token');

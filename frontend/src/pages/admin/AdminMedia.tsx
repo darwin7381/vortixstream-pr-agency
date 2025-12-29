@@ -24,7 +24,7 @@ interface MediaFile {
   height: number | null;
 }
 
-const ADMIN_API = `${import.meta.env.VITE_API_URL || 'http://localhost:8000/api'}/admin`;
+import { ADMIN_API } from '../../config/api';
 
 export default function AdminMedia() {
   const [files, setFiles] = useState<MediaFile[]>([]);
