@@ -71,8 +71,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
       if (mode === 'login') {
         const success = await login(formData.email, formData.password);
         if (success) {
-          // 重新整理頁面以同步登入狀態
-          window.location.href = '/';
+          navigate('/');
         } else {
           setFormError(error || '登入失敗，請檢查您的 Email 和密碼');
         }
@@ -84,8 +83,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
         }
         const success = await register(formData.email, formData.password, formData.name, invitationToken || undefined);
         if (success) {
-          // 重新整理頁面以同步登入狀態
-          window.location.href = '/';
+          navigate('/');
         } else {
           setFormError(error || '註冊失敗，請稍後再試');
         }

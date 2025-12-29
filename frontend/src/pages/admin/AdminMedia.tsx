@@ -5,6 +5,7 @@ import ImageViewModal from '../../components/admin/ImageViewModal';
 import { 
   Search, Trash2, Grid, List as ListIcon, Copy, ZoomIn, RefreshCw
 } from 'lucide-react';
+import { ADMIN_API } from '../../config/api';
 
 interface MediaFile {
   id: number;
@@ -23,8 +24,6 @@ interface MediaFile {
   width: number | null;
   height: number | null;
 }
-
-import { ADMIN_API } from '../../config/api';
 
 export default function AdminMedia() {
   const [files, setFiles] = useState<MediaFile[]>([]);

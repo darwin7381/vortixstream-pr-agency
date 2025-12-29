@@ -7,12 +7,7 @@
  * - /admin/ - 管理操作（需認證，不快取）
  */
 
-// 移除 fallback - 強制要求環境變數
-if (!import.meta.env.VITE_API_URL) {
-  throw new Error('VITE_API_URL 環境變數未設定！');
-}
-
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 const PUBLIC_API = `${API_BASE_URL}/public`;
 const WRITE_API = `${API_BASE_URL}/write`;
 const ADMIN_API = `${API_BASE_URL}/admin`;

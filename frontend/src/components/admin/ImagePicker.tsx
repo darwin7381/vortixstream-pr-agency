@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X, Upload, Search, Check, Folder } from 'lucide-react';
+import { ADMIN_API } from '../../config/api';
 
 interface MediaFile {
   id: number;
@@ -20,8 +21,6 @@ interface ImagePickerProps {
   currentUrl?: string;
   defaultFolder?: string; // 預設資料夾，但可切換
 }
-
-import { ADMIN_API } from '../../config/api';
 
 export default function ImagePicker({ isOpen, onClose, onSelect, currentUrl, defaultFolder }: ImagePickerProps) {
   const [files, setFiles] = useState<MediaFile[]>([]);
