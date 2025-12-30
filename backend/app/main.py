@@ -24,7 +24,8 @@ app = FastAPI(
     description="VortixPR Backend API for Blog, Pricing, and more",
     version="1.0.0",
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
+    redirect_slashes=True  # 明確設定（避免 307 導致協議問題）
 )
 
 # CORS 設定

@@ -82,7 +82,7 @@ export default function AdminUsers() {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/activate`, {
+      const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/activate/`, {
         method: 'PATCH',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -103,7 +103,7 @@ export default function AdminUsers() {
 
   const loadStats = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/users/stats`, {
+      const response = await fetch(`${API_BASE_URL}/admin/users/stats/`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
@@ -146,7 +146,7 @@ export default function AdminUsers() {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/role?role=${newRole}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/role/?role=${newRole}`, {
         method: 'PATCH',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -174,7 +174,7 @@ export default function AdminUsers() {
 
     try {
       // 軟刪除（停用帳號）
-      const response = await fetch(`${API_BASE_URL}/admin/users/${userId}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -200,7 +200,7 @@ export default function AdminUsers() {
     if (!reason) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/ban?reason=${encodeURIComponent(reason)}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/ban/?reason=${encodeURIComponent(reason)}`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -223,7 +223,7 @@ export default function AdminUsers() {
     if (!confirm(`確定要解除對 ${email} 的封禁？`)) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/unban`, {
+      const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/unban/`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
