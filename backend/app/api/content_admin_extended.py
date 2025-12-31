@@ -1,5 +1,5 @@
 """
-內容管理 - Admin API 擴展（Partner Logos, Publisher Features, Hero Sections）
+內容管理 - Admin API 擴展（Client Logos, Publisher Features, Hero Sections）
 """
 from fastapi import APIRouter, HTTPException, Depends
 from typing import List
@@ -9,7 +9,7 @@ from datetime import datetime
 from ..core.database import Database
 from ..utils.security import get_current_user, require_admin
 from ..models.content import (
-    PartnerLogoCreate, PartnerLogoUpdate, PartnerLogoResponse,
+    ClientLogoCreate, ClientLogoUpdate, ClientLogoResponse,
     PublisherFeatureCreate, PublisherFeatureUpdate, PublisherFeatureResponse,
     HeroSectionCreate, HeroSectionUpdate, HeroSectionResponse
 )
@@ -23,28 +23,29 @@ async def get_db_conn():
         yield conn
 
 
-# ==================== Partner Logos ====================
+# ==================== Client Logos ====================
+# 顯示在首頁 "Trusted by industry leaders" 區塊
 
-@router.get("/partners", response_model=List[PartnerLogoResponse])
-async def get_all_partners(conn: asyncpg.Connection = Depends(get_db_conn)):
-    rows = await conn.fetch("SELECT * FROM partner_logos ORDER BY display_order ASC, id ASC")
+@router.get("/clients", response_model=List[ClientLogoResponse])
+async def get_all_clients(conn: asyncpg.Connection = Depends(get_db_conn)):
+    rows = await conn.fetch("SELECT * FROM client_logos ORDER BY display_order ASC, id ASC")
     return [dict(row) for row in rows]
 
 
-@router.post("/partners", response_model=PartnerLogoResponse)
-async def create_partner(item: PartnerLogoCreate, conn: asyncpg.Connection = Depends(get_db_conn), current_user = Depends(get_current_user)):
+@router.post("/clients", response_model=ClientLogoResponse)
+async def create_client(item: ClientLogoCreate, conn: asyncpg.Connection = Depends(get_db_conn), current_user = Depends(get_current_user)):
     row = await conn.fetchrow("""
-        INSERT INTO partner_logos (name, logo_url, website_url, display_order, is_active)
+        INSERT INTO client_logos (name, logo_url, website_url, display_order, is_active)
         VALUES ($1, $2, $3, $4, $5) RETURNING *
     """, item.name, item.logo_url, item.website_url, item.display_order, item.is_active)
     return dict(row)
 
 
-@router.put("/partners/{item_id}", response_model=PartnerLogoResponse)
-async def update_partner(item_id: int, item: PartnerLogoUpdate, conn: asyncpg.Connection = Depends(get_db_conn), current_user = Depends(get_current_user)):
-    existing = await conn.fetchrow("SELECT * FROM partner_logos WHERE id = $1", item_id)
+@router.put("/clients/{item_id}", response_model=ClientLogoResponse)
+async def update_client(item_id: int, item: ClientLogoUpdate, conn: asyncpg.Connection = Depends(get_db_conn), current_user = Depends(get_current_user)):
+    existing = await conn.fetchrow("SELECT * FROM client_logos WHERE id = $1", item_id)
     if not existing:
-        raise HTTPException(status_code=404, detail="Partner not found")
+        raise HTTPException(status_code=404, detail="Client not found")
     
     update_fields = []
     values = []
@@ -62,16 +63,16 @@ async def update_partner(item_id: int, item: PartnerLogoUpdate, conn: asyncpg.Co
     param_count += 1
     values.append(item_id)
     
-    row = await conn.fetchrow(f"UPDATE partner_logos SET {', '.join(update_fields)} WHERE id = ${param_count} RETURNING *", *values)
+    row = await conn.fetchrow(f"UPDATE client_logos SET {', '.join(update_fields)} WHERE id = ${param_count} RETURNING *", *values)
     return dict(row)
 
 
-@router.delete("/partners/{item_id}")
-async def delete_partner(item_id: int, conn: asyncpg.Connection = Depends(get_db_conn), current_user = Depends(get_current_user)):
-    result = await conn.execute("DELETE FROM partner_logos WHERE id = $1", item_id)
+@router.delete("/clients/{item_id}")
+async def delete_client(item_id: int, conn: asyncpg.Connection = Depends(get_db_conn), current_user = Depends(get_current_user)):
+    result = await conn.execute("DELETE FROM client_logos WHERE id = $1", item_id)
     if result == "DELETE 0":
-        raise HTTPException(status_code=404, detail="Partner not found")
-    return {"message": "Partner deleted successfully"}
+        raise HTTPException(status_code=404, detail="Client not found")
+    return {"message": "Client deleted successfully"}
 
 
 # ==================== Publisher Features ====================

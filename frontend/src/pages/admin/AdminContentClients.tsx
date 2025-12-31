@@ -5,7 +5,7 @@ import { Plus, Edit, Trash2, Image as ImageIcon } from 'lucide-react';
 import ImagePicker from '../../components/admin/ImagePicker';
 import { ADMIN_API } from '../../config/api';
 
-interface PartnerLogo {
+interface ClientLogo {
   id: number;
   name: string;
   logo_url: string;
@@ -14,11 +14,11 @@ interface PartnerLogo {
   is_active: boolean;
 }
 
-export default function AdminContentPartners() {
+export default function AdminContentClients() {
   const token = localStorage.getItem('access_token');
-  const [partners, setPartners] = useState<PartnerLogo[]>([]);
+  const [clients, setClients] = useState<ClientLogo[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editing, setEditing] = useState<PartnerLogo | null>(null);
+  const [editing, setEditing] = useState<ClientLogo | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [showImagePicker, setShowImagePicker] = useState(false);
   const [selectedLogoUrl, setSelectedLogoUrl] = useState('');
@@ -26,11 +26,11 @@ export default function AdminContentPartners() {
   const fetchData = async () => {
     if (!token) return;
     try {
-      const response = await fetch(`${ADMIN_API}/content/partners`, {
+      const response = await fetch(`${ADMIN_API}/content/clients`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await response.json();
-      setPartners(data);
+      setClients(data);
     } catch (error) {
       console.error('Failed to fetch:', error);
     } finally {
@@ -42,11 +42,11 @@ export default function AdminContentPartners() {
     fetchData();
   }, [token]);
 
-  const handleDelete = async (item: PartnerLogo) => {
+  const handleDelete = async (item: ClientLogo) => {
     if (!token || !confirm(`Are you sure you want to delete「${item.name}」?`)) return;
     
     try {
-      await fetch(`${ADMIN_API}/content/partners/${item.id}`, {
+      await fetch(`${ADMIN_API}/content/clients/${item.id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -72,14 +72,14 @@ export default function AdminContentPartners() {
 
     try {
       if (editing) {
-        await fetch(`${ADMIN_API}/content/partners/${editing.id}`, {
+        await fetch(`${ADMIN_API}/content/clients/${editing.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify(data),
         });
         alert('Updated successfully');
       } else {
-        await fetch(`${ADMIN_API}/content/partners`, {
+        await fetch(`${ADMIN_API}/content/clients`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify(data),
@@ -110,20 +110,21 @@ export default function AdminContentPartners() {
       <div className="p-8">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Partner Logo Management</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">Total {partners.length}  partners</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Client Logo Management</h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-2">Total {clients.length} clients</p>
+            <p className="text-sm text-gray-500 dark:text-gray-500 mt-1">Displayed as "Trusted by industry leaders" on homepage</p>
           </div>
           <button
             onClick={() => { setEditing(null); setShowModal(true); }}
             className="flex items-center gap-2 bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors shadow-sm"
           >
             <Plus size={20} />
-            Add Partner
+            Add Client
           </button>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-          {partners.map((item) => (
+          {clients.map((item) => (
             <div key={item.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md transition-shadow">
               <div className="aspect-video bg-gray-100 dark:bg-gray-700 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
                 {item.logo_url ? (
@@ -155,7 +156,7 @@ export default function AdminContentPartners() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-xl w-full">
             <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{editing ? 'Edit Partner' : 'Add Partner'}</h2>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{editing ? 'Edit Client' : 'Add Client'}</h2>
             </div>
             <form onSubmit={handleSave} className="p-6 space-y-4">
               <div>
@@ -202,7 +203,7 @@ export default function AdminContentPartners() {
         </div>
       )}
 
-      <ImagePicker isOpen={showImagePicker} onClose={() => setShowImagePicker(false)} onSelect={(url) => { setSelectedLogoUrl(url); setShowImagePicker(false); }} currentUrl={selectedLogoUrl} defaultFolder="partners" />
+      <ImagePicker isOpen={showImagePicker} onClose={() => setShowImagePicker(false)} onSelect={(url) => { setSelectedLogoUrl(url); setShowImagePicker(false); }} currentUrl={selectedLogoUrl} defaultFolder="clients" />
     </AdminLayout>
   );
 }

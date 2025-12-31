@@ -16,7 +16,7 @@ from ..models.content import (
     SettingUpdate, SettingResponse,
     DifferentiatorCreate, DifferentiatorUpdate, DifferentiatorResponse,
     StatCreate, StatUpdate, StatResponse,
-    PartnerLogoCreate, PartnerLogoUpdate, PartnerLogoResponse,
+    ClientLogoCreate, ClientLogoUpdate, ClientLogoResponse,
     PublisherFeatureCreate, PublisherFeatureUpdate, PublisherFeatureResponse,
     HeroSectionCreate, HeroSectionUpdate, HeroSectionResponse
 )

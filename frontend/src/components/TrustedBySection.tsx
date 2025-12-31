@@ -3,10 +3,12 @@
  * 1. ❌ 禁止 fallback
  * 2. ❌ 禁止檢查邏輯
  * 3. ✅ 使用 map 動態渲染所有 logo
+ * 
+ * 顯示客戶 Logo（首頁標題為 "Trusted by industry leaders"）
  */
 import { useState, useEffect, useRef } from 'react';
 
-interface PartnerLogo {
+interface ClientLogo {
   id: number;
   name: string;
   logo_url: string;
@@ -24,14 +26,14 @@ export default function TrustedBySection({
   showTitle = false, 
   title = "Trusted by industry leaders" 
 }: TrustedBySectionProps) {
-  const [partners, setPartners] = useState<PartnerLogo[]>([]);
+  const [clients, setClients] = useState<ClientLogo[]>([]);
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/public/content/partners`)
+    fetch(`${import.meta.env.VITE_API_URL}/public/content/clients`)
       .then(res => res.json())
-      .then(setPartners)
+      .then(setClients)
       .catch(console.error);
   }, []);
 
@@ -53,7 +55,7 @@ export default function TrustedBySection({
     return () => observer.disconnect();
   }, []);
 
-  const LogoCard = ({ logo, index }: { logo: PartnerLogo; index: number }) => {
+  const LogoCard = ({ logo, index }: { logo: ClientLogo; index: number }) => {
     const animationClass = isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-4 scale-95';
 
     return (
@@ -108,9 +110,9 @@ export default function TrustedBySection({
             </div>
           )}
           
-          {/* 動態渲染所有合作夥伴 Logo */}
+          {/* 動態渲染所有客戶 Logo */}
           <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 lg:gap-5">
-            {partners.map((logo, index) => (
+            {clients.map((logo, index) => (
               <LogoCard key={logo.id} logo={logo} index={index} />
             ))}
           </div>

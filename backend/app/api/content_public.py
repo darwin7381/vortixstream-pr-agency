@@ -15,7 +15,7 @@ from ..models.content import (
     SettingResponse,
     DifferentiatorResponse,
     StatResponse,
-    PartnerLogoResponse,
+    ClientLogoResponse,
     PublisherFeatureResponse,
     HeroSectionResponse
 )
@@ -164,15 +164,16 @@ async def get_stats(
     return [dict(row) for row in rows]
 
 
-# ==================== Partner Logos ====================
+# ==================== Client Logos ====================
+# 顯示在首頁 "Trusted by industry leaders" 區塊
 
-@router.get("/partners", response_model=List[PartnerLogoResponse])
-async def get_partner_logos(
+@router.get("/clients", response_model=List[ClientLogoResponse])
+async def get_client_logos(
     conn: asyncpg.Connection = Depends(get_db_conn)
 ):
-    """取得所有啟用的合作夥伴 Logo（按順序）"""
+    """取得所有啟用的客戶 Logo（按順序）- 顯示在首頁 "Trusted by industry leaders" 區塊"""
     rows = await conn.fetch("""
-        SELECT * FROM partner_logos 
+        SELECT * FROM client_logos 
         WHERE is_active = true 
         ORDER BY display_order ASC, id ASC
     """)

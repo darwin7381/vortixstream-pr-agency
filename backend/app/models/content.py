@@ -216,9 +216,9 @@ class StatResponse(StatBase):
         from_attributes = True
 
 
-# ==================== Partner Logo Models ====================
+# ==================== Client Logo Models ====================
 
-class PartnerLogoBase(BaseModel):
+class ClientLogoBase(BaseModel):
     name: str = Field(..., min_length=1, max_length=200)
     logo_url: str = Field(..., min_length=1)
     website_url: Optional[str] = None
@@ -226,11 +226,11 @@ class PartnerLogoBase(BaseModel):
     is_active: bool = Field(default=True)
 
 
-class PartnerLogoCreate(PartnerLogoBase):
+class ClientLogoCreate(ClientLogoBase):
     pass
 
 
-class PartnerLogoUpdate(BaseModel):
+class ClientLogoUpdate(BaseModel):
     name: Optional[str] = None
     logo_url: Optional[str] = None
     website_url: Optional[str] = None
@@ -238,7 +238,7 @@ class PartnerLogoUpdate(BaseModel):
     is_active: Optional[bool] = None
 
 
-class PartnerLogoResponse(PartnerLogoBase):
+class ClientLogoResponse(ClientLogoBase):
     id: int
     created_at: datetime
     updated_at: datetime

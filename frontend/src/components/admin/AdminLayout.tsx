@@ -128,7 +128,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         { label: 'Testimonials', icon: MessageCircle, path: '/admin/content/testimonials' },
         { label: 'Services', icon: Briefcase, path: '/admin/content/services' },
         { label: 'Why Vortix', icon: Sparkles, path: '/admin/content/why-vortix' },
-        { label: 'Partner Logos', icon: Image, path: '/admin/content/partners' },
+        { label: 'Client Logos', icon: Image, path: '/admin/content/clients' },
         { label: 'Publisher Features', icon: FileText, path: '/admin/content/publisher' },
         { label: 'Site Settings', icon: Settings, path: '/admin/content/settings' },
       ]

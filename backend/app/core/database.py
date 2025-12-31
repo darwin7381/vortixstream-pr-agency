@@ -227,9 +227,35 @@ class Database:
                 CREATE INDEX IF NOT EXISTS idx_stats_active_order ON stats(is_active, display_order);
             """)
             
-            # ==================== Partner Logos ====================
+            # ==================== Client Logos ====================
+            # 顯示在首頁 "Trusted by industry leaders" 區塊
+            # ⚠️ 遷移處理：如果舊的 partner_logos 表存在，先重命名
+            partner_table_exists = await conn.fetchval("""
+                SELECT EXISTS (
+                    SELECT 1 FROM information_schema.tables 
+                    WHERE table_name='partner_logos'
+                )
+            """)
+            
+            if partner_table_exists:
+                logger.info("🔄 Migrating: Renaming partner_logos → client_logos...")
+                await conn.execute("ALTER TABLE partner_logos RENAME TO client_logos")
+                
+                # 重命名索引（如果存在）
+                index_exists = await conn.fetchval("""
+                    SELECT EXISTS (
+                        SELECT 1 FROM pg_indexes 
+                        WHERE indexname = 'idx_partner_logos_active_order'
+                    )
+                """)
+                if index_exists:
+                    await conn.execute("ALTER INDEX idx_partner_logos_active_order RENAME TO idx_client_logos_active_order")
+                
+                logger.info("✅ Table renamed successfully")
+            
+            # 現在創建表（如果還不存在）
             await conn.execute("""
-                CREATE TABLE IF NOT EXISTS partner_logos (
+                CREATE TABLE IF NOT EXISTS client_logos (
                     id SERIAL PRIMARY KEY,
                     name VARCHAR(200) NOT NULL,
                     logo_url TEXT NOT NULL,
@@ -240,7 +266,7 @@ class Database:
                     updated_at TIMESTAMP DEFAULT NOW()
                 );
                 
-                CREATE INDEX IF NOT EXISTS idx_partner_logos_active_order ON partner_logos(is_active, display_order);
+                CREATE INDEX IF NOT EXISTS idx_client_logos_active_order ON client_logos(is_active, display_order);
             """)
             
             # ==================== Publisher Features ====================
