@@ -5,7 +5,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 
 export default function AdminContentServices() {
-  const { token } = useAuth();
+  const token = localStorage.getItem('access_token');
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingItem, setEditingItem] = useState<Service | null>(null);

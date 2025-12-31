@@ -19,7 +19,7 @@ interface HeroSection {
 }
 
 export default function AdminContentHero() {
-  const { token } = useAuth();
+  const token = localStorage.getItem('access_token');
   const [heroes, setHeroes] = useState<HeroSection[]>([]);
   const [loading, setLoading] = useState(true);
   const [showImagePicker, setShowImagePicker] = useState(false);

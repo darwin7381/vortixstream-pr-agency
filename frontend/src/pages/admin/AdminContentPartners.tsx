@@ -15,7 +15,7 @@ interface PartnerLogo {
 }
 
 export default function AdminContentPartners() {
-  const { token } = useAuth();
+  const token = localStorage.getItem('access_token');
   const [partners, setPartners] = useState<PartnerLogo[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<PartnerLogo | null>(null);

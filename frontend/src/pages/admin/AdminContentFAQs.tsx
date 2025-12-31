@@ -5,7 +5,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 
 export default function AdminContentFAQs() {
-  const { token } = useAuth();
+  const token = localStorage.getItem('access_token');
   const [faqs, setFaqs] = useState<FAQ[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingFAQ, setEditingFAQ] = useState<FAQ | null>(null);

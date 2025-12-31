@@ -15,7 +15,7 @@ interface Setting {
 }
 
 export default function AdminContentSettings() {
-  const { token } = useAuth();
+  const token = localStorage.getItem('access_token');
   const [settings, setSettings] = useState<Setting[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);

@@ -6,7 +6,7 @@ import { Plus, Edit, Trash2, Image as ImageIcon } from 'lucide-react';
 import ImagePicker from '../../components/admin/ImagePicker';
 
 export default function AdminContentTestimonials() {
-  const { token } = useAuth();
+  const token = localStorage.getItem('access_token');
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingItem, setEditingItem] = useState<Testimonial | null>(null);

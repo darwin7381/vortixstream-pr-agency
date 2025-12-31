@@ -5,7 +5,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { TrendingUp, Sparkles, Plus, Edit, Trash2 } from 'lucide-react';
 
 export default function AdminContentWhyVortix() {
-  const { token } = useAuth();
+  const token = localStorage.getItem('access_token');
   const [stats, setStats] = useState<Stat[]>([]);
   const [differentiators, setDifferentiators] = useState<Differentiator[]>([]);
   const [loading, setLoading] = useState(true);

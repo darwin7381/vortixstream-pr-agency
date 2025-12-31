@@ -156,11 +156,9 @@ export const useAuth = () => {
   };
 
   const isAuthenticated = !!user;
-  const token = localStorage.getItem('access_token') || undefined;
 
   return {
     user,
-    token,
     isLoading,
     isAuthenticated,
     error,

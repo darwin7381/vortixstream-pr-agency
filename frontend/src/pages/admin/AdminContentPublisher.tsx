@@ -13,7 +13,7 @@ interface PublisherFeature {
 }
 
 export default function AdminContentPublisher() {
-  const { token } = useAuth();
+  const token = localStorage.getItem('access_token');
   const [features, setFeatures] = useState<PublisherFeature[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<PublisherFeature | null>(null);
