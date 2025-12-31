@@ -8,7 +8,7 @@ from .api import (
     blog, pricing, contact, newsletter, pr_package,
     blog_admin, pricing_admin, pr_package_admin, contact_admin, newsletter_admin,
     pr_category_admin, media_admin, auth, user_admin, invitation_admin, invitation_public,
-    settings_admin
+    settings_admin, content_public, content_admin, content_admin_extended
 )
 
 # 設定 logging
@@ -47,6 +47,9 @@ async def startup():
     # 初始化資料庫
     db.database_url = settings.DATABASE_URL
     await db.connect()
+    
+    # 存儲 db 實例到 app.state
+    app.state.db = db
     
     logger.info("✅ VortixPR API started successfully")
 
@@ -100,6 +103,7 @@ async def health_check():
 app.include_router(blog.router, prefix="/api/public", tags=["Public - Blog"])
 app.include_router(pricing.router, prefix="/api/public", tags=["Public - Pricing"])
 app.include_router(pr_package.router, prefix="/api/public", tags=["Public - PR Packages"])
+app.include_router(content_public.router, prefix="/api", tags=["Public - Content"])
 
 # Auth APIs（認證相關）
 app.include_router(auth.router, tags=["Authentication"])
@@ -120,6 +124,8 @@ app.include_router(media_admin.router, prefix="/api/admin", tags=["Admin - Media
 app.include_router(user_admin.router, tags=["Admin - Users"])
 app.include_router(invitation_admin.router, tags=["Admin - Invitations"])
 app.include_router(settings_admin.router, tags=["Admin - Settings"])
+app.include_router(content_admin.router, prefix="/api", tags=["Admin - Content"])
+app.include_router(content_admin_extended.router, prefix="/api", tags=["Admin - Content Extended"])
 
 
 if __name__ == "__main__":

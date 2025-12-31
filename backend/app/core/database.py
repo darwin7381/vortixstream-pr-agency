@@ -109,13 +109,173 @@ class Database:
                 CREATE INDEX IF NOT EXISTS idx_settings_key ON system_settings(setting_key);
             """)
             
-            # 插入預設設定
+            # 插入預設設定（包含 CMS 設定）
             await conn.execute("""
                 INSERT INTO system_settings (setting_key, setting_value, setting_type, description)
                 VALUES 
                     ('auto_delete_deactivated_users', 'false', 'boolean', '是否自動刪除停用超過 N 天的用戶'),
-                    ('auto_delete_days', '30', 'integer', '自動刪除的天數（當啟用自動刪除時）')
+                    ('auto_delete_days', '30', 'integer', '自動刪除的天數（當啟用自動刪除時）'),
+                    ('site_logo_light', '', 'url', 'Logo 圖片 URL (淺色版)'),
+                    ('site_logo_dark', '', 'url', 'Logo 圖片 URL (深色版)'),
+                    ('site_name', 'VortixPR', 'text', '網站名稱'),
+                    ('site_slogan', 'Your Crypto&AI News Partner', 'text', '網站 Slogan'),
+                    ('contact_email', 'hello@vortixpr.com', 'email', '聯絡信箱'),
+                    ('contact_phone', '', 'text', '聯絡電話'),
+                    ('social_twitter', '', 'url', 'Twitter 連結'),
+                    ('social_linkedin', '', 'url', 'LinkedIn 連結'),
+                    ('social_facebook', '', 'url', 'Facebook 連結'),
+                    ('social_instagram', '', 'url', 'Instagram 連結')
                 ON CONFLICT (setting_key) DO NOTHING
+            """)
+            
+            # ==================== FAQs ====================
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS faqs (
+                    id SERIAL PRIMARY KEY,
+                    question TEXT NOT NULL,
+                    answer TEXT NOT NULL,
+                    display_order INTEGER DEFAULT 0,
+                    is_active BOOLEAN DEFAULT TRUE,
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    updated_at TIMESTAMP DEFAULT NOW()
+                );
+                
+                CREATE INDEX IF NOT EXISTS idx_faqs_active_order ON faqs(is_active, display_order);
+            """)
+            
+            # ==================== Testimonials ====================
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS testimonials (
+                    id SERIAL PRIMARY KEY,
+                    quote TEXT NOT NULL,
+                    author_name VARCHAR(100) NOT NULL,
+                    author_title VARCHAR(200),
+                    author_company VARCHAR(200),
+                    author_avatar_url TEXT,
+                    display_order INTEGER DEFAULT 0,
+                    is_active BOOLEAN DEFAULT TRUE,
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    updated_at TIMESTAMP DEFAULT NOW()
+                );
+                
+                CREATE INDEX IF NOT EXISTS idx_testimonials_active_order ON testimonials(is_active, display_order);
+            """)
+            
+            # ==================== Team Members ====================
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS team_members (
+                    id SERIAL PRIMARY KEY,
+                    name VARCHAR(100) NOT NULL,
+                    position VARCHAR(200) NOT NULL,
+                    avatar_url TEXT,
+                    bio TEXT,
+                    linkedin_url TEXT,
+                    twitter_url TEXT,
+                    display_order INTEGER DEFAULT 0,
+                    is_active BOOLEAN DEFAULT TRUE,
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    updated_at TIMESTAMP DEFAULT NOW()
+                );
+                
+                CREATE INDEX IF NOT EXISTS idx_team_members_active_order ON team_members(is_active, display_order);
+            """)
+            
+            # ==================== Services ====================
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS services (
+                    id SERIAL PRIMARY KEY,
+                    title VARCHAR(200) NOT NULL,
+                    description TEXT NOT NULL,
+                    icon VARCHAR(50),
+                    display_order INTEGER DEFAULT 0,
+                    is_active BOOLEAN DEFAULT TRUE,
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    updated_at TIMESTAMP DEFAULT NOW()
+                );
+                
+                CREATE INDEX IF NOT EXISTS idx_services_active_order ON services(is_active, display_order);
+            """)
+            
+            # ==================== Differentiators ====================
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS differentiators (
+                    id SERIAL PRIMARY KEY,
+                    text TEXT NOT NULL,
+                    display_order INTEGER DEFAULT 0,
+                    is_active BOOLEAN DEFAULT TRUE,
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    updated_at TIMESTAMP DEFAULT NOW()
+                );
+                
+                CREATE INDEX IF NOT EXISTS idx_differentiators_active_order ON differentiators(is_active, display_order);
+            """)
+            
+            # ==================== Stats ====================
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS stats (
+                    id SERIAL PRIMARY KEY,
+                    label VARCHAR(100) NOT NULL,
+                    value INTEGER NOT NULL,
+                    suffix VARCHAR(10) DEFAULT '+',
+                    description TEXT,
+                    display_order INTEGER DEFAULT 0,
+                    is_active BOOLEAN DEFAULT TRUE,
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    updated_at TIMESTAMP DEFAULT NOW()
+                );
+                
+                CREATE INDEX IF NOT EXISTS idx_stats_active_order ON stats(is_active, display_order);
+            """)
+            
+            # ==================== Partner Logos ====================
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS partner_logos (
+                    id SERIAL PRIMARY KEY,
+                    name VARCHAR(200) NOT NULL,
+                    logo_url TEXT NOT NULL,
+                    website_url TEXT,
+                    display_order INTEGER DEFAULT 0,
+                    is_active BOOLEAN DEFAULT TRUE,
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    updated_at TIMESTAMP DEFAULT NOW()
+                );
+                
+                CREATE INDEX IF NOT EXISTS idx_partner_logos_active_order ON partner_logos(is_active, display_order);
+            """)
+            
+            # ==================== Publisher Features ====================
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS publisher_features (
+                    id SERIAL PRIMARY KEY,
+                    title VARCHAR(200) NOT NULL,
+                    description TEXT NOT NULL,
+                    display_order INTEGER DEFAULT 0,
+                    is_active BOOLEAN DEFAULT TRUE,
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    updated_at TIMESTAMP DEFAULT NOW()
+                );
+                
+                CREATE INDEX IF NOT EXISTS idx_publisher_features_active_order ON publisher_features(is_active, display_order);
+            """)
+            
+            # ==================== Hero Sections ====================
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS hero_sections (
+                    id SERIAL PRIMARY KEY,
+                    page VARCHAR(50) NOT NULL,
+                    title TEXT NOT NULL,
+                    subtitle TEXT,
+                    description TEXT,
+                    cta_primary_text VARCHAR(100),
+                    cta_primary_url VARCHAR(500),
+                    cta_secondary_text VARCHAR(100),
+                    cta_secondary_url VARCHAR(500),
+                    background_image_url TEXT,
+                    is_active BOOLEAN DEFAULT TRUE,
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    updated_at TIMESTAMP DEFAULT NOW(),
+                    UNIQUE(page)
+                );
             """)
             
             # ==================== User Invitations ====================
@@ -431,6 +591,96 @@ class Database:
             )
             
             logger.info("✅ Pricing packages seeded")
+        
+        # === Seed FAQs ===
+        faq_count = await conn.fetchval("SELECT COUNT(*) FROM faqs")
+        if faq_count == 0:
+            logger.info("📝 Seeding FAQs...")
+            await conn.execute("""
+                INSERT INTO faqs (question, answer, display_order, is_active)
+                VALUES
+                    ('How fast can you distribute a PR?', 'Most releases are scheduled within 24–48 hours after final approval.\n\nRush options may be available depending on the package.', 1, true),
+                    ('What media outlets are included?', 'We work with a mix of crypto, AI, tech and Asia-regional publications, including news sites, niche media and aggregators.\n\nOutlet access varies by package and market targeting.', 2, true),
+                    ('Do you guarantee placements?', 'Certain packages include guaranteed publication based on predefined outlet categories.\n\nEditorial features, interviews or headlines are not guaranteed and depend on publisher discretion.', 3, true),
+                    ('How many revisions are included?', 'Packages include one round of revisions before distribution.\n\nAdditional edits or rewrites are available as add-ons.', 4, true),
+                    ('What''s the Asia localization process?', 'Localization includes regional messaging alignment, optional language adaptation, and distribution to relevant Asia media lists depending on your tier.', 5, true),
+                    ('Do you help with strategy?', 'Strategy support is available as an add-on.\n\nSome packages include light headline or angle refinement prior to distribution.', 6, true)
+            """)
+            logger.info("✅ FAQs seeded")
+        
+        # === Seed Testimonials ===
+        testimonial_count = await conn.fetchval("SELECT COUNT(*) FROM testimonials")
+        if testimonial_count == 0:
+            logger.info("📝 Seeding testimonials...")
+            await conn.execute("""
+                INSERT INTO testimonials (quote, author_name, author_title, author_company, display_order, is_active)
+                VALUES
+                    ('Professional, results-driven, and incredibly well-connected. VortixPR delivered beyond our expectations for our token launch.', 'Michael Kim', 'Head of Marketing', 'BlockchainVentures', 1, true),
+                    ('Their strategic approach to AI PR positioning helped us stand out in a crowded market. The media coverage exceeded all expectations.', 'Emily Watson', 'CEO', 'FinTech Innovations', 2, true),
+                    ('VortixPR''s deep understanding of the crypto space and regulatory landscape made our exchange launch seamless and successful.', 'David Park', 'Marketing Director', 'CryptoExchange Pro', 3, true),
+                    ('The team''s expertise in DeFi marketing helped us reach the right investors at the perfect time. Truly exceptional service and results.', 'Sarah Chen', 'Co-founder', 'DeFi Protocol Labs', 4, true),
+                    ('From concept to launch, VortixPR guided our NFT project with precision and creativity. The community response was incredible.', 'Alex Rodriguez', 'Creative Director', 'MetaArt Studios', 5, true),
+                    ('Outstanding work on our Web3 gaming platform launch. Their understanding of both gaming and crypto audiences is unmatched.', 'Jordan Taylor', 'CEO', 'GameChain Interactive', 6, true)
+            """)
+            logger.info("✅ Testimonials seeded")
+        
+        # === Seed Services ===
+        service_count = await conn.fetchval("SELECT COUNT(*) FROM services")
+        if service_count == 0:
+            logger.info("📝 Seeding services...")
+            await conn.execute("""
+                INSERT INTO services (title, description, icon, display_order, is_active)
+                VALUES
+                    ('Global Press Distribution', 'Targeted distribution across top crypto, tech and AI media.', 'globe', 1, true),
+                    ('Asia-Market Localization & Outreach', 'CN, KR, JP & SEA outreach with language + narrative adaptation.', 'language', 2, true),
+                    ('PR & Narrative Strategy', 'Angle shaping, headline advice, and editorial review.', 'strategy', 3, true),
+                    ('Founder & Personal Branding PR', 'Articles, interviews and content for founder authority.', 'user', 4, true),
+                    ('Influencer Marketing & Community Activation', 'Leverage key opinion leaders and build engaged communities around your project.', 'users', 5, true)
+            """)
+            logger.info("✅ Services seeded")
+        
+        # === Seed Differentiators ===
+        diff_count = await conn.fetchval("SELECT COUNT(*) FROM differentiators")
+        if diff_count == 0:
+            logger.info("📝 Seeding differentiators...")
+            await conn.execute("""
+                INSERT INTO differentiators (text, display_order, is_active)
+                VALUES
+                    ('Distribution + strategy under one roof', 1, true),
+                    ('Asia-native editorial network', 2, true),
+                    ('AI-backed narrative & LLM optimization', 3, true),
+                    ('Transparent pricing, no hidden fees', 4, true),
+                    ('Founder-friendly packages + add-ons', 5, true)
+            """)
+            logger.info("✅ Differentiators seeded")
+        
+        # === Seed Stats ===
+        stats_count = await conn.fetchval("SELECT COUNT(*) FROM stats")
+        if stats_count == 0:
+            logger.info("📝 Seeding stats...")
+            await conn.execute("""
+                INSERT INTO stats (label, value, suffix, description, display_order, is_active)
+                VALUES
+                    ('Publications', 900, '+', 'Media outlets in our global network', 1, true),
+                    ('Brands', 300, '+', 'Clients successfully served', 2, true),
+                    ('Countries', 20, '+', 'Global reach across continents', 3, true),
+                    ('Media Reach', 1003, 'M+', 'Total audience impressions delivered', 4, true)
+            """)
+            logger.info("✅ Stats seeded")
+        
+        # === Seed Publisher Features ===
+        pub_count = await conn.fetchval("SELECT COUNT(*) FROM publisher_features")
+        if pub_count == 0:
+            logger.info("📝 Seeding publisher features...")
+            await conn.execute("""
+                INSERT INTO publisher_features (title, description, display_order, is_active)
+                VALUES
+                    ('Premium Media Access', 'Connect with 500+ verified crypto & AI outlets instantly', 1, true),
+                    ('Revenue Share Model', 'Earn up to 40% commission on successful placements', 2, true),
+                    ('Publisher Dashboard', 'Track performance, earnings, and content in real-time', 3, true),
+                    ('Priority Support', 'Dedicated support team for all your publishing needs', 4, true)
+            """)
+            logger.info("✅ Publisher features seeded")
     
     async def _add_new_columns(self, conn):
         """
