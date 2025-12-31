@@ -36,6 +36,7 @@ export const useAuth = () => {
           });
         } catch (error) {
           // Token 無效，清除
+          console.error('Failed to restore auth state:', error);
           localStorage.removeItem('access_token');
           localStorage.removeItem('refresh_token');
         }
