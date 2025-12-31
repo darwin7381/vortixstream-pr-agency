@@ -29,7 +29,7 @@ export default function TrustedBySection({
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/public/content/partners')
+    fetch(`${import.meta.env.VITE_API_URL}/public/content/partners`)
       .then(res => res.json())
       .then(setPartners)
       .catch(console.error);

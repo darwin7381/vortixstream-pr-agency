@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { useAuth } from '../../hooks/useAuth';
-import { Save, Image as ImageIcon } from 'lucide-react';
-import ImagePicker from '../../components/admin/ImagePicker';
+import { Save } from 'lucide-react';
+import { ADMIN_API } from '../../config/api';
 
 interface HeroSection {
   id: number;
@@ -28,7 +28,7 @@ export default function AdminContentHero() {
   const fetchData = async () => {
     if (!token) return;
     try {
-      const response = await fetch('http://localhost:8000/api/admin/content/hero', {
+      const response = await fetch(`${ADMIN_API}/content/hero`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await response.json();
@@ -61,7 +61,7 @@ export default function AdminContentHero() {
     };
 
     try {
-      await fetch(`http://localhost:8000/api/admin/content/hero/${page}`, {
+      await fetch(`${ADMIN_API}/content/hero/${page}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(data),

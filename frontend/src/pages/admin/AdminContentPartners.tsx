@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { useAuth } from '../../hooks/useAuth';
-import { Plus, Edit, Trash2, Image as ImageIcon, ExternalLink } from 'lucide-react';
+import { Plus, Edit, Trash2, Image as ImageIcon } from 'lucide-react';
 import ImagePicker from '../../components/admin/ImagePicker';
+import { ADMIN_API } from '../../config/api';
 
 interface PartnerLogo {
   id: number;
@@ -25,7 +26,7 @@ export default function AdminContentPartners() {
   const fetchData = async () => {
     if (!token) return;
     try {
-      const response = await fetch('http://localhost:8000/api/admin/content/partners', {
+      const response = await fetch(`${ADMIN_API}/content/partners`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await response.json();
@@ -45,7 +46,7 @@ export default function AdminContentPartners() {
     if (!token || !confirm(`Are you sure you want to delete「${item.name}」?`)) return;
     
     try {
-      await fetch(`http://localhost:8000/api/admin/content/partners/${item.id}`, {
+      await fetch(`${ADMIN_API}/content/partners/${item.id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -71,14 +72,14 @@ export default function AdminContentPartners() {
 
     try {
       if (editing) {
-        await fetch(`http://localhost:8000/api/admin/content/partners/${editing.id}`, {
+        await fetch(`${ADMIN_API}/content/partners/${editing.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify(data),
         });
         alert('Updated successfully');
       } else {
-        await fetch('http://localhost:8000/api/admin/content/partners', {
+        await fetch(`${ADMIN_API}/content/partners`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify(data),

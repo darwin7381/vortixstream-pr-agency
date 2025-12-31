@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { useAuth } from '../../hooks/useAuth';
 import { Plus, Edit, Trash2 } from 'lucide-react';
+import { ADMIN_API } from '../../config/api';
 
 interface PublisherFeature {
   id: number;
@@ -21,7 +22,7 @@ export default function AdminContentPublisher() {
   const fetchData = async () => {
     if (!token) return;
     try {
-      const response = await fetch('http://localhost:8000/api/admin/content/publisher-features', {
+      const response = await fetch(`${ADMIN_API}/content/publisher-features`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await response.json();
@@ -41,7 +42,7 @@ export default function AdminContentPublisher() {
     if (!token || !confirm(`Are you sure you want to delete「${item.title}」?`)) return;
     
     try {
-      await fetch(`http://localhost:8000/api/admin/content/publisher-features/${item.id}`, {
+      await fetch(`${ADMIN_API}/content/publisher-features/${item.id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -66,14 +67,14 @@ export default function AdminContentPublisher() {
 
     try {
       if (editing) {
-        await fetch(`http://localhost:8000/api/admin/content/publisher-features/${editing.id}`, {
+        await fetch(`${ADMIN_API}/content/publisher-features/${editing.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify(data),
         });
         alert('Updated successfully');
       } else {
-        await fetch('http://localhost:8000/api/admin/content/publisher-features', {
+        await fetch(`${ADMIN_API}/content/publisher-features`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify(data),
