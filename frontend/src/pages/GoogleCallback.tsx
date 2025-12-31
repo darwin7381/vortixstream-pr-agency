@@ -23,11 +23,9 @@ export const GoogleCallback = () => {
         localStorage.setItem('access_token', accessToken);
         localStorage.setItem('refresh_token', refreshToken);
         
-        // 觸發認證狀態更新事件
-        window.dispatchEvent(new Event('storage'));
-        
-        // 直接跳轉到首頁（不需要 reload）
+        // 跳轉到首頁並刷新
         window.location.href = '/';
+        window.location.reload();
       } catch (error) {
         console.error('Google callback error:', error);
         setError(error instanceof Error ? error.message : 'Google 登入失敗');
