@@ -25,14 +25,14 @@ export default function AdminBlogList() {
   }, []);
 
   const handleDelete = async (post: BlogPost) => {
-    if (confirm(`確定要刪除「${post.title}」嗎？`)) {
+    if (confirm(`Are you sure you want to delete「${post.title}」?`)) {
       try {
         await blogAPI.deletePost(post.id);
-        alert('文章已刪除');
+        alert('postDeleted successfully');
         fetchPosts();
       } catch (error) {
         console.error('Failed to delete:', error);
-        alert('刪除失敗');
+        alert('Delete failed');
       }
     }
   };
@@ -41,7 +41,7 @@ export default function AdminBlogList() {
     return (
       <AdminLayout>
         <div className="p-8 flex items-center justify-center">
-          <div className="text-gray-600 dark:text-gray-400">載入中...</div>
+          <div className="text-gray-600 dark:text-gray-400">Loading...</div>
         </div>
       </AdminLayout>
     );
@@ -52,15 +52,15 @@ export default function AdminBlogList() {
       <div className="p-8">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Blog 文章管理</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">共 {posts.length} 篇文章</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Blog Posts Management</h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-2">Total {posts.length}  posts</p>
           </div>
           <button
             onClick={() => navigate('/admin/blog/new')}
             className="flex items-center gap-2 bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors shadow-sm"
           >
             <Plus size={20} />
-            新增文章
+            Add Post
           </button>
         </div>
 
@@ -69,19 +69,19 @@ export default function AdminBlogList() {
             <thead className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
               <tr>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                  標題
+                  Title
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                  分類
+                  Category
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                  狀態
+                  Status
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                  發布日期
+                  Published Date
                 </th>
                 <th className="px-6 py-4 text-right text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                  操作
+                  Actions
                 </th>
               </tr>
             </thead>
@@ -107,12 +107,12 @@ export default function AdminBlogList() {
                           : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
                       }`}
                     >
-                      {post.status === 'published' ? '已發布' : post.status === 'draft' ? '草稿' : post.status}
+                      {post.status === 'published' ? 'Published' : post.status === 'draft' ? 'Draft' : post.status}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
                     {post.published_at
-                      ? new Date(post.published_at).toLocaleDateString('zh-TW')
+                      ? new Date(post.published_at).toLocaleDateString('en-US')
                       : '-'}
                   </td>
                   <td className="px-6 py-4 text-right">
@@ -120,21 +120,21 @@ export default function AdminBlogList() {
                       <button
                         onClick={() => window.open(`/blog/${post.slug}`, '_blank')}
                         className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
-                        title="預覽"
+                        title="Preview"
                       >
                         <Eye size={18} />
                       </button>
                       <button
                         onClick={() => navigate(`/admin/blog/edit/${post.id}`)}
                         className="p-2 text-orange-600 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/30 rounded-lg transition-colors"
-                        title="編輯"
+                        title="Edit"
                       >
                         <Edit size={18} />
                       </button>
                       <button
                         onClick={() => handleDelete(post)}
                         className="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors"
-                        title="刪除"
+                        title="Delete"
                       >
                         <Trash2 size={18} />
                       </button>
@@ -148,12 +148,12 @@ export default function AdminBlogList() {
           {posts.length === 0 && (
             <div className="text-center py-16">
               <FileText className="mx-auto text-gray-300 dark:text-gray-600 mb-4" size={48} />
-              <p className="text-gray-500 dark:text-gray-400 text-lg">暫無文章</p>
+              <p className="text-gray-500 dark:text-gray-400 text-lg">Nopost</p>
               <button
                 onClick={() => navigate('/admin/blog/new')}
                 className="mt-4 text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-500 font-medium"
               >
-                建立第一篇文章
+                Create your first post
               </button>
             </div>
           )}

@@ -1,15 +1,28 @@
+/**
+ * ⚠️ 重要原則（絕對不可違反）：
+ * 1. ❌ 禁止任何 fallback
+ * 2. ❌ 禁止任何檢查邏輯（禁止 if (loading)、if (data.length) 等）
+ * 3. ❌ 禁止寫死數量（禁止 slice(0,2)、slice(2,5) 等）
+ * 4. ✅ 組件必須總是渲染
+ * 5. ✅ 使用 map 動態渲染所有資料
+ */
 import { useState, useEffect, useRef } from 'react';
-import { stats } from '../constants/statsData';
-import { aboutContent } from '../constants/aboutData';
+import { contentAPI, type Stat, type Differentiator } from '../api/client';
 import StatsCardCompact from './StatsCardCompact';
 
 export default function StatsSection() {
   const [isVisible, setIsVisible] = useState(false);
   const [visibleDiff, setVisibleDiff] = useState(new Set());
+  const [stats, setStats] = useState<Stat[]>([]);
+  const [differentiators, setDifferentiators] = useState<Differentiator[]>([]);
   const sectionRef = useRef<HTMLDivElement>(null);
   const diffRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  const differentiators = aboutContent.whyVortix.differentiators;
+  // 載入 stats 和 differentiators
+  useEffect(() => {
+    contentAPI.getStats().then(setStats).catch(console.error);
+    contentAPI.getDifferentiators().then(setDifferentiators).catch(console.error);
+  }, []);
 
   // Intersection Observer for triggering animations
   useEffect(() => {
@@ -50,7 +63,7 @@ export default function StatsSection() {
     });
 
     return () => observers.forEach(observer => observer.disconnect());
-  }, []);
+  }, [differentiators]);
 
   // Check icon for differentiators
   const CheckIcon = () => (
@@ -138,19 +151,24 @@ export default function StatsSection() {
             Why Vortix Is Different?
           </h2>
           
-          {/* Stats Cards - 使用精簡版組件 */}
+          {/* Stats Cards - 動態渲染 */}
           <div className="mb-12 sm:mb-16 md:mb-20 lg:mb-24">
-            <StatsCardCompact stats={stats} />
+            <StatsCardCompact stats={stats.map(stat => ({
+              number: `${stat.value}${stat.suffix}`,
+              targetNumber: stat.value,
+              suffix: stat.suffix,
+              label: stat.label,
+              description: stat.description
+            }))} />
           </div>
 
-          {/* Differentiators Section - 2欄網格佈局（前2個一排，後3個一排）*/}
+          {/* Differentiators Section - 動態網格佈局 */}
           <div className="max-w-[1100px] mx-auto">
-            {/* First Row - 2 items */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8 mb-4 md:mb-6 lg:mb-8">
-              {differentiators.slice(0, 2).map((item, index) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+                {differentiators.map((item, index) => (
                 <div 
                   key={index}
-                  ref={el => diffRefs.current[index] = el}
+                  ref={el => { diffRefs.current[index] = el; }}
                   className={`group relative transition-all duration-1000 ease-out ${
                     visibleDiff.has(index) 
                       ? 'opacity-100 translate-y-0 translate-x-0 float-card' 
@@ -175,7 +193,7 @@ export default function StatsSection() {
                     {/* Text */}
                     <div className="relative flex-1">
                       <p className="text-[14px] sm:text-[15px] md:text-[16px] lg:text-[17px] text-white/90 leading-[1.5] font-sans group-hover:text-white transition-colors duration-300">
-                        {item}
+                        {item.text}
                       </p>
                     </div>
 
@@ -186,53 +204,9 @@ export default function StatsSection() {
                   {/* Enhanced Border Left Accent */}
                   <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-8 sm:h-10 bg-gradient-to-b from-[#FF7400] via-white to-[#1D3557] rounded-r-full opacity-50 group-hover:opacity-100 group-hover:w-1 group-hover:shadow-[0_0_12px_rgba(255,116,0,0.6)] transition-all duration-500" />
                 </div>
-              ))}
+                ))}
+              </div>
             </div>
-
-            {/* Second Row - 3 items */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
-              {differentiators.slice(2, 5).map((item, index) => (
-                <div 
-                  key={index + 2}
-                  ref={el => diffRefs.current[index + 2] = el}
-                  className={`group relative transition-all duration-1000 ease-out ${
-                    visibleDiff.has(index + 2) 
-                      ? 'opacity-100 translate-y-0 translate-x-0 float-card' 
-                      : 'opacity-0 translate-y-6 -translate-x-4'
-                  }`}
-                  style={{ 
-                    transitionDelay: `${0.8 + (index + 2) * 0.15}s`,
-                    animationDelay: `${(index + 2) * 0.3}s`
-                  }}
-                >
-                  {/* Card with minimal glassmorphism */}
-                  <div className="relative flex items-center gap-4 sm:gap-5 p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl bg-gradient-to-br from-white/[0.03] via-white/[0.05] to-white/[0.02] border border-white/5 hover:border-white/15 hover:from-white/[0.05] hover:to-white/[0.03] transition-all duration-500 hover:scale-[1.01] hover:-translate-y-0.5">
-                    
-                    {/* Subtle Inner Glow on Hover */}
-                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#FF7400]/5 via-transparent to-[#1D3557]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    
-                    {/* Check Icon */}
-                    <div className="relative flex-shrink-0">
-                      <CheckIcon />
-                    </div>
-                    
-                    {/* Text */}
-                    <div className="relative flex-1">
-                      <p className="text-[13px] sm:text-[14px] md:text-[15px] lg:text-[16px] text-white/90 leading-[1.5] font-sans group-hover:text-white transition-colors duration-300">
-                        {item}
-                      </p>
-                    </div>
-
-                    {/* Decorative Corner Dot */}
-                    <div className="absolute top-3 sm:top-4 right-3 sm:right-4 w-1 h-1 bg-white/20 rounded-full group-hover:bg-[#FF7400] group-hover:shadow-[0_0_6px_rgba(255,116,0,0.6)] transition-all duration-300" />
-                  </div>
-
-                  {/* Enhanced Border Left Accent */}
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-8 sm:h-10 bg-gradient-to-b from-[#FF7400] via-white to-[#1D3557] rounded-r-full opacity-50 group-hover:opacity-100 group-hover:w-1 group-hover:shadow-[0_0_12px_rgba(255,116,0,0.6)] transition-all duration-500" />
-                </div>
-              ))}
-            </div>
-          </div>
       </div>
     </section>
   );

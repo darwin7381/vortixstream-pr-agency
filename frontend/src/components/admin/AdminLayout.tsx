@@ -22,7 +22,13 @@ import {
   UserCircle,
   Moon,
   Sun,
-  Users
+  Users,
+  FileQuestion,
+  MessageCircle,
+  Briefcase,
+  Palette,
+  Sparkles,
+  TrendingUp
 } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 import VortixLogoWhite from '../../assets/VortixLogo White_Horizontal.png';
@@ -91,12 +97,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       path: '/admin' 
     },
     { 
-      label: 'Blog 文章', 
+      label: 'Blog Posts', 
       icon: FileText, 
       path: '/admin/blog' 
     },
     { 
-      label: 'Pricing 方案', 
+      label: 'Pricing Plans', 
       icon: DollarSign, 
       path: '/admin/pricing' 
     },
@@ -104,17 +110,31 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       label: 'PR Packages',
       icon: Package,
       children: [
-        { label: 'Packages 列表', icon: List, path: '/admin/pr-packages' },
-        { label: '分類管理', icon: Folder, path: '/admin/pr-packages/categories' },
+        { label: 'Package List', icon: List, path: '/admin/pr-packages' },
+        { label: 'Categories', icon: Folder, path: '/admin/pr-packages/categories' },
       ]
     },
     { 
-      label: '媒體圖庫', 
+      label: 'Media Library', 
       icon: Image, 
       path: '/admin/media' 
     },
+    {
+      label: 'Content Management',
+      icon: Palette,
+      children: [
+        { label: 'Hero Sections', icon: Home, path: '/admin/content/hero' },
+        { label: 'FAQs', icon: FileQuestion, path: '/admin/content/faqs' },
+        { label: 'Testimonials', icon: MessageCircle, path: '/admin/content/testimonials' },
+        { label: 'Services', icon: Briefcase, path: '/admin/content/services' },
+        { label: 'Why Vortix', icon: Sparkles, path: '/admin/content/why-vortix' },
+        { label: 'Partner Logos', icon: Image, path: '/admin/content/partners' },
+        { label: 'Publisher Features', icon: FileText, path: '/admin/content/publisher' },
+        { label: 'Site Settings', icon: Settings, path: '/admin/content/settings' },
+      ]
+    },
     { 
-      label: '聯絡表單', 
+      label: 'Contact Form', 
       icon: MessageSquare, 
       path: '/admin/contact' 
     },
@@ -124,15 +144,15 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       path: '/admin/newsletter' 
     },
     {
-      label: '用戶管理',
+      label: 'User Management',
       icon: Users,
       children: [
-        { label: '用戶列表', icon: List, path: '/admin/users' },
-        { label: '邀請管理', icon: Mail, path: '/admin/invitations' },
+        { label: 'User List', icon: List, path: '/admin/users' },
+        { label: 'Invitations', icon: Mail, path: '/admin/invitations' },
       ]
     },
     { 
-      label: '系統設定', 
+      label: 'System Settings', 
       icon: Settings, 
       path: '/admin/settings' 
     },
@@ -274,16 +294,16 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             {/* 頁面標題 */}
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
               {location.pathname === '/admin' && 'Dashboard'}
-              {location.pathname === '/admin/blog' && 'Blog 文章管理'}
-              {location.pathname.includes('/admin/blog/') && 'Blog 文章編輯'}
-              {location.pathname === '/admin/pricing' && 'Pricing 方案管理'}
-              {location.pathname.includes('/admin/pricing/') && 'Pricing 方案編輯'}
-              {location.pathname === '/admin/pr-packages' && 'PR Packages 管理'}
-              {location.pathname.includes('/admin/pr-packages/edit') && 'PR Package 編輯'}
-              {location.pathname.includes('/admin/pr-packages/categories') && 'PR Package 分類管理'}
-              {location.pathname === '/admin/contact' && '聯絡表單管理'}
-              {location.pathname === '/admin/newsletter' && 'Newsletter 訂閱者'}
-              {location.pathname === '/admin/media' && '媒體圖庫'}
+              {location.pathname === '/admin/blog' && 'Blog Posts Management'}
+              {location.pathname.includes('/admin/blog/') && 'Edit Blog Post'}
+              {location.pathname === '/admin/pricing' && 'Pricing Plans Management'}
+              {location.pathname.includes('/admin/pricing/') && 'Edit Pricing Plan'}
+              {location.pathname === '/admin/pr-packages' && 'PR Packages Management'}
+              {location.pathname.includes('/admin/pr-packages/edit') && 'Edit PR Package'}
+              {location.pathname.includes('/admin/pr-packages/categories') && 'PR Package Categories'}
+              {location.pathname === '/admin/contact' && 'Contact Form Management'}
+              {location.pathname === '/admin/newsletter' && 'Newsletter Subscribers'}
+              {location.pathname === '/admin/media' && 'Media Library'}
             </h2>
           </div>
           
@@ -293,16 +313,16 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
               <input
                 type="text"
-                placeholder="搜索..."
+                placeholder="Search..."
                 className="pl-10 pr-4 py-2 w-64 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
               />
             </div>
             
-            {/* 主題切換 */}
+            {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
               className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-              title={theme === 'light' ? '切換到深色模式' : '切換到淺色模式'}
+              title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
             >
               {theme === 'light' ? (
                 <Moon size={20} className="text-gray-600" />
@@ -311,30 +331,30 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               )}
             </button>
             
-            {/* 通知圖標 */}
+            {/* Notifications */}
             <div className="relative">
               <button
                 onClick={() => setShowNotifications(!showNotifications)}
                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors relative"
-                title="通知"
+                title="Notifications"
               >
                 <Bell size={20} className="text-gray-600 dark:text-gray-400" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
               </button>
             </div>
             
-            {/* 設置圖標 */}
+            {/* Settings */}
             <button
               className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-              title="設置"
+              title="Settings"
             >
               <Settings size={20} className="text-gray-600 dark:text-gray-400" />
             </button>
             
-            {/* 分隔線 */}
+            {/* Divider */}
             <div className="h-8 w-px bg-gray-300 dark:bg-gray-600"></div>
             
-            {/* 用戶下拉選單 */}
+            {/* User Menu */}
             <div className="relative">
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
@@ -343,9 +363,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 <div className="text-right hidden sm:block">
                   <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.name || 'Admin User'}</p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {user?.role === 'super_admin' ? '超級管理員' : 
-                     user?.role === 'admin' ? '管理員' :
-                     user?.role === 'publisher' ? '出版商' : '用戶'}
+                    {user?.role === 'super_admin' ? 'Super Admin' : 
+                     user?.role === 'admin' ? 'Admin' :
+                     user?.role === 'publisher' ? 'Publisher' : 'User'}
                   </p>
                 </div>
                 {user?.avatar ? (
@@ -367,9 +387,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                       <p className="text-sm font-semibold text-gray-900 dark:text-white">{user?.name}</p>
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{user?.email}</p>
                       <span className="inline-block mt-2 px-2 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 text-xs font-medium rounded">
-                        {user?.role === 'super_admin' ? '超級管理員' : 
-                         user?.role === 'admin' ? '管理員' :
-                         user?.role === 'publisher' ? '出版商' : '用戶'}
+                        {user?.role === 'super_admin' ? 'Super Admin' : 
+                         user?.role === 'admin' ? 'Admin' :
+                         user?.role === 'publisher' ? 'Publisher' : 'User'}
                       </span>
                     </div>
                     <div className="py-2">
@@ -381,21 +401,21 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                         className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors"
                       >
                         <Home size={18} />
-                        <span className="text-sm font-medium">返回前台網站</span>
+                        <span className="text-sm font-medium">Back to Website</span>
                       </button>
                       <button
                         onClick={() => setShowUserMenu(false)}
                         className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors"
                       >
                         <UserCircle size={18} />
-                        <span className="text-sm font-medium">個人資料</span>
+                        <span className="text-sm font-medium">Profile</span>
                       </button>
                       <button
                         onClick={() => setShowUserMenu(false)}
                         className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors"
                       >
                         <Settings size={18} />
-                        <span className="text-sm font-medium">帳號設置</span>
+                        <span className="text-sm font-medium">Account Settings</span>
                       </button>
                     </div>
                     <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
@@ -408,7 +428,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                         className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors"
                       >
                         <Home size={18} />
-                        <span className="text-sm font-medium">返回前台網站</span>
+                        <span className="text-sm font-medium">Back to Website</span>
                       </button>
                       <button
                         onClick={() => {
@@ -419,7 +439,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                         className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 transition-colors"
                       >
                         <LogOut size={18} />
-                        <span className="text-sm font-medium">登出</span>
+                        <span className="text-sm font-medium">Logout</span>
                       </button>
                     </div>
                   </div>

@@ -36,7 +36,7 @@ export default function AdminSettings() {
         const data = await response.json();
         setSettings(data);
         
-        // 載入現有設定值
+        // Loading現有設定值
         const autoDeleteSetting = data.find((s: Setting) => s.setting_key === 'auto_delete_deactivated_users');
         const daysSetting = data.find((s: Setting) => s.setting_key === 'auto_delete_days');
         
@@ -52,7 +52,7 @@ export default function AdminSettings() {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      // 更新自動刪除設定
+      // Update auto-delete settings
       await fetch(`${API_BASE_URL}/admin/settings/auto_delete_deactivated_users`, {
         method: 'PATCH',
         headers: {
@@ -62,7 +62,7 @@ export default function AdminSettings() {
         body: JSON.stringify({ setting_value: String(autoDelete) })
       });
 
-      // 更新天數設定
+      // Update days setting
       await fetch(`${API_BASE_URL}/admin/settings/auto_delete_days`, {
         method: 'PATCH',
         headers: {
@@ -72,11 +72,11 @@ export default function AdminSettings() {
         body: JSON.stringify({ setting_value: deleteDays })
       });
 
-      alert('設定已儲存');
+      alert('Settings saved successfully');
       loadSettings();
     } catch (error) {
       console.error('Failed to save settings:', error);
-      alert('儲存失敗');
+      alert('Save failed');
     }
     setIsSaving(false);
   };
@@ -86,25 +86,25 @@ export default function AdminSettings() {
       <div className="p-8">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">系統設定</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">管理系統行為和參數</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">System Settings</h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-2">Manage system behavior and parameters</p>
           </div>
         </div>
 
         {isLoading ? (
-          <div className="text-center py-12 text-gray-600 dark:text-gray-400">載入中...</div>
+          <div className="text-center py-12 text-gray-600 dark:text-gray-400">Loading...</div>
         ) : (
           <div className="max-w-2xl space-y-6">
-            {/* 用戶自動刪除設定 */}
+            {/* User Auto-delete Settings */}
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
               <div className="flex items-start gap-3 mb-4">
                 <SettingsIcon className="w-5 h-5 text-orange-600 dark:text-orange-400 mt-0.5" />
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
-                    自動刪除停用帳號
+                    自動DeleteDeactivate帳號
                   </h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    自動刪除停用超過指定天數的帳號（不包含被封禁的帳號）
+                    自動DeleteDeactivate超過指定days數的帳號（不包含被Ban的帳號）
                   </p>
                 </div>
               </div>
@@ -113,7 +113,7 @@ export default function AdminSettings() {
                 {/* 開關 */}
                 <div className="flex items-center justify-between py-3 border-b border-gray-200 dark:border-gray-700">
                   <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    啟用自動刪除
+                    Enable Auto-delete
                   </label>
                   <button
                     onClick={() => setAutoDelete(!autoDelete)}
@@ -129,10 +129,10 @@ export default function AdminSettings() {
                   </button>
                 </div>
 
-                {/* 天數設定 */}
+                {/* days數設定 */}
                 <div className="flex items-center justify-between">
                   <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    自動刪除天數
+                    Days Before Auto-delete
                   </label>
                   <div className="flex items-center gap-2">
                     <input
@@ -144,7 +144,7 @@ export default function AdminSettings() {
                       disabled={!autoDelete}
                       className="w-20 px-3 py-2 bg-gray-50 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-sm disabled:opacity-50"
                     />
-                    <span className="text-sm text-gray-600 dark:text-gray-400">天</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-400">days</span>
                   </div>
                 </div>
 
@@ -153,14 +153,14 @@ export default function AdminSettings() {
                   <div className="flex items-start gap-2 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700/50 rounded-lg">
                     <Info className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
                     <p className="text-xs text-blue-700 dark:text-blue-300">
-                      停用超過 {deleteDays} 天的帳號將會被自動永久刪除。被封禁的帳號不會被自動刪除。
+                      Deactivate超過 {deleteDays} days的帳號將會被自動permanently delete。被Ban的帳號不會被自動Delete。
                     </p>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* 儲存按鈕 */}
+            {/* Save Button */}
             <div className="flex justify-end">
               <button
                 onClick={handleSave}
@@ -168,7 +168,7 @@ export default function AdminSettings() {
                 className="flex items-center gap-2 px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-colors shadow-sm disabled:opacity-50"
               >
                 <Save className="w-5 h-5" />
-                {isSaving ? '儲存中...' : '儲存設定'}
+                {isSaving ? 'Saving...' : 'Save Settings'}
               </button>
             </div>
           </div>

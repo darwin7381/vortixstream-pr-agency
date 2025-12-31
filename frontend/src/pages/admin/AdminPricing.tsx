@@ -27,14 +27,14 @@ export default function AdminPricing() {
   };
 
   const handleDelete = async (pkg: PricingPackage) => {
-    if (confirm(`確定要刪除「${pkg.name}」方案嗎？`)) {
+    if (confirm(`Are you sure you want to delete「${pkg.name}」plan?`)) {
       try {
         await pricingAPI.deletePackage(pkg.id);
-        alert('方案已刪除');
+        alert('planDeleted successfully');
         fetchPackages();
       } catch (error) {
         console.error('Failed to delete:', error);
-        alert('刪除失敗');
+        alert('Delete failed');
       }
     }
   };
@@ -42,7 +42,7 @@ export default function AdminPricing() {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="p-8 text-gray-600 dark:text-gray-400">載入中...</div>
+        <div className="p-8 text-gray-600 dark:text-gray-400">Loading...</div>
       </AdminLayout>
     );
   }
@@ -52,15 +52,15 @@ export default function AdminPricing() {
       <div className="p-8">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Pricing 方案管理</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">共 {packages.length} 個方案</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Pricing Plans Management</h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-2">Total {packages.length}  plans</p>
           </div>
           <button
             onClick={() => navigate('/admin/pricing/new')}
             className="flex items-center gap-2 bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors shadow-sm"
           >
             <Plus size={20} />
-            新增方案
+            Add Plan
           </button>
         </div>
 
@@ -74,24 +74,24 @@ export default function AdminPricing() {
                 <div className="absolute -top-3 right-4">
                   <span className="inline-flex items-center gap-1 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-1 rounded-full text-sm font-semibold shadow-lg">
                     <Star size={14} className="fill-white" />
-                    熱門
+                    Popular
                   </span>
                 </div>
               )}
 
-              {/* 操作按鈕 */}
+              {/* Action Buttons */}
               <div className="absolute top-4 right-4 flex gap-2">
                 <button
                   onClick={() => navigate(`/admin/pricing/edit/${pkg.id}`)}
                   className="p-2 text-orange-600 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/30 rounded-lg transition-colors"
-                  title="編輯"
+                  title="Edit"
                 >
                   <Edit size={18} />
                 </button>
                 <button
                   onClick={() => handleDelete(pkg)}
                   className="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors"
-                  title="刪除"
+                  title="Delete"
                 >
                   <Trash2 size={18} />
                 </button>
@@ -101,13 +101,13 @@ export default function AdminPricing() {
               
               <div className="mb-4">
                 <span className="text-4xl font-bold text-orange-600 dark:text-orange-400">${pkg.price}</span>
-                <span className="text-gray-600 dark:text-gray-400 ml-2">/ {pkg.billing_period === 'monthly' ? '月' : '年'}</span>
+                <span className="text-gray-600 dark:text-gray-400 ml-2">/ {pkg.billing_period === 'monthly' ? 'month' : 'year'}</span>
               </div>
 
               <p className="text-gray-600 dark:text-gray-400 mb-6">{pkg.description}</p>
 
               <div className="space-y-3">
-                <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">包含功能</p>
+                <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">Features Included</p>
                 {pkg.features.map((feature: string, idx: number) => (
                   <div key={idx} className="flex items-start gap-2">
                     <Check size={18} className="text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
@@ -117,8 +117,8 @@ export default function AdminPricing() {
               </div>
 
               <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-between text-sm text-gray-500 dark:text-gray-400">
-                <span>狀態: {pkg.status}</span>
-                <span>排序: {pkg.display_order}</span>
+                <span>Status: {pkg.status}</span>
+                <span>Display Order: {pkg.display_order}</span>
               </div>
             </div>
           ))}
@@ -126,12 +126,12 @@ export default function AdminPricing() {
 
         {packages.length === 0 && !loading && (
           <div className="text-center py-16">
-            <p className="text-gray-500 dark:text-gray-400 text-lg">暫無方案</p>
+            <p className="text-gray-500 dark:text-gray-400 text-lg">Noplan</p>
             <button
               onClick={() => navigate('/admin/pricing/new')}
               className="mt-4 text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-500 font-medium"
             >
-              建立第一個方案
+              Create第一 plans
             </button>
           </div>
         )}

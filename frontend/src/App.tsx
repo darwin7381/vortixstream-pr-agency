@@ -48,6 +48,14 @@ import AdminMedia from './pages/admin/AdminMedia';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminInvitations from './pages/admin/AdminInvitations';
 import AdminSettings from './pages/admin/AdminSettings';
+import AdminContentFAQs from './pages/admin/AdminContentFAQs';
+import AdminContentTestimonials from './pages/admin/AdminContentTestimonials';
+import AdminContentServices from './pages/admin/AdminContentServices';
+import AdminContentSettings from './pages/admin/AdminContentSettings';
+import AdminContentWhyVortix from './pages/admin/AdminContentWhyVortix';
+import AdminContentPartners from './pages/admin/AdminContentPartners';
+import AdminContentPublisher from './pages/admin/AdminContentPublisher';
+import AdminContentHero from './pages/admin/AdminContentHero';
 import { faqs } from './constants/faqData';
 
 // Home Page Component
@@ -164,6 +172,14 @@ function AppContent() {
           <Route path="/admin/media" element={<ProtectedRoute requireAdmin><AdminMedia /></ProtectedRoute>} />
           <Route path="/admin/users" element={<ProtectedRoute requireAdmin><AdminUsers /></ProtectedRoute>} />
           <Route path="/admin/invitations" element={<ProtectedRoute requireAdmin><AdminInvitations /></ProtectedRoute>} />
+          <Route path="/admin/content/hero" element={<ProtectedRoute requireAdmin><AdminContentHero /></ProtectedRoute>} />
+          <Route path="/admin/content/faqs" element={<ProtectedRoute requireAdmin><AdminContentFAQs /></ProtectedRoute>} />
+          <Route path="/admin/content/testimonials" element={<ProtectedRoute requireAdmin><AdminContentTestimonials /></ProtectedRoute>} />
+          <Route path="/admin/content/services" element={<ProtectedRoute requireAdmin><AdminContentServices /></ProtectedRoute>} />
+          <Route path="/admin/content/why-vortix" element={<ProtectedRoute requireAdmin><AdminContentWhyVortix /></ProtectedRoute>} />
+          <Route path="/admin/content/partners" element={<ProtectedRoute requireAdmin><AdminContentPartners /></ProtectedRoute>} />
+          <Route path="/admin/content/publisher" element={<ProtectedRoute requireAdmin><AdminContentPublisher /></ProtectedRoute>} />
+          <Route path="/admin/content/settings" element={<ProtectedRoute requireAdmin><AdminContentSettings /></ProtectedRoute>} />
           <Route path="/admin/settings" element={<ProtectedRoute requireAdmin><AdminSettings /></ProtectedRoute>} />
         </Routes>
       </div>

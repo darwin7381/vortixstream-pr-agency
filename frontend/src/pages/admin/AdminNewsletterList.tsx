@@ -34,40 +34,40 @@ export default function AdminNewsletterList() {
   }, [statusFilter]);
 
   const handleUnsubscribe = async (id: number, email: string) => {
-    if (confirm(`確定要取消 ${email} 的訂閱嗎？`)) {
+    if (confirm(`Are you sure you want to Cancel ${email} ?`)) {
       try {
         await newsletterAdminAPI.updateStatus(id, 'unsubscribed');
-        alert('訂閱已取消');
+        alert('Subscription cancelled successfully');
         fetchData();
       } catch (error) {
         console.error('Failed to unsubscribe:', error);
-        alert('操作失敗');
+        alert('Operation failed');
       }
     }
   };
 
   const handleReactivate = async (id: number, email: string) => {
-    if (confirm(`確定要重新啟用 ${email} 的訂閱嗎？`)) {
+    if (confirm(`Are you sure you want to Reactivate ${email} ?`)) {
       try {
         await newsletterAdminAPI.updateStatus(id, 'active');
-        alert('訂閱已重新啟用');
+        alert('Subscription reactivated successfully');
         fetchData();
       } catch (error) {
         console.error('Failed to reactivate:', error);
-        alert('操作失敗');
+        alert('Operation failed');
       }
     }
   };
 
   const handleDelete = async (id: number, email: string) => {
-    if (confirm(`確定要永久刪除 ${email} 嗎？此操作無法撤銷。`)) {
+    if (confirm(`Are you sure you want to permanently delete ${email} ?This action cannot be undone。`)) {
       try {
         await newsletterAdminAPI.deleteSubscriber(id);
-        alert('訂閱者已刪除');
+        alert('subscriberDeleted successfully');
         fetchData();
       } catch (error) {
         console.error('Failed to delete:', error);
-        alert('刪除失敗');
+        alert('Delete failed');
       }
     }
   };
@@ -82,7 +82,7 @@ export default function AdminNewsletterList() {
     return (
       <AdminLayout>
         <div className="p-8 flex items-center justify-center min-h-[400px]">
-          <div className="text-gray-600 dark:text-gray-400">載入中...</div>
+          <div className="text-gray-600 dark:text-gray-400">Loading...</div>
         </div>
       </AdminLayout>
     );
@@ -92,11 +92,11 @@ export default function AdminNewsletterList() {
     <AdminLayout>
       <div className="p-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Newsletter 訂閱者</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">管理所有 newsletter 訂閱</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Newsletter Subscribers</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">Manage all newsletter subscriptions</p>
         </div>
 
-        {/* 統計卡片 */}
+        {/* Statistics Cards */}
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
@@ -105,7 +105,7 @@ export default function AdminNewsletterList() {
                   <TrendingUp className="text-green-600 dark:text-green-400" size={24} />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">活躍訂閱</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Active Subscriptions</p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.active_count}</p>
                 </div>
               </div>
@@ -117,7 +117,7 @@ export default function AdminNewsletterList() {
                   <X className="text-gray-600 dark:text-gray-400" size={24} />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">已取消訂閱</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Cancelled Subscriptions</p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.unsubscribed_count}</p>
                 </div>
               </div>
@@ -129,7 +129,7 @@ export default function AdminNewsletterList() {
                   <Mail className="text-blue-600 dark:text-blue-400" size={24} />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">總訂閱數</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Total Subscriptions</p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.total_count}</p>
                 </div>
               </div>
@@ -137,7 +137,7 @@ export default function AdminNewsletterList() {
           </div>
         )}
 
-        {/* 篩選和搜尋 */}
+        {/* Filter and Search */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-6 flex gap-4">
           <div className="flex gap-2">
             <button
@@ -148,7 +148,7 @@ export default function AdminNewsletterList() {
                   : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >
-              全部
+              All
             </button>
             <button
               onClick={() => setStatusFilter('active')}
@@ -158,7 +158,7 @@ export default function AdminNewsletterList() {
                   : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >
-              活躍
+              Active
             </button>
             <button
               onClick={() => setStatusFilter('unsubscribed')}
@@ -168,7 +168,7 @@ export default function AdminNewsletterList() {
                   : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >
-              已取消
+              Cancelled successfully
             </button>
           </div>
 
@@ -177,37 +177,37 @@ export default function AdminNewsletterList() {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="搜尋電郵地址..."
+              placeholder="Search email address..."
               className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
             />
             <button
               type="submit"
               className="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
             >
-              搜尋
+              Search
             </button>
           </form>
         </div>
 
-        {/* 訂閱者列表 */}
+        {/* Subscriber List */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
           <table className="w-full">
             <thead className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
               <tr>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                  電郵
+                  Email
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                  來源
+                  Source
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                  狀態
+                  Status
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                  訂閱時間
+                  Subscribed At
                 </th>
                 <th className="px-6 py-4 text-right text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                  操作
+                  Actions
                 </th>
               </tr>
             </thead>
@@ -234,13 +234,13 @@ export default function AdminNewsletterList() {
                           : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
                       }`}
                     >
-                      {subscriber.status === 'active' ? '活躍' : '已取消'}
+                      {subscriber.status === 'active' ? 'Active' : 'Cancelled successfully'}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
                     <div className="flex items-center gap-2">
                       <Clock size={14} className="text-gray-400 dark:text-gray-500" />
-                      {new Date(subscriber.subscribed_at).toLocaleDateString('zh-TW')}
+                      {new Date(subscriber.subscribed_at).toLocaleDateString('en-US')}
                     </div>
                   </td>
                   <td className="px-6 py-4 text-right">
@@ -249,7 +249,7 @@ export default function AdminNewsletterList() {
                         <button
                           onClick={() => handleUnsubscribe(subscriber.id, subscriber.email)}
                           className="p-2 text-orange-600 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/30 rounded-lg transition-colors"
-                          title="取消訂閱"
+                          title="Unsubscribe"
                         >
                           <X size={18} />
                         </button>
@@ -257,7 +257,7 @@ export default function AdminNewsletterList() {
                         <button
                           onClick={() => handleReactivate(subscriber.id, subscriber.email)}
                           className="p-2 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30 rounded-lg transition-colors"
-                          title="重新啟用"
+                          title="Reactivate"
                         >
                           <Mail size={18} />
                         </button>
@@ -265,7 +265,7 @@ export default function AdminNewsletterList() {
                       <button
                         onClick={() => handleDelete(subscriber.id, subscriber.email)}
                         className="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors"
-                        title="刪除"
+                        title="Delete"
                       >
                         <Trash2 size={18} />
                       </button>
@@ -278,7 +278,7 @@ export default function AdminNewsletterList() {
 
           {subscribers.length === 0 && (
             <div className="text-center py-16">
-              <p className="text-gray-500 dark:text-gray-400 text-lg">沒有找到訂閱者</p>
+              <p className="text-gray-500 dark:text-gray-400 text-lg">No subscribers found</p>
             </div>
           )}
         </div>

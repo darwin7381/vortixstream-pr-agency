@@ -33,15 +33,15 @@ export default function AdminMedia() {
   const [uploading, setUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   
-  // 篩選和搜尋
+  // Filter and Search
   const [selectedFolder, setSelectedFolder] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   
-  // 放大檢視
+  // Zoom View
   const [viewingImage, setViewingImage] = useState<MediaFile | null>(null);
   
-  // 上傳設定
+  // Upload Settings
   const [uploadFolder, setUploadFolder] = useState('uploads');
   const [showNewFolderDialog, setShowNewFolderDialog] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
@@ -68,7 +68,7 @@ export default function AdminMedia() {
     }
   };
 
-  // 拖曳上傳處理
+  // Drag and Drop Upload
   const handleDragEnter = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -122,28 +122,28 @@ export default function AdminMedia() {
         });
       }
       
-      alert(`成功上傳 ${filesToUpload.length} 個檔案到「${uploadFolder}」資料夾`);
+      alert(`Successfully uploaded ${filesToUpload.length} files to「${uploadFolder}」folder`);
       fetchData();
     } catch (error) {
       console.error('Upload failed:', error);
-      alert('上傳失敗');
+      alert('Upload failed');
     } finally {
       setUploading(false);
     }
   };
 
   const handleDelete = async (file: MediaFile) => {
-    if (confirm(`確定要刪除「${file.original_filename}」嗎？`)) {
+    if (confirm(`Are you sure you want to delete「${file.original_filename}」?`)) {
       try {
         await fetch(`${ADMIN_API}/media/files/${file.id}`, {
           method: 'DELETE',
         });
-        alert('檔案已刪除');
+        alert('File deleted successfully');
         setViewingImage(null);
         fetchData();
       } catch (error) {
         console.error('Delete failed:', error);
-        alert('刪除失敗');
+        alert('Delete failed');
       }
     }
   };
@@ -156,9 +156,9 @@ export default function AdminMedia() {
         body: JSON.stringify(data),
       });
       
-      alert('資訊已更新');
+      alert('Information updated successfully');
       fetchData();
-      // 更新當前查看的圖片
+      // Update currently viewing image
       if (viewingImage && viewingImage.id === file.id) {
         setViewingImage({
           ...viewingImage,
@@ -168,17 +168,17 @@ export default function AdminMedia() {
       }
     } catch (error) {
       console.error('Update failed:', error);
-      alert('更新失敗');
+      alert('Update failed');
     }
   };
 
   const handleCopyUrl = (url: string) => {
     navigator.clipboard.writeText(url);
-    alert('URL 已複製到剪貼板');
+    alert('URL copied to clipboard');
   };
 
   const handleSyncFromR2 = async () => {
-    if (!confirm('確定要掃描 R2 並匯入檔案嗎？已存在的檔案會被跳過。')) return;
+    if (!confirm('Are you sure you want to scan R2 and import files?existing files will be skipped。')) return;
     
     setLoading(true);
     
@@ -190,14 +190,14 @@ export default function AdminMedia() {
       const result = await response.json();
       
       if (response.ok) {
-        alert(`同步完成！\n已匯入：${result.imported} 個檔案\n已跳過：${result.skipped} 個（已存在）\n總計：${result.total} 個檔案`);
+        alert(`Sync completed！\nImported: ${result.imported} files\nSkipped: ${result.skipped} (already exists）\nTotal：${result.total} files`);
         fetchData();
       } else {
-        throw new Error(result.detail || '同步失敗');
+        throw new Error(result.detail || 'Sync failed');
       }
     } catch (error: any) {
       console.error('Sync failed:', error);
-      alert(`同步失敗：${error.message}`);
+      alert(`Sync failed：${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -219,17 +219,17 @@ export default function AdminMedia() {
       
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.detail || '創建失敗');
+        throw new Error(error.detail || 'Creation failed');
       }
       
       setUploadFolder(folderName);
       setNewFolderName('');
       setShowNewFolderDialog(false);
-      alert(`資料夾「${folderName}」已創建並設為上傳目標！`);
-      fetchData(); // 重新載入資料夾列表
+      alert(`folder "${folderName}" created successfully and set as upload target！`);
+      fetchData(); // Reload folder list
     } catch (error: any) {
       console.error('Failed to create folder:', error);
-      alert(error.message || '創建資料夾失敗');
+      alert(error.message || 'Failed to create folder');
     }
   };
 
@@ -240,7 +240,7 @@ export default function AdminMedia() {
   };
 
   const filteredFiles = files.filter(file => {
-    // 過濾掉 .keep 檔案
+    // Filter out .keep files
     if (file.filename === '.keep') return false;
     
     if (searchTerm) {
@@ -254,7 +254,7 @@ export default function AdminMedia() {
     return (
       <AdminLayout>
         <div className="p-8 flex items-center justify-center min-h-[400px]">
-          <div className="text-gray-600 dark:text-gray-400">載入中...</div>
+          <div className="text-gray-600 dark:text-gray-400">Loading...</div>
         </div>
       </AdminLayout>
     );
@@ -263,12 +263,12 @@ export default function AdminMedia() {
   return (
     <AdminLayout>
       <div className="p-8">
-        {/* 標題和統計 */}
+        {/* Title and Statistics */}
         <div className="mb-8 flex items-start justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">媒體圖庫</h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Media Library</h1>
             <p className="text-gray-600 dark:text-gray-400">
-              共 {stats?.total_files || 0} 個檔案 · {formatFileSize(stats?.total_size || 0)} · {folders.length} 個資料夾
+              Total {stats?.total_files || 0} files · {formatFileSize(stats?.total_size || 0)} · {folders.length}  folders
             </p>
           </div>
           
@@ -278,11 +278,11 @@ export default function AdminMedia() {
             className="flex items-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <RefreshCw size={20} />
-            掃描 R2 並匯入
+            Scan R2 and Import
           </button>
         </div>
 
-        {/* 拖曳上傳區域 */}
+        {/* Drag and Drop Upload Area */}
         <MediaUploadZone
           isDragging={isDragging}
           uploading={uploading}
@@ -297,22 +297,22 @@ export default function AdminMedia() {
           onNewFolder={() => setShowNewFolderDialog(true)}
         />
 
-        {/* 新建資料夾對話框 */}
+        {/* New Folder Dialog */}
         {showNewFolderDialog && (
           <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center" onClick={() => setShowNewFolderDialog(false)}>
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl" onClick={(e) => e.stopPropagation()}>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">新建資料夾</h3>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">New Folder</h3>
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                資料夾會立即創建並出現在列表中。建議使用英文小寫和連字號（例如：my-folder）。
+                Folder will be created immediately and appear in the list。Recommended to use lowercase English and hyphens(e.g.: my-folder)
               </p>
               <input
                 type="text"
                 value={newFolderName}
                 onChange={(e) => setNewFolderName(e.target.value)}
-                placeholder="資料夾名稱（例如：banners）"
+                placeholder="folderName(e.g.: banners）"
                 className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg mb-4 focus:ring-2 focus:ring-orange-500"
                 onKeyPress={(e) => e.key === 'Enter' && handleCreateFolder()}
-                aria-label="新資料夾名稱"
+                aria-label="New Folder Name"
                 autoFocus
               />
               <div className="flex gap-3">
@@ -322,7 +322,7 @@ export default function AdminMedia() {
                   type="button"
                   disabled={!newFolderName.trim()}
                 >
-                  創建資料夾
+                  Createfolder
                 </button>
                 <button
                   onClick={() => {
@@ -332,14 +332,14 @@ export default function AdminMedia() {
                   className="flex-1 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600"
                   type="button"
                 >
-                  取消
+                  Cancel
                 </button>
               </div>
             </div>
           </div>
         )}
 
-        {/* 篩選和搜尋 */}
+        {/* Filter and Search */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-6">
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <div className="flex gap-2 flex-wrap">
@@ -351,7 +351,7 @@ export default function AdminMedia() {
                     : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                 }`}
               >
-                全部 ({stats?.total_files || 0})
+                All ({stats?.total_files || 0})
               </button>
               {folders.map((folder) => (
                 <button
@@ -375,7 +375,7 @@ export default function AdminMedia() {
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="搜尋檔案名稱..."
+                  placeholder="Search file name..."
                   className="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg w-64"
                 />
               </div>
@@ -384,14 +384,14 @@ export default function AdminMedia() {
                 <button
                   onClick={() => setViewMode('grid')}
                   className={`p-2 ${viewMode === 'grid' ? 'bg-gray-100 dark:bg-gray-700' : ''}`}
-                  title="網格檢視"
+                  title="Grid View"
                 >
                   <Grid size={18} />
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
                   className={`p-2 ${viewMode === 'list' ? 'bg-gray-100 dark:bg-gray-700' : ''}`}
-                  title="列表檢視"
+                  title="List View"
                 >
                   <ListIcon size={18} />
                 </button>
@@ -400,7 +400,7 @@ export default function AdminMedia() {
           </div>
         </div>
 
-        {/* 圖片展示 - 網格檢視 */}
+        {/* Image Display - Grid View */}
         {viewMode === 'grid' ? (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {filteredFiles.map((file) => (
@@ -421,21 +421,21 @@ export default function AdminMedia() {
                   <button
                     onClick={() => setViewingImage(file)}
                     className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
-                    title="放大查看"
+                    title="View Fullsize"
                   >
                     <ZoomIn size={18} />
                   </button>
                   <button
                     onClick={() => handleCopyUrl(file.file_url)}
                     className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
-                    title="複製 URL"
+                    title="Copy URL"
                   >
                     <Copy size={18} />
                   </button>
                   <button
                     onClick={() => handleDelete(file)}
                     className="bg-red-600 text-white p-2 rounded-lg hover:bg-red-700"
-                    title="刪除"
+                    title="Delete"
                   >
                     <Trash2 size={18} />
                   </button>
@@ -453,17 +453,17 @@ export default function AdminMedia() {
             ))}
           </div>
         ) : (
-          // 列表檢視
+          // List View
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
             <table className="w-full">
               <thead className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
                 <tr>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">預覽</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">檔名</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">資料夾</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">大小</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">上傳時間</th>
-                  <th className="px-6 py-4 text-right text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">操作</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">Preview</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">Filename</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">folder</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">Size</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">Upload Time</th>
+                  <th className="px-6 py-4 text-right text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -492,28 +492,28 @@ export default function AdminMedia() {
                       {formatFileSize(file.file_size)}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
-                      {new Date(file.created_at).toLocaleString('zh-TW')}
+                      {new Date(file.created_at).toLocaleString('en-US')}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => setViewingImage(file)}
                           className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg"
-                          title="放大查看"
+                          title="View Fullsize"
                         >
                           <ZoomIn size={18} />
                         </button>
                         <button
                           onClick={() => handleCopyUrl(file.file_url)}
                           className="p-2 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30 rounded-lg"
-                          title="複製 URL"
+                          title="Copy URL"
                         >
                           <Copy size={18} />
                         </button>
                         <button
                           onClick={() => handleDelete(file)}
                           className="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg"
-                          title="刪除"
+                          title="Delete"
                         >
                           <Trash2 size={18} />
                         </button>
@@ -530,15 +530,15 @@ export default function AdminMedia() {
           <div className="text-center py-16 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
             <Search className="mx-auto text-gray-300 dark:text-gray-600 mb-4" size={64} />
             <p className="text-gray-500 dark:text-gray-400 text-lg mb-2">
-              {searchTerm ? '沒有找到符合的檔案' : '此資料夾還沒有圖片'}
+              {searchTerm ? 'No matching files found' : 'This folder has no images yet'}
             </p>
             <p className="text-gray-400 dark:text-gray-500 text-sm">
-              拖曳圖片到上方區域或點擊按鈕上傳
+              Drag images to the area above or click the button to upload
             </p>
           </div>
         )}
 
-        {/* 圖片放大查看彈窗（使用獨立組件） */}
+        {/* Image Fullsize Modal (using separate component) */}
         <ImageViewModal
           file={viewingImage}
           onClose={() => setViewingImage(null)}

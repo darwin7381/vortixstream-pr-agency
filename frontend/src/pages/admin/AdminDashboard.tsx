@@ -47,15 +47,15 @@ export default function AdminDashboard() {
       <div className="p-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">歡迎回來，管理您的 VortixPR 內容</p>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">Welcome back, manage your VortixPR content</p>
         </div>
 
-        {/* 統計卡片 */}
+        {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">Blog 文章</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">Blog post</p>
                 <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{loading ? '-' : stats.blogCount}</p>
               </div>
               <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
@@ -67,7 +67,7 @@ export default function AdminDashboard() {
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">Pricing 方案</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">Pricing plan</p>
                 <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{loading ? '-' : stats.pricingCount}</p>
               </div>
               <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg">
@@ -91,7 +91,7 @@ export default function AdminDashboard() {
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">聯絡提交</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">Contact Submissions</p>
                 <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{loading ? '-' : stats.contactCount}</p>
               </div>
               <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
@@ -113,9 +113,9 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* 快速操作 */}
+        {/* Quick Actions */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">快速操作</h2>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <Link
               to="/admin/blog/new"
@@ -125,8 +125,8 @@ export default function AdminDashboard() {
                 <FileText className="text-orange-600 dark:text-orange-400" size={24} />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">新增 Blog 文章</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">建立新的部落格文章</p>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Add Blog post</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Create new blog post</p>
               </div>
             </Link>
 
@@ -138,8 +138,8 @@ export default function AdminDashboard() {
                 <FileText className="text-blue-600 dark:text-blue-400" size={24} />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">管理文章</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">編輯或刪除現有文章</p>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Manage Posts</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Edit or delete existing posts</p>
               </div>
             </Link>
 
@@ -151,8 +151,8 @@ export default function AdminDashboard() {
                 <DollarSign className="text-green-600 dark:text-green-400" size={24} />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">查看定價</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">檢視定價方案</p>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">View Pricing</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">View pricing plans</p>
               </div>
             </Link>
 
@@ -165,7 +165,7 @@ export default function AdminDashboard() {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">PR Packages</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">檢視 PR 套餐</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">View PR packages</p>
               </div>
             </Link>
 
@@ -177,8 +177,8 @@ export default function AdminDashboard() {
                 <MessageSquare className="text-pink-600 dark:text-pink-400" size={24} />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">聯絡表單</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">查看和回覆用戶訊息</p>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Contact Form</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">View and reply to user messages</p>
               </div>
             </Link>
 
@@ -191,7 +191,7 @@ export default function AdminDashboard() {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Newsletter</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">管理訂閱者列表</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Manage subscriber list</p>
               </div>
             </Link>
           </div>

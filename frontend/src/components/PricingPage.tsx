@@ -6,7 +6,7 @@ import PricingCommitment from './PricingCommitment';
 import LogoCarousel from './LogoCarousel';
 import Footer from './Footer';
 import { pricingPlans } from '../constants/pricingData';
-import { faqs } from '../constants/faqData';
+import { contentAPI, type FAQ } from '../api/client';
 
 interface PricingPageProps {
   showFooter?: boolean;
@@ -14,6 +14,8 @@ interface PricingPageProps {
 
 export default function PricingPage({ showFooter = true }: PricingPageProps) {
   const [isVisible, setIsVisible] = useState(false);
+  const [faqs, setFaqs] = useState<FAQ[]>([]);
+  const [loading, setLoading] = useState(true);
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -31,6 +33,14 @@ export default function PricingPage({ showFooter = true }: PricingPageProps) {
     }
 
     return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    // 載入 FAQs
+    contentAPI.getFAQs()
+      .then(setFaqs)
+      .catch(console.error)
+      .finally(() => setLoading(false));
   }, []);
 
   return (
@@ -144,12 +154,14 @@ export default function PricingPage({ showFooter = true }: PricingPageProps) {
       </section>
 
       {/* FAQ Section */}
-      <FAQSection 
-        faqs={faqs}
-        variant="default"
-        maxWidth="default"
-        showCTA={false}
-      />
+      {!loading && (
+        <FAQSection 
+          faqs={faqs}
+          variant="default"
+          maxWidth="default"
+          showCTA={false}
+        />
+      )}
 
       {/* Contact Form */}
       <PricingContactForm />

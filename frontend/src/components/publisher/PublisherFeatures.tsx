@@ -180,11 +180,10 @@ export default function PublisherFeaturesSection() {
             </div>
           </div>
 
-          {/* Compact Features List - 2 + 2 Layout */}
+          {/* Compact Features List - 動態佈局 */}
           <div className="max-w-[1100px] mx-auto">
-            {/* First Row - 2 items */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-6">
-              {publisherFeatures.slice(0, 2).map((item, index) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+              {publisherFeatures.map((item, index) => (
                 <div 
                   key={index}
                   ref={el => { diffRefs.current[index] = el; }}
@@ -196,45 +195,6 @@ export default function PublisherFeaturesSection() {
                   style={{ 
                     transitionDelay: `${0.3 + index * 0.15}s`,
                     animationDelay: `${index * 0.3}s`
-                  }}
-                >
-                  <div className="relative flex items-center gap-4 p-4 md:p-5 rounded-xl bg-gradient-to-br from-white/[0.03] via-white/[0.05] to-white/[0.02] border border-white/5 hover:border-white/15 hover:from-white/[0.05] hover:to-white/[0.03] transition-all duration-500 hover:scale-[1.01] hover:-translate-y-0.5">
-                    
-                    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#FF7400]/5 via-transparent to-[#1D3557]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    
-                    <div className="relative flex-shrink-0">
-                      <CheckIcon />
-                    </div>
-                    
-                    <div className="relative flex-1">
-                      <h3 className="text-white text-[16px] md:text-[20px] font-medium leading-[1.3] tracking-[-0.16px] md:tracking-[-0.2px] mb-1.5 group-hover:text-white transition-colors duration-300" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                        {item.title}
-                      </h3>
-                      <p className="text-white/90 text-[12px] md:text-[14px] opacity-90 leading-[1.5] group-hover:opacity-100 transition-opacity duration-300">
-                        {item.description}
-                      </p>
-                    </div>
-
-                    <div className="absolute top-3 right-3 w-1 h-1 bg-white/20 rounded-full group-hover:bg-[#FF7400] group-hover:shadow-[0_0_6px_rgba(255,116,0,0.6)] transition-all duration-300" />
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Second Row - 2 items */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-              {publisherFeatures.slice(2, 4).map((item, index) => (
-                <div 
-                  key={index + 2}
-                  ref={el => { diffRefs.current[index + 2] = el; }}
-                  className={`group relative transition-all duration-1000 ease-out ${
-                    visibleDiff.has(index + 2) 
-                      ? 'opacity-100 translate-y-0 translate-x-0 float-card' 
-                      : 'opacity-0 translate-y-6 -translate-x-4'
-                  }`}
-                  style={{ 
-                    transitionDelay: `${0.3 + (index + 2) * 0.15}s`,
-                    animationDelay: `${(index + 2) * 0.3}s`
                   }}
                 >
                   <div className="relative flex items-center gap-4 p-4 md:p-5 rounded-xl bg-gradient-to-br from-white/[0.03] via-white/[0.05] to-white/[0.02] border border-white/5 hover:border-white/15 hover:from-white/[0.05] hover:to-white/[0.03] transition-all duration-500 hover:scale-[1.01] hover:-translate-y-0.5">

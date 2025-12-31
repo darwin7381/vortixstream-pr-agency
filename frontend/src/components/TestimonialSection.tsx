@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { testimonials } from '../constants/testimonialData';
+import { contentAPI, type Testimonial } from '../api/client';
 import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
 
 // 生成頭像圖片 - 使用不同的 Unsplash 圖片
@@ -13,7 +13,17 @@ const avatarImages = [
 ];
 
 export default function TestimonialSection() {
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
+
+  // 載入 testimonials
+  useEffect(() => {
+    contentAPI.getTestimonials()
+      .then(setTestimonials)
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
 
   // 桌面版每頁顯示3個卡片，手機版每頁顯示1個
   const getItemsPerPage = () => {
@@ -91,8 +101,8 @@ export default function TestimonialSection() {
         <div className="relative">
           <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-gradient-to-br from-[#FF7400] to-[#E6690A] p-0.5">
             <img
-              src={avatarImages[testimonials.indexOf(testimonial)]}
-              alt={testimonial.name}
+              src={testimonial.author_avatar_url || avatarImages[testimonials.indexOf(testimonial)]}
+              alt={testimonial.author_name}
               className="w-full h-full rounded-full object-cover"
             />
           </div>
@@ -100,15 +110,19 @@ export default function TestimonialSection() {
         
         <div>
           <div className="font-medium text-white text-sm lg:text-base">
-            {testimonial.name}
+            {testimonial.author_name}
           </div>
           <div className="text-gray-400 text-sm lg:text-base">
-            {testimonial.title}
+            {testimonial.author_title}{testimonial.author_company && ` at ${testimonial.author_company}`}
           </div>
         </div>
       </div>
     </div>
   );
+
+  if (loading) {
+    return null;
+  }
 
   return (
     <section className="bg-black py-16 md:py-24 lg:py-28">

@@ -25,16 +25,16 @@ export default function AdminPRPackages() {
   };
 
   const handleDelete = async (pkgSlug: string, pkgName: string) => {
-    if (confirm(`確定要刪除「${pkgName}」嗎？`)) {
+    if (confirm(`Are you sure you want to delete「${pkgName}」?`)) {
       try {
-        // 先通過 slug 獲取完整的 package 數據來得到實際的數據庫 ID
+        // First get complete package data through slug to get actual database ID
         const pkg = await prPackagesAPI.getPackage(pkgSlug);
         await prPackagesAPI.deletePackage((pkg as any).id);
-        alert('Package 已刪除');
+        alert('Package Deleted successfully');
         fetchPackages();
       } catch (error) {
         console.error('Failed to delete:', error);
-        alert('刪除失敗');
+        alert('Delete failed');
       }
     }
   };
@@ -42,7 +42,7 @@ export default function AdminPRPackages() {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="p-8">載入中...</div>
+        <div className="p-8">Loading...</div>
       </AdminLayout>
     );
   }
@@ -54,8 +54,8 @@ export default function AdminPRPackages() {
       <div className="p-8">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">PR Packages 管理</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">{categories.length} 個分類，共 {totalPackages} 個 packages</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">PR Packages Management</h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-2">{categories.length} categories，Total {totalPackages}  packages</p>
           </div>
           <div className="flex gap-3">
             <button
@@ -63,14 +63,14 @@ export default function AdminPRPackages() {
               className="flex items-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors shadow-sm"
             >
               <Folder size={20} />
-              管理分類
+              Manage Categories
             </button>
             <button
               onClick={() => navigate('/admin/pr-packages/new')}
               className="flex items-center gap-2 bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors shadow-sm"
             >
               <Plus size={20} />
-              新增 Package
+              Add Package
             </button>
           </div>
         </div>
@@ -78,7 +78,7 @@ export default function AdminPRPackages() {
         <div className="space-y-8">
           {categories.map((category, catIdx) => (
             <div key={category.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-              {/* 分類標題 */}
+              {/* CategoryTitle */}
               <div className="mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
                 <div className="flex items-center justify-between">
                   <div>
@@ -100,32 +100,32 @@ export default function AdminPRPackages() {
                 </div>
               </div>
 
-              {/* Packages 列表 */}
+              {/* Package List */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {category.packages.map((pkg: any, pkgIdx: number) => (
                   <div
                     key={pkg.id}
                     className="border-2 border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:border-orange-500 hover:shadow-md transition-all relative"
                   >
-                    {/* 操作按鈕 */}
+                    {/* Action Buttons */}
                     <div className="absolute top-3 right-3 flex gap-1">
                       <button
                         onClick={() => navigate(`/admin/pr-packages/edit/${pkg.id}`)}
                         className="p-1.5 text-orange-600 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/30 rounded-lg transition-colors"
-                        title="編輯"
+                        title="Edit"
                       >
                         <Edit size={16} />
                       </button>
                       <button
                         onClick={() => handleDelete(pkg.id, pkg.name)}
                         className="p-1.5 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors"
-                        title="刪除"
+                        title="Delete"
                       >
                         <Trash2 size={16} />
                       </button>
                     </div>
 
-                    {/* Package 標題 */}
+                    {/* Package Title */}
                     <div className="flex items-start justify-between mb-4 pr-16">
                       <div className="flex-1">
                         <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">{pkg.name}</h3>
@@ -138,13 +138,13 @@ export default function AdminPRPackages() {
                       <Package className="text-orange-600 dark:text-orange-400 flex-shrink-0" size={24} />
                     </div>
 
-                    {/* 價格 */}
+                    {/* Price */}
                     <p className="text-2xl font-bold text-orange-600 dark:text-orange-400 mb-3">{pkg.price}</p>
 
-                    {/* 描述 */}
+                    {/* Description */}
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{pkg.description}</p>
 
-                    {/* 保證發布數 */}
+                    {/* Guaranteed Publications */}
                     {pkg.guaranteedPublications && (
                       <div className="mb-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
                         <p className="text-sm font-semibold text-green-700 dark:text-green-400">
@@ -158,7 +158,7 @@ export default function AdminPRPackages() {
                       <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                         <p className="text-xs font-semibold text-blue-700 dark:text-blue-400 mb-2 flex items-center gap-2">
                           <Image size={14} />
-                          Media Logos: {pkg.mediaLogos.length} 個
+                          Media Logos: {pkg.mediaLogos.length} items
                         </p>
                         <div className="space-y-1">
                           {pkg.mediaLogos.map((logo: any, idx: number) => (
@@ -170,7 +170,7 @@ export default function AdminPRPackages() {
 
                     {/* Features */}
                     <div className="mb-4">
-                      <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">主要功能</p>
+                      <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">Key Features</p>
                       <div className="space-y-2">
                         {pkg.features.slice(0, 3).map((feature: string, idx: number) => (
                           <p key={idx} className="text-sm text-gray-600 dark:text-gray-400 flex items-start gap-2">
@@ -179,7 +179,7 @@ export default function AdminPRPackages() {
                           </p>
                         ))}
                         {pkg.features.length > 3 && (
-                          <p className="text-xs text-gray-500 dark:text-gray-400">+{pkg.features.length - 3} 更多功能</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">+{pkg.features.length - 3} more features</p>
                         )}
                       </div>
                     </div>
@@ -189,7 +189,7 @@ export default function AdminPRPackages() {
                       <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                         <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
                           <FileText size={14} />
-                          詳細資訊: {pkg.detailedInfo.sections.length} 個區塊
+                          Detailed Info: {pkg.detailedInfo.sections.length} itemssections
                         </p>
                         <div className="space-y-2">
                           {pkg.detailedInfo.sections.map((section: any, idx: number) => (

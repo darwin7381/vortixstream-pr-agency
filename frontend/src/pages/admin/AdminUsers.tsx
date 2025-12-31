@@ -60,9 +60,9 @@ export default function AdminUsers() {
       
       if (response.ok) {
         const data = await response.json();
-        console.log('===用戶列表 API 返回===', data);
+        console.log('===User列表 API 返回===', data);
         if (data && data.length > 0) {
-          console.log('第一個用戶:', data[0]);
+          console.log('第一itemsUser:', data[0]);
           console.log('  account_status:', data[0].account_status);
           console.log('  is_active:', data[0].is_active);
         }
@@ -77,7 +77,7 @@ export default function AdminUsers() {
   };
 
   const handleReactivateUser = async (userId: number, email: string) => {
-    if (!confirm(`確定要重新啟用用戶 ${email}？`)) {
+    if (!confirm(`Are you sure you want to ReactivateUser ${email}？`)) {
       return;
     }
 
@@ -88,16 +88,16 @@ export default function AdminUsers() {
       });
 
       if (response.ok) {
-        alert('用戶已重新啟用');
+        alert('User已Reactivate');
         loadUsers();
         loadStats();
       } else {
         const error = await response.json();
-        alert(error.detail || '重新啟用失敗');
+        alert(error.detail || 'Reactivate失敗');
       }
     } catch (error) {
       console.error('Failed to reactivate user:', error);
-      alert('重新啟用失敗');
+      alert('Reactivate失敗');
     }
   };
 
@@ -122,10 +122,10 @@ export default function AdminUsers() {
 
   const getRoleLabel = (role: UserRole): string => {
     const labels: Record<UserRole, string> = {
-      'user': '一般用戶',
-      'publisher': '出版商',
-      'admin': '管理員',
-      'super_admin': '超級管理員'
+      'user': 'Users',
+      'publisher': 'Publishers',
+      'admin': 'Admins',
+      'super_admin': 'Super Admins'
     };
     return labels[role];
   };
@@ -141,7 +141,7 @@ export default function AdminUsers() {
   };
 
   const handleUpdateRole = async (userId: number, newRole: UserRole) => {
-    if (!confirm(`確定要將此用戶設為 ${getRoleLabel(newRole)}？`)) {
+    if (!confirm(`Are you sure you want to 將此User設為 ${getRoleLabel(newRole)}？`)) {
       return;
     }
 
@@ -152,28 +152,28 @@ export default function AdminUsers() {
       });
 
       if (response.ok) {
-        alert('角色已更新');
+        alert('RoleUpdated successfully');
         loadUsers();
         loadStats();
       } else {
         const error = await response.json();
-        alert(error.detail || '更新失敗');
+        alert(error.detail || 'Update failed');
       }
     } catch (error) {
       console.error('Failed to update role:', error);
-      alert('更新失敗');
+      alert('Update failed');
     }
   };
 
   const handleDeleteUser = async (userId: number, email: string) => {
-    const confirmMsg = `確定要停用用戶 ${email}？\n\n用戶將無法登入，但資料會保留。`;
+    const confirmMsg = `Are you sure you want to DeactivateUser ${email}？\n\nUser將無法登入，但資料會保留。`;
     
     if (!confirm(confirmMsg)) {
       return;
     }
 
     try {
-      // 軟刪除（停用帳號）
+      // 軟Delete（Deactivate帳號）
       const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
@@ -186,16 +186,16 @@ export default function AdminUsers() {
         loadStats();
       } else {
         const error = await response.json();
-        alert(error.detail || '操作失敗');
+        alert(error.detail || 'Operation failed');
       }
     } catch (error) {
       console.error('Failed to delete user:', error);
-      alert('操作失敗');
+      alert('Operation failed');
     }
   };
 
   const handleBanUser = async (userId: number, email: string) => {
-    const reason = prompt(`封禁用戶 ${email}\n\n請輸入封禁原因：`, '違反服務條款');
+    const reason = prompt(`BanUser ${email}\n\nEnterBan原因：`, '違反服務條款');
     
     if (!reason) return;
 
@@ -206,21 +206,21 @@ export default function AdminUsers() {
       });
 
       if (response.ok) {
-        alert('用戶已封禁');
+        alert('UserBanned');
         loadUsers();
         loadStats();
       } else {
         const error = await response.json();
-        alert(error.detail || '封禁失敗');
+        alert(error.detail || 'Ban失敗');
       }
     } catch (error) {
       console.error('Failed to ban user:', error);
-      alert('封禁失敗');
+      alert('Ban失敗');
     }
   };
 
   const handleUnbanUser = async (userId: number, email: string) => {
-    if (!confirm(`確定要解除對 ${email} 的封禁？`)) return;
+    if (!confirm(`Are you sure you want to 解除對 ${email} 的Ban？`)) return;
 
     try {
       const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/unban/`, {
@@ -229,22 +229,22 @@ export default function AdminUsers() {
       });
 
       if (response.ok) {
-        alert('已解除封禁');
+        alert('已解除Ban');
         loadUsers();
         loadStats();
       } else {
         const error = await response.json();
-        alert(error.detail || '解除封禁失敗');
+        alert(error.detail || '解除Ban失敗');
       }
     } catch (error) {
       console.error('Failed to unban user:', error);
-      alert('解除封禁失敗');
+      alert('解除Ban失敗');
     }
   };
 
   const handleInviteUser = async () => {
     if (!inviteEmail.trim()) {
-      alert('請輸入 Email');
+      alert('Enter Email');
       return;
     }
 
@@ -279,28 +279,28 @@ export default function AdminUsers() {
   return (
     <AdminLayout>
       <div className="p-8">
-        {/* 標題與邀請按鈕 */}
+        {/* Title與邀請按鈕 */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">用戶管理</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">管理所有註冊用戶</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">User Management</h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-2">Manage all註冊User</p>
           </div>
           <button
             onClick={() => setShowInviteModal(true)}
             className="flex items-center gap-2 bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors shadow-sm"
           >
             <Mail className="w-5 h-5" />
-            邀請用戶
+            Invite User
           </button>
         </div>
 
-        {/* 統計卡片 */}
+        {/* Statistics Cards */}
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <div className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-700 shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-1">總用戶數</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-1">Total Users</p>
                   <p className="text-gray-900 dark:text-white text-2xl font-bold">{stats.total_users}</p>
                 </div>
                 <div className="w-12 h-12 bg-blue-100 dark:bg-blue-500/10 rounded-lg flex items-center justify-center">
@@ -312,7 +312,7 @@ export default function AdminUsers() {
             <div className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-700 shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-1">管理員</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-1">Admins</p>
                   <p className="text-gray-900 dark:text-white text-2xl font-bold">{stats.admin_count}</p>
                 </div>
                 <div className="w-12 h-12 bg-purple-100 dark:bg-purple-500/10 rounded-lg flex items-center justify-center">
@@ -324,7 +324,7 @@ export default function AdminUsers() {
             <div className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-700 shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-1">Google 登入</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-1">Google Sign-ins</p>
                   <p className="text-gray-900 dark:text-white text-2xl font-bold">{stats.google_users}</p>
                 </div>
                 <div className="w-12 h-12 bg-green-100 dark:bg-green-500/10 rounded-lg flex items-center justify-center">
@@ -338,7 +338,7 @@ export default function AdminUsers() {
             <div className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-700 shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-1">已驗證</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-1">Verified</p>
                   <p className="text-gray-900 dark:text-white text-2xl font-bold">{stats.verified_users}</p>
                 </div>
                 <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-500/10 rounded-lg flex items-center justify-center">
@@ -349,7 +349,7 @@ export default function AdminUsers() {
           </div>
         )}
 
-        {/* 角色 Tabs */}
+        {/* Role Tabs */}
         <div className="bg-white dark:bg-gray-800 rounded-xl p-1.5 mb-6 border border-gray-200 dark:border-gray-700 shadow-sm">
           <div className="flex gap-1 overflow-x-auto">
             <button
@@ -360,7 +360,7 @@ export default function AdminUsers() {
                   : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
-              所有用戶 {stats && `(${stats.total_users})`}
+              All Users {stats && `(${stats.total_users})`}
             </button>
             <button
               onClick={() => setRoleFilter('user')}
@@ -370,7 +370,7 @@ export default function AdminUsers() {
                   : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
-              一般用戶 {stats && `(${stats.user_count})`}
+              Users {stats && `(${stats.user_count})`}
             </button>
             <button
               onClick={() => setRoleFilter('publisher')}
@@ -380,7 +380,7 @@ export default function AdminUsers() {
                   : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
-              出版商
+              Publishers
             </button>
             <button
               onClick={() => setRoleFilter('admin')}
@@ -390,7 +390,7 @@ export default function AdminUsers() {
                   : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
-              管理員 {stats && `(${stats.admin_count})`}
+              Admins {stats && `(${stats.admin_count})`}
             </button>
             <button
               onClick={() => setRoleFilter('super_admin')}
@@ -400,15 +400,15 @@ export default function AdminUsers() {
                   : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
-              超級管理員
+              Super Admins
             </button>
           </div>
         </div>
 
-        {/* 搜尋和篩選列 */}
+        {/* Search和篩選列 */}
         <div className="bg-white dark:bg-gray-800 rounded-xl p-5 mb-6 border border-gray-200 dark:border-gray-700 shadow-sm">
           <div className="flex gap-3">
-            {/* 搜尋框 + 按鈕組合 */}
+            {/* Search框 + 按鈕組合 */}
             <div className="flex-1 flex gap-2">
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
@@ -417,7 +417,7 @@ export default function AdminUsers() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                  placeholder="搜尋 Email 或姓名..."
+                  placeholder="Search Email 或Name..."
                   className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-orange-500 dark:focus:border-orange-500/50 transition-all"
                 />
               </div>
@@ -425,39 +425,39 @@ export default function AdminUsers() {
                 onClick={handleSearch}
                 className="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-all shadow-sm whitespace-nowrap"
               >
-                搜尋
+                Search
               </button>
             </div>
 
-            {/* 狀態篩選 */}
+            {/* Status篩選 */}
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
               className="px-4 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-sm focus:border-orange-500 transition-all min-w-[140px]"
             >
-              <option value="active">✅ 啟用中</option>
-              <option value="admin_suspended">🟡 已停用</option>
-              <option value="banned">🔴 已封禁</option>
+              <option value="active">✅ Active中</option>
+              <option value="admin_suspended">🟡 已Deactivate</option>
+              <option value="banned">🔴 Banned</option>
             </select>
           </div>
         </div>
 
-        {/* 用戶列表 */}
+        {/* User列表 */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
           {isLoading ? (
-            <div className="p-12 text-center text-gray-600 dark:text-gray-400">載入中...</div>
+            <div className="p-12 text-center text-gray-600 dark:text-gray-400">Loading...</div>
           ) : users.length === 0 ? (
-            <div className="p-12 text-center text-gray-600 dark:text-gray-400">沒有找到用戶</div>
+            <div className="p-12 text-center text-gray-600 dark:text-gray-400">沒有找到User</div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">用戶</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">角色</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">狀態</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">註冊時間</th>
-                    <th className="px-6 py-4 text-right text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">操作</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">User</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Role</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Registered At</th>
+                    <th className="px-6 py-4 text-right text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -466,7 +466,7 @@ export default function AdminUsers() {
                       user.account_status === 'banned' ? 'opacity-40 bg-red-900/5' :
                       user.account_status === 'admin_suspended' ? 'opacity-60' : ''
                     }`}>
-                      {/* 用戶資訊 */}
+                      {/* User資訊 */}
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           {user.avatar_url ? (
@@ -490,7 +490,7 @@ export default function AdminUsers() {
                         </div>
                       </td>
 
-                      {/* 角色 */}
+                      {/* Role */}
                       <td className="px-6 py-4">
                         <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border ${getRoleColor(user.role)}`}>
                           <Shield className="w-3.5 h-3.5" />
@@ -498,100 +498,100 @@ export default function AdminUsers() {
                         </span>
                       </td>
 
-                      {/* 狀態 */}
+                      {/* Status */}
                       <td className="px-6 py-4">
                         <div className="flex flex-col gap-1.5">
                           {user.account_status === 'banned' ? (
                             <span className="inline-flex items-center gap-1 text-xs font-semibold text-red-600 dark:text-red-400">
                               <Ban className="w-3.5 h-3.5" />
-                              已封禁
+                              Banned
                             </span>
                           ) : user.account_status === 'admin_suspended' ? (
                             <span className="inline-flex items-center gap-1 text-xs font-semibold text-orange-600 dark:text-orange-400">
                               <XCircle className="w-3.5 h-3.5" />
-                              已停用
+                              已Deactivate
                             </span>
                           ) : user.is_verified ? (
                             <span className="inline-flex items-center gap-1 text-xs text-green-600 dark:text-green-400">
                               <UserCheck className="w-3.5 h-3.5" />
-                              已驗證
+                              Verified
                             </span>
                           ) : (
                             <span className="inline-flex items-center gap-1 text-xs text-yellow-600 dark:text-yellow-400">
                               <UserX className="w-3.5 h-3.5" />
-                              未驗證
+                              Unverified
                             </span>
                           )}
                         </div>
                       </td>
 
-                      {/* 註冊時間 */}
+                      {/* Registered At */}
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-1.5 text-gray-600 dark:text-gray-400 text-sm">
                           <Calendar className="w-4 h-4" />
-                          {new Date(user.created_at).toLocaleDateString('zh-TW')}
+                          {new Date(user.created_at).toLocaleDateString('en-US')}
                         </div>
                       </td>
 
-                      {/* 操作 */}
+                      {/* Actions */}
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-end gap-2">
                           {(user.account_status === 'active' || !user.account_status || user.is_active !== false) ? (
                             <>
-                              {/* 角色選擇器（僅啟用用戶） */}
+                              {/* Role選擇器（僅ActiveUser） */}
                               <select
                                 value={user.role}
                                 onChange={(e) => handleUpdateRole(user.id, e.target.value as UserRole)}
                                 className="px-3 py-1.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-600 rounded-lg text-xs text-gray-900 dark:text-white focus:border-orange-500 transition-all"
                               >
-                                <option value="user">一般用戶</option>
-                                <option value="publisher">出版商</option>
-                                <option value="admin">管理員</option>
-                                <option value="super_admin">超級管理員</option>
+                                <option value="user">Users</option>
+                                <option value="publisher">Publishers</option>
+                                <option value="admin">Admins</option>
+                                <option value="super_admin">Super Admins</option>
                               </select>
 
-                              {/* 停用 */}
+                              {/* Deactivate */}
                               <button
                                 onClick={() => handleDeleteUser(user.id, user.email)}
                                 className="px-3 py-1.5 bg-yellow-100 dark:bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 hover:bg-yellow-200 dark:hover:bg-yellow-500/20 border border-yellow-200 dark:border-yellow-500/20 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5"
-                                title="停用用戶"
+                                title="DeactivateUser"
                               >
                                 <XCircle className="w-3.5 h-3.5" />
-                                停用
+                                Deactivate
                               </button>
 
-                              {/* 封禁 */}
+                              {/* Ban */}
                               <button
                                 onClick={() => handleBanUser(user.id, user.email)}
                                 className="px-3 py-1.5 bg-red-100 dark:bg-red-500/10 text-red-700 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-500/20 border border-red-200 dark:border-red-500/20 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5"
-                                title="封禁用戶"
+                                title="BanUser"
                               >
                                 <Ban className="w-3.5 h-3.5" />
-                                封禁
+                                Ban
                               </button>
                             </>
                           ) : user.account_status === 'banned' ? (
                             <>
-                              {/* 解除封禁（僅 super_admin） */}
+                              {/* 解除Ban（僅 super_admin） */}
                               <button
                                 onClick={() => handleUnbanUser(user.id, user.email)}
                                 className="px-3 py-1.5 bg-purple-100 dark:bg-purple-500/10 text-purple-700 dark:text-purple-400 hover:bg-purple-200 dark:hover:bg-purple-500/20 border border-purple-200 dark:border-purple-500/20 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5"
-                                title="解除封禁（需 Super Admin）"
+                                title="解除Ban（需 Super Admin）"
                               >
                                 <RefreshCw className="w-3.5 h-3.5" />
-                                解除封禁
+                                解除Ban
                               </button>
                             </>
                           ) : (
                             <>
-                              {/* 重新啟用（停用狀態） */}
+                              {/* Reactivate（DeactivateStatus） */}
                               <button
                                 onClick={() => handleReactivateUser(user.id, user.email)}
                                 className="px-3 py-1.5 bg-green-100 dark:bg-green-500/10 text-green-700 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-500/20 border border-green-200 dark:border-green-500/20 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5"
-                                title="重新啟用用戶"
+                                title="ReactivateUser"
                               >
                                 <RefreshCw className="w-3.5 h-3.5" />
-                                重新啟用
+                                Reactivate
                               </button>
                             </>
                           )}
@@ -605,10 +605,10 @@ export default function AdminUsers() {
           )}
         </div>
 
-        {/* 總數 */}
+        {/* Total Count */}
         {!isLoading && users.length > 0 && (
           <div className="mt-4 text-center text-gray-500 dark:text-gray-400 text-sm">
-            顯示 {users.length} 位用戶
+            Showing {users.length}  users
           </div>
         )}
 
@@ -616,13 +616,13 @@ export default function AdminUsers() {
         {showInviteModal && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full p-6 border border-gray-200 dark:border-gray-700">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">邀請新用戶</h2>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">邀請新User</h2>
               
               <div className="space-y-4">
                 {/* Email 輸入 */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Email 地址
+                    Email Address
                   </label>
                   <input
                     type="email"
@@ -633,22 +633,22 @@ export default function AdminUsers() {
                   />
                 </div>
 
-                {/* 角色選擇 */}
+                {/* Role選擇 */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    指定角色
+                    指定Role
                   </label>
                   <select
                     value={inviteRole}
                     onChange={(e) => setInviteRole(e.target.value as UserRole)}
                     className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:border-orange-500 transition-all"
                   >
-                    <option value="user">一般用戶</option>
-                    <option value="publisher">出版商</option>
-                    <option value="admin">管理員</option>
+                    <option value="user">Users</option>
+                    <option value="publisher">Publishers</option>
+                    <option value="admin">Admins</option>
                   </select>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1.5">
-                    註：邀請郵件將在 7 天後過期
+                    Note: Invitation expires in 7 days
                   </p>
                 </div>
               </div>
@@ -663,13 +663,13 @@ export default function AdminUsers() {
                   }}
                   className="flex-1 px-4 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                 >
-                  取消
+                  Cancel
                 </button>
                 <button
                   onClick={handleInviteUser}
                   className="flex-1 px-4 py-2.5 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
                 >
-                  發送邀請
+                  Send Invitation
                 </button>
               </div>
             </div>

@@ -31,23 +31,23 @@ export default function AdminContactList() {
   const handleStatusChange = async (id: number, newStatus: string) => {
     try {
       await contactAdminAPI.updateStatus(id, newStatus);
-      alert('狀態已更新');
+      alert('StatusUpdated successfully');
       fetchSubmissions();
     } catch (error) {
       console.error('Failed to update status:', error);
-      alert('更新失敗');
+      alert('Update failed');
     }
   };
 
   const handleDelete = async (id: number, name: string) => {
-    if (confirm(`確定要刪除來自「${name}」的提交嗎？`)) {
+    if (confirm(`Are you sure you want to deletefrom 「${name}」submission?`)) {
       try {
         await contactAdminAPI.deleteSubmission(id);
-        alert('提交已刪除');
+        alert('Submission deleted successfully');
         fetchSubmissions();
       } catch (error) {
         console.error('Failed to delete:', error);
-        alert('刪除失敗');
+        alert('Delete failed');
       }
     }
   };
@@ -62,7 +62,7 @@ export default function AdminContactList() {
     return (
       <AdminLayout>
         <div className="p-8 flex items-center justify-center min-h-[400px]">
-          <div className="text-gray-600 dark:text-gray-400">載入中...</div>
+          <div className="text-gray-600 dark:text-gray-400">Loading...</div>
         </div>
       </AdminLayout>
     );
@@ -75,20 +75,20 @@ export default function AdminContactList() {
   };
 
   const statusLabels: Record<string, string> = {
-    new: '新',
-    read: '已讀',
-    replied: '已回覆',
+    new: 'New',
+    read: 'Read',
+    replied: 'Replied',
   };
 
   return (
     <AdminLayout>
       <div className="p-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">聯絡表單提交</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">共 {submissions.length} 個提交</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Contact Form Submissions</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">Total {submissions.length}  submissions</p>
         </div>
 
-        {/* 篩選和搜尋 */}
+        {/* Filter and Search */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-6 flex gap-4">
           <div className="flex gap-2">
             <button
@@ -99,7 +99,7 @@ export default function AdminContactList() {
                   : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >
-              全部
+              All
             </button>
             <button
               onClick={() => setStatusFilter('new')}
@@ -109,7 +109,7 @@ export default function AdminContactList() {
                   : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >
-              新提交
+              New
             </button>
             <button
               onClick={() => setStatusFilter('read')}
@@ -119,7 +119,7 @@ export default function AdminContactList() {
                   : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >
-              已讀
+              Read
             </button>
             <button
               onClick={() => setStatusFilter('replied')}
@@ -129,7 +129,7 @@ export default function AdminContactList() {
                   : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >
-              已回覆
+              Replied
             </button>
           </div>
 
@@ -138,19 +138,19 @@ export default function AdminContactList() {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="搜尋姓名、電郵、公司..."
+              placeholder="SearchName、Email、Company..."
               className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-orange-500"
             />
             <button
               type="submit"
               className="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
             >
-              搜尋
+              Search
             </button>
           </form>
         </div>
 
-        {/* 提交列表 */}
+        {/* Submission List */}
         <div className="space-y-4">
           {submissions.map((submission) => (
             <div
@@ -185,7 +185,7 @@ export default function AdminContactList() {
                     )}
                     <div className="flex items-center gap-2">
                       <Clock size={16} />
-                      <span>{new Date(submission.created_at).toLocaleString('zh-TW')}</span>
+                      <span>{new Date(submission.created_at).toLocaleString('en-US')}</span>
                     </div>
                   </div>
                 </div>
@@ -195,7 +195,7 @@ export default function AdminContactList() {
                     <button
                       onClick={() => handleStatusChange(submission.id, 'read')}
                       className="p-2 text-yellow-600 dark:text-yellow-400 hover:bg-yellow-100 dark:hover:bg-yellow-900/30 rounded-lg transition-colors"
-                      title="標記為已讀"
+                      title="Mark as Read"
                     >
                       <Check size={18} />
                     </button>
@@ -204,7 +204,7 @@ export default function AdminContactList() {
                     <button
                       onClick={() => handleStatusChange(submission.id, 'replied')}
                       className="p-2 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30 rounded-lg transition-colors"
-                      title="標記為已回覆"
+                      title="Mark as Replied"
                     >
                       <Check size={18} />
                     </button>
@@ -212,7 +212,7 @@ export default function AdminContactList() {
                   <button
                     onClick={() => handleDelete(submission.id, submission.name)}
                     className="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors"
-                    title="刪除"
+                    title="Delete"
                   >
                     <Trash2 size={18} />
                   </button>
@@ -230,7 +230,7 @@ export default function AdminContactList() {
 
           {submissions.length === 0 && (
             <div className="text-center py-16">
-              <p className="text-gray-500 dark:text-gray-400 text-lg">沒有找到提交</p>
+              <p className="text-gray-500 dark:text-gray-400 text-lg">No submissions found</p>
             </div>
           )}
         </div>

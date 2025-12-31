@@ -1,7 +1,19 @@
+/**
+ * ⚠️ 重要原則（絕對不可違反）：
+ * 
+ * 1. ❌ 禁止任何 fallback（包括 fallback 資料、fallback 文字、|| 運算符）
+ * 2. ❌ 禁止任何檢查邏輯（禁止 if (loading)、if (services.length)、if (data) 等）
+ * 3. ❌ 禁止 console.log（除非 debug 時暫時使用）
+ * 4. ✅ 組件必須總是渲染（不可 return null）
+ * 5. ✅ 只使用可選鏈 ?. 防止錯誤
+ * 6. ✅ API 調用失敗也要正常渲染（顯示空白即可）
+ * 
+ * 如果資料載入失敗或為空，就讓它顯示空白，不要加任何防禦邏輯！
+ */
 import { useState, useEffect, useRef } from 'react';
 import { Button } from "./ui/button";
 import { ChevronRight } from "lucide-react";
-import { services } from '../constants/servicesData';
+import { contentAPI, type Service } from '../api/client';
 const catAstronautImage = "https://img.vortixpr.com/VortixPR_Website/austronaut_cat_profile_pic.png";
 
 interface ServicesSectionProps {
@@ -9,10 +21,18 @@ interface ServicesSectionProps {
 }
 
 export default function ServicesSection({ onContactClick }: ServicesSectionProps = {}) {
+  const [services, setServices] = useState<Service[]>([]);
   const [isVisible, setIsVisible] = useState(false);
   const [visibleItems, setVisibleItems] = useState(new Set());
   const sectionRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // 載入 services
+  useEffect(() => {
+    contentAPI.getServices()
+      .then(setServices)
+      .catch(console.error);
+  }, []);
 
   // Main section intersection observer
   useEffect(() => {
@@ -172,7 +192,7 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
               <div className="space-y-12">
                 {/* Service 1: Blockchain / Crypto PR */}
                 <div 
-                  ref={el => itemRefs.current[0] = el}
+                  ref={el => { itemRefs.current[0] = el; }}
                   className={`text-center rounded-xl p-4 transition-all duration-1400 ease-out hover:animate-[subtle-glow_2s_ease-in-out_infinite] hover:bg-white/[0.02] group ${
                     visibleItems.has(0) 
                       ? 'opacity-100 translate-y-0 translate-x-0' 
@@ -184,16 +204,16 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
                     <ServiceIcon />
                   </div>
                   <h3 className="text-[24px] font-medium text-white mb-3 tracking-[-0.24px] font-heading font-medium">
-                    {services[0].title}
+                    {services[0]?.title || ''}
                   </h3>
                   <p className="text-[14px] text-white font-sans">
-                    {services[0].description}
+                    {services[0]?.description || ''}
                   </p>
                 </div>
 
                 {/* Service 2: AI Product PR */}
                 <div 
-                  ref={el => itemRefs.current[1] = el}
+                  ref={el => { itemRefs.current[1] = el; }}
                   className={`text-center rounded-xl p-4 transition-all duration-1400 ease-out hover:animate-[subtle-glow_2s_ease-in-out_infinite] hover:bg-white/[0.02] group ${
                     visibleItems.has(1) 
                       ? 'opacity-100 translate-y-0 translate-x-0' 
@@ -205,10 +225,10 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
                     <ServiceIcon />
                   </div>
                   <h3 className="text-[24px] font-medium text-white mb-3 tracking-[-0.24px] font-heading font-medium">
-                    {services[1].title}
+                    {services[1]?.title || ''}
                   </h3>
                   <p className="text-[14px] text-white font-sans">
-                    {services[1].description}
+                    {services[1]?.description || ''}
                   </p>
                 </div>
               </div>
@@ -256,7 +276,7 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
               <div className="space-y-12">
                 {/* Service 3: Global & Regional Media Distribution */}
                 <div 
-                  ref={el => itemRefs.current[2] = el}
+                  ref={el => { itemRefs.current[2] = el; }}
                   className={`text-center rounded-xl p-4 transition-all duration-1400 ease-out hover:animate-[subtle-glow_2s_ease-in-out_infinite] hover:bg-white/[0.02] group ${
                     visibleItems.has(2) 
                       ? 'opacity-100 translate-y-0 translate-x-0' 
@@ -268,16 +288,16 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
                     <ServiceIcon />
                   </div>
                   <h3 className="text-[24px] font-medium text-white mb-3 tracking-[-0.24px] font-heading font-medium">
-                    {services[2].title}
+                    {services[2]?.title || ''}
                   </h3>
                   <p className="text-[14px] text-white font-sans">
-                    {services[2].description}
+                    {services[2]?.description || ''}
                   </p>
                 </div>
 
                 {/* Service 4: Influencer Marketing */}
                 <div 
-                  ref={el => itemRefs.current[3] = el}
+                  ref={el => { itemRefs.current[3] = el; }}
                   className={`text-center rounded-xl p-4 transition-all duration-1400 ease-out hover:animate-[subtle-glow_2s_ease-in-out_infinite] hover:bg-white/[0.02] group ${
                     visibleItems.has(3) 
                       ? 'opacity-100 translate-y-0 translate-x-0' 
@@ -289,10 +309,10 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
                     <ServiceIcon />
                   </div>
                   <h3 className="text-[24px] font-medium text-white mb-3 tracking-[-0.24px] font-heading font-medium">
-                    {services[3].title}
+                    {services[3]?.title || ''}
                   </h3>
                   <p className="text-[14px] text-white font-sans">
-                    {services[3].description}
+                    {services[3]?.description || ''}
                   </p>
                 </div>
               </div>
@@ -305,7 +325,7 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
               {services.map((service, index) => (
                 <div 
                   key={index} 
-                  ref={el => itemRefs.current[index + 4] = el}
+                  ref={el => { itemRefs.current[index + 4] = el; }}
                   className={`text-center rounded-xl p-4 transition-all duration-1400 ease-out hover:animate-[subtle-glow_2s_ease-in-out_infinite] hover:bg-white/[0.02] group ${
                     visibleItems.has(index + 4) 
                       ? 'opacity-100 translate-y-0' 

@@ -18,7 +18,7 @@ export default function AdminBlogEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [saving, setSaving] = useState(false);
-  const [loading, setLoading] = useState(!!id); // 只有編輯模式需要載入
+  const [loading, setLoading] = useState(!!id); // Only Edit mode needs loading
 
   const [formData, setFormData] = useState({
     title: '',
@@ -31,7 +31,7 @@ export default function AdminBlogEdit() {
     status: 'draft',
   });
 
-  // 載入現有文章數據（編輯模式）
+  // Load existing post data (Edit mode)
   useEffect(() => {
     if (id) {
       loadPost();
@@ -53,7 +53,7 @@ export default function AdminBlogEdit() {
       });
     } catch (error) {
       console.error('Failed to load post:', error);
-      alert('載入文章失敗');
+      alert('Failed to load post');
       navigate('/admin/blog');
     } finally {
       setLoading(false);
@@ -66,18 +66,18 @@ export default function AdminBlogEdit() {
 
     try {
       if (id) {
-        // 更新現有文章
+        // Update existing post
         await blogAPI.updatePost(Number(id), formData);
-        alert('文章已更新');
+        alert('postUpdated successfully');
       } else {
-        // 創建新文章
+        // Create new post
         await blogAPI.createPost(formData as any);
-        alert('文章已建立');
+        alert('postcreated successfully');
       }
       navigate('/admin/blog');
     } catch (error) {
       console.error('Failed to save:', error);
-      alert('儲存失敗');
+      alert('Save failed');
     } finally {
       setSaving(false);
     }
@@ -87,7 +87,7 @@ export default function AdminBlogEdit() {
     return (
       <AdminLayout>
         <div className="p-8 flex items-center justify-center min-h-[400px]">
-          <div className="text-gray-600 dark:text-gray-400">載入中...</div>
+          <div className="text-gray-600 dark:text-gray-400">Loading...</div>
         </div>
       </AdminLayout>
     );
@@ -101,19 +101,19 @@ export default function AdminBlogEdit() {
           className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-6 transition-colors"
         >
           <ArrowLeft size={20} />
-          返回列表
+          Back to List
         </button>
 
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
-          {id ? '編輯' : '新增'}文章
+          {id ? 'Edit' : 'Add'}post
         </h1>
 
         <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-8 max-w-4xl">
           <div className="space-y-6">
-            {/* 標題 */}
+            {/* Title */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                標題 *
+                Title *
               </label>
               <input
                 type="text"
@@ -124,10 +124,10 @@ export default function AdminBlogEdit() {
               />
             </div>
 
-            {/* 分類 */}
+            {/* Category */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                分類 *
+                Category *
               </label>
               <select
                 required
@@ -143,10 +143,10 @@ export default function AdminBlogEdit() {
               </select>
             </div>
 
-            {/* 摘要 */}
+            {/* Excerpt */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                摘要 *
+                Excerpt *
               </label>
               <textarea
                 required
@@ -157,10 +157,10 @@ export default function AdminBlogEdit() {
               />
             </div>
 
-            {/* 內容 */}
+            {/* Content */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                內容 * (支援 Markdown)
+                Content * (Supports Markdown)
               </label>
               <textarea
                 required
@@ -168,24 +168,24 @@ export default function AdminBlogEdit() {
                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                 rows={15}
                 className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-orange-500 font-mono text-sm"
-                placeholder="# 標題&#10;&#10;內容..."
+                placeholder="# Title&#10;&#10;Content..."
               />
             </div>
 
-            {/* 圖片 URL - 使用圖片選擇器 */}
+            {/* Image URL - Use image picker */}
             <ImageInputField
-              label="圖片 URL"
+              label="Image URL"
               value={formData.image_url}
               onChange={(url) => setFormData({ ...formData, image_url: url })}
               folder="blog"
-              placeholder="選擇或上傳 Blog 文章圖片"
+              placeholder="Select or upload blog post image"
             />
 
             <div className="grid grid-cols-3 gap-4">
-              {/* 閱讀時間 */}
+              {/* Reading Time */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  閱讀時間（分鐘）
+                  Reading Time (minutes)
                 </label>
                 <input
                   type="number"
@@ -197,9 +197,9 @@ export default function AdminBlogEdit() {
                 />
               </div>
 
-              {/* 作者 */}
+              {/* Author */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">作者</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Author</label>
                 <input
                   type="text"
                   value={formData.author}
@@ -208,22 +208,22 @@ export default function AdminBlogEdit() {
                 />
               </div>
 
-              {/* 狀態 */}
+              {/* Status */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">狀態</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
                 <select
                   value={formData.status}
                   onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                 >
-                  <option value="draft">草稿</option>
-                  <option value="published">已發布</option>
-                  <option value="archived">已封存</option>
+                  <option value="draft">Draft</option>
+                  <option value="published">Published</option>
+                  <option value="archived">Archived</option>
                 </select>
               </div>
             </div>
 
-            {/* 操作按鈕 */}
+            {/* Action Buttons */}
             <div className="flex gap-4 pt-4">
               <button
                 type="submit"
@@ -231,14 +231,14 @@ export default function AdminBlogEdit() {
                 className="flex items-center gap-2 bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 disabled:opacity-50"
               >
                 <Save size={18} />
-                {id ? '更新' : '建立'}文章
+                {id ? 'Update' : 'Create'}post
               </button>
               <button
                 type="button"
                 onClick={() => navigate('/admin/blog')}
                 className="px-6 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600"
               >
-                取消
+                Cancel
               </button>
             </div>
           </div>

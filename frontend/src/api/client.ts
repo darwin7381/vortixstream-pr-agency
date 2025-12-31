@@ -723,3 +723,454 @@ export const authAPI = {
   },
 };
 
+// ==================== Content CMS API (Public) ====================
+
+export interface FAQ {
+  id: number;
+  question: string;
+  answer: string;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Testimonial {
+  id: number;
+  quote: string;
+  author_name: string;
+  author_title: string | null;
+  author_company: string | null;
+  author_avatar_url: string | null;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TeamMember {
+  id: number;
+  name: string;
+  position: string;
+  avatar_url: string | null;
+  bio: string | null;
+  linkedin_url: string | null;
+  twitter_url: string | null;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Service {
+  id: number;
+  title: string;
+  description: string;
+  icon: string | null;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SiteSettings {
+  site_logo_light: string;
+  site_logo_dark: string;
+  site_name: string;
+  site_slogan: string;
+  contact_email: string;
+  contact_phone: string;
+  social_twitter: string;
+  social_linkedin: string;
+  social_facebook: string;
+  social_instagram: string;
+}
+
+export interface Differentiator {
+  id: number;
+  text: string;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Stat {
+  id: number;
+  label: string;
+  value: number;
+  suffix: string;
+  description: string | null;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export const contentAPI = {
+  // ===== Public APIs (前台讀取) =====
+  
+  async getFAQs(): Promise<FAQ[]> {
+    const response = await fetch(`${PUBLIC_API}/content/faqs`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch FAQs');
+    }
+    return response.json();
+  },
+
+  async getTestimonials(): Promise<Testimonial[]> {
+    const response = await fetch(`${PUBLIC_API}/content/testimonials`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch testimonials');
+    }
+    return response.json();
+  },
+
+  async getTeamMembers(): Promise<TeamMember[]> {
+    const response = await fetch(`${PUBLIC_API}/content/team`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch team members');
+    }
+    return response.json();
+  },
+
+  async getServices(): Promise<Service[]> {
+    const response = await fetch(`${PUBLIC_API}/content/services`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch services');
+    }
+    return response.json();
+  },
+
+  async getSiteSettings(): Promise<SiteSettings> {
+    const response = await fetch(`${PUBLIC_API}/content/settings`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch site settings');
+    }
+    return response.json();
+  },
+
+  async getDifferentiators(): Promise<Differentiator[]> {
+    const response = await fetch(`${PUBLIC_API}/content/differentiators`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch differentiators');
+    }
+    return response.json();
+  },
+
+  async getStats(): Promise<Stat[]> {
+    const response = await fetch(`${PUBLIC_API}/content/stats`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch stats');
+    }
+    return response.json();
+  },
+
+  // ===== Admin APIs (後台管理) =====
+
+  async createFAQ(data: Omit<FAQ, 'id' | 'created_at' | 'updated_at'>, token: string): Promise<FAQ> {
+    const response = await fetch(`${ADMIN_API}/content/faqs`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to create FAQ');
+    return response.json();
+  },
+
+  async updateFAQ(id: number, data: Partial<FAQ>, token: string): Promise<FAQ> {
+    const response = await fetch(`${ADMIN_API}/content/faqs/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to update FAQ');
+    return response.json();
+  },
+
+  async deleteFAQ(id: number, token: string): Promise<void> {
+    const response = await fetch(`${ADMIN_API}/content/faqs/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error('Failed to delete FAQ');
+  },
+
+  async getAllFAQs(token: string): Promise<FAQ[]> {
+    const response = await fetch(`${ADMIN_API}/content/faqs`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error('Failed to fetch all FAQs');
+    return response.json();
+  },
+
+  // Testimonials Admin
+  async createTestimonial(data: Omit<Testimonial, 'id' | 'created_at' | 'updated_at'>, token: string): Promise<Testimonial> {
+    const response = await fetch(`${ADMIN_API}/content/testimonials`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to create testimonial');
+    return response.json();
+  },
+
+  async updateTestimonial(id: number, data: Partial<Testimonial>, token: string): Promise<Testimonial> {
+    const response = await fetch(`${ADMIN_API}/content/testimonials/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to update testimonial');
+    return response.json();
+  },
+
+  async deleteTestimonial(id: number, token: string): Promise<void> {
+    const response = await fetch(`${ADMIN_API}/content/testimonials/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error('Failed to delete testimonial');
+  },
+
+  async getAllTestimonials(token: string): Promise<Testimonial[]> {
+    const response = await fetch(`${ADMIN_API}/content/testimonials`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error('Failed to fetch all testimonials');
+    return response.json();
+  },
+
+  // Services Admin
+  async createService(data: Omit<Service, 'id' | 'created_at' | 'updated_at'>, token: string): Promise<Service> {
+    const response = await fetch(`${ADMIN_API}/content/services`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to create service');
+    return response.json();
+  },
+
+  async updateService(id: number, data: Partial<Service>, token: string): Promise<Service> {
+    const response = await fetch(`${ADMIN_API}/content/services/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to update service');
+    return response.json();
+  },
+
+  async deleteService(id: number, token: string): Promise<void> {
+    const response = await fetch(`${ADMIN_API}/content/services/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error('Failed to delete service');
+  },
+
+  async getAllServices(token: string): Promise<Service[]> {
+    const response = await fetch(`${ADMIN_API}/content/services`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error('Failed to fetch all services');
+    return response.json();
+  },
+
+  // Team Members Admin
+  async createTeamMember(data: Omit<TeamMember, 'id' | 'created_at' | 'updated_at'>, token: string): Promise<TeamMember> {
+    const response = await fetch(`${ADMIN_API}/content/team`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to create team member');
+    return response.json();
+  },
+
+  async updateTeamMember(id: number, data: Partial<TeamMember>, token: string): Promise<TeamMember> {
+    const response = await fetch(`${ADMIN_API}/content/team/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to update team member');
+    return response.json();
+  },
+
+  async deleteTeamMember(id: number, token: string): Promise<void> {
+    const response = await fetch(`${ADMIN_API}/content/team/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error('Failed to delete team member');
+  },
+
+  async getAllTeamMembers(token: string): Promise<TeamMember[]> {
+    const response = await fetch(`${ADMIN_API}/content/team`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error('Failed to fetch all team members');
+    return response.json();
+  },
+
+  // Site Settings Admin
+  async updateSiteSetting(key: string, value: string, token: string): Promise<any> {
+    const response = await fetch(`${ADMIN_API}/content/settings/${key}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ value }),
+    });
+    if (!response.ok) throw new Error('Failed to update setting');
+    return response.json();
+  },
+
+  async getAllSettings(token: string): Promise<any[]> {
+    const response = await fetch(`${ADMIN_API}/content/settings`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error('Failed to fetch all settings');
+    return response.json();
+  },
+
+  // Differentiators Admin
+  async createDifferentiator(data: Omit<Differentiator, 'id' | 'created_at' | 'updated_at'>, token: string): Promise<Differentiator> {
+    const response = await fetch(`${ADMIN_API}/content/differentiators`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to create differentiator');
+    return response.json();
+  },
+
+  async updateDifferentiator(id: number, data: Partial<Differentiator>, token: string): Promise<Differentiator> {
+    const response = await fetch(`${ADMIN_API}/content/differentiators/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to update differentiator');
+    return response.json();
+  },
+
+  async deleteDifferentiator(id: number, token: string): Promise<void> {
+    const response = await fetch(`${ADMIN_API}/content/differentiators/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error('Failed to delete differentiator');
+  },
+
+  async getAllDifferentiators(token: string): Promise<Differentiator[]> {
+    const response = await fetch(`${ADMIN_API}/content/differentiators`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error('Failed to fetch all differentiators');
+    return response.json();
+  },
+
+  // Stats Admin
+  async createStat(data: Omit<Stat, 'id' | 'created_at' | 'updated_at'>, token: string): Promise<Stat> {
+    const response = await fetch(`${ADMIN_API}/content/stats`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to create stat');
+    return response.json();
+  },
+
+  async updateStat(id: number, data: Partial<Stat>, token: string): Promise<Stat> {
+    const response = await fetch(`${ADMIN_API}/content/stats/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to update stat');
+    return response.json();
+  },
+
+  async deleteStat(id: number, token: string): Promise<void> {
+    const response = await fetch(`${ADMIN_API}/content/stats/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error('Failed to delete stat');
+  },
+
+  async getAllStats(token: string): Promise<Stat[]> {
+    const response = await fetch(`${ADMIN_API}/content/stats`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error('Failed to fetch all stats');
+    return response.json();
+  },
+};
+
