@@ -18,12 +18,22 @@ export const GoogleCallback = () => {
         return;
       }
 
-      // 儲存 tokens
-      localStorage.setItem('access_token', accessToken);
-      localStorage.setItem('refresh_token', refreshToken);
-      
-      // 直接跳轉到首頁（會觸發完整頁面載入）
-      window.location.href = '/';
+      try {
+        // 儲存 tokens
+        localStorage.setItem('access_token', accessToken);
+        localStorage.setItem('refresh_token', refreshToken);
+        
+        // 跳轉到首頁
+        setTimeout(() => {
+          navigate('/');
+          // 刷新頁面以觸發 useAuth 重新載入用戶資料
+          window.location.reload();
+        }, 500);
+      } catch (error) {
+        console.error('Google callback error:', error);
+        setError(error instanceof Error ? error.message : 'Google 登入失敗');
+        setTimeout(() => navigate('/login'), 2000);
+      }
     };
 
     handleCallback();

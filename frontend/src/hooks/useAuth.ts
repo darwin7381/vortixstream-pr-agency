@@ -26,17 +26,19 @@ export const useAuth = () => {
       if (token) {
         try {
           const userData = await authAPI.getMe(token);
-          setUser({
+          console.log('=== useAuth 初始化，取得用戶資料 ===', userData);
+          const newUser = {
             id: userData.id,
             name: userData.name,
             email: userData.email,
             avatar: userData.avatar_url || undefined,
             role: userData.role,
             is_verified: userData.is_verified
-          });
+          };
+          console.log('=== 設定的 user ===', newUser);
+          setUser(newUser);
         } catch (error) {
           // Token 無效，清除
-          console.error('Failed to restore auth state:', error);
           localStorage.removeItem('access_token');
           localStorage.removeItem('refresh_token');
         }
@@ -45,17 +47,6 @@ export const useAuth = () => {
     };
 
     initAuth();
-    
-    // 監聽登出事件（跨組件同步）
-    const handleLogout = () => {
-      setUser(null);
-    };
-    
-    window.addEventListener('auth-logout', handleLogout);
-    
-    return () => {
-      window.removeEventListener('auth-logout', handleLogout);
-    };
   }, []);
 
   /**
@@ -68,21 +59,31 @@ export const useAuth = () => {
     try {
       const response = await authAPI.login({ email, password });
       
+      console.log('=== 登入成功，用戶資料 ===', response.user);
+      console.log('avatar_url:', response.user.avatar_url);
+      
       // 儲存 tokens
       localStorage.setItem('access_token', response.access_token);
       localStorage.setItem('refresh_token', response.refresh_token);
       
       // 設定用戶狀態
-      setUser({
+      const newUser = {
         id: response.user.id,
         name: response.user.name,
         email: response.user.email,
         avatar: response.user.avatar_url || undefined,
         role: response.user.role,
         is_verified: response.user.is_verified
-      });
+      };
       
-      setIsLoading(false);
+      console.log('=== 設定的 user 狀態 ===', newUser);
+      setUser(newUser);
+      
+      // 強制重新渲染
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 100);
+      
       return true;
     } catch (error) {
       setError(error instanceof Error ? error.message : '登入失敗');
@@ -131,9 +132,6 @@ export const useAuth = () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     setUser(null);
-    
-    // 發送自定義事件通知其他組件
-    window.dispatchEvent(new Event('auth-logout'));
   };
 
   /**
