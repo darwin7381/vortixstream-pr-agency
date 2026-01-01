@@ -95,11 +95,12 @@ export default function AdminHeroHome() {
             <div>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Center Logo</label>
               <div className="flex gap-2 mb-2">
-                <input type="url" name="center_logo_url" defaultValue={heroData?.center_logo_url} className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" />
+                <input type="url" name="center_logo_url" id="center_logo_url" defaultValue={heroData?.center_logo_url} className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" />
                 <button type="button" onClick={() => { setImagePickerField('center_logo'); setSelectedUrl(heroData?.center_logo_url); setShowImagePicker(true); }} className="px-4 py-3 border-2 border-orange-600 text-orange-600 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-900/20">
                   <ImageIcon size={20} />
                 </button>
               </div>
+              {heroData?.center_logo_url && <img src={heroData.center_logo_url} alt="Center Logo Preview" className="h-20 object-contain bg-gray-900 p-2 rounded" />}
             </div>
 
             <div>
@@ -261,7 +262,7 @@ export default function AdminHeroHome() {
 
         <ImagePicker isOpen={showImagePicker} onClose={() => setShowImagePicker(false)} onSelect={(url) => { 
           if (imagePickerField === 'center_logo') {
-            const input = document.querySelector('input[name="center_logo_url"]') as HTMLInputElement;
+            const input = document.getElementById('center_logo_url') as HTMLInputElement;
             if (input) input.value = url;
           } else {
             setSelectedUrl(url);

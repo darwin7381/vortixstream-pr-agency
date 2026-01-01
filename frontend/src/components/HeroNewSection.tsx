@@ -1,13 +1,18 @@
+/**
+ * ⚠️ 重要原則：
+ * 1. ❌ 禁止 fallback
+ * 2. ❌ 禁止檢查邏輯
+ * 3. ✅ 使用 API 動態載入
+ */
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "./ui/button";
-import VortixLogoMark from '../assets/Vortix Logo mark.png';
 
-// Typewriter Text Component - 保留原有的打字機效果
-function TypewriterText() {
-  const words = [
-    "Web3 & AI"
-  ];
+interface TypewriterProps {
+  words: string[];
+}
+
+function TypewriterText({ words }: TypewriterProps) {
   
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [currentText, setCurrentText] = useState('');
@@ -63,154 +68,41 @@ function TypewriterText() {
   );
 }
 
-// Media Logo Cloud Component - 右側的媒體 logo 雲（環繞中心分布）
-function MediaLogoCloud() {
-  // 8 個不同的 logo，環繞中心分布，避開中心區域
-  const mediaLogos = [
-    { 
-      url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/blocktempo%20logo_white_%E6%A9%AB.png',
-      name: 'BlockTempo', 
-      opacity: 0.6, 
-      size: 'lg', 
-      position: { top: '8%', right: '22%' } 
-    },
-    { 
-      url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(57).png',
-      name: 'The Block', 
-      opacity: 0.45, 
-      size: 'md', 
-      position: { top: '20%', left: '-8%' } 
-    },
-    { 
-      url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/Logo.png',
-      name: 'Investing.com', 
-      opacity: 0.4, 
-      size: 'sm', 
-      position: { top: '30%', right: '2%' } 
-    },
-    { 
-      url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(58).png',
-      name: 'CoinTelegraph', 
-      opacity: 0.55, 
-      size: 'lg', 
-      position: { top: '52%', right: '-7%' } 
-    },
-    { 
-      url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(59).png',
-      name: 'CoinDesk', 
-      opacity: 0.5, 
-      size: 'md', 
-      position: { top: '62%', left: '-5%' } 
-    },
-    { 
-      url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/business-insider.png',
-      name: 'Business Insider', 
-      opacity: 0.42, 
-      size: 'sm', 
-      position: { top: '84', left: '20%' } 
-    },
-    { 
-      url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(60).png',
-      name: 'Decrypt', 
-      opacity: 0.4, 
-      size: 'sm', 
-      position: { top: '80%', right: '12%' } 
-    },
-    { 
-      url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(61).png',
-      name: 'Bitcoin Magazine', 
-      opacity: 0.45, 
-      size: 'md', 
-      position: { top: '68%', right: '28%' } 
-    },
-    { 
-      url: 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/output-onlinepngtools%20(9).png',
-      name: 'Bitcoin.com', 
-      opacity: 0.38, 
-      size: 'lg', 
-      position: { top: '35%', left: '13%' } 
-    },
-  ];
-
-  return (
-    <div className="absolute inset-0" style={{ width: '100%', height: '100%', left: '0%', top: '0%' }}>
-      {mediaLogos.map((logo, index) => {
-        // 根據 size 設定尺寸（調大）
-        let maxWidth = '100px';
-        let maxHeight = '40px';
-        
-        if (logo.size === 'sm') {
-          maxWidth = '80px';
-          maxHeight = '32px';
-        } else if (logo.size === 'md') {
-          maxWidth = '100px';
-          maxHeight = '40px';
-        } else if (logo.size === 'lg') {
-          maxWidth = '115px';
-          maxHeight = '50px';
-        }
-        
-        return (
-          <div
-            key={`${logo.name}-${index}`}
-            className="absolute"
-            style={{
-              ...logo.position,
-              animation: `float-particle ${5 + Math.random() * 3}s ease-in-out infinite`,
-              animationDelay: `${Math.random() * 2}s`,
-              opacity: logo.opacity,
-              maxWidth,
-              maxHeight
-            }}
-          >
-            <img 
-              src={logo.url}
-              alt={logo.name}
-              className="w-full h-full object-contain"
-              style={{ 
-                display: 'block',
-                border: 'none',
-                textDecoration: 'none'
-              }}
-              loading="lazy"
-            />
-          </div>
-        );
-      })}
-    </div>
-  );
-}
 
 export default function HeroNewSection() {
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(false);
+  const [heroData, setHeroData] = useState<any>(null);
+  const [mediaLogos, setMediaLogos] = useState<any[]>([]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoaded(true);
-    }, 100);
+    const timer = setTimeout(() => setIsLoaded(true), 100);
+    fetch(`${import.meta.env.VITE_API_URL}/public/content/hero/home`)
+      .then(r => r.json())
+      .then(setHeroData)
+      .catch(console.error);
+    fetch(`${import.meta.env.VITE_API_URL}/public/content/hero/home/logos`)
+      .then(r => r.json())
+      .then(setMediaLogos)
+      .catch(console.error);
     return () => clearTimeout(timer);
   }, []);
 
-  // View Packages 按鈕處理：桌面版滑動到區域，手機版跳轉到頁面
-  const handleViewPackages = () => {
-    const isMobile = window.innerWidth < 1024; // lg breakpoint
+  const handleCTA = (desktopUrl?: string, mobileUrl?: string) => {
+    const isMobile = window.innerWidth < 1024;
+    const url = isMobile ? (mobileUrl || desktopUrl) : desktopUrl;
+    if (!url) return;
     
-    if (isMobile) {
-      // 手機版：跳轉到 Pricing 頁面
-      navigate('/pricing');
-    } else {
-      // 桌面版：滑動到 packages-section
-      const packagesSection = document.getElementById('packages-section');
-      if (packagesSection) {
-        const navbarHeight = 72;
-        const targetPosition = packagesSection.offsetTop - navbarHeight - 20;
-        
+    if (url.startsWith('#')) {
+      const element = document.getElementById(url.substring(1));
+      if (element) {
         window.scrollTo({
-          top: targetPosition,
+          top: element.offsetTop - 72 - 20,
           behavior: 'smooth'
         });
       }
+    } else {
+      navigate(url);
     }
   };
 
@@ -298,20 +190,7 @@ export default function HeroNewSection() {
                           filter: isLoaded ? 'blur(0px)' : 'blur(2px)'
                         }}
                       >
-                        Strategic PR & Global
-                      </span>
-                      <span 
-                        className={`block text-white transition-all duration-1500 ease-out ${
-                          isLoaded 
-                            ? 'opacity-100 translate-y-0' 
-                            : 'opacity-0 translate-y-6'
-                        }`}
-                        style={{ 
-                          transitionDelay: '0.7s',
-                          filter: isLoaded ? 'blur(0px)' : 'blur(2px)'
-                        }}
-                      >
-                        Press Distribution for
+                        {heroData?.title_prefix}
                       </span>
                       <span 
                         className={`block transition-all duration-1500 ease-out ${
@@ -324,7 +203,7 @@ export default function HeroNewSection() {
                           filter: isLoaded ? 'blur(0px)' : 'blur(2px)'
                         }}
                       >
-                        <TypewriterText />
+                        {heroData?.title_highlights && <TypewriterText words={heroData.title_highlights} />}
                       </span>
                     </h1>
                   </div>
@@ -339,7 +218,7 @@ export default function HeroNewSection() {
                     style={{ transitionDelay: '1.3s' }}
                   >
                     <p className="text-[13px] sm:text-[14px] md:text-[15px] lg:text-[15px] xl:text-[16px] text-white/70 font-sans leading-[1.5] sm:leading-[1.55] md:leading-[1.6]">
-                      Fast, reliable coverage — global & Asia — with optional narrative support and founder visibility.
+                      {heroData?.subtitle}
                     </p>
                   </div>
                 </div>
@@ -355,14 +234,14 @@ export default function HeroNewSection() {
                 >
                   {/* Primary CTA - View Packages */}
                   <Button 
-                    onClick={handleViewPackages}
+                    onClick={() => handleCTA(heroData?.cta_primary_url, heroData?.cta_primary_url_mobile)}
                     className="group relative h-12 lg:h-14 px-4 sm:px-5 lg:px-7 text-[13px] sm:text-[14px] lg:text-[15px] font-semibold !text-black hover:!text-black focus:!text-black bg-gradient-to-br from-[#FF7400] to-[#E6690A] border-0 rounded-[0.75rem] hover:-translate-y-[1px] focus:ring-2 focus:ring-[#FF7400]/40 focus:ring-offset-2 transition-all duration-300 ease-out overflow-hidden btn-brand-shadow flex-1"
                     style={{ 
                       textShadow: '0 1px 2px rgba(255,255,255,0.3)'
                     }}
                   >
                     <span className="relative z-10 flex items-center gap-2 !text-black hover:!text-black focus:!text-black transition-colors duration-300">
-                      View Packages
+                      {heroData?.cta_primary_text}
                       <span 
                         className="material-symbols-outlined text-[14px] sm:text-[16px] lg:text-[18px] !text-black hover:!text-black focus:!text-black group-hover:animate-[arrow-slide_300ms_ease-out_forwards] transition-all duration-300"
                         style={{ fontVariationSettings: "'FILL' 0, 'wght' 600, 'GRAD' 0, 'opsz' 24" }}
@@ -381,7 +260,7 @@ export default function HeroNewSection() {
                     onClick={() => window.open('#', '_blank')} // 這裡填入實際的表單連結
                   >
                     <span className="relative z-10 !text-white hover:!text-white focus:!text-white transition-colors duration-300">
-                      Submit Press Release
+                      {heroData?.cta_secondary_text}
                     </span>
                     {/* Subtle hover background overlay */}
                     <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-out"></div>
@@ -409,14 +288,38 @@ export default function HeroNewSection() {
                 {/* 中央 Vortix Logo */}
                 <div className="relative z-20 w-[160px] h-[160px] lg:w-[200px] lg:h-[200px] xl:w-[240px] xl:h-[240px] 2xl:w-[280px] 2xl:h-[280px]">
                   <img 
-                    src={VortixLogoMark}
+                    src={heroData?.center_logo_url}
                     alt="Vortix"
                     className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(139,92,246,0.5)]"
                   />
                 </div>
                 
                 {/* Media Logo Cloud - 基於整個右側欄空間 */}
-                <MediaLogoCloud />
+                <div className="absolute inset-0" style={{ width: '100%', height: '100%' }}>
+                  {mediaLogos.map((logo, index) => {
+                    const sizeMap = { sm: { w: '80px', h: '32px' }, md: { w: '100px', h: '40px' }, lg: { w: '115px', h: '50px' }};
+                    const size = sizeMap[logo.size as keyof typeof sizeMap] ?? sizeMap.md;
+                    const randomSpeed = logo.animation_speed ?? (5 + Math.random() * 3);
+                    const randomDelay = Math.random() * 2;
+                    const style: any = { 
+                      top: logo.position_top, 
+                      opacity: logo.opacity, 
+                      position: 'absolute', 
+                      zIndex: 10,
+                      maxWidth: size.w,
+                      maxHeight: size.h,
+                      animation: `float-particle ${randomSpeed}s ease-in-out infinite`,
+                      animationDelay: `${randomDelay}s`
+                    };
+                    if (logo.position_left) style.left = logo.position_left;
+                    if (logo.position_right) style.right = logo.position_right;
+                    return (
+                      <div key={logo.id} style={style}>
+                        <img src={logo.logo_url} alt={logo.name} className="w-full h-full object-contain" style={{ display: 'block', border: 'none' }} loading="lazy" />
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
 
