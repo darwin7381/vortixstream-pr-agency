@@ -1,22 +1,45 @@
-export default function LogoCarousel() {
-  // R2 Logo URLs
-  const logos = [
-    'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/blocktempo%20logo_white_%E6%A9%AB.png',
-    'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/Logo.png',
-    'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(57).png',
-    'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(58).png',
-    'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(59).png',
-    'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/business-insider.png',
-    'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(60).png',
-    'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(61).png',
-    'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/output-onlinepngtools%20(9).png'
-  ];
+import { useEffect, useState } from 'react';
+import { contentAPI, CarouselLogo as CarouselLogoType } from '../api/client';
 
-  const MediaLogo = ({ src, alt }: { src: string; alt: string }) => (
+export default function LogoCarousel() {
+  const [logos, setLogos] = useState<CarouselLogoType[]>([]);
+  const [subtitle, setSubtitle] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // 從 CMS 載入跑馬燈 Logo 和副標題
+    const fetchData = async () => {
+      try {
+        // 載入 Logos
+        const logosData = await contentAPI.getCarouselLogos();
+        setLogos(logosData);
+
+        // 載入副標題（無條件使用 CMS 值，包括空字串）
+        const settingsData = await contentAPI.getSiteSettings();
+        setSubtitle(settingsData.carousel_subtitle || '');
+      } catch (error) {
+        console.error('Failed to fetch carousel data:', error);
+        setLogos([]);
+        setSubtitle('');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // 如果正在載入或沒有 logo，則顯示佔位符或隱藏
+  if (loading || logos.length === 0) {
+    return null;
+  }
+
+  const MediaLogo = ({ logo }: { logo: CarouselLogoType }) => (
     <div className="h-12 md:h-16 w-auto flex-shrink-0 flex items-center justify-center group cursor-pointer">
       <img 
-        src={src} 
-        alt={alt}
+        src={logo.logo_url} 
+        alt={logo.alt_text || logo.name}
+        title={logo.name}
         className="h-full w-auto object-contain opacity-50 group-hover:opacity-100 transition-opacity duration-300"
         style={{
           filter: 'grayscale(100%)',
@@ -32,9 +55,6 @@ export default function LogoCarousel() {
       />
     </div>
   );
-
-  // Create the logo sequence that will repeat
-  const logoSequence = logos;
 
   return (
     <section className="relative w-full overflow-hidden py-8 md:py-12">
@@ -81,12 +101,14 @@ export default function LogoCarousel() {
 
       {/* Content */}
       <div className="relative z-10">
-        {/* Small Subtitle - Following Project Design Pattern */}
-        <div className="text-center mb-6 md:mb-8 px-5 md:px-16">
-          <p className="text-[11px] md:text-[16px] text-white/70 font-sans leading-[1.4]">
-            Selected crypto, tech, AI and regional outlets we work with.
-          </p>
-        </div>
+        {/* Small Subtitle - Only show if subtitle exists */}
+        {subtitle && (
+          <div className="text-center mb-6 md:mb-8 px-5 md:px-16">
+            <p className="text-[11px] md:text-[16px] text-white/70 font-sans leading-[1.4]">
+              {subtitle}
+            </p>
+          </div>
+        )}
         
         {/* Full Width Carousel Container */}
         <div className="relative w-full overflow-hidden">
@@ -99,23 +121,23 @@ export default function LogoCarousel() {
             }}
           >
             {/* First set of logos */}
-            {logoSequence.map((logoUrl, index) => (
-              <div key={`set1-${index}`} className="flex items-center gap-8 md:gap-12">
-                <MediaLogo src={logoUrl} alt={`Media logo ${index + 1}`} />
+            {logos.map((logo) => (
+              <div key={`set1-${logo.id}`} className="flex items-center gap-8 md:gap-12">
+                <MediaLogo logo={logo} />
               </div>
             ))}
             
             {/* Second set of logos (duplicate for seamless loop) */}
-            {logoSequence.map((logoUrl, index) => (
-              <div key={`set2-${index}`} className="flex items-center gap-8 md:gap-12">
-                <MediaLogo src={logoUrl} alt={`Media logo ${index + 1}`} />
+            {logos.map((logo) => (
+              <div key={`set2-${logo.id}`} className="flex items-center gap-8 md:gap-12">
+                <MediaLogo logo={logo} />
               </div>
             ))}
             
             {/* Third set of logos (duplicate for seamless loop) */}
-            {logoSequence.map((logoUrl, index) => (
-              <div key={`set3-${index}`} className="flex items-center gap-8 md:gap-12">
-                <MediaLogo src={logoUrl} alt={`Media logo ${index + 1}`} />
+            {logos.map((logo) => (
+              <div key={`set3-${logo.id}`} className="flex items-center gap-8 md:gap-12">
+                <MediaLogo logo={logo} />
               </div>
             ))}
           </div>

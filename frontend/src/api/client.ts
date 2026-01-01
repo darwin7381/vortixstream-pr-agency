@@ -784,6 +784,7 @@ export interface SiteSettings {
   social_linkedin: string;
   social_facebook: string;
   social_instagram: string;
+  carousel_subtitle: string;
 }
 
 export interface Differentiator {
@@ -801,6 +802,18 @@ export interface Stat {
   value: number;
   suffix: string;
   description: string | null;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CarouselLogo {
+  id: number;
+  name: string;
+  logo_url: string;
+  alt_text: string | null;
+  website_url: string | null;
   display_order: number;
   is_active: boolean;
   created_at: string;
@@ -1170,6 +1183,60 @@ export const contentAPI = {
       },
     });
     if (!response.ok) throw new Error('Failed to fetch all stats');
+    return response.json();
+  },
+
+  // Carousel Logos Public
+  async getCarouselLogos(): Promise<CarouselLogo[]> {
+    const response = await fetch(`${PUBLIC_API}/content/carousel-logos`);
+    if (!response.ok) throw new Error('Failed to fetch carousel logos');
+    return response.json();
+  },
+
+  // Carousel Logos Admin
+  async createCarouselLogo(data: Omit<CarouselLogo, 'id' | 'created_at' | 'updated_at'>, token: string): Promise<CarouselLogo> {
+    const response = await fetch(`${ADMIN_API}/content/carousel-logos`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to create carousel logo');
+    return response.json();
+  },
+
+  async updateCarouselLogo(id: number, data: Partial<CarouselLogo>, token: string): Promise<CarouselLogo> {
+    const response = await fetch(`${ADMIN_API}/content/carousel-logos/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to update carousel logo');
+    return response.json();
+  },
+
+  async deleteCarouselLogo(id: number, token: string): Promise<void> {
+    const response = await fetch(`${ADMIN_API}/content/carousel-logos/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error('Failed to delete carousel logo');
+  },
+
+  async getAllCarouselLogos(token: string): Promise<CarouselLogo[]> {
+    const response = await fetch(`${ADMIN_API}/content/carousel-logos`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error('Failed to fetch all carousel logos');
     return response.json();
   },
 };

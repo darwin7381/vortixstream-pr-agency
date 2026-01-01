@@ -315,3 +315,36 @@ class HeroSectionResponse(HeroSectionBase):
     class Config:
         from_attributes = True
 
+
+# ==================== Carousel Logo Models ====================
+
+class CarouselLogoBase(BaseModel):
+    name: str = Field(..., min_length=1, max_length=200)
+    logo_url: str = Field(..., min_length=1)
+    alt_text: Optional[str] = Field(None, max_length=200)
+    website_url: Optional[str] = None
+    display_order: int = Field(default=0)
+    is_active: bool = Field(default=True)
+
+
+class CarouselLogoCreate(CarouselLogoBase):
+    pass
+
+
+class CarouselLogoUpdate(BaseModel):
+    name: Optional[str] = Field(None, min_length=1, max_length=200)
+    logo_url: Optional[str] = None
+    alt_text: Optional[str] = Field(None, max_length=200)
+    website_url: Optional[str] = None
+    display_order: Optional[int] = None
+    is_active: Optional[bool] = None
+
+
+class CarouselLogoResponse(CarouselLogoBase):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+    
+    class Config:
+        from_attributes = True
+

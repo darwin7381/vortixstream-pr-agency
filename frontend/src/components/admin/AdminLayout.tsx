@@ -28,6 +28,7 @@ import {
   Briefcase,
   Palette,
   Sparkles,
+  Monitor,
   TrendingUp
 } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -124,6 +125,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       icon: Palette,
       children: [
         { label: 'Hero Sections', icon: Home, path: '/admin/content/hero' },
+        { label: 'Logo Carousel', icon: Monitor, path: '/admin/content/carousel' },
         { label: 'FAQs', icon: FileQuestion, path: '/admin/content/faqs' },
         { label: 'Testimonials', icon: MessageCircle, path: '/admin/content/testimonials' },
         { label: 'Services', icon: Briefcase, path: '/admin/content/services' },

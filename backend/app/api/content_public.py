@@ -17,7 +17,8 @@ from ..models.content import (
     StatResponse,
     ClientLogoResponse,
     PublisherFeatureResponse,
-    HeroSectionResponse
+    HeroSectionResponse,
+    CarouselLogoResponse
 )
 
 router = APIRouter(prefix="/public/content", tags=["Public Content"])
@@ -108,6 +109,7 @@ async def get_site_settings(
         OR setting_key LIKE 'stats_%' 
         OR setting_key LIKE 'contact_%' 
         OR setting_key LIKE 'social_%'
+        OR setting_key LIKE 'carousel_%'
         ORDER BY setting_key
     """)
     
@@ -214,4 +216,21 @@ async def get_hero_section(
         raise HTTPException(status_code=404, detail="Hero section not found")
     
     return dict(row)
+
+
+# ==================== Carousel Logos ====================
+# 顯示在首頁跑馬燈區塊
+
+@router.get("/carousel-logos", response_model=List[CarouselLogoResponse])
+async def get_carousel_logos(
+    conn: asyncpg.Connection = Depends(get_db_conn)
+):
+    """取得所有啟用的跑馬燈 Logo（按順序）- 顯示在首頁跑馬燈區塊"""
+    rows = await conn.fetch("""
+        SELECT * FROM carousel_logos 
+        WHERE is_active = true 
+        ORDER BY display_order ASC, id ASC
+    """)
+    
+    return [dict(row) for row in rows]
 

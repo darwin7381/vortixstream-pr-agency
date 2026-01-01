@@ -124,9 +124,22 @@ class Database:
                     ('social_twitter', '', 'url', 'Twitter 連結'),
                     ('social_linkedin', '', 'url', 'LinkedIn 連結'),
                     ('social_facebook', '', 'url', 'Facebook 連結'),
-                    ('social_instagram', '', 'url', 'Instagram 連結')
+                    ('social_instagram', '', 'url', 'Instagram 連結'),
+                    ('carousel_subtitle', 'Selected crypto, tech, AI and regional outlets we work with.', 'text', '首頁跑馬燈區域副標題')
                 ON CONFLICT (setting_key) DO NOTHING
             """)
+            
+            # 確保 carousel_subtitle 設定存在（針對已有資料庫的情況）
+            carousel_setting_exists = await conn.fetchval("""
+                SELECT EXISTS(SELECT 1 FROM system_settings WHERE setting_key = 'carousel_subtitle')
+            """)
+            if not carousel_setting_exists:
+                logger.info("📝 Adding carousel_subtitle setting...")
+                await conn.execute("""
+                    INSERT INTO system_settings (setting_key, setting_value, setting_type, description)
+                    VALUES ('carousel_subtitle', 'Selected crypto, tech, AI and regional outlets we work with.', 'text', '首頁跑馬燈區域副標題')
+                """)
+                logger.info("✅ Carousel subtitle setting added")
             
             # ==================== FAQs ====================
             await conn.execute("""
@@ -283,6 +296,44 @@ class Database:
                 
                 CREATE INDEX IF NOT EXISTS idx_publisher_features_active_order ON publisher_features(is_active, display_order);
             """)
+            
+            # ==================== Carousel Logos ====================
+            # 顯示在首頁跑馬燈區塊
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS carousel_logos (
+                    id SERIAL PRIMARY KEY,
+                    name VARCHAR(200) NOT NULL,
+                    logo_url TEXT NOT NULL,
+                    alt_text VARCHAR(200),
+                    website_url TEXT,
+                    display_order INTEGER DEFAULT 0,
+                    is_active BOOLEAN DEFAULT TRUE,
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    updated_at TIMESTAMP DEFAULT NOW()
+                );
+                
+                CREATE INDEX IF NOT EXISTS idx_carousel_logos_display_order ON carousel_logos(display_order);
+                CREATE INDEX IF NOT EXISTS idx_carousel_logos_is_active ON carousel_logos(is_active);
+                CREATE INDEX IF NOT EXISTS idx_carousel_logos_active_order ON carousel_logos(is_active, display_order);
+            """)
+            
+            # 插入初始 Logo 數據（僅在表為空時）
+            carousel_count = await conn.fetchval("SELECT COUNT(*) FROM carousel_logos")
+            if carousel_count == 0:
+                logger.info("📝 Inserting initial carousel logos...")
+                await conn.execute("""
+                    INSERT INTO carousel_logos (name, logo_url, alt_text, display_order, is_active) VALUES
+                    ('BlockTempo', 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/blocktempo%20logo_white_%E6%A9%AB.png', 'BlockTempo Logo', 1, true),
+                    ('Media Partner 2', 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/Logo.png', 'Media Logo', 2, true),
+                    ('Media Partner 3', 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(57).png', 'Media Logo', 3, true),
+                    ('Media Partner 4', 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(58).png', 'Media Logo', 4, true),
+                    ('Media Partner 5', 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(59).png', 'Media Logo', 5, true),
+                    ('Business Insider', 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/business-insider.png', 'Business Insider Logo', 6, true),
+                    ('Media Partner 7', 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(60).png', 'Media Logo', 7, true),
+                    ('Media Partner 8', 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(61).png', 'Media Logo', 8, true),
+                    ('Media Partner 9', 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/output-onlinepngtools%20(9).png', 'Media Logo', 9, true)
+                """)
+                logger.info("✅ Initial carousel logos inserted")
             
             # ==================== Hero Sections ====================
             await conn.execute("""

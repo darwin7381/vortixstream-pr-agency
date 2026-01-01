@@ -18,7 +18,8 @@ from ..models.content import (
     StatCreate, StatUpdate, StatResponse,
     ClientLogoCreate, ClientLogoUpdate, ClientLogoResponse,
     PublisherFeatureCreate, PublisherFeatureUpdate, PublisherFeatureResponse,
-    HeroSectionCreate, HeroSectionUpdate, HeroSectionResponse
+    HeroSectionCreate, HeroSectionUpdate, HeroSectionResponse,
+    CarouselLogoCreate, CarouselLogoUpdate, CarouselLogoResponse
 )
 
 router = APIRouter(prefix="/admin/content", tags=["Admin Content"], dependencies=[Depends(require_admin)])
@@ -614,4 +615,90 @@ async def delete_stat(
         raise HTTPException(status_code=404, detail="Stat not found")
     
     return {"message": "Stat deleted successfully"}
+
+
+# ==================== Carousel Logos Management ====================
+
+@router.get("/carousel-logos", response_model=List[CarouselLogoResponse])
+async def get_all_carousel_logos(
+    conn: asyncpg.Connection = Depends(get_db_conn)
+):
+    """取得所有跑馬燈 Logo（包含停用的）"""
+    rows = await conn.fetch("""
+        SELECT * FROM carousel_logos 
+        ORDER BY display_order ASC, id ASC
+    """)
+    return [dict(row) for row in rows]
+
+
+@router.post("/carousel-logos", response_model=CarouselLogoResponse)
+async def create_carousel_logo(
+    item: CarouselLogoCreate,
+    conn: asyncpg.Connection = Depends(get_db_conn),
+    current_user = Depends(get_current_user)
+):
+    """創建新跑馬燈 Logo"""
+    row = await conn.fetchrow("""
+        INSERT INTO carousel_logos (name, logo_url, alt_text, website_url, display_order, is_active)
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING *
+    """, item.name, item.logo_url, item.alt_text, item.website_url, 
+        item.display_order, item.is_active)
+    
+    return dict(row)
+
+
+@router.put("/carousel-logos/{item_id}", response_model=CarouselLogoResponse)
+async def update_carousel_logo(
+    item_id: int,
+    item: CarouselLogoUpdate,
+    conn: asyncpg.Connection = Depends(get_db_conn),
+    current_user = Depends(get_current_user)
+):
+    """更新跑馬燈 Logo"""
+    existing = await conn.fetchrow("SELECT * FROM carousel_logos WHERE id = $1", item_id)
+    if not existing:
+        raise HTTPException(status_code=404, detail="Carousel logo not found")
+    
+    update_fields = []
+    values = []
+    param_count = 1
+    
+    for field in ['name', 'logo_url', 'alt_text', 'website_url', 'display_order', 'is_active']:
+        value = getattr(item, field, None)
+        if value is not None:
+            update_fields.append(f"{field} = ${param_count}")
+            values.append(value)
+            param_count += 1
+    
+    update_fields.append(f"updated_at = ${param_count}")
+    values.append(datetime.utcnow())
+    param_count += 1
+    
+    values.append(item_id)
+    
+    query = f"""
+        UPDATE carousel_logos 
+        SET {', '.join(update_fields)}
+        WHERE id = ${param_count}
+        RETURNING *
+    """
+    
+    row = await conn.fetchrow(query, *values)
+    return dict(row)
+
+
+@router.delete("/carousel-logos/{item_id}")
+async def delete_carousel_logo(
+    item_id: int,
+    conn: asyncpg.Connection = Depends(get_db_conn),
+    current_user = Depends(get_current_user)
+):
+    """刪除跑馬燈 Logo"""
+    result = await conn.execute("DELETE FROM carousel_logos WHERE id = $1", item_id)
+    
+    if result == "DELETE 0":
+        raise HTTPException(status_code=404, detail="Carousel logo not found")
+    
+    return {"message": "Carousel logo deleted successfully"}
 
