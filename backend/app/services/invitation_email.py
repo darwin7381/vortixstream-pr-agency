@@ -136,3 +136,4 @@ async def send_invitation_email(
         print(f"Resend email error: {e}")
         raise Exception(f"發送郵件失敗: {str(e)}")
 
+

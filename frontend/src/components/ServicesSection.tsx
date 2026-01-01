@@ -64,7 +64,7 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
               setVisibleItems(prev => new Set([...prev, index]));
             }
           },
-          { threshold: 0.3 }
+          { threshold: 0.2 }
         );
         
         observer.observe(ref);
@@ -73,7 +73,7 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
     });
 
     return () => observers.forEach(observer => observer.disconnect());
-  }, []);
+  }, [services]);  // ✅ 添加 services 依賴，確保數據載入後重新設置 observer
 
   const ServiceIcon = () => (
     <div className="size-12 relative">
@@ -198,7 +198,7 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
                       ? 'opacity-100 translate-y-0 translate-x-0' 
                       : 'opacity-0 translate-y-8 -translate-x-4'
                   }`}
-                  style={{ transitionDelay: '0.5s' }}
+                  style={{ transitionDelay: '0.2s' }}
                 >
                   <div className="flex justify-center mb-5">
                     <ServiceIcon />
@@ -219,7 +219,7 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
                       ? 'opacity-100 translate-y-0 translate-x-0' 
                       : 'opacity-0 translate-y-8 -translate-x-4'
                   }`}
-                  style={{ transitionDelay: '1.2s' }}
+                  style={{ transitionDelay: '0.4s' }}
                 >
                   <div className="flex justify-center mb-5">
                     <ServiceIcon />
@@ -282,7 +282,7 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
                       ? 'opacity-100 translate-y-0 translate-x-0' 
                       : 'opacity-0 translate-y-8 translate-x-4'
                   }`}
-                  style={{ transitionDelay: '1.4s' }}
+                  style={{ transitionDelay: '0.3s' }}
                 >
                   <div className="flex justify-center mb-5">
                     <ServiceIcon />
@@ -303,7 +303,7 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
                       ? 'opacity-100 translate-y-0 translate-x-0' 
                       : 'opacity-0 translate-y-8 translate-x-4'
                   }`}
-                  style={{ transitionDelay: '2.1s' }}
+                  style={{ transitionDelay: '0.5s' }}
                 >
                   <div className="flex justify-center mb-5">
                     <ServiceIcon />
@@ -319,29 +319,42 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
             </div>
           </div>
 
-          {/* Enhanced Mobile Layout */}
+          {/* Enhanced Mobile Layout - 列表式布局 with 分隔線 */}
           <div className="md:hidden mb-12">
-            <div className="space-y-12">
+            <div className="space-y-0">
               {services.map((service, index) => (
                 <div 
                   key={index} 
                   ref={el => { itemRefs.current[index + 4] = el; }}
-                  className={`text-center rounded-xl p-4 transition-all duration-1400 ease-out hover:animate-[subtle-glow_2s_ease-in-out_infinite] hover:bg-white/[0.02] group ${
+                  className={`flex items-start gap-4 py-6 px-3 transition-all duration-1400 ease-out hover:bg-white/[0.02] group ${
+                    index !== services.length - 1 ? 'border-b border-white/5' : ''
+                  } ${
                     visibleItems.has(index + 4) 
                       ? 'opacity-100 translate-y-0' 
                       : 'opacity-0 translate-y-8'
                   }`}
-                  style={{ transitionDelay: `${0.4 + index * 0.4}s` }}
+                  style={{ transitionDelay: `${0.2 + index * 0.2}s` }}
                 >
-                  <div className="flex justify-center mb-5">
-                    <ServiceIcon />
+                  {/* Icon 在左側 - 縮小尺寸 */}
+                  <div className="flex-shrink-0 mt-1">
+                    <div className="size-8 relative">
+                      <div className="size-full relative group-hover:animate-[planet-orbit_6s_ease-in-out_infinite]">
+                        <svg className="size-full drop-shadow-sm" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M11.2278 10.9835C11.5173 10.9835 11.7638 10.8818 11.9675 10.6785C12.171 10.475 12.2728 10.2285 12.2728 9.93899C12.2728 9.64949 12.1701 9.40291 11.9648 9.19924C11.7593 8.99574 11.5118 8.89399 11.2223 8.89399C10.9328 8.89399 10.6872 8.99665 10.4855 9.20199C10.284 9.40749 10.1833 9.65499 10.1833 9.94449C10.1833 10.234 10.2849 10.4796 10.4883 10.6812C10.6918 10.8827 10.9383 10.9835 11.2278 10.9835ZM21.186 23.0255C20.5848 23.0255 19.6343 22.6757 18.3345 21.976C17.0347 21.2763 15.6545 20.4102 14.194 19.3777C13.844 19.5071 13.4824 19.5967 13.1093 19.6467C12.7359 19.6967 12.3578 19.7217 11.975 19.7217C10.0252 19.7217 8.36609 19.0375 6.99775 17.669C5.62925 16.3007 4.945 14.6416 4.945 12.6917C4.945 12.3084 4.97 11.9354 5.02 11.5727C5.07 11.2101 5.15967 10.8517 5.289 10.4977C4.2525 9.04124 3.38442 7.6599 2.68475 6.35374C1.98509 5.04757 1.63525 4.09807 1.63525 3.50524C1.63525 3.17224 1.74342 2.89466 1.95975 2.67249C2.17609 2.45016 2.45934 2.33899 2.8095 2.33899C3.35784 2.33899 4.08625 2.59199 4.99475 3.09799C5.90325 3.60399 6.84084 4.12399 7.8075 4.65799C8.01067 4.76766 8.13809 4.92691 8.18975 5.13574C8.24159 5.34441 8.2155 5.55041 8.1115 5.75374C8.0035 5.96091 7.8385 6.08932 7.6165 6.13899C7.39467 6.18866 7.18209 6.16149 6.97875 6.05749C6.43275 5.72816 5.87425 5.41449 5.30325 5.11649C4.73225 4.81849 4.15709 4.53816 3.57775 4.27549C3.92042 5.06015 4.30109 5.82499 4.71975 6.56999C5.13842 7.31499 5.59375 8.06049 6.08575 8.80649C6.71375 7.83716 7.53992 7.06657 8.56425 6.49474C9.58875 5.92274 10.7257 5.63674 11.975 5.63674C13.9267 5.63674 15.5904 6.32482 16.9663 7.70099C18.3421 9.07716 19.03 10.7412 19.03 12.6932C19.03 13.9241 18.744 15.0519 18.172 16.0767C17.6002 17.1016 16.8316 17.928 15.8663 18.556C16.6111 19.0472 17.3584 19.5043 18.1083 19.9275C18.8583 20.3507 19.6339 20.7358 20.4353 21.083C20.1686 20.5037 19.8831 19.9243 19.5788 19.345C19.2744 18.7657 18.9596 18.205 18.6343 17.663C18.5263 17.4597 18.4981 17.2522 18.5498 17.0407C18.6014 16.8291 18.7288 16.6702 18.932 16.5642C19.1353 16.4582 19.3469 16.4301 19.5668 16.4797C19.7868 16.5294 19.9488 16.6559 20.0528 16.8592C20.5828 17.8179 21.0976 18.7545 21.5973 19.669C22.0969 20.5835 22.3468 21.3137 22.3468 21.8595C22.3468 22.1965 22.2376 22.4751 22.0193 22.6952C21.8009 22.9154 21.5232 23.0255 21.186 23.0255ZM13.7295 15.4835C13.9552 15.4835 14.1438 15.4072 14.2955 15.2547C14.447 15.1021 14.5228 14.9129 14.5228 14.6872C14.5228 14.4616 14.4461 14.2729 14.2928 14.1212C14.1393 13.9697 13.9491 13.894 13.7223 13.894C13.4954 13.894 13.3072 13.9707 13.1575 14.124C13.008 14.2775 12.9333 14.4677 12.9333 14.6945C12.9333 14.9213 13.0095 15.1096 13.162 15.2592C13.3147 15.4087 13.5038 15.4835 13.7295 15.4835ZM14.9748 11.9835C15.1203 11.9835 15.248 11.9296 15.358 11.8217C15.4678 11.7139 15.5228 11.5873 15.5228 11.442C15.5228 11.2965 15.4684 11.1687 15.3598 11.0587C15.2511 10.9489 15.1235 10.894 14.977 10.894C14.8303 10.894 14.703 10.9483 14.595 11.057C14.4872 11.1657 14.4333 11.2932 14.4333 11.4397C14.4333 11.5864 14.4872 11.7137 14.595 11.8217C14.7028 11.9296 14.8294 11.9835 14.9748 11.9835ZM12.3023 17.9445C11.1841 17.046 10.0658 16.0375 8.9475 14.919C7.829 13.8007 7.08725 12.9325 6.72225 12.3145L6.69725 12.652L6.67225 12.9895C6.69225 13.7417 6.86175 14.4322 7.18075 15.061C7.49975 15.6898 7.91392 16.233 8.42325 16.6905C8.93275 17.1478 9.52275 17.4912 10.1933 17.7205C10.8638 17.9498 11.5668 18.0245 12.3023 17.9445ZM14.337 17.5162C15.2395 17.0749 15.9703 16.4237 16.5295 15.5625C17.0888 14.7012 17.3685 13.7384 17.3685 12.6742C17.3685 11.1627 16.8463 9.88882 15.8018 8.85249C14.7571 7.81632 13.479 7.29824 11.9675 7.29824C10.9033 7.29824 9.94475 7.57591 9.09175 8.13124C8.23892 8.68641 7.59184 9.41524 7.1505 10.3177C8.16484 11.6781 9.277 12.9619 10.487 14.1692C11.6972 15.3766 12.9805 16.4922 14.337 17.5162Z" fill="white"/>
+                        </svg>
+                      </div>
+                    </div>
                   </div>
-                  <h3 className="text-[20px] font-medium text-white mb-3 tracking-[-0.2px] font-heading font-medium">
-                    {service.title}
-                  </h3>
-                  <p className="text-[12px] text-white font-sans">
-                    {service.description}
-                  </p>
+                  
+                  {/* 文字內容在右側 - 左對齊 */}
+                  <div className="flex-1 text-left">
+                    <h3 className="text-[18px] font-medium text-white mb-2 tracking-[-0.18px] font-heading font-medium">
+                      {service.title}
+                    </h3>
+                    <p className="text-[13px] text-white/80 font-sans leading-relaxed">
+                      {service.description}
+                    </p>
+                  </div>
                 </div>
               ))}
               
@@ -352,7 +365,7 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
                     ? 'opacity-100 scale-100 translate-y-0' 
                     : 'opacity-0 scale-95 translate-y-8'
                 }`}
-                style={{ transitionDelay: '2.0s' }}
+                style={{ transitionDelay: '1.0s' }}
               >
                 <div className="relative">
                   {/* Enhanced outer glow ring - smaller for mobile */}

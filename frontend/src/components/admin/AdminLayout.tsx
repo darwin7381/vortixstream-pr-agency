@@ -125,6 +125,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       icon: Palette,
       children: [
         { label: 'Hero Sections', icon: Home, path: '/admin/content/hero' },
+        { label: 'Lyro Section', icon: Sparkles, path: '/admin/content/lyro' },
         { label: 'Logo Carousel', icon: Monitor, path: '/admin/content/carousel' },
         { label: 'FAQs', icon: FileQuestion, path: '/admin/content/faqs' },
         { label: 'Testimonials', icon: MessageCircle, path: '/admin/content/testimonials' },

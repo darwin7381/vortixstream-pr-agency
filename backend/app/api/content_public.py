@@ -17,7 +17,9 @@ from ..models.content import (
     StatResponse,
     PublisherFeatureResponse,
     HeroSectionResponse,
-    HeroMediaLogoResponse
+    HeroMediaLogoResponse,
+    LyroSectionResponse,
+    LyroFeatureResponse
 )
 
 router = APIRouter(prefix="/public/content", tags=["Public Content"])
@@ -230,6 +232,39 @@ async def get_hero_media_logos(
         WHERE hero_page = $1 AND is_active = true 
         ORDER BY display_order ASC, id ASC
     """, page)
+    
+    return [dict(row) for row in rows]
+
+
+# ==================== Lyro Section ====================
+
+@router.get("/lyro", response_model=LyroSectionResponse)
+async def get_lyro_section(
+    conn: asyncpg.Connection = Depends(get_db_conn)
+):
+    """取得 Lyro Section 內容"""
+    row = await conn.fetchrow("""
+        SELECT * FROM lyro_section 
+        WHERE is_active = true 
+        LIMIT 1
+    """)
+    
+    if not row:
+        raise HTTPException(status_code=404, detail="Lyro section not found")
+    
+    return dict(row)
+
+
+@router.get("/lyro/features", response_model=List[LyroFeatureResponse])
+async def get_lyro_features(
+    conn: asyncpg.Connection = Depends(get_db_conn)
+):
+    """取得 Lyro 功能列表"""
+    rows = await conn.fetch("""
+        SELECT * FROM lyro_features 
+        WHERE is_active = true 
+        ORDER BY display_order ASC, id ASC
+    """)
     
     return [dict(row) for row in rows]
 

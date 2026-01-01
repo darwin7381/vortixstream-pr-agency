@@ -404,6 +404,41 @@ class Database:
                 CREATE INDEX IF NOT EXISTS idx_hero_media_active_order ON hero_media_logos(is_active, display_order);
             """)
             
+            # ==================== Lyro Section ====================
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS lyro_section (
+                    id SERIAL PRIMARY KEY,
+                    
+                    -- 內容
+                    label VARCHAR(100),
+                    title TEXT NOT NULL,
+                    subtitle TEXT,
+                    description TEXT,
+                    
+                    -- 圖片
+                    background_image_url TEXT,
+                    
+                    -- 狀態
+                    is_active BOOLEAN DEFAULT TRUE,
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    updated_at TIMESTAMP DEFAULT NOW()
+                );
+            """)
+            
+            # ==================== Lyro Features ====================
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS lyro_features (
+                    id SERIAL PRIMARY KEY,
+                    text TEXT NOT NULL,
+                    display_order INTEGER DEFAULT 0,
+                    is_active BOOLEAN DEFAULT TRUE,
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    updated_at TIMESTAMP DEFAULT NOW()
+                );
+                
+                CREATE INDEX IF NOT EXISTS idx_lyro_features_active_order ON lyro_features(is_active, display_order);
+            """)
+            
             # ==================== User Invitations ====================
             await conn.execute("""
                 CREATE TABLE IF NOT EXISTS user_invitations (
@@ -854,6 +889,36 @@ class Database:
             """)
             
             logger.info("✅ Hero media logos seeded")
+        
+        # === Seed Lyro Section ===
+        lyro_count = await conn.fetchval("SELECT COUNT(*) FROM lyro_section")
+        if lyro_count == 0:
+            logger.info("📝 Seeding lyro section...")
+            await conn.execute("""
+                INSERT INTO lyro_section (label, title, subtitle, description, background_image_url, is_active)
+                VALUES
+                    ('#lyro_engine', 
+                     'Lyro — AI Narrative Engine', 
+                     '(Coming Soon)',
+                     'Lyro is our internal AI tool that analyzes your announcement before distribution. It checks for clarity, angle suitability, and how well LLMs can surface your story in search, news, and AI feeds.',
+                     'https://img.vortixpr.com/VortixPR_Website/Left_Point_Cat-2.png',
+                     true)
+            """)
+            logger.info("✅ Lyro section seeded")
+        
+        # === Seed Lyro Features ===
+        lyro_feat_count = await conn.fetchval("SELECT COUNT(*) FROM lyro_features")
+        if lyro_feat_count == 0:
+            logger.info("📝 Seeding lyro features...")
+            await conn.execute("""
+                INSERT INTO lyro_features (text, display_order, is_active)
+                VALUES
+                    ('Narrative optimization', 1, true),
+                    ('Media angle suggestions', 2, true),
+                    ('LLM visibility forecasting', 3, true),
+                    ('Asia geo-angle adjustments', 4, true)
+            """)
+            logger.info("✅ Lyro features seeded")
     
     async def _add_new_columns(self, conn):
         """

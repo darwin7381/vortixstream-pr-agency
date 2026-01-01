@@ -229,3 +229,4 @@ ON CONFLICT (setting_key) DO NOTHING
 **開發者**: AI Team  
 **版本**: 1.0.0
 
+

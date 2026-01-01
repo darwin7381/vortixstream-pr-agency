@@ -12,7 +12,9 @@ from ..models.content import (
     ClientLogoCreate, ClientLogoUpdate, ClientLogoResponse,
     PublisherFeatureCreate, PublisherFeatureUpdate, PublisherFeatureResponse,
     HeroSectionCreate, HeroSectionUpdate, HeroSectionResponse,
-    HeroMediaLogoCreate, HeroMediaLogoUpdate, HeroMediaLogoResponse
+    HeroMediaLogoCreate, HeroMediaLogoUpdate, HeroMediaLogoResponse,
+    LyroSectionUpdate, LyroSectionResponse,
+    LyroFeatureCreate, LyroFeatureUpdate, LyroFeatureResponse
 )
 
 router = APIRouter(prefix="/admin/content", tags=["Admin Content Extended"], dependencies=[Depends(require_admin)])
@@ -216,4 +218,79 @@ async def delete_hero_logo(logo_id: int, conn: asyncpg.Connection = Depends(get_
     if result == "DELETE 0":
         raise HTTPException(status_code=404, detail="Logo not found")
     return {"message": "Logo deleted"}
+
+
+# ==================== Lyro Section ====================
+
+@router.put("/lyro", response_model=LyroSectionResponse)
+async def update_lyro(item: LyroSectionUpdate, conn: asyncpg.Connection = Depends(get_db_conn), current_user = Depends(get_current_user)):
+    row = await conn.fetchrow("SELECT * FROM lyro_section LIMIT 1")
+    if not row:
+        raise HTTPException(status_code=404, detail="Not found")
+    
+    update_fields = []
+    values = []
+    param_count = 1
+    
+    for field in ['label', 'title', 'subtitle', 'description', 'background_image_url']:
+        value = getattr(item, field, None)
+        if value is not None:
+            update_fields.append(f"{field} = ${param_count}")
+            values.append(value)
+            param_count += 1
+    
+    update_fields.append(f"updated_at = ${param_count}")
+    values.append(datetime.utcnow())
+    param_count += 1
+    values.append(row['id'])
+    
+    result = await conn.fetchrow(f"UPDATE lyro_section SET {', '.join(update_fields)} WHERE id = ${param_count} RETURNING *", *values)
+    return dict(result)
+
+
+@router.get("/lyro/features", response_model=List[LyroFeatureResponse])
+async def get_all_lyro_features(conn: asyncpg.Connection = Depends(get_db_conn)):
+    rows = await conn.fetch("SELECT * FROM lyro_features ORDER BY display_order ASC")
+    return [dict(row) for row in rows]
+
+
+@router.post("/lyro/features", response_model=LyroFeatureResponse)
+async def create_lyro_feature(item: LyroFeatureCreate, conn: asyncpg.Connection = Depends(get_db_conn), current_user = Depends(get_current_user)):
+    row = await conn.fetchrow("INSERT INTO lyro_features (text, display_order, is_active) VALUES ($1, $2, $3) RETURNING *", 
+        item.text, item.display_order, item.is_active)
+    return dict(row)
+
+
+@router.put("/lyro/features/{feat_id}", response_model=LyroFeatureResponse)
+async def update_lyro_feature(feat_id: int, item: LyroFeatureUpdate, conn: asyncpg.Connection = Depends(get_db_conn), current_user = Depends(get_current_user)):
+    existing = await conn.fetchrow("SELECT * FROM lyro_features WHERE id = $1", feat_id)
+    if not existing:
+        raise HTTPException(status_code=404, detail="Not found")
+    
+    update_fields = []
+    values = []
+    param_count = 1
+    
+    for field in ['text', 'display_order', 'is_active']:
+        value = getattr(item, field, None)
+        if value is not None:
+            update_fields.append(f"{field} = ${param_count}")
+            values.append(value)
+            param_count += 1
+    
+    update_fields.append(f"updated_at = ${param_count}")
+    values.append(datetime.utcnow())
+    param_count += 1
+    values.append(feat_id)
+    
+    row = await conn.fetchrow(f"UPDATE lyro_features SET {', '.join(update_fields)} WHERE id = ${param_count} RETURNING *", *values)
+    return dict(row)
+
+
+@router.delete("/lyro/features/{feat_id}")
+async def delete_lyro_feature(feat_id: int, conn: asyncpg.Connection = Depends(get_db_conn), current_user = Depends(get_current_user)):
+    result = await conn.execute("DELETE FROM lyro_features WHERE id = $1", feat_id)
+    if result == "DELETE 0":
+        raise HTTPException(status_code=404, detail="Not found")
+    return {"message": "Deleted"}
 

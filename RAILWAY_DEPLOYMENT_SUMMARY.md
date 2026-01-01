@@ -223,3 +223,4 @@ DATABASE_URL="<你的資料庫URL>" uv run python import_pr_categories.py
 3. 資料庫連接狀態
 4. CORS 和環境變數設定
 
+

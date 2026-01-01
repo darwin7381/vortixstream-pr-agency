@@ -372,6 +372,60 @@ class HeroMediaLogoResponse(HeroMediaLogoBase):
         from_attributes = True
 
 
+# ==================== Lyro Section Models ====================
+
+class LyroSectionBase(BaseModel):
+    label: Optional[str] = None
+    title: str = Field(..., min_length=1)
+    subtitle: Optional[str] = None
+    description: Optional[str] = None
+    background_image_url: Optional[str] = None
+    is_active: bool = Field(default=True)
+
+
+class LyroSectionUpdate(BaseModel):
+    label: Optional[str] = None
+    title: Optional[str] = None
+    subtitle: Optional[str] = None
+    description: Optional[str] = None
+    background_image_url: Optional[str] = None
+    is_active: Optional[bool] = None
+
+
+class LyroSectionResponse(LyroSectionBase):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+
+class LyroFeatureBase(BaseModel):
+    text: str = Field(..., min_length=1)
+    display_order: int = Field(default=0)
+    is_active: bool = Field(default=True)
+
+
+class LyroFeatureCreate(LyroFeatureBase):
+    pass
+
+
+class LyroFeatureUpdate(BaseModel):
+    text: Optional[str] = None
+    display_order: Optional[int] = None
+    is_active: Optional[bool] = None
+
+
+class LyroFeatureResponse(LyroFeatureBase):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+
 # ==================== Carousel Logo Models ====================
 
 class CarouselLogoBase(BaseModel):

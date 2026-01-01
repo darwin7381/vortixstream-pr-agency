@@ -121,3 +121,4 @@ async def get_newsletter_stats():
     
     return dict(stats)
 
+

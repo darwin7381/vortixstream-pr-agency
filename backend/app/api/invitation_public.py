@@ -56,3 +56,4 @@ async def get_invitation_info(token: str):
             "expires_at": invitation["expires_at"].isoformat()
         }
 
+

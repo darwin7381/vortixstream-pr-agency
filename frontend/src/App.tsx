@@ -56,6 +56,7 @@ import AdminContentWhyVortix from './pages/admin/AdminContentWhyVortix';
 import AdminContentClients from './pages/admin/AdminContentClients';
 import AdminContentPublisher from './pages/admin/AdminContentPublisher';
 import AdminHeroHome from './pages/admin/AdminHeroHome';
+import AdminLyro from './pages/admin/AdminLyro';
 import AdminContentCarousel from './pages/admin/AdminContentCarousel';
 import { faqs } from './constants/faqData';
 
@@ -174,7 +175,7 @@ function AppContent() {
           <Route path="/admin/users" element={<ProtectedRoute requireAdmin><AdminUsers /></ProtectedRoute>} />
           <Route path="/admin/invitations" element={<ProtectedRoute requireAdmin><AdminInvitations /></ProtectedRoute>} />
           <Route path="/admin/content/hero" element={<ProtectedRoute requireAdmin><AdminHeroHome /></ProtectedRoute>} />
-          <Route path="/admin/content/hero-sections" element={<ProtectedRoute requireAdmin><AdminHeroHome /></ProtectedRoute>} />
+          <Route path="/admin/content/lyro" element={<ProtectedRoute requireAdmin><AdminLyro /></ProtectedRoute>} />
           <Route path="/admin/content/carousel" element={<ProtectedRoute requireAdmin><AdminContentCarousel /></ProtectedRoute>} />
           <Route path="/admin/content/faqs" element={<ProtectedRoute requireAdmin><AdminContentFAQs /></ProtectedRoute>} />
           <Route path="/admin/content/testimonials" element={<ProtectedRoute requireAdmin><AdminContentTestimonials /></ProtectedRoute>} />

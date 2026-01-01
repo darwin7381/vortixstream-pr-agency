@@ -1,17 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
-import svgPaths from "../imports/svg-f7gq800qcd";
-
-const imgCatAstronaut = "https://img.vortixpr.com/VortixPR_Website/Left_Point_Cat-2.png";
 
 // Check Icon - Using FeaturesSection style
 const CheckIcon = () => (
     <div className="size-4">
-        <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 16 16">
+        <svg className="block size-full" fill="none" viewBox="0 0 16 16">
             <path
-                clipRule="evenodd"
-                d={svgPaths.p24ff3080}
-                fill="white"
-                fillRule="evenodd"
+                d="M13.5 4.5L6 12L2.5 8.5"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
             />
         </svg>
     </div>
@@ -19,6 +17,8 @@ const CheckIcon = () => (
 
 export default function LyroSection() {
     const [isVisible, setIsVisible] = useState(false);
+    const [lyroData, setLyroData] = useState<any>(null);
+    const [features, setFeatures] = useState<any[]>([]);
     const sectionRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -26,9 +26,19 @@ export default function LyroSection() {
             ([entry]) => {
                 if (entry.isIntersecting) setIsVisible(true);
             },
-            { threshold: 0.1 } // Lower threshold for earlier activation
+            { threshold: 0.1 }
         );
         if (sectionRef.current) observer.observe(sectionRef.current);
+        
+        fetch(`${import.meta.env.VITE_API_URL}/public/content/lyro`)
+            .then(r => r.json())
+            .then(setLyroData)
+            .catch(console.error);
+        fetch(`${import.meta.env.VITE_API_URL}/public/content/lyro/features`)
+            .then(r => r.json())
+            .then(setFeatures)
+            .catch(console.error);
+        
         return () => observer.disconnect();
     }, []);
 
@@ -123,6 +133,43 @@ export default function LyroSection() {
                         transform: translateX(50%) translateY(-50%);
                     }
                 }
+                
+                /* 雙圓圈定位 - 對齊橘色動畫點點 */
+                .lyro-engine-rings {
+                    transform: translate(50%, -50%);
+                }
+                
+                /* 小螢幕手機版 (< 768px) */
+                @media (max-width: 767px) {
+                    .lyro-engine-rings {
+                        top: calc(33% - 80px) !important;
+                        right: 78.1% !important;
+                    }
+                }
+                
+                /* 中螢幕平板版 (768px - 1023px) */
+                @media (min-width: 768px) and (max-width: 1023px) {
+                    .lyro-engine-rings {
+                        top: calc(37% - 160px) !important;
+                        right: 47% !important;
+                    }
+                }
+                
+                /* 大螢幕桌面版 (≥ 1024px) */
+                @media (min-width: 1024px) {
+                    .lyro-engine-rings {
+                        top: calc(40% - 160px) !important;
+                        right: 38.4% !important;
+                    }
+                }
+                
+                /* 超大螢幕優化 (≥ 1440px) */
+                @media (min-width: 1440px) {
+                    .lyro-engine-rings {
+                        top: calc(39% - 160px) !important;
+                        right: 39.4% !important;
+                    }
+                }
             `}</style>
 
             {/* --- BACKGROUND --- */}
@@ -153,8 +200,8 @@ export default function LyroSection() {
                 ))}
             </div>
 
-            {/* Engine Rings (Rotating + Pulsing) */}
-            <div className={`absolute top-1/2 left-0 -translate-y-1/2 w-[900px] h-[900px] pointer-events-none transition-opacity duration-1000 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+            {/* Engine Rings (Rotating + Pulsing) - 中心點對齊橘色動畫點點 */}
+            <div className={`lyro-engine-rings absolute w-[900px] h-[900px] pointer-events-none transition-opacity duration-1000 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
                 <div
                     className="absolute inset-0 tech-ring"
                     style={{ animation: 'rotate-slow 60s linear infinite' }}
@@ -163,15 +210,30 @@ export default function LyroSection() {
                     className="absolute inset-[20%] tech-ring opacity-70"
                     style={{ animation: 'rotate-slow 40s linear infinite reverse, pulse-ring 8s ease-in-out infinite' }}
                 />
+                <div
+                    className="absolute inset-[40%] tech-ring opacity-50"
+                    style={{ animation: 'rotate-slow 30s linear infinite, pulse-ring 6s ease-in-out infinite' }}
+                />
             </div>
 
-            {/* Background Image Layer - Cat Astronaut (鏡像版本 - 還是在右側) */}
+            {/* Background Image Layer - Cat Astronaut */}
+            {lyroData?.background_image_url && (
+                <div 
+                    className="absolute inset-0 w-full h-full bg-no-repeat cat-astronaut-bg"
+                    style={{ 
+                        backgroundImage: `url('${lyroData.background_image_url}')`,
+                        backgroundPosition: 'center right',
+                        zIndex: 1
+                    }}
+                />
+            )}
+
+            {/* Mobile Overlay - 手機版半透明黑色遮罩 */}
             <div 
-                className="absolute inset-0 w-full h-full bg-no-repeat cat-astronaut-bg"
+                className="absolute inset-0 w-full h-full lg:hidden"
                 style={{ 
-                    backgroundImage: `url('${imgCatAstronaut}')`,
-                    backgroundPosition: 'center right',
-                    zIndex: 1
+                    background: 'rgba(0, 0, 0, 0.6)',
+                    zIndex: 2
                 }}
             />
 
@@ -226,7 +288,7 @@ export default function LyroSection() {
                             >
                                 <div className="w-2 h-2 rounded-full bg-[#FF7400] shadow-[0_0_10px_#FF7400] animate-pulse"></div>
                                 <span className="text-[14px] text-[#FF7400] font-mono tracking-widest uppercase font-bold">
-                                    #lyro_engine
+                                    {lyroData?.label}
                                 </span>
                             </div>
 
@@ -237,8 +299,8 @@ export default function LyroSection() {
                                     opacity: 0
                                 }}
                             >
-                                Lyro — AI Narrative Engine
-                                <span className="block mt-2 text-[#94A3B8] font-light text-[24px] md:text-[32px]">(Coming Soon)</span>
+                                {lyroData?.title}
+                                {lyroData?.subtitle && <span className="block mt-2 text-[#94A3B8] font-light text-[24px] md:text-[32px]">{lyroData.subtitle}</span>}
                             </h2>
                         </div>
 
@@ -254,7 +316,7 @@ export default function LyroSection() {
                                 className="text-[12px] md:text-[16px] font-sans leading-relaxed drop-shadow-md"
                                 style={{ color: '#ffffff', textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}
                             >
-                                Lyro is our internal AI tool that analyzes your announcement before distribution. It checks for clarity, angle suitability, and how well LLMs can surface your story in search, news, and AI feeds.
+                                {lyroData?.description}
                             </p>
                         </div>
 
@@ -271,12 +333,7 @@ export default function LyroSection() {
                             </h3>
 
                             <ul className="space-y-4">
-                                {[
-                                    "Narrative optimization",
-                                    "Media angle suggestions",
-                                    "LLM visibility forecasting",
-                                    "Asia geo-angle adjustments"
-                                ].map((item, index) => (
+                                {features.map((item, index) => (
                                     <li
                                         key={index}
                                         className="group relative inline-flex items-center gap-6 p-4 rounded-xl transition-all duration-300 hover:bg-white/[0.05] border border-white/20"
@@ -289,7 +346,7 @@ export default function LyroSection() {
                                             <CheckIcon />
                                         </div>
                                         <span className="relative text-[12px] md:text-[16px] text-white font-sans transition-transform duration-300 group-hover:translate-x-2">
-                                            {item}
+                                            {item.text}
                                         </span>
                                     </li>
                                 ))}

@@ -62,3 +62,4 @@ async def update_setting(
             "new_value": data.setting_value
         }
 
+
