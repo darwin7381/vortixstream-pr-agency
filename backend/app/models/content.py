@@ -2,7 +2,7 @@
 內容管理模型 (CMS)
 """
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 
 
@@ -280,14 +280,18 @@ class PublisherFeatureResponse(PublisherFeatureBase):
 
 class HeroSectionBase(BaseModel):
     page: str = Field(..., max_length=50)
-    title: str = Field(..., min_length=1)
+    title_prefix: Optional[str] = None
+    title_highlights: Optional[List[str]] = Field(default=['Web3 & AI'])
+    title_suffix: Optional[str] = None
     subtitle: Optional[str] = None
     description: Optional[str] = None
+    center_logo_url: Optional[str] = None
     cta_primary_text: Optional[str] = None
     cta_primary_url: Optional[str] = None
     cta_secondary_text: Optional[str] = None
     cta_secondary_url: Optional[str] = None
     background_image_url: Optional[str] = None
+    background_video_url: Optional[str] = None
     is_active: bool = Field(default=True)
 
 
@@ -296,18 +300,70 @@ class HeroSectionCreate(HeroSectionBase):
 
 
 class HeroSectionUpdate(BaseModel):
-    title: Optional[str] = None
+    title_prefix: Optional[str] = None
+    title_highlights: Optional[List[str]] = None
+    title_suffix: Optional[str] = None
     subtitle: Optional[str] = None
     description: Optional[str] = None
+    center_logo_url: Optional[str] = None
     cta_primary_text: Optional[str] = None
     cta_primary_url: Optional[str] = None
+    cta_primary_url_mobile: Optional[str] = None
     cta_secondary_text: Optional[str] = None
     cta_secondary_url: Optional[str] = None
+    cta_secondary_url_mobile: Optional[str] = None
     background_image_url: Optional[str] = None
+    background_video_url: Optional[str] = None
     is_active: Optional[bool] = None
 
 
 class HeroSectionResponse(HeroSectionBase):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+
+# ==================== Hero Media Logo Models ====================
+
+class HeroMediaLogoBase(BaseModel):
+    hero_page: str = Field(..., max_length=50)
+    name: str = Field(..., min_length=1, max_length=200)
+    logo_url: str = Field(..., min_length=1)
+    website_url: Optional[str] = None
+    opacity: float = Field(default=0.5, ge=0.0, le=1.0)
+    size: str = Field(default='md', pattern='^(sm|md|lg)$')
+    position_top: Optional[str] = None
+    position_left: Optional[str] = None
+    position_right: Optional[str] = None
+    position_bottom: Optional[str] = None
+    animation_speed: int = Field(default=5, ge=1, le=60)
+    display_order: int = Field(default=0)
+    is_active: bool = Field(default=True)
+
+
+class HeroMediaLogoCreate(HeroMediaLogoBase):
+    pass
+
+
+class HeroMediaLogoUpdate(BaseModel):
+    name: Optional[str] = None
+    logo_url: Optional[str] = None
+    website_url: Optional[str] = None
+    opacity: Optional[float] = Field(None, ge=0.0, le=1.0)
+    size: Optional[str] = Field(None, pattern='^(sm|md|lg)$')
+    position_top: Optional[str] = None
+    position_left: Optional[str] = None
+    position_right: Optional[str] = None
+    position_bottom: Optional[str] = None
+    animation_speed: Optional[int] = Field(None, ge=1, le=60)
+    display_order: Optional[int] = None
+    is_active: Optional[bool] = None
+
+
+class HeroMediaLogoResponse(HeroMediaLogoBase):
     id: int
     created_at: datetime
     updated_at: datetime

@@ -15,10 +15,9 @@ from ..models.content import (
     SettingResponse,
     DifferentiatorResponse,
     StatResponse,
-    ClientLogoResponse,
     PublisherFeatureResponse,
     HeroSectionResponse,
-    CarouselLogoResponse
+    HeroMediaLogoResponse
 )
 
 router = APIRouter(prefix="/public/content", tags=["Public Content"])
@@ -169,7 +168,7 @@ async def get_stats(
 # ==================== Client Logos ====================
 # 顯示在首頁 "Trusted by industry leaders" 區塊
 
-@router.get("/clients", response_model=List[ClientLogoResponse])
+@router.get("/clients")
 async def get_client_logos(
     conn: asyncpg.Connection = Depends(get_db_conn)
 ):
@@ -218,10 +217,27 @@ async def get_hero_section(
     return dict(row)
 
 
+# ==================== Hero Media Logos ====================
+
+@router.get("/hero/{page}/logos", response_model=List[HeroMediaLogoResponse])
+async def get_hero_media_logos(
+    page: str,
+    conn: asyncpg.Connection = Depends(get_db_conn)
+):
+    """取得指定頁面 Hero 的 Media Cloud Logos"""
+    rows = await conn.fetch("""
+        SELECT * FROM hero_media_logos 
+        WHERE hero_page = $1 AND is_active = true 
+        ORDER BY display_order ASC, id ASC
+    """, page)
+    
+    return [dict(row) for row in rows]
+
+
 # ==================== Carousel Logos ====================
 # 顯示在首頁跑馬燈區塊
 
-@router.get("/carousel-logos", response_model=List[CarouselLogoResponse])
+@router.get("/carousel-logos")
 async def get_carousel_logos(
     conn: asyncpg.Connection = Depends(get_db_conn)
 ):

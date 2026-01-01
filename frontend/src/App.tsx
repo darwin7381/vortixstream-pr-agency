@@ -55,7 +55,7 @@ import AdminContentSettings from './pages/admin/AdminContentSettings';
 import AdminContentWhyVortix from './pages/admin/AdminContentWhyVortix';
 import AdminContentClients from './pages/admin/AdminContentClients';
 import AdminContentPublisher from './pages/admin/AdminContentPublisher';
-import AdminContentHero from './pages/admin/AdminContentHero';
+import AdminHeroHome from './pages/admin/AdminHeroHome';
 import AdminContentCarousel from './pages/admin/AdminContentCarousel';
 import { faqs } from './constants/faqData';
 
@@ -173,7 +173,8 @@ function AppContent() {
           <Route path="/admin/media" element={<ProtectedRoute requireAdmin><AdminMedia /></ProtectedRoute>} />
           <Route path="/admin/users" element={<ProtectedRoute requireAdmin><AdminUsers /></ProtectedRoute>} />
           <Route path="/admin/invitations" element={<ProtectedRoute requireAdmin><AdminInvitations /></ProtectedRoute>} />
-          <Route path="/admin/content/hero" element={<ProtectedRoute requireAdmin><AdminContentHero /></ProtectedRoute>} />
+          <Route path="/admin/content/hero" element={<ProtectedRoute requireAdmin><AdminHeroHome /></ProtectedRoute>} />
+          <Route path="/admin/content/hero-sections" element={<ProtectedRoute requireAdmin><AdminHeroHome /></ProtectedRoute>} />
           <Route path="/admin/content/carousel" element={<ProtectedRoute requireAdmin><AdminContentCarousel /></ProtectedRoute>} />
           <Route path="/admin/content/faqs" element={<ProtectedRoute requireAdmin><AdminContentFAQs /></ProtectedRoute>} />
           <Route path="/admin/content/testimonials" element={<ProtectedRoute requireAdmin><AdminContentTestimonials /></ProtectedRoute>} />

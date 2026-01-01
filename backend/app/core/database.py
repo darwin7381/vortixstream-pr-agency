@@ -340,19 +340,68 @@ class Database:
                 CREATE TABLE IF NOT EXISTS hero_sections (
                     id SERIAL PRIMARY KEY,
                     page VARCHAR(50) NOT NULL,
-                    title TEXT NOT NULL,
+                    
+                    -- 標題
+                    title_prefix TEXT,
+                    title_highlights TEXT[],
+                    title_suffix TEXT,
                     subtitle TEXT,
                     description TEXT,
+                    
+                    -- 中心 Logo
+                    center_logo_url TEXT,
+                    
+                    -- CTA 按鈕
                     cta_primary_text VARCHAR(100),
                     cta_primary_url VARCHAR(500),
+                    cta_primary_url_mobile VARCHAR(500),
                     cta_secondary_text VARCHAR(100),
                     cta_secondary_url VARCHAR(500),
+                    cta_secondary_url_mobile VARCHAR(500),
+                    
+                    -- 背景
                     background_image_url TEXT,
+                    background_video_url TEXT,
+                    
                     is_active BOOLEAN DEFAULT TRUE,
                     created_at TIMESTAMP DEFAULT NOW(),
                     updated_at TIMESTAMP DEFAULT NOW(),
                     UNIQUE(page)
                 );
+            """)
+            
+            # ==================== Hero Media Logos ====================
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS hero_media_logos (
+                    id SERIAL PRIMARY KEY,
+                    hero_page VARCHAR(50) NOT NULL,
+                    
+                    -- Logo 資訊
+                    name VARCHAR(200) NOT NULL,
+                    logo_url TEXT NOT NULL,
+                    website_url TEXT,
+                    
+                    -- 視覺屬性
+                    opacity DECIMAL(3,2) DEFAULT 0.5,
+                    size VARCHAR(20) DEFAULT 'md',
+                    
+                    -- 位置（自定義 CSS 值）
+                    position_top VARCHAR(20),
+                    position_left VARCHAR(20),
+                    position_right VARCHAR(20),
+                    position_bottom VARCHAR(20),
+                    
+                    -- 動畫
+                    animation_speed INTEGER DEFAULT 5,
+                    
+                    display_order INTEGER DEFAULT 0,
+                    is_active BOOLEAN DEFAULT TRUE,
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    updated_at TIMESTAMP DEFAULT NOW()
+                );
+                
+                CREATE INDEX IF NOT EXISTS idx_hero_media_page ON hero_media_logos(hero_page);
+                CREATE INDEX IF NOT EXISTS idx_hero_media_active_order ON hero_media_logos(is_active, display_order);
             """)
             
             # ==================== User Invitations ====================
@@ -758,6 +807,53 @@ class Database:
                     ('Priority Support', 'Dedicated support team for all your publishing needs', 4, true)
             """)
             logger.info("✅ Publisher features seeded")
+        
+        # === Seed Hero Sections ===
+        hero_count = await conn.fetchval("SELECT COUNT(*) FROM hero_sections")
+        if hero_count == 0:
+            logger.info("📝 Seeding hero sections...")
+            await conn.execute("""
+                INSERT INTO hero_sections (page, title_prefix, title_highlights, subtitle, cta_primary_text, cta_primary_url, cta_secondary_text, cta_secondary_url, center_logo_url, is_active)
+                VALUES
+                    ('home', 
+                     'Strategic PR & Global Press Distribution for', 
+                     ARRAY['Web3 & AI']::text[],
+                     'Fast, reliable coverage — global & Asia — with optional narrative support and founder visibility.', 
+                     'View Packages', 
+                     '/packages', 
+                     'Submit Press Release', 
+                     '/contact',
+                     'https://img.vortixpr.com/VortixPR_Website/Vortix%20Logo%20mark.png',
+                     true)
+            """)
+            logger.info("✅ Hero sections seeded")
+        
+        # === Seed Hero Media Logos（首頁的 8 個 logo）===
+        hero_logo_count = await conn.fetchval("SELECT COUNT(*) FROM hero_media_logos")
+        if hero_logo_count == 0:
+            logger.info("📝 Seeding hero media logos...")
+            await conn.execute("""
+                INSERT INTO hero_media_logos (hero_page, name, logo_url, opacity, size, position_top, position_right, display_order, is_active)
+                VALUES
+                    ('home', 'BlockTempo', 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/blocktempo%20logo_white_%E6%A9%AB.png', 0.6, 'lg', '8%', '22%', 1, true),
+                    ('home', 'The Block', 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(57).png', 0.45, 'md', '20%', null, 2, true),
+                    ('home', 'Investing.com', 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/Logo.png', 0.4, 'sm', '30%', '2%', 3, true),
+                    ('home', 'CoinTelegraph', 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(58).png', 0.55, 'lg', '52%', '-7%', 4, true),
+                    ('home', 'CoinDesk', 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(59).png', 0.5, 'md', '62%', null, 5, true),
+                    ('home', 'Business Insider', 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/business-insider.png', 0.42, 'sm', '84%', null, 6, true),
+                    ('home', 'Decrypt', 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(60).png', 0.4, 'sm', '80%', '12%', 7, true),
+                    ('home', 'Bitcoin Magazine', 'https://img.vortixpr.com/VortixPR_Website/For%20media%20cloud%20(hero)/image-removebg-preview%20(61).png', 0.45, 'md', '68%', '28%', 8, true)
+            """)
+            
+            # 設置 left 位置（需要另外 UPDATE，因為有些是 left 有些是 right）
+            await conn.execute("""
+                UPDATE hero_media_logos SET position_left = '-8%' WHERE name = 'The Block';
+                UPDATE hero_media_logos SET position_left = '-5%' WHERE name = 'CoinDesk';
+                UPDATE hero_media_logos SET position_left = '20%' WHERE name = 'Business Insider';
+                UPDATE hero_media_logos SET position_left = '13%' WHERE name = 'Bitcoin.com';
+            """)
+            
+            logger.info("✅ Hero media logos seeded")
     
     async def _add_new_columns(self, conn):
         """
