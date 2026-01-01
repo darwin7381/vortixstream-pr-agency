@@ -78,14 +78,14 @@ function HomePage() {
       </section>
       <ServicesSection onContactClick={handleCTAClick} />
 
-      {/* Lyro AI Section */}
-      <section id="lyro-section">
-        <LyroSection />
-      </section>
-
       {/* Packages Preview Section - V2 版本 */}
       <section id="packages-section">
         <PricingCardsV2 />
+      </section>
+
+      {/* Lyro AI Section */}
+      <section id="lyro-section">
+        <LyroSection />
       </section>
 
       <EverythingYouNeedSection reverse={true} />
