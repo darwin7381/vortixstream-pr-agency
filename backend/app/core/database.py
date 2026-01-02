@@ -336,32 +336,18 @@ class Database:
                 logger.info("✅ Initial carousel logos inserted")
             
             # ==================== Hero Sections ====================
+            # ⚠️ 只定義原始的穩定欄位（遵循 DATABASE_ARCHITECTURE.md 原則）
+            # 新增欄位應該在 _add_new_columns() 中處理
             await conn.execute("""
                 CREATE TABLE IF NOT EXISTS hero_sections (
                     id SERIAL PRIMARY KEY,
                     page VARCHAR(50) NOT NULL,
                     
-                    -- 標題
-                    title_prefix TEXT,
-                    title_highlights TEXT[],
-                    title_suffix TEXT,
-                    subtitle TEXT,
-                    description TEXT,
-                    
-                    -- 中心 Logo
-                    center_logo_url TEXT,
-                    
-                    -- CTA 按鈕
+                    -- 基本 CTA 按鈕（原始欄位）
                     cta_primary_text VARCHAR(100),
                     cta_primary_url VARCHAR(500),
-                    cta_primary_url_mobile VARCHAR(500),
                     cta_secondary_text VARCHAR(100),
                     cta_secondary_url VARCHAR(500),
-                    cta_secondary_url_mobile VARCHAR(500),
-                    
-                    -- 背景
-                    background_image_url TEXT,
-                    background_video_url TEXT,
                     
                     is_active BOOLEAN DEFAULT TRUE,
                     created_at TIMESTAMP DEFAULT NOW(),
@@ -931,7 +917,7 @@ class Database:
         4. ✅ 冪等性保證
         """
         
-        # 檢查 account_status 欄位是否存在
+        # === Migration 1: Users table - account_status ===
         account_status_exists = await conn.fetchval("""
             SELECT EXISTS (
                 SELECT 1 FROM information_schema.columns 
@@ -966,6 +952,32 @@ class Database:
             """)
             
             logger.info("✅ account_status columns and index added")
+        
+        # === Migration 2: Hero Sections table - new title fields ===
+        title_prefix_exists = await conn.fetchval("""
+            SELECT EXISTS (
+                SELECT 1 FROM information_schema.columns 
+                WHERE table_name='hero_sections' AND column_name='title_prefix'
+            )
+        """)
+        
+        if not title_prefix_exists:
+            logger.info("🔄 Adding new title fields to hero_sections table...")
+            await conn.execute("""
+                ALTER TABLE hero_sections 
+                ADD COLUMN IF NOT EXISTS title_prefix TEXT,
+                ADD COLUMN IF NOT EXISTS title_highlights TEXT[],
+                ADD COLUMN IF NOT EXISTS title_suffix TEXT,
+                ADD COLUMN IF NOT EXISTS subtitle TEXT,
+                ADD COLUMN IF NOT EXISTS description TEXT,
+                ADD COLUMN IF NOT EXISTS center_logo_url TEXT,
+                ADD COLUMN IF NOT EXISTS cta_primary_url_mobile VARCHAR(500),
+                ADD COLUMN IF NOT EXISTS cta_secondary_url_mobile VARCHAR(500),
+                ADD COLUMN IF NOT EXISTS background_image_url TEXT,
+                ADD COLUMN IF NOT EXISTS background_video_url TEXT;
+            """)
+            
+            logger.info("✅ Hero sections new fields added")
     
     async def _promote_super_admin(self, conn):
         """
