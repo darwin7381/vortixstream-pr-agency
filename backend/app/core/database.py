@@ -953,7 +953,32 @@ class Database:
             
             logger.info("✅ account_status columns and index added")
         
-        # === Migration 2: Hero Sections table - new title fields ===
+        # === Migration 2: Hero Sections table ===
+        
+        # Step 1: 處理舊的 title 欄位（如果存在）- 獨立執行
+        old_title_exists = await conn.fetchval("""
+            SELECT EXISTS (
+                SELECT 1 FROM information_schema.columns 
+                WHERE table_name='hero_sections' AND column_name='title'
+            )
+        """)
+        
+        if old_title_exists:
+            # 檢查是否有 NOT NULL 約束
+            title_is_not_null = await conn.fetchval("""
+                SELECT is_nullable = 'NO'
+                FROM information_schema.columns 
+                WHERE table_name='hero_sections' AND column_name='title'
+            """)
+            
+            if title_is_not_null:
+                logger.info("🔄 Removing NOT NULL constraint from old title column...")
+                await conn.execute("""
+                    ALTER TABLE hero_sections ALTER COLUMN title DROP NOT NULL;
+                """)
+                logger.info("✅ Old title column constraint removed")
+        
+        # Step 2: 添加新欄位
         title_prefix_exists = await conn.fetchval("""
             SELECT EXISTS (
                 SELECT 1 FROM information_schema.columns 
@@ -963,22 +988,6 @@ class Database:
         
         if not title_prefix_exists:
             logger.info("🔄 Adding new title fields to hero_sections table...")
-            
-            # 如果舊的 title 欄位存在且是 NOT NULL，改為允許 NULL
-            # （只改約束，不動資料）
-            old_title_exists = await conn.fetchval("""
-                SELECT EXISTS (
-                    SELECT 1 FROM information_schema.columns 
-                    WHERE table_name='hero_sections' AND column_name='title'
-                )
-            """)
-            
-            if old_title_exists:
-                await conn.execute("""
-                    ALTER TABLE hero_sections ALTER COLUMN title DROP NOT NULL;
-                """)
-            
-            # 添加新欄位
             await conn.execute("""
                 ALTER TABLE hero_sections 
                 ADD COLUMN IF NOT EXISTS title_prefix TEXT,
@@ -992,7 +1001,6 @@ class Database:
                 ADD COLUMN IF NOT EXISTS background_image_url TEXT,
                 ADD COLUMN IF NOT EXISTS background_video_url TEXT;
             """)
-            
             logger.info("✅ Hero sections new fields added")
     
     async def _promote_super_admin(self, conn):
