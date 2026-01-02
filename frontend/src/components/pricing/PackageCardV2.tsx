@@ -35,18 +35,40 @@ export default function PackageCardV2({
           >
             {pkg.name}
           </h3>
-          <div className="text-white/60 text-base font-normal whitespace-nowrap ml-3">
+          <div className="text-white/70 text-xl md:text-2xl font-bold whitespace-nowrap ml-3">
             {pkg.price}
           </div>
         </div>
-        <p className="text-white/50 text-sm">
+        <p className="text-white/50 text-sm mb-3">
           {pkg.description}
         </p>
+        
+        {/* Media Logos - 緊湊顯示 */}
+        {pkg.mediaLogos && pkg.mediaLogos.length > 0 && (
+          <div className="flex items-center gap-2 flex-wrap">
+            {pkg.mediaLogos.slice(0, 4).map((logo, index) => (
+              <img 
+                key={index}
+                src={logo.url}
+                alt={logo.name}
+                className="h-6 w-auto object-contain opacity-50 hover:opacity-70 transition-opacity duration-300"
+                style={{
+                  filter: 'brightness(1.2)'
+                }}
+              />
+            ))}
+            {pkg.mediaLogos.length > 4 && (
+              <span className="text-white/40 text-xs ml-1">
+                +{pkg.mediaLogos.length - 4}
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
-      {/* Features List - Show only first 3-4 features */}
+      {/* Features List - Show only first 2 features */}
       <div className="relative space-y-2.5 mb-5">
-        {pkg.features.slice(0, 3).map((feature, index) => (
+        {pkg.features.slice(0, 2).map((feature, index) => (
           <div key={index} className="flex items-center gap-2.5">
             <div className="w-1.5 h-1.5 bg-white/40 rounded-full flex-shrink-0" />
             <p className="text-white/70 text-sm leading-relaxed">
@@ -54,9 +76,9 @@ export default function PackageCardV2({
             </p>
           </div>
         ))}
-        {pkg.features.length > 3 && (
+        {pkg.features.length > 2 && (
           <p className="text-white/40 text-sm pl-4">
-            +{pkg.features.length - 3} more features
+            +{pkg.features.length - 2} more features
           </p>
         )}
       </div>
