@@ -963,6 +963,22 @@ class Database:
         
         if not title_prefix_exists:
             logger.info("🔄 Adding new title fields to hero_sections table...")
+            
+            # 如果舊的 title 欄位存在且是 NOT NULL，改為允許 NULL
+            # （只改約束，不動資料）
+            old_title_exists = await conn.fetchval("""
+                SELECT EXISTS (
+                    SELECT 1 FROM information_schema.columns 
+                    WHERE table_name='hero_sections' AND column_name='title'
+                )
+            """)
+            
+            if old_title_exists:
+                await conn.execute("""
+                    ALTER TABLE hero_sections ALTER COLUMN title DROP NOT NULL;
+                """)
+            
+            # 添加新欄位
             await conn.execute("""
                 ALTER TABLE hero_sections 
                 ADD COLUMN IF NOT EXISTS title_prefix TEXT,
