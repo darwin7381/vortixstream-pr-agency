@@ -1,9 +1,19 @@
+import { useState, useEffect } from 'react';
 import { MaterialSymbol } from '../ui/material-symbol';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { aboutContent } from '../../constants/aboutData';
+import { contentAPI, type TeamMember } from '../../api/client';
 import { Linkedin, Twitter } from 'lucide-react';
 
 export default function AboutTeam() {
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+
+  useEffect(() => {
+    contentAPI.getTeamMembers()
+      .then(setTeamMembers)
+      .catch(console.error);
+  }, []);
+
   return (
     <section className="bg-black py-section-large">
       <div className="container-global">
@@ -23,27 +33,28 @@ export default function AboutTeam() {
 
           {/* Team Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
-            {aboutContent.team.members.map((member, index) => (
+            {teamMembers.map((member, index) => (
               <div 
-                key={member.name}
+                key={member.id}
                 className="group text-center space-y-4 hover:scale-[1.02] transition-transform duration-300"
               >
                 {/* Avatar */}
                 <div className="relative w-32 h-32 mx-auto">
-                  <div className="w-full h-full rounded-full bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900 p-0.5">
-                    <div className="w-full h-full rounded-full overflow-hidden">
-                      <ImageWithFallback
-                        src={member.avatar}
-                        alt={`${member.name} - ${member.position}`}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
+                  {member.avatar_url ? (
+                    <div className="w-full h-full rounded-full bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900 p-0.5">
+                      <div className="w-full h-full rounded-full overflow-hidden">
+                        <ImageWithFallback
+                          src={member.avatar_url}
+                          alt={`${member.name} - ${member.position}`}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
                     </div>
-                  </div>
-                  
-                  {/* Placeholder if needed */}
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900 flex items-center justify-center">
-                    <MaterialSymbol name="person" size={48} className="text-white/40" />
-                  </div>
+                  ) : (
+                    <div className="w-full h-full rounded-full bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900 flex items-center justify-center">
+                      <MaterialSymbol name="person" size={48} className="text-white/40" />
+                    </div>
+                  )}
                 </div>
 
                 {/* Name & Position */}
@@ -60,20 +71,30 @@ export default function AboutTeam() {
                 </div>
 
                 {/* Social Links */}
-                <div className="flex justify-center gap-3">
-                  <a 
-                    href={member.linkedin}
-                    className="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center hover:bg-white/20 hover:border-white/30 transition-all duration-300"
-                  >
-                    <Linkedin size={16} className="text-white" />
-                  </a>
-                  <a 
-                    href={member.twitter}
-                    className="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center hover:bg-white/20 hover:border-white/30 transition-all duration-300"
-                  >
-                    <Twitter size={16} className="text-white" />
-                  </a>
-                </div>
+                {(member.linkedin_url || member.twitter_url) && (
+                  <div className="flex justify-center gap-3">
+                    {member.linkedin_url && (
+                      <a 
+                        href={member.linkedin_url}
+                        className="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center hover:bg-white/20 hover:border-white/30 transition-all duration-300"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Linkedin size={16} className="text-white" />
+                      </a>
+                    )}
+                    {member.twitter_url && (
+                      <a 
+                        href={member.twitter_url}
+                        className="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center hover:bg-white/20 hover:border-white/30 transition-all duration-300"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Twitter size={16} className="text-white" />
+                      </a>
+                    )}
+                  </div>
+                )}
               </div>
             ))}
           </div>

@@ -1,20 +1,33 @@
+import { useState, useEffect } from 'react';
 import FAQSection from '../FAQSection';
 import PricingContactForm from '../PricingContactForm';
 import PricingCommitment from '../PricingCommitment';
 import LogoCarousel from '../LogoCarousel';
 import Footer from '../Footer';
 import PricingHero from './PricingHero';
-import PricingCardsV2 from './PricingCardsV2';
-import { faqs } from '../../constants/faqData';
+import PRPackagesGrid from './PRPackagesGrid';
+import { contentAPI, type FAQ } from '../../api/client';
 
 export default function PricingPageV2() {
+  const [faqs, setFaqs] = useState<FAQ[]>([]);
+
+  useEffect(() => {
+    contentAPI.getFAQs()
+      .then(setFaqs)
+      .catch(console.error);
+  }, []);
+
   return (
     <div className="min-h-screen bg-black">
       {/* Hero Section */}
       <PricingHero />
 
-      {/* Pricing Cards V2 */}
-      <PricingCardsV2 />
+      {/* PR Packages Grid */}
+      <section className="bg-black py-section-large">
+        <div className="container-large px-[17px] md:px-[17px]">
+          <PRPackagesGrid />
+        </div>
+      </section>
 
       {/* Logo Carousel */}
       <section className="bg-black py-section-medium">
@@ -23,7 +36,7 @@ export default function PricingPageV2() {
 
       {/* FAQ Section */}
       <FAQSection 
-        faqs={faqs}
+        faqs={faqs.map(faq => ({ question: faq.question, answer: faq.answer }))}
         variant="default"
         maxWidth="default"
         showCTA={false}

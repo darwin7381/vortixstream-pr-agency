@@ -1,7 +1,7 @@
-import { Package } from '../../constants/pricingDataV2';
+import { type PRPackage } from '../../api/client';
 
 interface PackageCardV2Props {
-  package: Package;
+  package: PRPackage;
   onViewDetails: () => void;
 }
 

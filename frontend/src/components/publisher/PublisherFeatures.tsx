@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { publisherFeatures, publisherContent, publisherStats } from '../../constants/publisherData';
+import { publisherContent, publisherStats } from '../../constants/publisherData';
+import { contentAPI, type PublisherFeature } from '../../api/client';
 import svgPaths from "../../imports/svg-f7gq800qcd";
 import PublisherApplicationModal from './PublisherApplicationModal';
 
@@ -17,10 +18,17 @@ const CheckIcon = () => (
 );
 
 export default function PublisherFeaturesSection() {
+  const [publisherFeatures, setPublisherFeatures] = useState<PublisherFeature[]>([]);
   const [visibleDiff, setVisibleDiff] = useState(new Set());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
   const diffRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    contentAPI.getPublisherFeatures()
+      .then(setPublisherFeatures)
+      .catch(console.error);
+  }, []);
 
   // Differentiators intersection observer
   useEffect(() => {
@@ -43,7 +51,7 @@ export default function PublisherFeaturesSection() {
     });
 
     return () => observers.forEach(observer => observer.disconnect());
-  }, []);
+  }, [publisherFeatures]);
 
   return (
     <section ref={sectionRef} className="relative w-full overflow-hidden py-section-large">

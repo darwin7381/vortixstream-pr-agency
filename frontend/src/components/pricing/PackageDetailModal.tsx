@@ -1,11 +1,11 @@
 import { X } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Package } from '../../constants/pricingDataV2';
+import { type PRPackage } from '../../api/client';
 import { Button } from '../ui/button';
 import { handleGetStartedClick } from '../../utils/navigationHelpers';
 
 interface PackageDetailModalProps {
-  package: Package;
+  package: PRPackage;
   isOpen: boolean;
   onClose: () => void;
 }

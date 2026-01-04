@@ -820,6 +820,83 @@ export interface CarouselLogo {
   updated_at: string;
 }
 
+export interface PublisherFeature {
+  id: number;
+  title: string;
+  description: string;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ClientLogo {
+  id: number;
+  name: string;
+  logo_url: string;
+  website_url: string | null;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface HeroSection {
+  id: number;
+  page: string;
+  title_prefix: string | null;
+  title_highlights: string[] | null;
+  subtitle: string | null;
+  cta_primary_text: string | null;
+  cta_primary_url: string | null;
+  cta_primary_url_mobile: string | null;
+  cta_secondary_text: string | null;
+  cta_secondary_url: string | null;
+  center_logo_url: string | null;
+  background_image_url: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface HeroMediaLogo {
+  id: number;
+  hero_page: string;
+  name: string;
+  logo_url: string;
+  size: string;
+  position_top: string | null;
+  position_left: string | null;
+  position_right: string | null;
+  opacity: number;
+  animation_speed: number | null;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface LyroSection {
+  id: number;
+  label: string | null;
+  title: string | null;
+  subtitle: string | null;
+  description: string | null;
+  background_image_url: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface LyroFeature {
+  id: number;
+  text: string;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export const contentAPI = {
   // ===== Public APIs (前台讀取) =====
   
@@ -1237,6 +1314,46 @@ export const contentAPI = {
       },
     });
     if (!response.ok) throw new Error('Failed to fetch all carousel logos');
+    return response.json();
+  },
+
+  // Publisher Features Public
+  async getPublisherFeatures(): Promise<PublisherFeature[]> {
+    const response = await fetch(`${PUBLIC_API}/content/publisher-features`);
+    if (!response.ok) throw new Error('Failed to fetch publisher features');
+    return response.json();
+  },
+
+  // Client Logos Public
+  async getClientLogos(): Promise<ClientLogo[]> {
+    const response = await fetch(`${PUBLIC_API}/content/clients`);
+    if (!response.ok) throw new Error('Failed to fetch client logos');
+    return response.json();
+  },
+
+  // Hero Sections Public
+  async getHeroSection(page: string): Promise<HeroSection> {
+    const response = await fetch(`${PUBLIC_API}/content/hero/${page}`);
+    if (!response.ok) throw new Error('Failed to fetch hero section');
+    return response.json();
+  },
+
+  async getHeroMediaLogos(page: string): Promise<HeroMediaLogo[]> {
+    const response = await fetch(`${PUBLIC_API}/content/hero/${page}/logos`);
+    if (!response.ok) throw new Error('Failed to fetch hero media logos');
+    return response.json();
+  },
+
+  // Lyro Section Public
+  async getLyroSection(): Promise<LyroSection> {
+    const response = await fetch(`${PUBLIC_API}/content/lyro`);
+    if (!response.ok) throw new Error('Failed to fetch lyro section');
+    return response.json();
+  },
+
+  async getLyroFeatures(): Promise<LyroFeature[]> {
+    const response = await fetch(`${PUBLIC_API}/content/lyro/features`);
+    if (!response.ok) throw new Error('Failed to fetch lyro features');
     return response.json();
   },
 };

@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from './hooks/useAuth';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -16,7 +17,7 @@ import FAQSection from './components/FAQSection';
 import PricingContactForm from './components/PricingContactForm';
 import Footer from './components/Footer';
 import PricingCards from './components/pricing/PricingCards';
-import PricingCardsV2 from './components/pricing/PricingCardsV2';
+import PRPackagesSection from './components/pricing/PRPackagesSection';
 import PricingPage from './components/pricing/PricingPage';
 import PricingPageV2 from './components/pricing/PricingPageV2';
 import PublisherFeatures from './components/publisher/PublisherFeatures';
@@ -58,12 +59,19 @@ import AdminContentPublisher from './pages/admin/AdminContentPublisher';
 import AdminHeroHome from './pages/admin/AdminHeroHome';
 import AdminLyro from './pages/admin/AdminLyro';
 import AdminContentCarousel from './pages/admin/AdminContentCarousel';
-import { faqs } from './constants/faqData';
+import { contentAPI, type FAQ } from './api/client';
 
 // Home Page Component
 function HomePage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [faqs, setFaqs] = useState<FAQ[]>([]);
+
+  useEffect(() => {
+    contentAPI.getFAQs()
+      .then(setFaqs)
+      .catch(console.error);
+  }, []);
 
   const handleCTAClick = () => {
     handleContactClick(navigate, location.pathname);
@@ -78,10 +86,8 @@ function HomePage() {
       </section>
       <ServicesSection onContactClick={handleCTAClick} />
 
-      {/* Packages Preview Section - V2 版本 */}
-      <section id="packages-section">
-        <PricingCardsV2 />
-      </section>
+      {/* Packages Preview Section - 使用完整 Section 組件 */}
+      <PRPackagesSection />
 
       {/* Lyro AI Section */}
       <section id="lyro-section">
@@ -102,7 +108,7 @@ function HomePage() {
 
       <TestimonialSection />
       <FAQSection
-        faqs={faqs}
+        faqs={faqs.map(faq => ({ question: faq.question, answer: faq.answer }))}
         variant="default"
         maxWidth="default"
         showCTA={true}
