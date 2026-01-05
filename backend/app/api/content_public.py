@@ -285,3 +285,123 @@ async def get_carousel_logos(
     
     return [dict(row) for row in rows]
 
+
+# ==================== Navigation ====================
+
+@router.get("/navigation/items")
+async def get_navigation_items(
+    lang: str = 'en',
+    conn: asyncpg.Connection = Depends(get_db_conn)
+):
+    """取得 Navigation 選單項目"""
+    rows = await conn.fetch("""
+        SELECT 
+            id,
+            CASE 
+                WHEN $1 = 'zh' THEN COALESCE(label_zh, label_en)
+                WHEN $1 = 'ja' THEN COALESCE(label_ja, label_en)
+                ELSE label_en
+            END as label,
+            desktop_url,
+            mobile_url,
+            target,
+            parent_id,
+            display_order
+        FROM navigation_items 
+        WHERE is_active = true 
+        ORDER BY display_order ASC, id ASC
+    """, lang)
+    
+    return [dict(row) for row in rows]
+
+
+@router.get("/navigation/cta")
+async def get_navigation_cta(
+    lang: str = 'en',
+    conn: asyncpg.Connection = Depends(get_db_conn)
+):
+    """取得 Navigation CTA 按鈕"""
+    row = await conn.fetchrow("""
+        SELECT 
+            CASE 
+                WHEN $1 = 'zh' THEN COALESCE(text_zh, text_en)
+                WHEN $1 = 'ja' THEN COALESCE(text_ja, text_en)
+                ELSE text_en
+            END as text,
+            url
+        FROM navigation_cta 
+        WHERE is_active = true 
+        LIMIT 1
+    """, lang)
+    
+    return dict(row) if row else None
+
+
+# ==================== Footer ====================
+
+@router.get("/footer/sections")
+async def get_footer_sections(
+    lang: str = 'en',
+    conn: asyncpg.Connection = Depends(get_db_conn)
+):
+    """取得 Footer 區塊及連結"""
+    sections = await conn.fetch("""
+        SELECT 
+            id,
+            CASE 
+                WHEN $1 = 'zh' THEN COALESCE(title_zh, title_en)
+                WHEN $1 = 'ja' THEN COALESCE(title_ja, title_en)
+                ELSE title_en
+            END as title,
+            section_key,
+            display_order
+        FROM footer_sections 
+        WHERE is_active = true 
+        ORDER BY display_order ASC
+    """, lang)
+    
+    result = []
+    for section in sections:
+        links = await conn.fetch("""
+            SELECT 
+                id,
+                CASE 
+                    WHEN $1 = 'zh' THEN COALESCE(label_zh, label_en)
+                    WHEN $1 = 'ja' THEN COALESCE(label_ja, label_en)
+                    ELSE label_en
+                END as label,
+                url,
+                target,
+                display_order
+            FROM footer_links 
+            WHERE section_id = $2 AND is_active = true 
+            ORDER BY display_order ASC
+        """, lang, section['id'])
+        
+        result.append({
+            **dict(section),
+            'links': [dict(link) for link in links]
+        })
+    
+    return result
+
+
+@router.get("/footer/text-settings")
+async def get_footer_text_settings(
+    lang: str = 'en',
+    conn: asyncpg.Connection = Depends(get_db_conn)
+):
+    """取得 Footer 文字設定"""
+    rows = await conn.fetch("""
+        SELECT 
+            setting_key,
+            CASE 
+                WHEN $1 = 'zh' THEN COALESCE(value_zh, value_en)
+                WHEN $1 = 'ja' THEN COALESCE(value_ja, value_en)
+                ELSE value_en
+            END as value
+        FROM footer_text_settings
+    """, lang)
+    
+    return {row['setting_key']: row['value'] for row in rows}
+

@@ -29,7 +29,8 @@ import {
   Palette,
   Sparkles,
   Monitor,
-  TrendingUp
+  TrendingUp,
+  Navigation as NavigationIcon
 } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 import VortixLogoWhite from '../../assets/VortixLogo White_Horizontal.png';
@@ -133,6 +134,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         { label: 'Why Vortix', icon: Sparkles, path: '/admin/content/why-vortix' },
         { label: 'Client Logos', icon: Image, path: '/admin/content/clients' },
         { label: 'Publisher Features', icon: FileText, path: '/admin/content/publisher' },
+        { label: 'Navigation & Footer', icon: NavigationIcon, path: '/admin/site' },
         { label: 'Site Settings', icon: Settings, path: '/admin/content/settings' },
       ]
     },

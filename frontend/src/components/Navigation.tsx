@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown, User, Settings, LogOut, CreditCard, LayoutDashboard } from "lucide-react";
 import { Button } from "./ui/button";
@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { navItems } from '../constants/navigationData';
+import { contentAPI, type NavItem, type NavCTA } from '../api/client';
 import { User as UserType } from '../hooks/useAuth';
 
 // VortixPR Logo - 使用本地資源
@@ -60,65 +60,60 @@ export default function Navigation({ user, onLogout, onQuickLogin }: NavigationP
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [navItems, setNavItems] = useState<NavItem[]>([]);
+  const [navCTA, setNavCTA] = useState<NavCTA | null>({ text: 'Get Started', url: '/contact' });
+  const lang = 'en'; // 目前固定英文，下週加語言切換
+
+  // 載入 Navigation 資料
+  useEffect(() => {
+    Promise.all([
+      contentAPI.getNavigationItems(lang),
+      contentAPI.getNavigationCTA(lang),
+    ]).then(([items, cta]) => {
+      if (items && items.length > 0) setNavItems(items);
+      if (cta) setNavCTA(cta);
+    }).catch((error) => {
+      console.error('Failed to load navigation:', error);
+      // 如果 CMS 載入失敗，使用原有的預設值
+      setNavItems([
+        { id: 1, label: 'About', desktop_url: '#about-section', mobile_url: '/about', target: '_self', parent_id: null, display_order: 1 },
+        { id: 2, label: 'Services', desktop_url: '#services-section', mobile_url: '/services', target: '_self', parent_id: null, display_order: 2 },
+        { id: 3, label: 'Packages', desktop_url: '#packages-section', mobile_url: '/pricing', target: '_self', parent_id: null, display_order: 3 },
+        { id: 4, label: 'Publisher', desktop_url: '#publisher-section', mobile_url: '/publisher', target: '_self', parent_id: null, display_order: 4 },
+        { id: 5, label: 'Contact', desktop_url: '#contact-section', mobile_url: '/contact', target: '_self', parent_id: null, display_order: 5 },
+        { id: 6, label: 'Lyro', desktop_url: '#lyro-section', mobile_url: '/lyro', target: '_self', parent_id: null, display_order: 6 },
+      ]);
+    });
+  }, [lang]);
 
   // 獲取當前路徑
   const currentPath = location.pathname;
 
-  // 處理導航點擊 - 桌面版 scroll，手機版跳轉
-  const handleNavClick = (itemName: string) => {
-    const isDesktop = window.innerWidth >= 1024; // lg breakpoint
+  // 處理導航點擊
+  const handleNavClick = (item: any) => {
+    const isDesktop = window.innerWidth >= 1024;
+    const url = isDesktop ? item.desktop_url : (item.mobile_url || item.desktop_url);
     
-    // 處理有首頁預覽區域的項目
-    const sectionMap: { [key: string]: { id: string; path: string } } = {
-      'Services': { id: 'services-section', path: '/services' },
-      'Packages': { id: 'packages-section', path: '/pricing' },
-      'About': { id: 'about-section', path: '/about' },
-      'Publisher': { id: 'publisher-section', path: '/publisher' },
-      'Contact': { id: 'contact-section', path: '/contact' },
-      'Lyro': { id: 'lyro-section', path: '/lyro' }
-    };
-    
-    const config = sectionMap[itemName];
-    if (!config) return;
-    
-    // 桌面版：scroll 到首頁區域
-    if (isDesktop) {
-      // 如果不在首頁，先跳轉到首頁
+    if (url?.startsWith('#')) {
+      const sectionId = url.substring(1);
       if (currentPath !== '/') {
         navigate('/');
-        // 等待頁面跳轉完成後滾動
         setTimeout(() => {
-          const section = document.getElementById(config.id);
+          const section = document.getElementById(sectionId);
           if (section) {
-            const navbarHeight = 72; // 桌面版 navbar 高度
-            const targetPosition = section.offsetTop - navbarHeight;
-            
-            window.scrollTo({
-              top: targetPosition,
-              behavior: 'smooth'
-            });
+            window.scrollTo({ top: section.offsetTop - 72, behavior: 'smooth' });
           }
         }, 100);
       } else {
-        // 已在首頁，直接滾動
-        const section = document.getElementById(config.id);
+        const section = document.getElementById(sectionId);
         if (section) {
-          const navbarHeight = 72;
-          const targetPosition = section.offsetTop - navbarHeight;
-          
-          window.scrollTo({
-            top: targetPosition,
-            behavior: 'smooth'
-          });
+          window.scrollTo({ top: section.offsetTop - 72, behavior: 'smooth' });
         }
       }
-    } 
-    // 手機版：跳轉到詳細頁面
-    else {
-      navigate(config.path);
+    } else {
+      navigate(url);
     }
     
-    // 關閉手機選單
     setIsMobileMenuOpen(false);
   };
 
@@ -135,34 +130,13 @@ export default function Navigation({ user, onLogout, onQuickLogin }: NavigationP
         <div className="flex items-center space-x-6 lg:space-x-8 xl:space-x-10">
           {navItems.map((item) => (
             <button
-              key={item}
+              key={item.id}
               onClick={() => handleNavClick(item)}
               className={`text-white text-[16px] transition-all duration-500 ease-in-out hover:animate-[text-pulse_2s_ease-in-out_infinite] hover:[text-shadow:0_0_6px_rgba(255,255,255,0.3),0_0_12px_rgba(255,255,255,0.15),0_0_18px_rgba(255,255,255,0.08)] relative py-2 ${
-                (item === 'Services' && (currentPath === '/services' || (currentPath === '/' && document.getElementById('services-section')))) ||
-                (item === 'Packages' && (currentPath === '/pricing' || (currentPath === '/' && document.getElementById('packages-section')))) ||
-                (item === 'About' && (currentPath === '/about' || (currentPath === '/' && document.getElementById('about-section')))) ||
-                (item === 'Publisher' && (currentPath === '/publisher' || (currentPath === '/' && document.getElementById('publisher-section')))) ||
-                (item === 'Contact' && (currentPath === '/contact' || (currentPath === '/' && document.getElementById('contact-section')))) ||
-                (item === 'Lyro' && (currentPath === '/lyro' || (currentPath === '/' && document.getElementById('lyro-section'))))
-                  ? 'text-[#FF7400]' 
-                  : 'text-white'
+                (currentPath === (item.mobile_url || item.desktop_url) || currentPath === item.desktop_url) ? 'text-[#FF7400]' : 'text-white'
               }`}
             >
-              {item}
-              {item === 'Lyro' && (
-                <span 
-                  className="absolute -top-0.5 -right-5 text-[10px] font-bold"
-                  style={{ 
-                    background: 'linear-gradient(135deg, #FF7400 0%, #1D3557 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                    letterSpacing: '0.3px'
-                  }}
-                >
-                  AI
-                </span>
-              )}
+              {item.label}
             </button>
           ))}
         </div>
@@ -285,34 +259,13 @@ export default function Navigation({ user, onLogout, onQuickLogin }: NavigationP
             <div className="space-y-0.5">
               {navItems.map((item) => (
                 <button
-                  key={item}
+                  key={item.id}
                   onClick={() => handleNavClick(item)}
                   className={`block w-full text-left text-[16px] py-3.5 px-3 rounded-lg hover:bg-white/5 transition-all duration-300 ease-in-out hover:animate-[text-pulse_2s_ease-in-out_infinite] hover:[text-shadow:0_0_6px_rgba(255,255,255,0.3),0_0_12px_rgba(255,255,255,0.15),0_0_18px_rgba(255,255,255,0.08)] active:bg-white/10 font-medium relative ${
-                    (item === 'Services' && currentPath === '/services') ||
-                    (item === 'Packages' && currentPath === '/pricing') ||
-                    (item === 'Contact' && currentPath === '/contact') ||
-                    (item === 'Publisher' && currentPath === '/publisher') ||
-                    (item === 'Lyro' && currentPath === '/lyro') ||
-                    (item === 'About' && currentPath === '/about')
-                      ? 'text-[#FF7400] bg-[#FF7400]/5' 
-                      : 'text-white'
+                    (currentPath === (item.mobile_url || item.desktop_url) || currentPath === item.desktop_url) ? 'text-[#FF7400] bg-[#FF7400]/5' : 'text-white'
                   }`}
                 >
-                  {item}
-                  {item === 'Lyro' && (
-                    <span 
-                      className="absolute top-3 left-16 text-[10px] font-bold"
-                      style={{ 
-                        background: 'linear-gradient(135deg, #FF7400 0%, #1D3557 100%)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text',
-                        letterSpacing: '0.3px'
-                      }}
-                    >
-                      AI
-                    </span>
-                  )}
+                  {item.label}
                 </button>
               ))}
             </div>

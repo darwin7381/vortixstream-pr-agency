@@ -897,6 +897,45 @@ export interface LyroFeature {
   updated_at: string;
 }
 
+export interface NavItem {
+  id: number;
+  label: string;
+  desktop_url: string;
+  mobile_url?: string | null;
+  target: string;
+  parent_id: number | null;
+  display_order: number;
+}
+
+export interface NavCTA {
+  text: string;
+  url: string;
+}
+
+export interface FooterLink {
+  id: number;
+  label: string;
+  url: string;
+  target: string;
+  display_order: number;
+}
+
+export interface FooterSection {
+  id: number;
+  title: string;
+  section_key: string;
+  display_order: number;
+  links: FooterLink[];
+}
+
+export interface FooterTextSettings {
+  tagline?: string;
+  description?: string;
+  copyright?: string;
+  newsletter_title?: string;
+  newsletter_description?: string;
+}
+
 export const contentAPI = {
   // ===== Public APIs (前台讀取) =====
   
@@ -1354,6 +1393,194 @@ export const contentAPI = {
   async getLyroFeatures(): Promise<LyroFeature[]> {
     const response = await fetch(`${PUBLIC_API}/content/lyro/features`);
     if (!response.ok) throw new Error('Failed to fetch lyro features');
+    return response.json();
+  },
+
+  // Navigation Public
+  async getNavigationItems(lang: string = 'en'): Promise<NavItem[]> {
+    const response = await fetch(`${PUBLIC_API}/content/navigation/items?lang=${lang}`);
+    if (!response.ok) throw new Error('Failed to fetch navigation items');
+    return response.json();
+  },
+
+  async getNavigationCTA(lang: string = 'en'): Promise<NavCTA | null> {
+    const response = await fetch(`${PUBLIC_API}/content/navigation/cta?lang=${lang}`);
+    if (!response.ok) throw new Error('Failed to fetch navigation CTA');
+    return response.json();
+  },
+
+  // Footer Public
+  async getFooterSections(lang: string = 'en'): Promise<FooterSection[]> {
+    const response = await fetch(`${PUBLIC_API}/content/footer/sections?lang=${lang}`);
+    if (!response.ok) throw new Error('Failed to fetch footer sections');
+    return response.json();
+  },
+
+  async getFooterTextSettings(lang: string = 'en'): Promise<FooterTextSettings> {
+    const response = await fetch(`${PUBLIC_API}/content/footer/text-settings?lang=${lang}`);
+    if (!response.ok) throw new Error('Failed to fetch footer text settings');
+    return response.json();
+  },
+
+  // Navigation Admin
+  async getAllNavigationItems(token: string): Promise<any[]> {
+    const response = await fetch(`${ADMIN_API}/site/navigation/items`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error('Failed to fetch all navigation items');
+    return response.json();
+  },
+
+  async createNavigationItem(data: any, token: string): Promise<any> {
+    const response = await fetch(`${ADMIN_API}/site/navigation/items`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to create navigation item');
+    return response.json();
+  },
+
+  async updateNavigationItem(id: number, data: any, token: string): Promise<any> {
+    const response = await fetch(`${ADMIN_API}/site/navigation/items/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to update navigation item');
+    return response.json();
+  },
+
+  async deleteNavigationItem(id: number, token: string): Promise<void> {
+    const response = await fetch(`${ADMIN_API}/site/navigation/items/${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error('Failed to delete navigation item');
+  },
+
+  async getNavigationCTAAdmin(token: string): Promise<any> {
+    const response = await fetch(`${ADMIN_API}/site/navigation/cta`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error('Failed to fetch navigation CTA');
+    return response.json();
+  },
+
+  async updateNavigationCTA(data: any, token: string): Promise<any> {
+    const response = await fetch(`${ADMIN_API}/site/navigation/cta`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to update navigation CTA');
+    return response.json();
+  },
+
+  // Footer Admin
+  async getAllFooterSections(token: string): Promise<any[]> {
+    const response = await fetch(`${ADMIN_API}/site/footer/sections`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error('Failed to fetch all footer sections');
+    return response.json();
+  },
+
+  async createFooterSection(data: any, token: string): Promise<any> {
+    const response = await fetch(`${ADMIN_API}/site/footer/sections`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to create footer section');
+    return response.json();
+  },
+
+  async updateFooterSection(id: number, data: any, token: string): Promise<any> {
+    const response = await fetch(`${ADMIN_API}/site/footer/sections/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to update footer section');
+    return response.json();
+  },
+
+  async deleteFooterSection(id: number, token: string): Promise<void> {
+    const response = await fetch(`${ADMIN_API}/site/footer/sections/${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error('Failed to delete footer section');
+  },
+
+  async createFooterLink(data: any, token: string): Promise<any> {
+    const response = await fetch(`${ADMIN_API}/site/footer/links`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to create footer link');
+    return response.json();
+  },
+
+  async updateFooterLink(id: number, data: any, token: string): Promise<any> {
+    const response = await fetch(`${ADMIN_API}/site/footer/links/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to update footer link');
+    return response.json();
+  },
+
+  async deleteFooterLink(id: number, token: string): Promise<void> {
+    const response = await fetch(`${ADMIN_API}/site/footer/links/${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error('Failed to delete footer link');
+  },
+
+  async getAllFooterTextSettings(token: string): Promise<any[]> {
+    const response = await fetch(`${ADMIN_API}/site/footer/text-settings`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error('Failed to fetch footer text settings');
+    return response.json();
+  },
+
+  async updateFooterTextSetting(key: string, data: any, token: string): Promise<any> {
+    const response = await fetch(`${ADMIN_API}/site/footer/text-settings/${key}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to update footer text setting');
     return response.json();
   },
 };

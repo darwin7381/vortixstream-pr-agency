@@ -8,7 +8,7 @@ from .api import (
     blog, pricing, contact, newsletter, pr_package,
     blog_admin, pricing_admin, pr_package_admin, contact_admin, newsletter_admin,
     pr_category_admin, media_admin, auth, user_admin, invitation_admin, invitation_public,
-    settings_admin, content_public, content_admin, content_admin_extended
+    settings_admin, content_public, content_admin, content_admin_extended, site_admin
 )
 
 # 設定 logging
@@ -125,6 +125,7 @@ app.include_router(invitation_admin.router, tags=["Admin - Invitations"])
 app.include_router(settings_admin.router, tags=["Admin - Settings"])
 app.include_router(content_admin.router, prefix="/api", tags=["Admin - Content"])
 app.include_router(content_admin_extended.router, prefix="/api", tags=["Admin - Content Extended"])
+app.include_router(site_admin.router, prefix="/api", tags=["Admin - Site"])
 
 
 if __name__ == "__main__":

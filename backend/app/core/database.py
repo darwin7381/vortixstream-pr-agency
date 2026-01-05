@@ -596,6 +596,133 @@ class Database:
                 CREATE INDEX IF NOT EXISTS idx_publisher_created ON publisher_applications(created_at DESC);
             """)
             
+            # ==================== Navigation Items ====================
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS navigation_items (
+                    id SERIAL PRIMARY KEY,
+                    
+                    -- Multi-language labels
+                    label_en VARCHAR(100) NOT NULL,
+                    label_zh VARCHAR(100),
+                    label_ja VARCHAR(100),
+                    
+                    -- URL for desktop and mobile (flexible: can be #section or /page)
+                    desktop_url VARCHAR(255) NOT NULL,
+                    mobile_url VARCHAR(255),
+                    target VARCHAR(20) DEFAULT '_self',
+                    
+                    -- Hierarchy support
+                    parent_id INTEGER REFERENCES navigation_items(id) ON DELETE CASCADE,
+                    
+                    -- Display
+                    display_order INTEGER DEFAULT 0,
+                    is_active BOOLEAN DEFAULT true,
+                    
+                    -- Timestamps
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    updated_at TIMESTAMP DEFAULT NOW()
+                );
+                
+                CREATE INDEX IF NOT EXISTS idx_nav_items_active_order ON navigation_items(is_active, display_order);
+                CREATE INDEX IF NOT EXISTS idx_nav_items_parent ON navigation_items(parent_id);
+            """)
+            
+            # Navigation CTA Button
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS navigation_cta (
+                    id SERIAL PRIMARY KEY,
+                    
+                    -- Multi-language text
+                    text_en VARCHAR(100) NOT NULL,
+                    text_zh VARCHAR(100),
+                    text_ja VARCHAR(100),
+                    
+                    -- URL
+                    url VARCHAR(255) NOT NULL,
+                    
+                    -- Status
+                    is_active BOOLEAN DEFAULT true,
+                    
+                    -- Timestamps
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    updated_at TIMESTAMP DEFAULT NOW()
+                );
+            """)
+            
+            # ==================== Footer Sections ====================
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS footer_sections (
+                    id SERIAL PRIMARY KEY,
+                    
+                    -- Multi-language titles
+                    title_en VARCHAR(100) NOT NULL,
+                    title_zh VARCHAR(100),
+                    title_ja VARCHAR(100),
+                    
+                    -- Section identifier
+                    section_key VARCHAR(50) NOT NULL UNIQUE,
+                    
+                    -- Display
+                    display_order INTEGER DEFAULT 0,
+                    is_active BOOLEAN DEFAULT true,
+                    
+                    -- Timestamps
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    updated_at TIMESTAMP DEFAULT NOW()
+                );
+                
+                CREATE INDEX IF NOT EXISTS idx_footer_sections_active_order ON footer_sections(is_active, display_order);
+            """)
+            
+            # Footer Links
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS footer_links (
+                    id SERIAL PRIMARY KEY,
+                    
+                    -- Parent section
+                    section_id INTEGER REFERENCES footer_sections(id) ON DELETE CASCADE,
+                    
+                    -- Multi-language labels
+                    label_en VARCHAR(100) NOT NULL,
+                    label_zh VARCHAR(100),
+                    label_ja VARCHAR(100),
+                    
+                    -- URL and behavior
+                    url VARCHAR(255) NOT NULL,
+                    target VARCHAR(20) DEFAULT '_self',
+                    
+                    -- Display
+                    display_order INTEGER DEFAULT 0,
+                    is_active BOOLEAN DEFAULT true,
+                    
+                    -- Timestamps
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    updated_at TIMESTAMP DEFAULT NOW()
+                );
+                
+                CREATE INDEX IF NOT EXISTS idx_footer_links_section ON footer_links(section_id);
+                CREATE INDEX IF NOT EXISTS idx_footer_links_active_order ON footer_links(is_active, display_order);
+            """)
+            
+            # Footer Text Settings
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS footer_text_settings (
+                    id SERIAL PRIMARY KEY,
+                    
+                    -- Setting identifier
+                    setting_key VARCHAR(50) NOT NULL UNIQUE,
+                    
+                    -- Multi-language values
+                    value_en TEXT,
+                    value_zh TEXT,
+                    value_ja TEXT,
+                    
+                    -- Timestamps
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    updated_at TIMESTAMP DEFAULT NOW()
+                );
+            """)
+            
             # ==================== PR Packages (首頁使用) ====================
             await conn.execute("""
                 CREATE TABLE IF NOT EXISTS pr_packages (
@@ -905,6 +1032,107 @@ class Database:
                     ('Asia geo-angle adjustments', 4, true)
             """)
             logger.info("✅ Lyro features seeded")
+        
+        # === Seed Navigation Items ===
+        # 使用原有的 navigationData.ts 資料
+        # desktop_url: 桌面版（#section 或 /page）
+        # mobile_url: 手機版（通常是 /page）
+        nav_count = await conn.fetchval("SELECT COUNT(*) FROM navigation_items")
+        if nav_count == 0:
+            logger.info("📝 Seeding navigation items...")
+            await conn.execute("""
+                INSERT INTO navigation_items (label_en, desktop_url, mobile_url, target, display_order, is_active)
+                VALUES
+                    ('About', '#about-section', '/about', '_self', 1, true),
+                    ('Services', '#services-section', '/services', '_self', 2, true),
+                    ('Packages', '#packages-section', '/pricing', '_self', 3, true),
+                    ('Publisher', '#publisher-section', '/publisher', '_self', 4, true),
+                    ('Contact', '#contact-section', '/contact', '_self', 5, true),
+                    ('Lyro', '#lyro-section', '/lyro', '_self', 6, true)
+            """)
+            logger.info("✅ Navigation items seeded")
+        elif nav_count > 6:
+            # 清理重複資料（如果有的話）
+            logger.info("🧹 Cleaning duplicate navigation items...")
+            await conn.execute("""
+                DELETE FROM navigation_items
+                WHERE id NOT IN (
+                    SELECT MIN(id)
+                    FROM navigation_items
+                    GROUP BY label_en, desktop_url
+                )
+            """)
+            logger.info("✅ Duplicates cleaned")
+        
+        # === Seed Navigation CTA ===
+        nav_cta_count = await conn.fetchval("SELECT COUNT(*) FROM navigation_cta")
+        if nav_cta_count == 0:
+            logger.info("📝 Seeding navigation CTA...")
+            await conn.execute("""
+                INSERT INTO navigation_cta (text_en, url, is_active)
+                VALUES ('Get Started', '/contact', true)
+            """)
+            logger.info("✅ Navigation CTA seeded")
+        
+        # === Seed Footer Sections ===
+        # 使用原有的 footerData.ts 資料
+        footer_section_count = await conn.fetchval("SELECT COUNT(*) FROM footer_sections")
+        if footer_section_count == 0:
+            logger.info("📝 Seeding footer sections...")
+            await conn.execute("""
+                INSERT INTO footer_sections (section_key, title_en, display_order, is_active)
+                VALUES
+                    ('map', 'Map', 1, true),
+                    ('resources', 'Resources', 2, true),
+                    ('policies', 'Policies', 3, true)
+            """)
+            logger.info("✅ Footer sections seeded")
+        
+        # === Seed Footer Links ===
+        # 使用原有的 footerData.ts 資料
+        footer_link_count = await conn.fetchval("SELECT COUNT(*) FROM footer_links")
+        if footer_link_count == 0:
+            logger.info("📝 Seeding footer links...")
+            # 取得 section IDs
+            map_id = await conn.fetchval("SELECT id FROM footer_sections WHERE section_key = 'map'")
+            resources_id = await conn.fetchval("SELECT id FROM footer_sections WHERE section_key = 'resources'")
+            policies_id = await conn.fetchval("SELECT id FROM footer_sections WHERE section_key = 'policies'")
+            
+            await conn.execute("""
+                INSERT INTO footer_links (section_id, label_en, url, target, display_order, is_active)
+                VALUES
+                    ($1, 'Home', '/', '_self', 1, true),
+                    ($1, 'Services', '/services', '_self', 2, true),
+                    ($1, 'Packages', '/pricing', '_self', 3, true),
+                    ($1, 'Our Client', '/clients', '_self', 4, true),
+                    ($1, 'Publisher', '/publisher', '_self', 5, true),
+                    ($1, 'About', '/about', '_self', 6, true),
+                    ($1, 'Contact', '/contact', '_self', 7, true),
+                    ($2, 'Blog', '/blog', '_self', 1, true),
+                    ($2, 'Template', '/template', '_self', 2, true),
+                    ($2, 'Concept', '/concept', '_self', 3, true),
+                    ($3, 'Editorial Policy', '#', '_self', 1, true),
+                    ($3, 'Privacy Policy', '#', '_self', 2, true),
+                    ($3, 'Terms of Service', '#', '_self', 3, true),
+                    ($3, 'Credit Card Policy', '#', '_self', 4, true),
+                    ($3, 'Cookies Settings', '#', '_self', 5, true)
+            """, map_id, resources_id, policies_id)
+            logger.info("✅ Footer links seeded")
+        
+        # === Seed Footer Text Settings ===
+        footer_text_count = await conn.fetchval("SELECT COUNT(*) FROM footer_text_settings")
+        if footer_text_count == 0:
+            logger.info("📝 Seeding footer text settings...")
+            await conn.execute("""
+                INSERT INTO footer_text_settings (setting_key, value_en)
+                VALUES
+                    ('tagline', 'Your PR Partner for Web3 & AI'),
+                    ('description', 'VortixPR helps blockchain and AI companies amplify their message through strategic media distribution and PR services.'),
+                    ('copyright', '© 2025 VortixPR. All rights reserved.'),
+                    ('newsletter_title', 'Stay Updated'),
+                    ('newsletter_description', 'Get the latest news and insights from the world of Web3 and AI.')
+            """)
+            logger.info("✅ Footer text settings seeded")
     
     async def _add_new_columns(self, conn):
         """
@@ -1002,6 +1230,79 @@ class Database:
                 ADD COLUMN IF NOT EXISTS background_video_url TEXT;
             """)
             logger.info("✅ Hero sections new fields added")
+        
+        # 檢查並添加/轉換 navigation_items 的 URL 欄位
+        # 舊設計：url + section_id
+        # 新設計：desktop_url + mobile_url（更靈活）
+        desktop_url_exists = await conn.fetchval("""
+            SELECT EXISTS (
+                SELECT 1 FROM information_schema.columns 
+                WHERE table_name='navigation_items' AND column_name='desktop_url'
+            )
+        """)
+        
+        if not desktop_url_exists:
+            logger.info("🔄 Converting navigation_items to desktop_url/mobile_url structure...")
+            
+            # 如果有舊的 url 欄位，先遷移資料
+            old_url_exists = await conn.fetchval("""
+                SELECT EXISTS (
+                    SELECT 1 FROM information_schema.columns 
+                    WHERE table_name='navigation_items' AND column_name='url'
+                )
+            """)
+            
+            if old_url_exists:
+                # 添加新欄位
+                await conn.execute("""
+                    ALTER TABLE navigation_items 
+                    ADD COLUMN IF NOT EXISTS desktop_url VARCHAR(255),
+                    ADD COLUMN IF NOT EXISTS mobile_url VARCHAR(255);
+                """)
+                
+                # 遷移資料：如果有 section_id，desktop 用 #section，否則用 url
+                section_id_exists = await conn.fetchval("""
+                    SELECT EXISTS (
+                        SELECT 1 FROM information_schema.columns 
+                        WHERE table_name='navigation_items' AND column_name='section_id'
+                    )
+                """)
+                
+                if section_id_exists:
+                    await conn.execute("""
+                        UPDATE navigation_items 
+                        SET desktop_url = CASE 
+                            WHEN section_id IS NOT NULL AND section_id != '' 
+                            THEN '#' || section_id 
+                            ELSE url 
+                        END,
+                        mobile_url = url
+                        WHERE desktop_url IS NULL;
+                    """)
+                else:
+                    await conn.execute("""
+                        UPDATE navigation_items 
+                        SET desktop_url = url,
+                        mobile_url = url
+                        WHERE desktop_url IS NULL;
+                    """)
+                
+                # 刪除舊欄位
+                await conn.execute("""
+                    ALTER TABLE navigation_items 
+                    DROP COLUMN IF EXISTS url,
+                    DROP COLUMN IF EXISTS section_id;
+                """)
+                
+                logger.info("✅ Navigation items converted to desktop_url/mobile_url structure")
+            else:
+                # 沒有舊欄位，只添加新欄位
+                await conn.execute("""
+                    ALTER TABLE navigation_items 
+                    ADD COLUMN IF NOT EXISTS desktop_url VARCHAR(255),
+                    ADD COLUMN IF NOT EXISTS mobile_url VARCHAR(255);
+                """)
+                logger.info("✅ Navigation items desktop_url/mobile_url fields added")
     
     async def _promote_super_admin(self, conn):
         """
