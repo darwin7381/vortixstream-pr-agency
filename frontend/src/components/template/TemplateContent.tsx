@@ -1,120 +1,220 @@
-import { FileText, Download, Rocket, TrendingUp, Award, Megaphone } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Eye, Download, Rocket, TrendingUp, Award, Megaphone, FileText } from 'lucide-react';
 import { Button } from '../ui/button';
+import { MOCK_TEMPLATES, PRTemplate } from '../../constants/templateData';
+import TemplateFilters from './TemplateFilters';
+import TemplatePreviewModal from './TemplatePreviewModal';
+import TemplateDownloadForm from './TemplateDownloadForm';
+import ComingSoonBanner from './ComingSoonBanner';
 
-const templates = [
-  {
-    icon: Rocket,
-    title: 'Product Launch',
-    description: 'Perfect for announcing new products, features, or services to the market.',
-    category: 'Launch',
-    color: '#FF7400'
-  },
-  {
-    icon: TrendingUp,
-    title: 'Funding Announcement',
-    description: 'Communicate your latest funding round or investment news professionally.',
-    category: 'Finance',
-    color: '#1D3557'
-  },
-  {
-    icon: Award,
-    title: 'Achievement & Awards',
-    description: 'Showcase your company achievements, milestones, and industry recognition.',
-    category: 'Recognition',
-    color: '#FF7400'
-  },
-  {
-    icon: Megaphone,
-    title: 'Event Announcement',
-    description: 'Promote upcoming events, conferences, or company milestones.',
-    category: 'Event',
-    color: '#1D3557'
-  },
-  {
-    icon: FileText,
-    title: 'Partnership News',
-    description: 'Announce strategic partnerships and collaborations effectively.',
-    category: 'Partnership',
-    color: '#FF7400'
-  },
-  {
-    icon: TrendingUp,
-    title: 'Company Update',
-    description: 'Share important company news, updates, and strategic changes.',
-    category: 'Update',
-    color: '#1D3557'
-  }
-];
+// Icon mapping
+const iconMap: Record<string, any> = {
+  Rocket,
+  TrendingUp,
+  Award,
+  Megaphone,
+  FileText
+};
 
 export default function TemplateContent() {
+  // Filter states
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedIndustry, setSelectedIndustry] = useState('All');
+  const [sortBy, setSortBy] = useState('popular');
+
+  // Modal states
+  const [previewTemplate, setPreviewTemplate] = useState<PRTemplate | null>(null);
+  const [downloadTemplate, setDownloadTemplate] = useState<PRTemplate | null>(null);
+
+  // Filter and sort templates
+  const filteredTemplates = useMemo(() => {
+    let filtered = [...MOCK_TEMPLATES];
+
+    // Search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        (template) =>
+          template.title.toLowerCase().includes(query) ||
+          template.description.toLowerCase().includes(query) ||
+          template.category.toLowerCase().includes(query) ||
+          template.industryTags.some(tag => tag.toLowerCase().includes(query))
+      );
+    }
+
+    // Category filter
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter((template) => template.category === selectedCategory);
+    }
+
+    // Industry filter
+    if (selectedIndustry !== 'All') {
+      filtered = filtered.filter((template) =>
+        template.industryTags.includes(selectedIndustry) ||
+        template.industryTags.includes('All Industries')
+      );
+    }
+
+    // Sort
+    switch (sortBy) {
+      case 'popular':
+        filtered.sort((a, b) => b.downloadCount - a.downloadCount);
+        break;
+      case 'latest':
+        // 假設 ID 越大越新
+        filtered.sort((a, b) => b.id - a.id);
+        break;
+      case 'name':
+        filtered.sort((a, b) => a.title.localeCompare(b.title, 'zh-TW'));
+        break;
+    }
+
+    return filtered;
+  }, [searchQuery, selectedCategory, selectedIndustry, sortBy]);
+
+  const handlePreview = (template: PRTemplate) => {
+    setPreviewTemplate(template);
+  };
+
+  const handleDownload = (template: PRTemplate) => {
+    setPreviewTemplate(null);
+    setDownloadTemplate(template);
+  };
+
   return (
     <section className="bg-black py-section-medium">
       <div className="container-large px-[20px] xl:px-[64px] mx-auto">
+        {/* Filters */}
+        <TemplateFilters
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          selectedIndustry={selectedIndustry}
+          setSelectedIndustry={setSelectedIndustry}
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          totalResults={filteredTemplates.length}
+        />
+
         {/* Templates Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {templates.map((template, index) => {
-            const Icon = template.icon;
-            return (
-              <div
-                key={index}
-                className="bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 rounded-2xl p-8 hover:border-[#FF7400]/50 transition-all duration-300 hover:shadow-[0_8px_30px_rgba(255,116,0,0.15)] group"
+        <div className="mt-12">
+          {filteredTemplates.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredTemplates.map((template) => {
+                const Icon = iconMap[template.icon] || FileText;
+                return (
+                  <div
+                    key={template.id}
+                    className="bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 rounded-2xl p-8 hover:border-[#FF7400]/50 transition-all duration-300 hover:shadow-[0_8px_30px_rgba(255,116,0,0.15)] group flex flex-col"
+                  >
+                    {/* Icon */}
+                    <div
+                      className="w-14 h-14 rounded-xl flex items-center justify-center mb-6 transition-transform duration-300 group-hover:scale-110"
+                      style={{
+                        backgroundColor: `${template.categoryColor}20`,
+                        border: `1px solid ${template.categoryColor}40`
+                      }}
+                    >
+                      <Icon size={28} style={{ color: template.categoryColor }} />
+                    </div>
+
+                    {/* Category Badge */}
+                    <div className="inline-block mb-4">
+                      <span
+                        className="text-[12px] font-sans font-semibold px-3 py-1 rounded-full border"
+                        style={{
+                          color: template.categoryColor,
+                          backgroundColor: `${template.categoryColor}10`,
+                          borderColor: `${template.categoryColor}20`
+                        }}
+                      >
+                        {template.category}
+                      </span>
+                    </div>
+
+                    {/* Title */}
+                    <h3 className="text-white text-[22px] font-sans font-bold mb-3">
+                      {template.title}
+                    </h3>
+
+                    {/* Description */}
+                    <p className="text-white/70 text-[14px] font-sans leading-relaxed mb-4 flex-grow line-clamp-3">
+                      {template.description}
+                    </p>
+
+                    {/* Stats */}
+                    <div className="flex items-center gap-2 mb-6 text-white/50 text-[12px] font-sans">
+                      <Download size={14} />
+                      <span>{template.downloadCount.toLocaleString()} downloads</span>
+                      {template.downloadCount > 800 && (
+                        <span className="ml-auto text-[#FF7400]">🔥 Popular</span>
+                      )}
+                    </div>
+
+                    {/* Actions */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <Button
+                        onClick={() => handlePreview(template)}
+                        className="bg-transparent border border-white/20 text-white hover:bg-white/5 hover:border-white/30 transition-all text-[14px] h-10"
+                      >
+                        <Eye size={14} className="mr-2" />
+                        Preview
+                      </Button>
+                      <Button
+                        onClick={() => handleDownload(template)}
+                        className="bg-transparent border border-[#FF7400]/40 text-[#FF7400] hover:bg-[#FF7400]/10 hover:border-[#FF7400]/60 transition-all text-[14px] h-10"
+                      >
+                        <Download size={14} className="mr-2" />
+                        Use
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            // No results
+            <div className="text-center py-20">
+              <div className="text-6xl mb-6">🔍</div>
+              <h3 className="text-white text-[24px] font-sans font-bold mb-3">
+                No Templates Found
+              </h3>
+              <p className="text-white/60 text-[16px] font-sans mb-6">
+                Try adjusting your search criteria or clear all filters
+              </p>
+              <Button
+                onClick={() => {
+                  setSearchQuery('');
+                  setSelectedCategory('all');
+                  setSelectedIndustry('All');
+                }}
+                className="bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all"
               >
-                {/* Icon */}
-                <div
-                  className="w-14 h-14 rounded-xl flex items-center justify-center mb-6 transition-transform duration-300 group-hover:scale-110"
-                  style={{ backgroundColor: `${template.color}20`, border: `1px solid ${template.color}40` }}
-                >
-                  <Icon size={28} style={{ color: template.color }} />
-                </div>
-
-                {/* Category Badge */}
-                <div className="inline-block mb-4">
-                  <span className="text-[12px] font-sans font-semibold font-semibold text-[#FF7400] bg-[#FF7400]/10 px-3 py-1 rounded-full border border-[#FF7400]/20">
-                    {template.category}
-                  </span>
-                </div>
-
-                {/* Title */}
-                <h3 className="text-white text-[22px] font-sans font-bold font-bold mb-3">
-                  {template.title}
-                </h3>
-
-                {/* Description */}
-                <p className="text-white/70 text-[14px] font-sans leading-relaxed mb-6">
-                  {template.description}
-                </p>
-
-                {/* Download Button */}
-                <Button
-                  className="w-full bg-transparent border border-white/20 text-white hover:bg-white/5 hover:border-[#FF7400]/50 transition-all duration-300 group-hover:text-[#FF7400]"
-                >
-                  <Download size={16} className="mr-2" />
-                  Download Template
-                </Button>
-              </div>
-            );
-          })}
+                Clear All Filters
+              </Button>
+            </div>
+          )}
         </div>
 
-        {/* CTA Section */}
-        <div className="mt-20 text-center max-w-3xl mx-auto">
-          <div className="bg-gradient-to-br from-[#FF7400]/10 to-[#1D3557]/10 border border-[#FF7400]/20 rounded-2xl p-10">
-            <h3 className="text-white text-[28px] md:text-[32px] font-sans font-bold font-bold mb-4">
-              Need Custom Templates?
-            </h3>
-            <p className="text-white/80 text-[16px] font-sans leading-relaxed mb-6">
-              Our team can create customized PR templates tailored to your brand voice and specific communication needs.
-            </p>
-            <Button
-              className="bg-gradient-to-r from-[#FF7400] to-[#1D3557] text-white border border-[#FF7400] hover:shadow-[0_8px_25px_rgba(255,116,0,0.3)] transition-all duration-300"
-            >
-              Contact Our Team
-            </Button>
-          </div>
-        </div>
+        {/* Coming Soon Banner */}
+        <ComingSoonBanner />
       </div>
+
+      {/* Modals */}
+      <TemplatePreviewModal
+        template={previewTemplate}
+        isOpen={!!previewTemplate}
+        onClose={() => setPreviewTemplate(null)}
+        onDownload={handleDownload}
+      />
+
+      <TemplateDownloadForm
+        template={downloadTemplate}
+        isOpen={!!downloadTemplate}
+        onClose={() => setDownloadTemplate(null)}
+      />
     </section>
   );
 }
-
-
