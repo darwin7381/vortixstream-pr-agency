@@ -81,6 +81,9 @@ export default function AdminTemplates() {
         title: updatedTemplate.title,
         description: updatedTemplate.description,
         content: updatedTemplate.content,
+        industry_tags: updatedTemplate.industry_tags,
+        use_cases: updatedTemplate.use_cases,
+        includes: updatedTemplate.includes,
       });
       
       alert('更新成功！');
@@ -330,8 +333,14 @@ export default function AdminTemplates() {
 
       {/* Preview Modal */}
       {previewTemplate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="relative w-full max-w-4xl max-h-[90vh] bg-white dark:bg-gray-800 rounded-xl shadow-2xl overflow-auto">
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+          onClick={() => setPreviewTemplate(null)}
+        >
+          <div 
+            className="relative w-full max-w-4xl max-h-[90vh] bg-white dark:bg-gray-800 rounded-xl shadow-2xl overflow-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-between z-10">
               <h2 className="text-gray-900 dark:text-white text-[20px] font-bold">
                 {previewTemplate.title}
@@ -344,9 +353,29 @@ export default function AdminTemplates() {
               </button>
             </div>
             <div className="p-6">
-              <pre className="text-gray-800 dark:text-gray-200 text-[13px] font-mono leading-relaxed whitespace-pre-wrap">
-                {previewTemplate.content}
-              </pre>
+              <div 
+                className="prose prose-sm max-w-none
+                  [&_h1]:text-gray-900 [&_h1]:dark:text-white [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:my-4
+                  [&_h2]:text-gray-800 [&_h2]:dark:text-gray-100 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:my-3
+                  [&_h3]:text-gray-900 [&_h3]:dark:text-white [&_h3]:text-base [&_h3]:font-bold [&_h3]:mt-6 [&_h3]:mb-3
+                  [&_p]:text-gray-700 [&_p]:dark:text-gray-300 [&_p]:text-sm [&_p]:my-3 [&_p]:leading-relaxed
+                  [&_ul]:my-3 [&_ul]:pl-6 [&_ul]:list-disc [&_ul]:space-y-1.5
+                  [&_li]:text-gray-600 [&_li]:dark:text-gray-400 [&_li]:text-sm
+                  [&_blockquote]:border-l-4 [&_blockquote]:border-orange-500 [&_blockquote]:pl-4 [&_blockquote]:my-4 [&_blockquote]:italic
+                  [&_a]:text-blue-500 [&_a]:hover:text-blue-600 [&_a]:underline
+                  [&_img]:w-full [&_img]:rounded-lg [&_img]:my-6
+                  [&_strong]:font-bold
+                  [&_code]:bg-gray-100 [&_code]:dark:bg-gray-700 [&_code]:px-2 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-xs"
+                dangerouslySetInnerHTML={{
+                  __html: (() => {
+                    const { marked } = require('marked');
+                    let html = String(marked.parse(previewTemplate.content));
+                    // 處理 {{參數}} 高亮
+                    html = html.replace(/{{([^}]+)}}/g, '<span style="background-color: rgba(255, 116, 0, 0.2); color: #FF7400; padding: 0.125rem 0.375rem; border-radius: 0.25rem; font-weight: 600; font-style: normal;">$1</span>');
+                    return html;
+                  })()
+                }}
+              />
             </div>
           </div>
         </div>
@@ -354,9 +383,15 @@ export default function AdminTemplates() {
 
       {/* Edit Modal */}
       {editingTemplate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="relative w-full max-w-4xl bg-white dark:bg-gray-800 rounded-xl shadow-2xl">
-            <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-between">
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+          onClick={() => setEditingTemplate(null)}
+        >
+          <div 
+            className="relative w-full max-w-4xl bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-between sticky top-0 bg-white dark:bg-gray-800 z-10">
               <h2 className="text-gray-900 dark:text-white text-[20px] font-bold">
                 Edit Template: {editingTemplate.title}
               </h2>
@@ -367,7 +402,7 @@ export default function AdminTemplates() {
                 ×
               </button>
             </div>
-            <div className="p-6 max-h-[70vh] overflow-y-auto">
+            <div className="p-6">
               <div className="space-y-4">
                 {/* Title */}
                 <div>
@@ -395,6 +430,46 @@ export default function AdminTemplates() {
                   />
                 </div>
 
+                {/* Industry Tags */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    Industry Tags
+                  </label>
+                  <input
+                    type="text"
+                    value={editingTemplate.industry_tags.join(', ')}
+                    onChange={(e) => setEditingTemplate({ ...editingTemplate, industry_tags: e.target.value.split(',').map(t => t.trim()).filter(t => t) })}
+                    placeholder="Tech, SaaS, Startup"
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                </div>
+
+                {/* Use Cases */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    Use Cases
+                  </label>
+                  <textarea
+                    value={editingTemplate.use_cases.join('\n')}
+                    onChange={(e) => setEditingTemplate({ ...editingTemplate, use_cases: e.target.value.split('\n').filter(t => t.trim()) })}
+                    rows={3}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                </div>
+
+                {/* Includes */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    What's Included
+                  </label>
+                  <textarea
+                    value={editingTemplate.includes.join('\n')}
+                    onChange={(e) => setEditingTemplate({ ...editingTemplate, includes: e.target.value.split('\n').filter(t => t.trim()) })}
+                    rows={3}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                </div>
+
                 {/* Content */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
@@ -406,6 +481,9 @@ export default function AdminTemplates() {
                     rows={20}
                     className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-mono text-sm"
                   />
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    Use Markdown syntax and {'{{param}}'} for placeholders
+                  </p>
                 </div>
               </div>
             </div>
@@ -429,8 +507,14 @@ export default function AdminTemplates() {
 
       {/* New Template Modal */}
       {showNewModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="relative w-full max-w-4xl bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+          onClick={() => setShowNewModal(false)}
+        >
+          <div 
+            className="relative w-full max-w-4xl bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-between sticky top-0 bg-white dark:bg-gray-800 z-10">
               <h2 className="text-gray-900 dark:text-white text-[20px] font-bold">
                 Create New Template
@@ -502,6 +586,48 @@ export default function AdminTemplates() {
                     className="w-full h-10 rounded-lg border border-gray-300 dark:border-gray-600"
                   />
                 </div>
+              </div>
+
+              {/* Industry Tags */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  Industry Tags (comma-separated)
+                </label>
+                <input
+                  type="text"
+                  value={newTemplate.industry_tags.join(', ')}
+                  onChange={(e) => setNewTemplate({ ...newTemplate, industry_tags: e.target.value.split(',').map(t => t.trim()).filter(t => t) })}
+                  placeholder="e.g. Tech, SaaS, Startup"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                />
+              </div>
+
+              {/* Use Cases */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  Use Cases (one per line)
+                </label>
+                <textarea
+                  value={newTemplate.use_cases.join('\n')}
+                  onChange={(e) => setNewTemplate({ ...newTemplate, use_cases: e.target.value.split('\n').filter(t => t.trim()) })}
+                  rows={3}
+                  placeholder="New product launches&#10;Major feature updates&#10;Service announcements"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                />
+              </div>
+
+              {/* Includes */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  What's Included (one per line)
+                </label>
+                <textarea
+                  value={newTemplate.includes.join('\n')}
+                  onChange={(e) => setNewTemplate({ ...newTemplate, includes: e.target.value.split('\n').filter(t => t.trim()) })}
+                  rows={3}
+                  placeholder="Headline formula&#10;Quote templates&#10;Media contact format"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                />
               </div>
 
               {/* Content */}
