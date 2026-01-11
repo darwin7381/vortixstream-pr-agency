@@ -10,6 +10,18 @@ export default function AdminTemplates() {
   const [error, setError] = useState<string | null>(null);
   const [previewTemplate, setPreviewTemplate] = useState<PRTemplate | null>(null);
   const [editingTemplate, setEditingTemplate] = useState<PRTemplate | null>(null);
+  const [showNewModal, setShowNewModal] = useState(false);
+  const [newTemplate, setNewTemplate] = useState({
+    title: '',
+    description: '',
+    category: 'Launch',
+    category_color: '#FF7400',
+    icon: 'Rocket',
+    content: '',
+    industry_tags: [] as string[],
+    use_cases: [] as string[],
+    includes: [] as string[],
+  });
 
   // Fetch templates
   useEffect(() => {
@@ -80,6 +92,34 @@ export default function AdminTemplates() {
     }
   };
 
+  const handleCreateTemplate = async () => {
+    if (!newTemplate.title || !newTemplate.content) {
+      alert('請填寫標題和內容');
+      return;
+    }
+
+    try {
+      await templateAdminAPI.createTemplate(newTemplate);
+      alert('模板創建成功！');
+      setShowNewModal(false);
+      setNewTemplate({
+        title: '',
+        description: '',
+        category: 'Launch',
+        category_color: '#FF7400',
+        icon: 'Rocket',
+        content: '',
+        industry_tags: [],
+        use_cases: [],
+        includes: [],
+      });
+      fetchTemplates(); // 刷新列表
+    } catch (error: any) {
+      console.error('Failed to create template:', error);
+      alert(error.message || '創建失敗，請稍後再試');
+    }
+  };
+
   if (loading) {
     return (
       <AdminLayout>
@@ -104,7 +144,10 @@ export default function AdminTemplates() {
               Manage professional press release templates
             </p>
           </div>
-          <button className="flex items-center gap-2 bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors shadow-sm">
+          <button 
+            onClick={() => setShowNewModal(true)}
+            className="flex items-center gap-2 bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors shadow-sm"
+          >
             <Plus size={20} />
             New Template
           </button>
@@ -378,6 +421,118 @@ export default function AdminTemplates() {
                 className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
               >
                 Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* New Template Modal */}
+      {showNewModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="relative w-full max-w-4xl bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-between sticky top-0 bg-white dark:bg-gray-800 z-10">
+              <h2 className="text-gray-900 dark:text-white text-[20px] font-bold">
+                Create New Template
+              </h2>
+              <button
+                onClick={() => setShowNewModal(false)}
+                className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all"
+              >
+                ×
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              {/* Title */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  Title *
+                </label>
+                <input
+                  type="text"
+                  value={newTemplate.title}
+                  onChange={(e) => setNewTemplate({ ...newTemplate, title: e.target.value })}
+                  placeholder="e.g. Product Launch"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                />
+              </div>
+
+              {/* Description */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  Description *
+                </label>
+                <textarea
+                  value={newTemplate.description}
+                  onChange={(e) => setNewTemplate({ ...newTemplate, description: e.target.value })}
+                  rows={3}
+                  placeholder="Brief description of the template..."
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                />
+              </div>
+
+              {/* Category & Color */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    Category *
+                  </label>
+                  <select
+                    value={newTemplate.category}
+                    onChange={(e) => setNewTemplate({ ...newTemplate, category: e.target.value })}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  >
+                    <option value="Launch">Launch</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Recognition">Recognition</option>
+                    <option value="Event">Event</option>
+                    <option value="Partnership">Partnership</option>
+                    <option value="Corporate">Corporate</option>
+                    <option value="Update">Update</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    Color
+                  </label>
+                  <input
+                    type="color"
+                    value={newTemplate.category_color}
+                    onChange={(e) => setNewTemplate({ ...newTemplate, category_color: e.target.value })}
+                    className="w-full h-10 rounded-lg border border-gray-300 dark:border-gray-600"
+                  />
+                </div>
+              </div>
+
+              {/* Content */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  Content (Markdown) *
+                </label>
+                <textarea
+                  value={newTemplate.content}
+                  onChange={(e) => setNewTemplate({ ...newTemplate, content: e.target.value })}
+                  rows={20}
+                  placeholder="# Title&#10;## Subtitle&#10;&#10;Content with {{parameters}}..."
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-mono text-sm"
+                />
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  Use Markdown syntax (# ## ###) and {'{{param}}'} for placeholders
+                </p>
+              </div>
+            </div>
+            <div className="border-t border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-end gap-3 sticky bottom-0 bg-white dark:bg-gray-800">
+              <button
+                onClick={() => setShowNewModal(false)}
+                className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleCreateTemplate}
+                className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+              >
+                Create Template
               </button>
             </div>
           </div>
