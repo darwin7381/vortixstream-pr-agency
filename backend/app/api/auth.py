@@ -16,7 +16,7 @@ from app.utils.security import (
 from app.core.database import db
 from app.config import settings
 
-router = APIRouter(prefix="/api/auth", tags=["Authentication"])
+router = APIRouter(prefix="/api", tags=["Authentication"])
 
 
 # ==================== Google OAuth 設定 ====================
@@ -26,7 +26,7 @@ GOOGLE_REDIRECT_URI = settings.GOOGLE_REDIRECT_URI
 
 
 # ==================== 註冊 ====================
-@router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/auth/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
 async def register(user_data: UserRegister, invitation_token: Optional[str] = Query(None)):
     """
     用戶註冊
@@ -200,7 +200,7 @@ async def register(user_data: UserRegister, invitation_token: Optional[str] = Qu
 
 
 # ==================== 登入 ====================
-@router.post("/login", response_model=TokenResponse)
+@router.post("/auth/login", response_model=TokenResponse)
 async def login(credentials: UserLogin):
     """
     用戶登入
@@ -272,7 +272,7 @@ async def login(credentials: UserLogin):
 
 
 # ==================== 獲取當前用戶 ====================
-@router.get("/me", response_model=UserResponse)
+@router.get("/auth/me", response_model=UserResponse)
 async def get_me(current_user: TokenData = Depends(get_current_user)):
     """獲取當前登入用戶的完整資料"""
     async with db.pool.acquire() as conn:
@@ -292,7 +292,7 @@ async def get_me(current_user: TokenData = Depends(get_current_user)):
 
 
 # ==================== Google OAuth ====================
-@router.get("/google/login")
+@router.get("/auth/google/login")
 async def google_login():
     """導向 Google OAuth 登入頁面"""
     if not GOOGLE_CLIENT_ID:
@@ -314,7 +314,7 @@ async def google_login():
     return {"url": google_auth_url}
 
 
-@router.get("/google/callback")
+@router.get("/auth/google/callback")
 async def google_callback(code: str):
     """
     Google OAuth 回調
@@ -426,7 +426,7 @@ async def google_callback(code: str):
 
 
 # ==================== Refresh Token ====================
-@router.post("/refresh", response_model=TokenResponse)
+@router.post("/auth/refresh", response_model=TokenResponse)
 async def refresh_token(refresh_token: str):
     """
     使用 Refresh Token 獲取新的 Access Token

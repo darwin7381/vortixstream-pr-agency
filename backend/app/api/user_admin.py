@@ -7,11 +7,11 @@ from app.utils.security import require_admin, require_super_admin, get_current_u
 from datetime import datetime
 from app.core.database import db
 
-router = APIRouter(prefix="/api/admin/users", tags=["Admin - Users"])
+router = APIRouter(prefix="/api/admin", tags=["Admin - Users"])
 
 
 # ==================== 用戶列表 ====================
-@router.get("/", response_model=List[UserResponse])
+@router.get("/users", response_model=List[UserResponse])
 async def get_users(
     status: Optional[str] = None,
     role: Optional[str] = None,
@@ -80,7 +80,7 @@ async def get_users(
 
 
 # ==================== 用戶統計 ====================
-@router.get("/stats")
+@router.get("/users/stats")
 async def get_user_stats(current_user = Depends(require_admin)):
     """取得用戶統計資料"""
     async with db.pool.acquire() as conn:
@@ -101,7 +101,7 @@ async def get_user_stats(current_user = Depends(require_admin)):
 
 
 # ==================== 更新用戶角色 ====================
-@router.patch("/{user_id}/role")
+@router.patch("/users/{user_id}/role")
 async def update_user_role(
     user_id: int,
     role: str,
@@ -164,7 +164,7 @@ async def update_user_role(
 
 
 # ==================== 啟用/停用用戶 ====================
-@router.patch("/{user_id}/activate")
+@router.patch("/users/{user_id}/activate")
 async def activate_user(
     user_id: int,
     current_user = Depends(require_admin)
@@ -205,7 +205,7 @@ async def activate_user(
 
 
 # ==================== 刪除用戶（軟刪除）====================
-@router.delete("/{user_id}")
+@router.delete("/users/{user_id}")
 async def delete_user(
     user_id: int,
     permanent: bool = False,
@@ -289,7 +289,7 @@ async def delete_user(
 
 
 # ==================== 取得單一用戶詳細資料 ====================
-@router.get("/{user_id}", response_model=UserResponse)
+@router.get("/users/{user_id}", response_model=UserResponse)
 async def get_user(
     user_id: int,
     current_user = Depends(require_admin)
@@ -312,7 +312,7 @@ async def get_user(
 
 
 # ==================== 封禁用戶 ====================
-@router.post("/{user_id}/ban")
+@router.post("/users/{user_id}/ban")
 async def ban_user(
     user_id: int,
     reason: str = "違反服務條款",
@@ -373,7 +373,7 @@ async def ban_user(
 
 
 # ==================== 解除封禁 ====================
-@router.delete("/{user_id}/unban")
+@router.delete("/users/{user_id}/unban")
 async def unban_user(
     user_id: int,
     current_user = Depends(require_super_admin)

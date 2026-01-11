@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from app.utils.security import require_super_admin
 from app.core.database import db
 
-router = APIRouter(prefix="/api/admin/settings", tags=["Admin - Settings"])
+router = APIRouter(prefix="/api/admin", tags=["Admin - Settings"])
 
 
 class SettingUpdate(BaseModel):
@@ -13,7 +13,7 @@ class SettingUpdate(BaseModel):
 
 
 # ==================== 取得所有設定 ====================
-@router.get("/")
+@router.get("/settings")
 async def get_all_settings(current_user = Depends(require_super_admin)) -> List[Dict[str, Any]]:
     """取得所有系統設定（僅 super_admin）"""
     async with db.pool.acquire() as conn:
@@ -27,7 +27,7 @@ async def get_all_settings(current_user = Depends(require_super_admin)) -> List[
 
 
 # ==================== 更新設定 ====================
-@router.patch("/{setting_key}")
+@router.patch("/settings/{setting_key}")
 async def update_setting(
     setting_key: str,
     data: SettingUpdate,

@@ -29,7 +29,7 @@ export default function AdminInvitations() {
   const loadInvitations = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/invitations/?status=${statusFilter}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/invitations?status=${statusFilter}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
@@ -47,7 +47,7 @@ export default function AdminInvitations() {
     if (!confirm('Are you sure you want to resend invitation email？')) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/invitations/${invitationId}/resend`, {
+      const response = await fetch(`${API_BASE_URL}/admin/invitations${invitationId}/resend`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -68,7 +68,7 @@ export default function AdminInvitations() {
     if (!confirm(`Are you sure you want to cancel invitation for ${email} ?`)) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/invitations/${invitationId}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/invitations${invitationId}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });

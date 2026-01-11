@@ -54,7 +54,7 @@ export default function AdminUsers() {
       if (searchTerm) params.append('search', searchTerm);
       params.append('status', statusFilter);
 
-      const response = await fetch(`${API_BASE_URL}/admin/users/?${params}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/users?${params}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       

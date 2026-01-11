@@ -10,11 +10,11 @@ from app.core.database import db
 from app.config import settings
 from app.services.invitation_email import send_invitation_email
 
-router = APIRouter(prefix="/api/admin/invitations", tags=["Admin - Invitations"])
+router = APIRouter(prefix="/api/admin", tags=["Admin - Invitations"])
 
 
 # ==================== 創建邀請 ====================
-@router.post("/", response_model=InvitationResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/invitations", response_model=InvitationResponse, status_code=status.HTTP_201_CREATED)
 async def create_invitation(
     invitation: InvitationCreate,
     current_user: TokenData = Depends(require_admin)
@@ -121,7 +121,7 @@ async def create_invitation(
 
 
 # ==================== 取得所有邀請 ====================
-@router.get("/", response_model=List[InvitationResponse])
+@router.get("/invitations", response_model=List[InvitationResponse])
 async def get_invitations(
     status: str = "pending",
     current_user: TokenData = Depends(require_admin)
@@ -139,7 +139,7 @@ async def get_invitations(
 
 
 # ==================== 取消邀請 ====================
-@router.delete("/{invitation_id}")
+@router.delete("/invitations/{invitation_id}")
 async def cancel_invitation(
     invitation_id: int,
     current_user: TokenData = Depends(require_admin)
@@ -170,7 +170,7 @@ async def cancel_invitation(
 
 
 # ==================== 重新發送邀請 ====================
-@router.post("/{invitation_id}/resend")
+@router.post("/invitations/{invitation_id}/resend")
 async def resend_invitation(
     invitation_id: int,
     current_user: TokenData = Depends(require_admin)

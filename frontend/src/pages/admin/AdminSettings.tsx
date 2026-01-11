@@ -28,7 +28,7 @@ export default function AdminSettings() {
   const loadSettings = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/settings/`, {
+      const response = await fetch(`${API_BASE_URL}/admin/settings`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
@@ -53,7 +53,7 @@ export default function AdminSettings() {
     setIsSaving(true);
     try {
       // Update auto-delete settings
-      await fetch(`${API_BASE_URL}/admin/settings/auto_delete_deactivated_users`, {
+      await fetch(`${API_BASE_URL}/admin/settingsauto_delete_deactivated_users`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -63,7 +63,7 @@ export default function AdminSettings() {
       });
 
       // Update days setting
-      await fetch(`${API_BASE_URL}/admin/settings/auto_delete_days`, {
+      await fetch(`${API_BASE_URL}/admin/settingsauto_delete_days`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
