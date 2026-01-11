@@ -3,7 +3,7 @@ import { X, Mail, Sparkles, FileText, Loader2 } from 'lucide-react';
 import { marked } from 'marked';
 import { PRTemplate, templateAPI } from '../../api/templateClient';
 import { Button } from '../ui/button';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../contexts/AuthContext';
 import EmailLoginModal from './EmailLoginModal';
 
 interface TemplatePreviewModalProps {

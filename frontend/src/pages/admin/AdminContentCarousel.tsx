@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../contexts/AuthContext';
 import { Plus, Edit, Trash2, Image as ImageIcon, Save } from 'lucide-react';
 import ImagePicker from '../../components/admin/ImagePicker';
 import { ADMIN_API } from '../../config/api';

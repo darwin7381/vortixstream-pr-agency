@@ -6,7 +6,7 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Eye, EyeOff, ArrowLeft, Lock, Mail, User } from 'lucide-react';
 import VortixLogoWhite from '../assets/VortixLogo White_Horizontal.png';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../contexts/AuthContext';
 
 interface LoginPageProps {
   onLogin?: (email: string, password: string) => Promise<boolean>;

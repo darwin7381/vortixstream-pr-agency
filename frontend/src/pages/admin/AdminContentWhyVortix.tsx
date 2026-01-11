@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { contentAPI, type Stat, type Differentiator } from '../../api/client';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../contexts/AuthContext';
 import { TrendingUp, Sparkles, Plus, Edit, Trash2 } from 'lucide-react';
 
 export default function AdminContentWhyVortix() {

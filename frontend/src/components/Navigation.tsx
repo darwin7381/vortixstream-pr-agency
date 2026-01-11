@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { contentAPI, type NavItem, type NavCTA } from '../api/client';
-import { User as UserType } from '../hooks/useAuth';
+import { User as UserType } from '../contexts/AuthContext';
 
 // VortixPR Logo - 使用本地資源
 

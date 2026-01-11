@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 export const GoogleCallback = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { refreshAuth } = useAuth();
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const handleCallback = () => {
+    const handleCallback = async () => {
       // 從 URL 參數中取得 tokens（後端重新導向時帶過來的）
       const accessToken = searchParams.get('access_token');
       const refreshToken = searchParams.get('refresh_token');
@@ -23,11 +25,12 @@ export const GoogleCallback = () => {
         localStorage.setItem('access_token', accessToken);
         localStorage.setItem('refresh_token', refreshToken);
         
+        // 觸發 AuthContext 更新（不需要 reload！）
+        await refreshAuth();
+        
         // 跳轉到首頁
         setTimeout(() => {
           navigate('/');
-          // 刷新頁面以觸發 useAuth 重新載入用戶資料
-          window.location.reload();
         }, 500);
       } catch (error) {
         console.error('Google callback error:', error);
@@ -37,7 +40,7 @@ export const GoogleCallback = () => {
     };
 
     handleCallback();
-  }, [searchParams, navigate]);
+  }, [searchParams, navigate, refreshAuth]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 flex items-center justify-center px-4">

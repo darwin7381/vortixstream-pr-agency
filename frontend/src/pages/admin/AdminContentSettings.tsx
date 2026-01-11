@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { contentAPI } from '../../api/client';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../contexts/AuthContext';
 import { Save, Image, Mail, Share2 } from 'lucide-react';
 import ImagePicker from '../../components/admin/ImagePicker';
 
