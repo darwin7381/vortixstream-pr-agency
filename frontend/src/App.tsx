@@ -60,6 +60,7 @@ import AdminHeroHome from './pages/admin/AdminHeroHome';
 import AdminLyro from './pages/admin/AdminLyro';
 import AdminContentCarousel from './pages/admin/AdminContentCarousel';
 import AdminSiteSettings from './pages/admin/AdminSiteSettings';
+import AdminTemplates from './pages/admin/AdminTemplates';
 import { contentAPI, type FAQ } from './api/client';
 
 // Home Page Component
@@ -176,6 +177,7 @@ function AppContent() {
           <Route path="/admin/pr-packages/new" element={<ProtectedRoute requireAdmin><AdminPRPackagesEdit /></ProtectedRoute>} />
           <Route path="/admin/pr-packages/edit/:id" element={<ProtectedRoute requireAdmin><AdminPRPackagesEdit /></ProtectedRoute>} />
           <Route path="/admin/pr-packages/categories" element={<ProtectedRoute requireAdmin><AdminPRPackagesCategories /></ProtectedRoute>} />
+          <Route path="/admin/templates" element={<ProtectedRoute requireAdmin><AdminTemplates /></ProtectedRoute>} />
           <Route path="/admin/contact" element={<ProtectedRoute requireAdmin><AdminContactList /></ProtectedRoute>} />
           <Route path="/admin/newsletter" element={<ProtectedRoute requireAdmin><AdminNewsletterList /></ProtectedRoute>} />
           <Route path="/admin/media" element={<ProtectedRoute requireAdmin><AdminMedia /></ProtectedRoute>} />

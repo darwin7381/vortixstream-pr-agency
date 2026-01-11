@@ -5,10 +5,11 @@ import logging
 from .config import settings
 from .core.database import db
 from .api import (
-    blog, pricing, contact, newsletter, pr_package,
+    blog, pricing, contact, newsletter, pr_package, pr_template,
     blog_admin, pricing_admin, pr_package_admin, contact_admin, newsletter_admin,
     pr_category_admin, media_admin, auth, user_admin, invitation_admin, invitation_public,
-    settings_admin, content_public, content_admin, content_admin_extended, site_admin
+    settings_admin, content_public, content_admin, content_admin_extended, site_admin,
+    pr_template_admin
 )
 
 # 設定 logging
@@ -102,6 +103,7 @@ async def health_check():
 app.include_router(blog.router, prefix="/api/public", tags=["Public - Blog"])
 app.include_router(pricing.router, prefix="/api/public", tags=["Public - Pricing"])
 app.include_router(pr_package.router, prefix="/api/public", tags=["Public - PR Packages"])
+app.include_router(pr_template.router, tags=["Public - PR Templates"])  # Already has /api/public prefix in router
 app.include_router(content_public.router, prefix="/api", tags=["Public - Content"])
 
 # Auth APIs（認證相關）
@@ -117,6 +119,7 @@ app.include_router(blog_admin.router, prefix="/api/admin", tags=["Admin - Blog"]
 app.include_router(pricing_admin.router, prefix="/api/admin", tags=["Admin - Pricing"])
 app.include_router(pr_package_admin.router, prefix="/api/admin", tags=["Admin - PR Packages"])
 app.include_router(pr_category_admin.router, prefix="/api/admin", tags=["Admin - PR Categories"])
+app.include_router(pr_template_admin.router, tags=["Admin - PR Templates"])
 app.include_router(contact_admin.router, prefix="/api/admin", tags=["Admin - Contact"])
 app.include_router(newsletter_admin.router, prefix="/api/admin", tags=["Admin - Newsletter"])
 app.include_router(media_admin.router, prefix="/api/admin", tags=["Admin - Media"])

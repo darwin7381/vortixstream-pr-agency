@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import { X, Mail, Zap, LogIn } from 'lucide-react';
+import { X, Mail, Zap, LogIn, Loader2 } from 'lucide-react';
 import { Button } from '../ui/button';
+import { templateAPI } from '../../api/templateClient';
 
 interface EmailLoginModalProps {
   isOpen: boolean;
   onClose: () => void;
   templateTitle: string;
-  onEmailSubmit: (email: string) => void;
+  onEmailSubmit: (email: string) => Promise<void>;
   onGoogleLogin: () => void;
   onOtherLogin: () => void;
 }
@@ -21,19 +22,25 @@ export default function EmailLoginModal({
 }: EmailLoginModalProps) {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitError(null);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    onEmailSubmit(email);
-    setIsSubmitting(false);
-    setEmail('');
+    try {
+      // 呼叫真實 API（onEmailSubmit 會處理）
+      await onEmailSubmit(email);
+      setEmail('');
+    } catch (error) {
+      console.error('❌ Email submission failed:', error);
+      setSubmitError('Failed to send email. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -81,23 +88,30 @@ export default function EmailLoginModal({
                 />
               </div>
 
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-gradient-to-r from-[#FF7400] to-[#FF7400]/80 text-white border border-[#FF7400] hover:shadow-[0_8px_25px_rgba(255,116,0,0.3)] transition-all h-12"
-              >
-                {isSubmitting ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
-                    Sending...
-                  </>
-                ) : (
-                  <>
-                    <Mail size={18} className="mr-2" />
-                    Send Template
-                  </>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full bg-gradient-to-r from-[#FF7400] to-[#FF7400]/80 text-white border border-[#FF7400] hover:shadow-[0_8px_25px_rgba(255,116,0,0.3)] transition-all h-12 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 size={18} className="mr-2 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Mail size={18} className="mr-2" />
+                      Send Template
+                    </>
+                  )}
+                </Button>
+
+                {/* Error message */}
+                {submitError && (
+                  <p className="text-red-400 text-[12px] font-sans mt-2">
+                    {submitError}
+                  </p>
                 )}
-              </Button>
             </form>
 
             <div className="mt-6 pt-6 border-t border-white/10">

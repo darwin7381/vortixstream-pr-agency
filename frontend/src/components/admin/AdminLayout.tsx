@@ -30,7 +30,8 @@ import {
   Sparkles,
   Monitor,
   TrendingUp,
-  Navigation as NavigationIcon
+  Navigation as NavigationIcon,
+  FileType
 } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 import VortixLogoWhite from '../../assets/VortixLogo White_Horizontal.png';
@@ -115,6 +116,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         { label: 'Package List', icon: List, path: '/admin/pr-packages' },
         { label: 'Categories', icon: Folder, path: '/admin/pr-packages/categories' },
       ]
+    },
+    { 
+      label: 'PR Templates', 
+      icon: FileType, 
+      path: '/admin/templates' 
     },
     { 
       label: 'Media Library', 

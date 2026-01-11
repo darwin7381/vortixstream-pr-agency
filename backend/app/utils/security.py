@@ -1,14 +1,11 @@
 from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
-from passlib.context import CryptContext
+import bcrypt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.config import settings
 from app.models.user import TokenData
-
-# 密碼加密上下文
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # HTTP Bearer Token
 security = HTTPBearer()
@@ -17,12 +14,17 @@ security = HTTPBearer()
 # ==================== 密碼處理 ====================
 def hash_password(password: str) -> str:
     """將明文密碼加密"""
-    return pwd_context.hash(password)
+    password_bytes = password.encode('utf-8')
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(password_bytes, salt)
+    return hashed.decode('utf-8')
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """驗證密碼"""
-    return pwd_context.verify(plain_password, hashed_password)
+    password_bytes = plain_password.encode('utf-8')
+    hashed_bytes = hashed_password.encode('utf-8')
+    return bcrypt.checkpw(password_bytes, hashed_bytes)
 
 
 # ==================== JWT Token ====================

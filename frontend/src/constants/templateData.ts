@@ -1,19 +1,8 @@
 // 模板假資料
-export interface PRTemplate {
-  id: number;
-  title: string;
-  description: string;
-  category: string;
-  categoryColor: string;
-  icon: string;
-  content: string;
-  industryTags: string[];
-  downloadCount: number;
-  useCases: string[];
-  includes: string[];
-}
+// ⚠️ PRTemplate interface 已移至 api/client.ts
+// 這裡的假資料僅供開發測試使用
 
-export const MOCK_TEMPLATES: PRTemplate[] = [
+export const MOCK_TEMPLATES = [
   {
     id: 0,
     title: '[TEST] All Format Elements',

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { X, Mail, Sparkles, Zap, Wand2, Check } from 'lucide-react';
-import { PRTemplate } from '../../constants/templateData';
+import { PRTemplate, templateAPI } from '../../api/templateClient';
 import { Button } from '../ui/button';
 
 interface TemplateDownloadFormProps {
@@ -23,34 +23,46 @@ export default function TemplateDownloadForm({
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   if (!isOpen || !template) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitError(null);
     
-    // 模擬提交到 waitlist
-    console.log('AI Waitlist signup:', {
-      ...formData,
-      templateId: template.id,
-      templateTitle: template.title,
-      feature: 'ai-editor'
-    });
-
-    setSubmitted(true);
-
-    // 3秒後關閉
-    setTimeout(() => {
-      onClose();
-      setSubmitted(false);
-      setFormData({
-        name: '',
-        email: '',
-        company: '',
-        subscribeNewsletter: true,
-        interestedInService: true
+    try {
+      // 呼叫真實 API
+      const response = await templateAPI.joinWaitlist({
+        template_id: template.id,
+        email: formData.email,
+        name: formData.name || undefined,
+        subscribe_newsletter: formData.subscribeNewsletter,
       });
-    }, 3000);
+
+      console.log('✅ Waitlist signup successful:', response);
+      setSubmitted(true);
+
+      // 3秒後關閉
+      setTimeout(() => {
+        onClose();
+        setSubmitted(false);
+        setFormData({
+          name: '',
+          email: '',
+          company: '',
+          subscribeNewsletter: true,
+          interestedInService: true
+        });
+      }, 3000);
+    } catch (error) {
+      console.error('❌ Waitlist signup failed:', error);
+      setSubmitError('Failed to join waitlist. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -209,11 +221,28 @@ export default function TemplateDownloadForm({
                 {/* Submit */}
                 <Button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-[#FF7400] to-[#FF7400]/80 text-white border border-[#FF7400] hover:shadow-[0_8px_25px_rgba(255,116,0,0.3)] transition-all h-12 mt-6"
+                  disabled={isSubmitting}
+                  className="w-full bg-gradient-to-r from-[#FF7400] to-[#FF7400]/80 text-white border border-[#FF7400] hover:shadow-[0_8px_25px_rgba(255,116,0,0.3)] transition-all h-12 mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <Sparkles size={16} className="mr-2" />
-                  Join Waitlist
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 size={16} className="mr-2 animate-spin" />
+                      Joining...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles size={16} className="mr-2" />
+                      Join Waitlist
+                    </>
+                  )}
                 </Button>
+
+                {/* Error message */}
+                {submitError && (
+                  <p className="text-red-400 text-[13px] font-sans text-center mt-2">
+                    {submitError}
+                  </p>
+                )}
 
                 {/* Mobile Benefits (shown only on mobile) */}
                 <div className="md:hidden mt-6 pt-6 border-t border-white/10">

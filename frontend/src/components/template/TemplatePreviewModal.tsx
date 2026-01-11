@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { X, Mail, Sparkles, FileText } from 'lucide-react';
-import { PRTemplate } from '../../constants/templateData';
+import { X, Mail, Sparkles, FileText, Loader2 } from 'lucide-react';
+import { marked } from 'marked';
+import { PRTemplate, templateAPI } from '../../api/templateClient';
 import { Button } from '../ui/button';
 import { useAuth } from '../../hooks/useAuth';
 import EmailLoginModal from './EmailLoginModal';
@@ -20,22 +21,40 @@ export default function TemplatePreviewModal({
 }: TemplatePreviewModalProps) {
   const { user, loginWithGoogle } = useAuth();
   const [showEmailModal, setShowEmailModal] = useState(false);
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
 
-  const handleEmailToMe = () => {
-    if (user) {
+  const handleEmailToMe = async () => {
+    if (user && template) {
       // User is logged in - send directly
-      alert(`Template will be sent to ${user.email}`);
-      console.log('Sending template to:', user.email);
+      setIsSendingEmail(true);
+      try {
+        const response = await templateAPI.requestEmail(template.id, { email: user.email });
+        alert(response.message);
+        console.log('✅ Email sent:', response);
+      } catch (error) {
+        console.error('❌ Failed to send email:', error);
+        alert('Failed to send email. Please try again.');
+      } finally {
+        setIsSendingEmail(false);
+      }
     } else {
       // User not logged in - show email/login modal
       setShowEmailModal(true);
     }
   };
 
-  const handleEmailSubmit = (email: string) => {
-    console.log('Sending template to:', email);
-    alert(`Template will be sent to ${email}`);
-    setShowEmailModal(false);
+  const handleEmailSubmit = async (email: string) => {
+    if (!template) return;
+    
+    try {
+      const response = await templateAPI.requestEmail(template.id, { email });
+      console.log('✅ Email sent:', response);
+      alert(response.message);
+      setShowEmailModal(false);
+    } catch (error) {
+      console.error('❌ Failed to send email:', error);
+      alert('Failed to send email. Please try again.');
+    }
   };
 
   const handleGoogleLogin = async () => {
@@ -77,9 +96,9 @@ export default function TemplatePreviewModal({
               <span
                 className="text-[12px] font-sans font-semibold px-3 py-1 rounded-full border"
                 style={{
-                  color: template.categoryColor,
-                  backgroundColor: `${template.categoryColor}20`,
-                  borderColor: `${template.categoryColor}40`
+                  color: template.category_color,
+                  backgroundColor: `${template.category_color}20`,
+                  borderColor: `${template.category_color}40`
                 }}
               >
                 {template.category}
@@ -107,98 +126,96 @@ export default function TemplatePreviewModal({
               Template Content Preview
             </h3>
             <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-              <div className="text-white/80 text-[14px] leading-relaxed space-y-4">
-                {template.content.split('\n').map((line, index, allLines) => {
-                  // Remove ### at the end
-                  if (line.trim() === '###') return null;
-                  
-                  // Helper function to process line (add links and highlights)
-                  const processLine = (text: string) => {
-                    // Convert markdown links to HTML links first
-                    let processed = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_match, linkText, url) => {
-                      return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-[#3B82F6] hover:text-[#60A5FA] underline transition-colors">${linkText}</a>`;
-                    });
-                    // Then highlight remaining parameters in brackets (without showing the brackets)
-                    processed = processed.replace(/\[([^\]]+)\]/g, '<span class="bg-[#FF7400]/20 text-[#FF7400] px-1.5 py-0.5 rounded font-semibold">$1</span>');
-                    return processed;
-                  };
-                  
-                  // Images - ![alt](url)
-                  const imageMatch = line.match(/!\[([^\]]*)\]\(([^)]+)\)/);
-                  if (imageMatch) {
-                    const [, alt, url] = imageMatch;
-                    return (
-                      <div key={index} className="my-6">
-                        <img 
-                          src={url} 
-                          alt={alt} 
-                          className="w-full rounded-lg border border-white/10"
-                          loading="lazy"
-                        />
-                      </div>
-                    );
-                  }
-                  
-                  // Image captions (lines starting with *)
-                  if (line.trim().startsWith('*') && line.trim().endsWith('*')) {
-                    const caption = line.trim().slice(1, -1);
-                    return <div key={index} className="text-white/50 text-[12px] italic text-center -mt-4 mb-4">{caption}</div>;
-                  }
-                  
-                  // FOR IMMEDIATE RELEASE
-                  if (line.includes('FOR IMMEDIATE RELEASE')) {
-                    return <div key={index} className="font-bold text-[#FF7400] text-[12px] tracking-wider mb-6 uppercase">{line}</div>;
-                  }
-                  
-                  // Main headline (H1) - First substantive line after FOR IMMEDIATE RELEASE
-                  // Check by position and length, ignore emoji/bullet prefixes
-                  if (index > 0 && index <= 5 && line.length > 40 && !line.startsWith(' ') && !line.startsWith('*') && !line.match(/^[•\-]/)) {
-                    const previousLines = allLines.slice(0, index).filter(l => l.length > 40 && !l.includes('FOR IMMEDIATE RELEASE') && !l.startsWith('*'));
+              <div 
+                className="markdown-preview"
+                dangerouslySetInnerHTML={{
+                  __html: (() => {
+                    // 1. 用標準 marked 解析 Markdown → HTML（強制同步）
+                    marked.setOptions({ async: false });
+                    const html = String(marked.parse(template.content));
                     
-                    // First long line = H1 (main headline)
-                    if (previousLines.length === 0) {
-                      return <h1 key={index} className="font-bold text-white text-[24px] leading-tight mb-3 mt-4" dangerouslySetInnerHTML={{ __html: processLine(line) }} />;
-                    }
-                    // Second long line = H2 (subheadline)
-                    if (previousLines.length === 1) {
-                      return <h2 key={index} className="text-white/90 text-[18px] font-semibold mb-6 leading-snug" dangerouslySetInnerHTML={{ __html: processLine(line) }} />;
-                    }
-                  }
-                  
-                  // Section headers ending with colon
-                  if (line.match(/^[A-Z][^:]+:$/) && !line.includes('–')) {
-                    return <h3 key={index} className="font-bold text-white text-[16px] mt-6 mb-3" dangerouslySetInnerHTML={{ __html: processLine(line) }} />;
-                  }
-                  
-                  // Section headers (About, Media Contact, etc.)
-                  if (line.match(/^(About |Media Contact|Resources:|Availability|Capital Allocation|Pricing and|Key Achievement|Section Header|Partnership Highlights|Customer Benefits|Event Details|Featured Speakers|Summit Highlights|Registration and|Team Pedigree|Market Opportunity|Beta Program|Technical Enhancements|Headline Features)/)) {
-                    return <h3 key={index} className="font-bold text-white text-[16px] mt-6 mb-3" dangerouslySetInnerHTML={{ __html: processLine(line) }} />;
-                  }
-                  
-                  // Bullet points with emojis - should be prominent
-                  if (line.match(/^[🚀💡🎨🔒📈👥🌏]/)) {
-                    return <div key={index} className="font-semibold text-white text-[15px] mt-4 mb-2" dangerouslySetInnerHTML={{ __html: processLine(line) }} />;
-                  }
-                  
-                  // Regular bullet points
-                  if (line.trim().startsWith('•') || line.trim().startsWith('-')) {
-                    return <div key={index} className="text-white/70 ml-4 mb-1.5 text-[14px]" dangerouslySetInnerHTML={{ __html: processLine(line) }} />;
-                  }
-                  
-                  // Quotes (lines with " and reasonable length)
-                  if (line.includes('"') && line.length > 50) {
-                    return <div key={index} className="italic text-white/85 border-l-3 border-[#FF7400] pl-4 my-4 py-2" dangerouslySetInnerHTML={{ __html: processLine(line) }} />;
-                  }
-                  
-                  // Empty lines
-                  if (!line.trim()) {
-                    return <div key={index} className="h-3" />;
-                  }
-                  
-                  // Regular paragraphs
-                  return <div key={index} className="text-white/75 text-[14px] leading-relaxed" dangerouslySetInnerHTML={{ __html: processLine(line) }} />;
-                })}
-              </div>
+                    // 2. 處理 {{參數}} 高亮
+                    const processed = html.replace(/{{([^}]+)}}/g, '<span class="bg-[#FF7400]/20 text-[#FF7400] px-1.5 py-0.5 rounded font-semibold not-italic">$1</span>');
+                    
+                    return processed;
+                  })()
+                }}
+              />
+              
+              <style>{`
+                .markdown-preview {
+                  color: rgba(255, 255, 255, 0.8);
+                  font-size: 14px;
+                  line-height: 1.6;
+                }
+                .markdown-preview h1 {
+                  font-size: 24px;
+                  font-weight: bold;
+                  margin-top: 1rem;
+                  margin-bottom: 0.75rem;
+                  color: white;
+                }
+                .markdown-preview h2 {
+                  font-size: 18px;
+                  font-weight: 600;
+                  margin-bottom: 1rem;
+                  color: rgba(255, 255, 255, 0.9);
+                }
+                .markdown-preview h3 {
+                  font-size: 16px;
+                  font-weight: bold;
+                  margin-top: 1.5rem;
+                  margin-bottom: 0.75rem;
+                  color: white;
+                }
+                .markdown-preview p {
+                  margin-top: 0.75rem;
+                  margin-bottom: 0.75rem;
+                }
+                .markdown-preview ul {
+                  margin-top: 0.75rem;
+                  margin-bottom: 0.75rem;
+                  padding-left: 1.5rem;
+                  list-style-type: disc;
+                }
+                .markdown-preview li {
+                  margin-bottom: 0.375rem;
+                  color: rgba(255, 255, 255, 0.7);
+                }
+                .markdown-preview blockquote {
+                  border-left: 4px solid #FF7400;
+                  padding-left: 1rem;
+                  margin: 1rem 0;
+                  font-style: italic;
+                  color: rgba(255, 255, 255, 0.85);
+                }
+                .markdown-preview a {
+                  color: #3B82F6;
+                  text-decoration: underline;
+                }
+                .markdown-preview a:hover {
+                  color: #60A5FA;
+                }
+                .markdown-preview img {
+                  width: 100%;
+                  border-radius: 0.5rem;
+                  border: 1px solid rgba(255, 255, 255, 0.1);
+                  margin: 1.5rem 0;
+                }
+                .markdown-preview strong {
+                  font-weight: bold;
+                  color: white;
+                }
+                .markdown-preview em {
+                  font-style: italic;
+                }
+                .markdown-preview code {
+                  background-color: rgba(255, 255, 255, 0.1);
+                  padding: 0.125rem 0.5rem;
+                  border-radius: 0.25rem;
+                  font-size: 13px;
+                }
+              `}</style>
             </div>
           </div>
 
@@ -208,7 +225,7 @@ export default function TemplatePreviewModal({
               📌 What's Included
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {template.includes.map((item, index) => (
+              {template.includes.map((item: string, index: number) => (
                 <div
                   key={index}
                   className="flex items-start gap-2 text-white/70 text-[14px] font-sans"
@@ -226,7 +243,7 @@ export default function TemplatePreviewModal({
               💼 Use Cases
             </h3>
             <div className="space-y-2">
-              {template.useCases.map((useCase, index) => (
+              {template.use_cases.map((useCase: string, index: number) => (
                 <div
                   key={index}
                   className="flex items-center gap-2 text-white/70 text-[14px] font-sans"
@@ -239,13 +256,13 @@ export default function TemplatePreviewModal({
           </div>
 
           {/* Industry Tags */}
-          {template.industryTags.length > 0 && (
+          {template.industry_tags.length > 0 && (
             <div>
               <h3 className="text-white text-[18px] font-sans font-bold mb-3">
                 🏢 Industries
               </h3>
               <div className="flex flex-wrap gap-2">
-                {template.industryTags.map((tag, index) => (
+                {template.industry_tags.map((tag: string, index: number) => (
                   <span
                     key={index}
                     className="text-[12px] font-sans text-white/60 bg-white/5 px-3 py-1 rounded-full border border-white/10"
@@ -261,7 +278,7 @@ export default function TemplatePreviewModal({
           <div className="bg-gradient-to-r from-[#FF7400]/10 to-[#1D3557]/10 border border-[#FF7400]/20 rounded-xl p-4">
             <div className="flex items-center justify-between">
               <div className="text-white/70 text-[14px] font-sans">
-                <span className="text-[#FF7400] font-bold">{template.downloadCount.toLocaleString()}</span> people have used this template
+                <span className="text-[#FF7400] font-bold">{template.download_count.toLocaleString()}</span> people have used this template
               </div>
               <div className="text-white/60 text-[12px] font-sans">
                 🔥 Popular
@@ -276,10 +293,20 @@ export default function TemplatePreviewModal({
             {/* Email to Me Button */}
             <Button
               onClick={handleEmailToMe}
-              className="bg-transparent border border-white/20 text-white hover:bg-white/5 hover:border-white/30 transition-all h-12"
+              disabled={isSendingEmail}
+              className="bg-transparent border border-white/20 text-white hover:bg-white/5 hover:border-white/30 transition-all h-12 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Mail size={18} className="mr-2" />
-              {user ? 'Email to Me' : 'Get Template via Email'}
+              {isSendingEmail ? (
+                <>
+                  <Loader2 size={18} className="mr-2 animate-spin" />
+                  Sending...
+                </>
+              ) : (
+                <>
+                  <Mail size={18} className="mr-2" />
+                  {user ? 'Email to Me' : 'Get Template via Email'}
+                </>
+              )}
             </Button>
 
             {/* Use Template Button */}
@@ -317,4 +344,3 @@ export default function TemplatePreviewModal({
     </div>
   );
 }
-

@@ -822,6 +822,117 @@ class Database:
                 ON CONFLICT (category_id) DO NOTHING
             """)
             
+            # ==================== PR Templates ====================
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS pr_templates (
+                    id SERIAL PRIMARY KEY,
+                    
+                    -- 基本資訊
+                    title VARCHAR(200) NOT NULL,
+                    description TEXT NOT NULL,
+                    category VARCHAR(50) NOT NULL,
+                    category_color VARCHAR(20) DEFAULT '#FF7400',
+                    icon VARCHAR(50) DEFAULT 'FileText',
+                    
+                    -- 內容（Markdown 格式）
+                    content TEXT NOT NULL,
+                    
+                    -- 分類與標籤（JSONB for flexibility）
+                    industry_tags JSONB DEFAULT '[]'::jsonb,
+                    use_cases JSONB DEFAULT '[]'::jsonb,
+                    includes JSONB DEFAULT '[]'::jsonb,
+                    
+                    -- 統計數據
+                    download_count INTEGER DEFAULT 0,
+                    email_request_count INTEGER DEFAULT 0,
+                    preview_count INTEGER DEFAULT 0,
+                    waitlist_count INTEGER DEFAULT 0,
+                    
+                    -- 狀態與排序
+                    is_active BOOLEAN DEFAULT TRUE,
+                    display_order INTEGER DEFAULT 0,
+                    
+                    -- 時間戳
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    updated_at TIMESTAMP DEFAULT NOW()
+                )
+            """)
+            
+            await conn.execute("""
+                CREATE INDEX IF NOT EXISTS idx_pr_templates_category ON pr_templates(category);
+                CREATE INDEX IF NOT EXISTS idx_pr_templates_active ON pr_templates(is_active);
+                CREATE INDEX IF NOT EXISTS idx_pr_templates_order ON pr_templates(display_order);
+            """)
+            
+            # ==================== Template Waitlist ====================
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS template_waitlist (
+                    id SERIAL PRIMARY KEY,
+                    template_id INTEGER REFERENCES pr_templates(id) ON DELETE CASCADE,
+                    
+                    -- 用戶資訊
+                    email VARCHAR(255) NOT NULL,
+                    name VARCHAR(200),
+                    
+                    -- 偏好設定
+                    subscribe_newsletter BOOLEAN DEFAULT TRUE,
+                    
+                    -- 來源追蹤
+                    source_template_title VARCHAR(200),
+                    ip_address VARCHAR(50),
+                    user_agent TEXT,
+                    
+                    -- 狀態
+                    status VARCHAR(20) DEFAULT 'pending',
+                    invited_at TIMESTAMP,
+                    activated_at TIMESTAMP,
+                    
+                    -- 時間戳
+                    created_at TIMESTAMP DEFAULT NOW()
+                )
+            """)
+            
+            await conn.execute("""
+                CREATE INDEX IF NOT EXISTS idx_waitlist_email ON template_waitlist(email);
+                CREATE INDEX IF NOT EXISTS idx_waitlist_template ON template_waitlist(template_id);
+                CREATE INDEX IF NOT EXISTS idx_waitlist_status ON template_waitlist(status);
+                CREATE INDEX IF NOT EXISTS idx_waitlist_created ON template_waitlist(created_at DESC);
+            """)
+            
+            # ==================== Template Email Requests ====================
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS template_email_requests (
+                    id SERIAL PRIMARY KEY,
+                    template_id INTEGER REFERENCES pr_templates(id) ON DELETE CASCADE,
+                    
+                    -- 用戶資訊
+                    email VARCHAR(255) NOT NULL,
+                    
+                    -- 發送狀態
+                    status VARCHAR(20) DEFAULT 'pending',
+                    sent_at TIMESTAMP,
+                    opened_at TIMESTAMP,
+                    clicked_at TIMESTAMP,
+                    
+                    -- 追蹤（用於開信率統計）
+                    tracking_id VARCHAR(100) UNIQUE,
+                    
+                    -- 來源追蹤
+                    ip_address VARCHAR(50),
+                    user_agent TEXT,
+                    
+                    -- 時間戳
+                    created_at TIMESTAMP DEFAULT NOW()
+                )
+            """)
+            
+            await conn.execute("""
+                CREATE INDEX IF NOT EXISTS idx_email_requests_email ON template_email_requests(email);
+                CREATE INDEX IF NOT EXISTS idx_email_requests_template ON template_email_requests(template_id);
+                CREATE INDEX IF NOT EXISTS idx_email_requests_status ON template_email_requests(status);
+                CREATE INDEX IF NOT EXISTS idx_email_requests_tracking ON template_email_requests(tracking_id);
+            """)
+            
             logger.info("✅ All tables initialized")
             
             # 安全地添加新欄位（向後兼容）

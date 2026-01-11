@@ -1,7 +1,7 @@
-import { useState, useMemo } from 'react';
-import { Eye, Download, Rocket, TrendingUp, Award, Megaphone, FileText } from 'lucide-react';
+import { useState, useMemo, useEffect } from 'react';
+import { Eye, Download, Rocket, TrendingUp, Award, Megaphone, FileText, Loader2 } from 'lucide-react';
 import { Button } from '../ui/button';
-import { MOCK_TEMPLATES, PRTemplate } from '../../constants/templateData';
+import { templateAPI, PRTemplate } from '../../api/templateClient';
 import TemplateFilters from './TemplateFilters';
 import TemplatePreviewModal from './TemplatePreviewModal';
 import TemplateDownloadForm from './TemplateDownloadForm';
@@ -17,6 +17,11 @@ const iconMap: Record<string, any> = {
 };
 
 export default function TemplateContent() {
+  // Data states
+  const [templates, setTemplates] = useState<PRTemplate[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
   // Filter states
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -27,9 +32,28 @@ export default function TemplateContent() {
   const [previewTemplate, setPreviewTemplate] = useState<PRTemplate | null>(null);
   const [downloadTemplate, setDownloadTemplate] = useState<PRTemplate | null>(null);
 
-  // Filter and sort templates
+  // Fetch templates from API
+  useEffect(() => {
+    const fetchTemplates = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await templateAPI.getTemplates({ sort: sortBy });
+        setTemplates(data);
+      } catch (err) {
+        console.error('Failed to fetch templates:', err);
+        setError('Failed to load templates. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTemplates();
+  }, [sortBy]);
+
+  // Filter templates (client-side filtering for better UX)
   const filteredTemplates = useMemo(() => {
-    let filtered = [...MOCK_TEMPLATES];
+    let filtered = [...templates];
 
     // Search filter
     if (searchQuery) {
@@ -59,7 +83,7 @@ export default function TemplateContent() {
     // Sort
     switch (sortBy) {
       case 'popular':
-        filtered.sort((a, b) => b.downloadCount - a.downloadCount);
+        filtered.sort((a, b) => b.download_count - a.download_count);
         break;
       case 'latest':
         // 假設 ID 越大越新
@@ -71,7 +95,7 @@ export default function TemplateContent() {
     }
 
     return filtered;
-  }, [searchQuery, selectedCategory, selectedIndustry, sortBy]);
+  }, [templates, searchQuery, selectedCategory, selectedIndustry, sortBy]);
 
   const handlePreview = (template: PRTemplate) => {
     setPreviewTemplate(template);
@@ -100,7 +124,32 @@ export default function TemplateContent() {
 
         {/* Templates Grid */}
         <div className="mt-12">
-          {filteredTemplates.length > 0 ? (
+          {loading ? (
+            // Loading state
+            <div className="flex items-center justify-center py-20">
+              <div className="text-center">
+                <Loader2 size={48} className="text-[#FF7400] animate-spin mx-auto mb-4" />
+                <p className="text-white/60 text-[16px] font-sans">Loading templates...</p>
+              </div>
+            </div>
+          ) : error ? (
+            // Error state
+            <div className="text-center py-20">
+              <div className="text-6xl mb-6">⚠️</div>
+              <h3 className="text-white text-[24px] font-sans font-bold mb-3">
+                Failed to Load Templates
+              </h3>
+              <p className="text-white/60 text-[16px] font-sans mb-6">
+                {error}
+              </p>
+              <Button
+                onClick={() => window.location.reload()}
+                className="bg-[#FF7400] text-white hover:bg-[#FF7400]/90 transition-all"
+              >
+                Retry
+              </Button>
+            </div>
+          ) : filteredTemplates.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredTemplates.map((template) => {
                 const Icon = iconMap[template.icon] || FileText;
@@ -113,11 +162,11 @@ export default function TemplateContent() {
                     <div
                       className="w-14 h-14 rounded-xl flex items-center justify-center mb-6 transition-transform duration-300 group-hover:scale-110"
                       style={{
-                        backgroundColor: `${template.categoryColor}20`,
-                        border: `1px solid ${template.categoryColor}40`
+                        backgroundColor: `${template.category_color}20`,
+                        border: `1px solid ${template.category_color}40`
                       }}
                     >
-                      <Icon size={28} style={{ color: template.categoryColor }} />
+                      <Icon size={28} style={{ color: template.category_color }} />
                     </div>
 
                     {/* Category Badge */}
@@ -125,9 +174,9 @@ export default function TemplateContent() {
                       <span
                         className="text-[12px] font-sans font-semibold px-3 py-1 rounded-full border"
                         style={{
-                          color: template.categoryColor,
-                          backgroundColor: `${template.categoryColor}10`,
-                          borderColor: `${template.categoryColor}20`
+                          color: template.category_color,
+                          backgroundColor: `${template.category_color}10`,
+                          borderColor: `${template.category_color}20`
                         }}
                       >
                         {template.category}
@@ -147,8 +196,8 @@ export default function TemplateContent() {
                     {/* Stats */}
                     <div className="flex items-center gap-2 mb-6 text-white/50 text-[12px] font-sans">
                       <Download size={14} />
-                      <span>{template.downloadCount.toLocaleString()} downloads</span>
-                      {template.downloadCount > 800 && (
+                      <span>{template.download_count.toLocaleString()} downloads</span>
+                      {template.download_count > 800 && (
                         <span className="ml-auto text-[#FF7400]">🔥 Popular</span>
                       )}
                     </div>

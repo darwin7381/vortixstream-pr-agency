@@ -36,10 +36,14 @@
 
 ```bash
 # 創建測試管理員（密碼：test123）
+# 先生成密碼 hash
+HASH=$(cd backend && python3 -c "import bcrypt; print(bcrypt.hashpw('test123'.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'))")
+
+# 創建或更新測試帳號
 psql postgresql://JL@localhost:5432/vortixpr -c "
 INSERT INTO users (email, hashed_password, name, role, account_status, is_active, provider) 
-VALUES ('test@vortixpr.com', '\$2b\$12\$LQv3c1yqBWVHxkd0LHAkCOYz6TcxZ0Q3WBcpl2L3cRl.dF9C2xGQm', 'Test Admin', 'super_admin', 'active', true, 'email') 
-ON CONFLICT (email) DO UPDATE SET role = 'super_admin', hashed_password = '\$2b\$12\$LQv3c1yqBWVHxkd0LHAkCOYz6TcxZ0Q3WBcpl2L3cRl.dF9C2xGQm';
+VALUES ('test@vortixpr.com', '$HASH', 'Test Admin', 'super_admin', 'active', true, 'email') 
+ON CONFLICT (email) DO UPDATE SET role = 'super_admin', hashed_password = '$HASH';
 "
 ```
 
@@ -48,6 +52,7 @@ ON CONFLICT (email) DO UPDATE SET role = 'super_admin', hashed_password = '\$2b\
 - Password: `test123`
 - Role: `super_admin`
 - 可重複執行（ON CONFLICT 更新）
+- 每次執行都會生成新的密碼 hash（更安全）
 
 ---
 
@@ -74,9 +79,10 @@ curl -H "Authorization: Bearer $TOKEN" http://localhost:8000/api/admin/content/f
 
 ```bash
 # Step 1: 確保有測試帳號（執行一次即可）
+HASH=$(cd backend && python3 -c "import bcrypt; print(bcrypt.hashpw('test123'.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'))")
 psql postgresql://JL@localhost:5432/vortixpr -c "
 INSERT INTO users (email, hashed_password, name, role, account_status, is_active, provider) 
-VALUES ('test@vortixpr.com', '\$2b\$12\$LQv3c1yqBWVHxkd0LHAkCOYz6TcxZ0Q3WBcpl2L3cRl.dF9C2xGQm', 'Test Admin', 'super_admin', 'active', true, 'email') 
+VALUES ('test@vortixpr.com', '$HASH', 'Test Admin', 'super_admin', 'active', true, 'email') 
 ON CONFLICT (email) DO NOTHING;
 "
 
@@ -151,9 +157,9 @@ psql postgresql://JL@localhost:5432/vortixpr -c "DELETE FROM faqs WHERE question
 | test@vortixpr.com | test123 | super_admin | API 測試 |
 | joey@cryptoxlab.com | （Google OAuth） | super_admin | 正式管理員 |
 
-**密碼 hash（test123）**：
-```
-$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TcxZ0Q3WBcpl2L3cRl.dF9C2xGQm
+**如何生成密碼 hash**：
+```bash
+cd backend && python3 -c "import bcrypt; print(bcrypt.hashpw('YOUR_PASSWORD'.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'))"
 ```
 
 ---
