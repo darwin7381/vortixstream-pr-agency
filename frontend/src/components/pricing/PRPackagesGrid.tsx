@@ -8,7 +8,6 @@
  */
 import { useState, useEffect } from 'react';
 import PackageCardV2 from './PackageCardV2';
-import PackageDetailModal from './PackageDetailModal';
 import { prPackagesAPI, type PRPackageCategory, type PRPackage } from '../../api/client';
 
 interface PRPackagesGridProps {
@@ -18,15 +17,17 @@ interface PRPackagesGridProps {
   className?: string;
   /** 是否顯示 loading 狀態 */
   showLoading?: boolean;
+  /** Package 選擇回調 */
+  onPackageSelect?: (pkg: PRPackage) => void;
 }
 
 export default function PRPackagesGrid({ 
   showAnimation = true,
   className = '',
-  showLoading = true
+  showLoading = true,
+  onPackageSelect
 }: PRPackagesGridProps) {
   const [isVisible, setIsVisible] = useState(!showAnimation);
-  const [selectedPackage, setSelectedPackage] = useState<PRPackage | null>(null);
   const [pricingPackagesV2, setPricingPackagesV2] = useState<PRPackageCategory[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -64,68 +65,58 @@ export default function PRPackagesGrid({
   }
 
   return (
-    <>
-      {/* Three Column Layout - No borders */}
-      <div className={`grid grid-cols-1 lg:grid-cols-3 gap-8 ${className}`}>
-        {pricingPackagesV2.map((category, categoryIndex) => (
-          <div 
-            key={category.id}
-            className={`
-              transition-all duration-1000
-              ${isVisible 
-                ? 'opacity-100 transform translate-y-0' 
-                : 'opacity-0 transform translate-y-6'
-              }
-            `}
-            style={{ transitionDelay: showAnimation ? `${categoryIndex * 150}ms` : '0ms' }}
-          >
-            {/* Category Header */}
-            <div className="mb-6">
-              <h3 
-                className="text-white text-2xl md:text-3xl font-bold mb-3"
-                style={{ fontFamily: 'Space Grotesk, sans-serif' }}
-              >
-                {category.title}
-              </h3>
-              {category.badges && (
-                <div className="flex flex-wrap items-center gap-2">
-                  {category.badges.map((badge, badgeIndex) => (
-                    <span
-                      key={badgeIndex}
-                      className="
-                        px-3 py-1 rounded-full text-xs
-                        bg-white/5 border border-white/10 text-white/60
-                        transition-all duration-300
-                      "
-                    >
-                      {badge}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Package Cards - Stacked vertically */}
-            <div className="space-y-6">
-              {category.packages.map((pkg) => (
-                <PackageCardV2
-                  key={pkg.id}
-                  package={pkg}
-                  onViewDetails={() => setSelectedPackage(pkg)}
-                />
-              ))}
-            </div>
+    <div className={`grid grid-cols-1 lg:grid-cols-3 gap-8 ${className}`}>
+      {pricingPackagesV2.map((category, categoryIndex) => (
+        <div 
+          key={category.id}
+          className={`
+            transition-all duration-1000
+            ${isVisible 
+              ? 'opacity-100 transform translate-y-0' 
+              : 'opacity-0 transform translate-y-6'
+            }
+          `}
+          style={{ transitionDelay: showAnimation ? `${categoryIndex * 150}ms` : '0ms' }}
+        >
+          {/* Category Header */}
+          <div className="mb-6">
+            <h3 
+              className="text-white text-2xl md:text-3xl font-bold mb-3"
+              style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+            >
+              {category.title}
+            </h3>
+            {category.badges && (
+              <div className="flex flex-wrap items-center gap-2">
+                {category.badges.map((badge, badgeIndex) => (
+                  <span
+                    key={badgeIndex}
+                    className="
+                      px-3 py-1 rounded-full text-xs
+                      bg-white/5 border border-white/10 text-white/60
+                      transition-all duration-300
+                    "
+                  >
+                    {badge}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
-        ))}
-      </div>
 
-      {/* Detail Modal */}
-      <PackageDetailModal
-        package={selectedPackage!}
-        isOpen={!!selectedPackage}
-        onClose={() => setSelectedPackage(null)}
-      />
-    </>
+          {/* Package Cards - Stacked vertically */}
+          <div className="space-y-6">
+            {category.packages.map((pkg) => (
+              <PackageCardV2
+                key={pkg.id}
+                package={pkg}
+                onViewDetails={() => onPackageSelect?.(pkg)}
+              />
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }
 

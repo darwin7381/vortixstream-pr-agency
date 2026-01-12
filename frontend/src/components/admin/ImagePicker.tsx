@@ -97,7 +97,7 @@ export default function ImagePicker({ isOpen, onClose, onSelect, currentUrl, def
 
   return (
     <div 
-      className="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/50 dark:bg-black/70 z-[9999] flex items-center justify-center p-4"
       onClick={onClose}
     >
       <div 

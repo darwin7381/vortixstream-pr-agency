@@ -10,7 +10,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import PRPackagesGrid from './PRPackagesGrid';
+import PackageDetailModal from './PackageDetailModal';
 import { handleContactClick } from '../../utils/navigationHelpers';
+import { type PRPackage } from '../../api/client';
 
 interface PRPackagesSectionProps {
   /** 自訂標題 */
@@ -32,6 +34,7 @@ export default function PRPackagesSection({
   const navigate = useNavigate();
   const location = useLocation();
   const [isVisible, setIsVisible] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState<PRPackage | null>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -152,7 +155,10 @@ export default function PRPackagesSection({
         </div>
 
         {/* PR Packages Grid */}
-        <PRPackagesGrid showAnimation={isVisible} />
+        <PRPackagesGrid 
+          showAnimation={isVisible}
+          onPackageSelect={setSelectedPackage}
+        />
 
         {/* Bottom CTA */}
         {showCTA && (
@@ -195,6 +201,13 @@ export default function PRPackagesSection({
           </div>
         )}
       </div>
+
+      {/* Package Detail Modal - 在 z-10 容器外面 */}
+      <PackageDetailModal
+        package={selectedPackage!}
+        isOpen={!!selectedPackage}
+        onClose={() => setSelectedPackage(null)}
+      />
     </section>
   );
 }

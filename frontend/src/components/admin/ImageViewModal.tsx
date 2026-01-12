@@ -53,7 +53,7 @@ export default function ImageViewModal({ file, onClose, onDelete, onUpdate, onCo
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/70 z-[9999] flex items-center justify-center p-4" onClick={onClose}>
       <div 
         className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-5xl w-full max-h-[85vh] overflow-hidden flex"
         onClick={(e) => e.stopPropagation()}

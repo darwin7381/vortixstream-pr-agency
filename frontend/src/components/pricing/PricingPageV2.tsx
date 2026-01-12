@@ -6,10 +6,12 @@ import LogoCarousel from '../LogoCarousel';
 import Footer from '../Footer';
 import PricingHero from './PricingHero';
 import PRPackagesGrid from './PRPackagesGrid';
-import { contentAPI, type FAQ } from '../../api/client';
+import PackageDetailModal from './PackageDetailModal';
+import { contentAPI, type FAQ, type PRPackage } from '../../api/client';
 
 export default function PricingPageV2() {
   const [faqs, setFaqs] = useState<FAQ[]>([]);
+  const [selectedPackage, setSelectedPackage] = useState<PRPackage | null>(null);
 
   useEffect(() => {
     contentAPI.getFAQs()
@@ -25,9 +27,16 @@ export default function PricingPageV2() {
       {/* PR Packages Grid */}
       <section className="bg-black py-section-large">
         <div className="container-large px-[17px] md:px-[17px]">
-          <PRPackagesGrid />
+          <PRPackagesGrid onPackageSelect={setSelectedPackage} />
         </div>
       </section>
+
+      {/* Package Detail Modal */}
+      <PackageDetailModal
+        package={selectedPackage!}
+        isOpen={!!selectedPackage}
+        onClose={() => setSelectedPackage(null)}
+      />
 
       {/* Logo Carousel */}
       <section className="bg-black py-section-medium">

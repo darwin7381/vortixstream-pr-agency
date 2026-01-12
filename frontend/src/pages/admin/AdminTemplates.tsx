@@ -334,7 +334,7 @@ export default function AdminTemplates() {
       {/* Preview Modal */}
       {previewTemplate && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
           onClick={() => setPreviewTemplate(null)}
         >
           <div 
@@ -384,7 +384,7 @@ export default function AdminTemplates() {
       {/* Edit Modal */}
       {editingTemplate && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
           onClick={() => setEditingTemplate(null)}
         >
           <div 
@@ -447,11 +447,16 @@ export default function AdminTemplates() {
                 {/* Use Cases */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                    Use Cases
+                    Use Cases (one per line)
                   </label>
                   <textarea
                     value={editingTemplate.use_cases.join('\n')}
-                    onChange={(e) => setEditingTemplate({ ...editingTemplate, use_cases: e.target.value.split('\n').filter(t => t.trim()) })}
+                    onChange={(e) => setEditingTemplate({ ...editingTemplate, use_cases: e.target.value.split('\n') })}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.stopPropagation();
+                      }
+                    }}
                     rows={3}
                     className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
@@ -460,11 +465,16 @@ export default function AdminTemplates() {
                 {/* Includes */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                    What's Included
+                    What's Included (one per line)
                   </label>
                   <textarea
                     value={editingTemplate.includes.join('\n')}
-                    onChange={(e) => setEditingTemplate({ ...editingTemplate, includes: e.target.value.split('\n').filter(t => t.trim()) })}
+                    onChange={(e) => setEditingTemplate({ ...editingTemplate, includes: e.target.value.split('\n') })}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.stopPropagation();
+                      }
+                    }}
                     rows={3}
                     className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
@@ -508,7 +518,7 @@ export default function AdminTemplates() {
       {/* New Template Modal */}
       {showNewModal && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
           onClick={() => setShowNewModal(false)}
         >
           <div 
@@ -609,7 +619,12 @@ export default function AdminTemplates() {
                 </label>
                 <textarea
                   value={newTemplate.use_cases.join('\n')}
-                  onChange={(e) => setNewTemplate({ ...newTemplate, use_cases: e.target.value.split('\n').filter(t => t.trim()) })}
+                  onChange={(e) => setNewTemplate({ ...newTemplate, use_cases: e.target.value.split('\n') })}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.stopPropagation();
+                    }
+                  }}
                   rows={3}
                   placeholder="New product launches&#10;Major feature updates&#10;Service announcements"
                   className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
@@ -623,7 +638,12 @@ export default function AdminTemplates() {
                 </label>
                 <textarea
                   value={newTemplate.includes.join('\n')}
-                  onChange={(e) => setNewTemplate({ ...newTemplate, includes: e.target.value.split('\n').filter(t => t.trim()) })}
+                  onChange={(e) => setNewTemplate({ ...newTemplate, includes: e.target.value.split('\n') })}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.stopPropagation();
+                    }
+                  }}
                   rows={3}
                   placeholder="Headline formula&#10;Quote templates&#10;Media contact format"
                   className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"

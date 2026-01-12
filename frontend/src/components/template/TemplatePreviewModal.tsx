@@ -77,7 +77,7 @@ export default function TemplatePreviewModal({
   if (!isOpen || !template) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/70 backdrop-blur-sm"
@@ -225,7 +225,7 @@ export default function TemplatePreviewModal({
               📌 What's Included
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {template.includes.map((item: string, index: number) => (
+              {template.includes.filter((item: string) => item.trim()).map((item: string, index: number) => (
                 <div
                   key={index}
                   className="flex items-start gap-2 text-white/70 text-[14px] font-sans"
@@ -243,7 +243,7 @@ export default function TemplatePreviewModal({
               💼 Use Cases
             </h3>
             <div className="space-y-2">
-              {template.use_cases.map((useCase: string, index: number) => (
+              {template.use_cases.filter((useCase: string) => useCase.trim()).map((useCase: string, index: number) => (
                 <div
                   key={index}
                   className="flex items-center gap-2 text-white/70 text-[14px] font-sans"
