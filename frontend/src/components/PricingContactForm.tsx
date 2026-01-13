@@ -219,19 +219,19 @@ export default function PricingContactForm() {
               <div className="relative bg-gradient-to-br from-white/5 via-white/8 to-white/3 backdrop-blur-sm border border-white/10 rounded-xl sm:rounded-2xl p-6 transition-all duration-500 ease-out hover:border-white/25 hover:bg-gradient-to-br hover:from-white/8 hover:via-white/12 hover:to-white/5 hover:shadow-[0_8px_32px_rgba(255,255,255,0.1)] hover:scale-[1.02] group-hover:backdrop-blur-md">
                 
                 {/* Subtle Inner Glow */}
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#FF7400]/5 via-transparent to-[#1D3557]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#FF7400]/5 via-transparent to-[#1D3557]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                 
                 <div className="flex items-start gap-4 mb-4 relative">
                   {/* Enhanced Icon Container */}
-                  <div className="relative group/icon">
+                  <div className="relative group/icon pointer-events-none">
                     {/* Icon Background with Glow Effect */}
                     <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-[#FF7400]/20 to-[#1D3557]/20 backdrop-blur-sm border border-white/20 flex items-center justify-center transition-all duration-300 group-hover/icon:scale-110 group-hover/icon:bg-gradient-to-br group-hover/icon:from-[#FF7400]/30 group-hover/icon:to-[#1D3557]/30 group-hover/icon:border-white/40 group-hover/icon:shadow-[0_0_20px_rgba(255,116,0,0.3)]">
                       
                       {/* Icon Glow Ring */}
-                      <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#FF7400]/10 to-[#1D3557]/10 blur-sm scale-110 opacity-0 group-hover/icon:opacity-100 transition-opacity duration-300" />
+                      <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#FF7400]/10 to-[#1D3557]/10 blur-sm scale-110 opacity-0 group-hover/icon:opacity-100 transition-opacity duration-300 pointer-events-none" />
                       
                       {/* Icon */}
-                      <Mail className="w-6 h-6 text-white/90 group-hover/icon:text-white transition-colors duration-300 relative z-10" />
+                      <Mail className="w-6 h-6 text-white/90 group-hover/icon:text-white transition-colors duration-300 relative z-10 pointer-events-none" />
                     </div>
                   </div>
                   
@@ -244,19 +244,19 @@ export default function PricingContactForm() {
                   </div>
                 </div>
                 
-                <Button 
-                  className="w-full bg-gradient-to-r from-[#FF7400]/10 to-[#1D3557]/10 hover:from-[#FF7400]/20 hover:to-[#1D3557]/20 text-white border border-white/20 hover:border-white/40 py-3 px-4 rounded-lg transition-all duration-300 hover:shadow-[0_4px_16px_rgba(255,116,0,0.2)]"
-                  onClick={() => window.location.href = 'mailto:hello@vortixpr.com'}
+                <a 
+                  href="mailto:hello@vortixpr.com"
+                  className="relative z-10 w-full bg-gradient-to-r from-[#FF7400]/10 to-[#1D3557]/10 hover:from-[#FF7400]/20 hover:to-[#1D3557]/20 text-white border border-white/20 hover:border-white/40 py-3 px-4 rounded-lg transition-all duration-300 hover:shadow-[0_4px_16px_rgba(255,116,0,0.2)] inline-flex items-center justify-center text-sm font-medium"
                 >
                   Send Email
-                </Button>
+                </a>
                 
                 {/* Decorative Elements */}
-                <div className="absolute top-4 right-4 w-1 h-1 bg-white/30 rounded-full group-hover:bg-[#FF7400] group-hover:shadow-[0_0_6px_rgba(255,116,0,0.6)] transition-all duration-300" />
+                <div className="absolute top-4 right-4 w-1 h-1 bg-white/30 rounded-full group-hover:bg-[#FF7400] group-hover:shadow-[0_0_6px_rgba(255,116,0,0.6)] transition-all duration-300 pointer-events-none" />
               </div>
               
               {/* Enhanced Border Left Accent */}
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-16 bg-gradient-to-b from-[#FF7400] via-white to-[#1D3557] rounded-r-full opacity-60 group-hover:opacity-100 group-hover:w-1 group-hover:shadow-[0_0_12px_rgba(255,116,0,0.6)] transition-all duration-500" />
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-16 bg-gradient-to-b from-[#FF7400] via-white to-[#1D3557] rounded-r-full opacity-60 group-hover:opacity-100 group-hover:w-1 group-hover:shadow-[0_0_12px_rgba(255,116,0,0.6)] transition-all duration-500 pointer-events-none" />
             </div>
 
             {/* Telegram Card - Stats Section Style */}
@@ -265,19 +265,19 @@ export default function PricingContactForm() {
               <div className="relative bg-gradient-to-br from-white/5 via-white/8 to-white/3 backdrop-blur-sm border border-white/10 rounded-xl sm:rounded-2xl p-6 transition-all duration-500 ease-out hover:border-white/25 hover:bg-gradient-to-br hover:from-white/8 hover:via-white/12 hover:to-white/5 hover:shadow-[0_8px_32px_rgba(255,255,255,0.1)] hover:scale-[1.02] group-hover:backdrop-blur-md">
                 
                 {/* Subtle Inner Glow */}
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#FF7400]/5 via-transparent to-[#1D3557]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#FF7400]/5 via-transparent to-[#1D3557]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                 
                 <div className="flex items-start gap-4 mb-4 relative">
                   {/* Enhanced Icon Container */}
-                  <div className="relative group/icon">
+                  <div className="relative group/icon pointer-events-none">
                     {/* Icon Background with Glow Effect */}
                     <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-[#FF7400]/20 to-[#1D3557]/20 backdrop-blur-sm border border-white/20 flex items-center justify-center transition-all duration-300 group-hover/icon:scale-110 group-hover/icon:bg-gradient-to-br group-hover/icon:from-[#FF7400]/30 group-hover/icon:to-[#1D3557]/30 group-hover/icon:border-white/40 group-hover/icon:shadow-[0_0_20px_rgba(255,116,0,0.3)]">
                       
                       {/* Icon Glow Ring */}
-                      <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#FF7400]/10 to-[#1D3557]/10 blur-sm scale-110 opacity-0 group-hover/icon:opacity-100 transition-opacity duration-300" />
+                      <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#FF7400]/10 to-[#1D3557]/10 blur-sm scale-110 opacity-0 group-hover/icon:opacity-100 transition-opacity duration-300 pointer-events-none" />
                       
                       {/* Icon */}
-                      <MessageCircle className="w-6 h-6 text-white/90 group-hover/icon:text-white transition-colors duration-300 relative z-10" />
+                      <MessageCircle className="w-6 h-6 text-white/90 group-hover/icon:text-white transition-colors duration-300 relative z-10 pointer-events-none" />
                     </div>
                   </div>
                   
@@ -290,19 +290,21 @@ export default function PricingContactForm() {
                   </div>
                 </div>
                 
-                <Button 
-                  className="w-full bg-gradient-to-r from-[#FF7400]/10 to-[#1D3557]/10 hover:from-[#FF7400]/20 hover:to-[#1D3557]/20 text-white border border-white/20 hover:border-white/40 py-3 px-4 rounded-lg transition-all duration-300 hover:shadow-[0_4px_16px_rgba(255,116,0,0.2)]"
-                  onClick={() => window.open('https://t.me/VortixPR', '_blank')}
+                <a 
+                  href="https://t.me/VortixPR"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="relative z-10 w-full bg-gradient-to-r from-[#FF7400]/10 to-[#1D3557]/10 hover:from-[#FF7400]/20 hover:to-[#1D3557]/20 text-white border border-white/20 hover:border-white/40 py-3 px-4 rounded-lg transition-all duration-300 hover:shadow-[0_4px_16px_rgba(255,116,0,0.2)] inline-flex items-center justify-center text-sm font-medium"
                 >
                   Open Telegram
-                </Button>
+                </a>
                 
                 {/* Decorative Elements */}
-                <div className="absolute top-4 right-4 w-1 h-1 bg-white/30 rounded-full group-hover:bg-[#FF7400] group-hover:shadow-[0_0_6px_rgba(255,116,0,0.6)] transition-all duration-300" />
+                <div className="absolute top-4 right-4 w-1 h-1 bg-white/30 rounded-full group-hover:bg-[#FF7400] group-hover:shadow-[0_0_6px_rgba(255,116,0,0.6)] transition-all duration-300 pointer-events-none" />
               </div>
               
               {/* Enhanced Border Left Accent */}
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-16 bg-gradient-to-b from-[#FF7400] via-white to-[#1D3557] rounded-r-full opacity-60 group-hover:opacity-100 group-hover:w-1 group-hover:shadow-[0_0_12px_rgba(255,116,0,0.6)] transition-all duration-500" />
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-16 bg-gradient-to-b from-[#FF7400] via-white to-[#1D3557] rounded-r-full opacity-60 group-hover:opacity-100 group-hover:w-1 group-hover:shadow-[0_0_12px_rgba(255,116,0,0.6)] transition-all duration-500 pointer-events-none" />
             </div>
 
             {/* Service Level Agreement - Enhanced Style */}

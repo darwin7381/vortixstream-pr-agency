@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Mail, Sparkles, FileText, Loader2 } from 'lucide-react';
 import { marked } from 'marked';
 import { PRTemplate, templateAPI } from '../../api/templateClient';
@@ -22,6 +22,18 @@ export default function TemplatePreviewModal({
   const { user, loginWithGoogle } = useAuth();
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [isSendingEmail, setIsSendingEmail] = useState(false);
+
+  // 鎖定背景滾動
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
 
   const handleEmailToMe = async () => {
     if (user && template) {
