@@ -75,29 +75,19 @@ async def update_faq(
     if not existing:
         raise HTTPException(status_code=404, detail="FAQ not found")
     
-    # 準備更新欄位
+    # 使用 model_dump(exclude_unset=True) 只獲取真正提供的欄位
+    update_data = faq.model_dump(exclude_unset=True)
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
     update_fields = []
     values = []
     param_count = 1
     
-    if faq.question is not None:
-        update_fields.append(f"question = ${param_count}")
-        values.append(faq.question)
-        param_count += 1
-    
-    if faq.answer is not None:
-        update_fields.append(f"answer = ${param_count}")
-        values.append(faq.answer)
-        param_count += 1
-    
-    if faq.display_order is not None:
-        update_fields.append(f"display_order = ${param_count}")
-        values.append(faq.display_order)
-        param_count += 1
-    
-    if faq.is_active is not None:
-        update_fields.append(f"is_active = ${param_count}")
-        values.append(faq.is_active)
+    for field, value in update_data.items():
+        update_fields.append(f"{field} = ${param_count}")
+        values.append(value)
         param_count += 1
     
     update_fields.append(f"updated_at = ${param_count}")
@@ -176,16 +166,21 @@ async def update_testimonial(
     if not existing:
         raise HTTPException(status_code=404, detail="Testimonial not found")
     
+    # 使用 model_dump(exclude_unset=True) 只獲取真正提供的欄位
+    # 這樣可以區分「未提供」和「提供 null 值」
+    update_data = testimonial.model_dump(exclude_unset=True)
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
     update_fields = []
     values = []
     param_count = 1
     
-    for field in ['quote', 'author_name', 'author_title', 'author_company', 'author_avatar_url', 'display_order', 'is_active']:
-        value = getattr(testimonial, field, None)
-        if value is not None:
-            update_fields.append(f"{field} = ${param_count}")
-            values.append(value)
-            param_count += 1
+    for field, value in update_data.items():
+        update_fields.append(f"{field} = ${param_count}")
+        values.append(value)
+        param_count += 1
     
     update_fields.append(f"updated_at = ${param_count}")
     values.append(datetime.utcnow())
@@ -262,16 +257,20 @@ async def update_team_member(
     if not existing:
         raise HTTPException(status_code=404, detail="Team member not found")
     
+    # 使用 model_dump(exclude_unset=True) 只獲取真正提供的欄位
+    update_data = member.model_dump(exclude_unset=True)
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
     update_fields = []
     values = []
     param_count = 1
     
-    for field in ['name', 'position', 'avatar_url', 'bio', 'linkedin_url', 'twitter_url', 'display_order', 'is_active']:
-        value = getattr(member, field, None)
-        if value is not None:
-            update_fields.append(f"{field} = ${param_count}")
-            values.append(value)
-            param_count += 1
+    for field, value in update_data.items():
+        update_fields.append(f"{field} = ${param_count}")
+        values.append(value)
+        param_count += 1
     
     update_fields.append(f"updated_at = ${param_count}")
     values.append(datetime.utcnow())
@@ -348,16 +347,20 @@ async def update_service(
     if not existing:
         raise HTTPException(status_code=404, detail="Service not found")
     
+    # 使用 model_dump(exclude_unset=True) 只獲取真正提供的欄位
+    update_data = service.model_dump(exclude_unset=True)
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
     update_fields = []
     values = []
     param_count = 1
     
-    for field in ['title', 'description', 'icon', 'display_order', 'is_active']:
-        value = getattr(service, field, None)
-        if value is not None:
-            update_fields.append(f"{field} = ${param_count}")
-            values.append(value)
-            param_count += 1
+    for field, value in update_data.items():
+        update_fields.append(f"{field} = ${param_count}")
+        values.append(value)
+        param_count += 1
     
     update_fields.append(f"updated_at = ${param_count}")
     values.append(datetime.utcnow())
@@ -481,23 +484,19 @@ async def update_differentiator(
     if not existing:
         raise HTTPException(status_code=404, detail="Differentiator not found")
     
+    # 使用 model_dump(exclude_unset=True) 只獲取真正提供的欄位
+    update_data = item.model_dump(exclude_unset=True)
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
     update_fields = []
     values = []
     param_count = 1
     
-    if item.text is not None:
-        update_fields.append(f"text = ${param_count}")
-        values.append(item.text)
-        param_count += 1
-    
-    if item.display_order is not None:
-        update_fields.append(f"display_order = ${param_count}")
-        values.append(item.display_order)
-        param_count += 1
-    
-    if item.is_active is not None:
-        update_fields.append(f"is_active = ${param_count}")
-        values.append(item.is_active)
+    for field, value in update_data.items():
+        update_fields.append(f"{field} = ${param_count}")
+        values.append(value)
         param_count += 1
     
     update_fields.append(f"updated_at = ${param_count}")
@@ -574,16 +573,20 @@ async def update_stat(
     if not existing:
         raise HTTPException(status_code=404, detail="Stat not found")
     
+    # 使用 model_dump(exclude_unset=True) 只獲取真正提供的欄位
+    update_data = item.model_dump(exclude_unset=True)
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
     update_fields = []
     values = []
     param_count = 1
     
-    for field in ['label', 'value', 'suffix', 'description', 'display_order', 'is_active']:
-        value = getattr(item, field, None)
-        if value is not None:
-            update_fields.append(f"{field} = ${param_count}")
-            values.append(value)
-            param_count += 1
+    for field, value in update_data.items():
+        update_fields.append(f"{field} = ${param_count}")
+        values.append(value)
+        param_count += 1
     
     update_fields.append(f"updated_at = ${param_count}")
     values.append(datetime.utcnow())
@@ -660,16 +663,20 @@ async def update_carousel_logo(
     if not existing:
         raise HTTPException(status_code=404, detail="Carousel logo not found")
     
+    # 使用 model_dump(exclude_unset=True) 只獲取真正提供的欄位
+    update_data = item.model_dump(exclude_unset=True)
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
     update_fields = []
     values = []
     param_count = 1
     
-    for field in ['name', 'logo_url', 'alt_text', 'website_url', 'display_order', 'is_active']:
-        value = getattr(item, field, None)
-        if value is not None:
-            update_fields.append(f"{field} = ${param_count}")
-            values.append(value)
-            param_count += 1
+    for field, value in update_data.items():
+        update_fields.append(f"{field} = ${param_count}")
+        values.append(value)
+        param_count += 1
     
     update_fields.append(f"updated_at = ${param_count}")
     values.append(datetime.utcnow())

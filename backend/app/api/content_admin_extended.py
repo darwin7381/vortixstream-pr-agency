@@ -47,16 +47,20 @@ async def update_client(item_id: int, item: ClientLogoUpdate, conn: asyncpg.Conn
     if not existing:
         raise HTTPException(status_code=404, detail="Not found")
     
+    # 使用 model_dump(exclude_unset=True) 只獲取真正提供的欄位
+    update_data = item.model_dump(exclude_unset=True)
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
     update_fields = []
     values = []
     param_count = 1
     
-    for field in ['name', 'logo_url', 'website_url', 'display_order', 'is_active']:
-        value = getattr(item, field, None)
-        if value is not None:
-            update_fields.append(f"{field} = ${param_count}")
-            values.append(value)
-            param_count += 1
+    for field, value in update_data.items():
+        update_fields.append(f"{field} = ${param_count}")
+        values.append(value)
+        param_count += 1
     
     update_fields.append(f"updated_at = ${param_count}")
     values.append(datetime.utcnow())
@@ -98,16 +102,20 @@ async def update_publisher_feature(item_id: int, item: PublisherFeatureUpdate, c
     if not existing:
         raise HTTPException(status_code=404, detail="Feature not found")
     
+    # 使用 model_dump(exclude_unset=True) 只獲取真正提供的欄位
+    update_data = item.model_dump(exclude_unset=True)
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
     update_fields = []
     values = []
     param_count = 1
     
-    for field in ['title', 'description', 'display_order', 'is_active']:
-        value = getattr(item, field, None)
-        if value is not None:
-            update_fields.append(f"{field} = ${param_count}")
-            values.append(value)
-            param_count += 1
+    for field, value in update_data.items():
+        update_fields.append(f"{field} = ${param_count}")
+        values.append(value)
+        param_count += 1
     
     update_fields.append(f"updated_at = ${param_count}")
     values.append(datetime.utcnow())
@@ -149,16 +157,20 @@ async def update_hero_section(page: str, item: HeroSectionUpdate, conn: asyncpg.
     if not existing:
         raise HTTPException(status_code=404, detail="Hero section not found")
     
+    # 使用 model_dump(exclude_unset=True) 只獲取真正提供的欄位
+    update_data = item.model_dump(exclude_unset=True)
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
     update_fields = []
     values = []
     param_count = 1
     
-    for field in ['title_prefix', 'title_highlights', 'title_suffix', 'subtitle', 'description', 'center_logo_url', 'cta_primary_text', 'cta_primary_url', 'cta_primary_url_mobile', 'cta_secondary_text', 'cta_secondary_url', 'cta_secondary_url_mobile', 'background_image_url', 'background_video_url', 'is_active']:
-        value = getattr(item, field, None)
-        if value is not None:
-            update_fields.append(f"{field} = ${param_count}")
-            values.append(value)
-            param_count += 1
+    for field, value in update_data.items():
+        update_fields.append(f"{field} = ${param_count}")
+        values.append(value)
+        param_count += 1
     
     update_fields.append(f"updated_at = ${param_count}")
     values.append(datetime.utcnow())
@@ -192,16 +204,20 @@ async def update_hero_logo(logo_id: int, item: HeroMediaLogoUpdate, conn: asyncp
     if not existing:
         raise HTTPException(status_code=404, detail="Logo not found")
     
+    # 使用 model_dump(exclude_unset=True) 只獲取真正提供的欄位
+    update_data = item.model_dump(exclude_unset=True)
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
     update_fields = []
     values = []
     param_count = 1
     
-    for field in ['name', 'logo_url', 'website_url', 'opacity', 'size', 'position_top', 'position_left', 'position_right', 'position_bottom', 'animation_speed', 'display_order', 'is_active']:
-        value = getattr(item, field, None)
-        if value is not None:
-            update_fields.append(f"{field} = ${param_count}")
-            values.append(value)
-            param_count += 1
+    for field, value in update_data.items():
+        update_fields.append(f"{field} = ${param_count}")
+        values.append(value)
+        param_count += 1
     
     update_fields.append(f"updated_at = ${param_count}")
     values.append(datetime.utcnow())
@@ -228,16 +244,20 @@ async def update_lyro(item: LyroSectionUpdate, conn: asyncpg.Connection = Depend
     if not row:
         raise HTTPException(status_code=404, detail="Not found")
     
+    # 使用 model_dump(exclude_unset=True) 只獲取真正提供的欄位
+    update_data = item.model_dump(exclude_unset=True)
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
     update_fields = []
     values = []
     param_count = 1
     
-    for field in ['label', 'title', 'subtitle', 'description', 'background_image_url']:
-        value = getattr(item, field, None)
-        if value is not None:
-            update_fields.append(f"{field} = ${param_count}")
-            values.append(value)
-            param_count += 1
+    for field, value in update_data.items():
+        update_fields.append(f"{field} = ${param_count}")
+        values.append(value)
+        param_count += 1
     
     update_fields.append(f"updated_at = ${param_count}")
     values.append(datetime.utcnow())
@@ -267,16 +287,20 @@ async def update_lyro_feature(feat_id: int, item: LyroFeatureUpdate, conn: async
     if not existing:
         raise HTTPException(status_code=404, detail="Not found")
     
+    # 使用 model_dump(exclude_unset=True) 只獲取真正提供的欄位
+    update_data = item.model_dump(exclude_unset=True)
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
     update_fields = []
     values = []
     param_count = 1
     
-    for field in ['text', 'display_order', 'is_active']:
-        value = getattr(item, field, None)
-        if value is not None:
-            update_fields.append(f"{field} = ${param_count}")
-            values.append(value)
-            param_count += 1
+    for field, value in update_data.items():
+        update_fields.append(f"{field} = ${param_count}")
+        values.append(value)
+        param_count += 1
     
     update_fields.append(f"updated_at = ${param_count}")
     values.append(datetime.utcnow())

@@ -30,6 +30,13 @@ export default function AdminContentTestimonials() {
     fetchData();
   }, [token]);
 
+  // 當 modal 開啟或 editingItem 改變時，重置 selectedAvatarUrl
+  useEffect(() => {
+    if (showModal) {
+      setSelectedAvatarUrl('');
+    }
+  }, [showModal, editingItem]);
+
   const handleDelete = async (item: Testimonial) => {
     if (!token || !confirm(`Are you sure you want to delete ${item.author_name} ?`)) return;
     
