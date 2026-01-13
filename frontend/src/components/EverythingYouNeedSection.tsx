@@ -58,7 +58,16 @@ export default function EverythingYouNeedSection({ reverse = false }: Everything
               </>
             ) : (
               <>
-                {/* Content First (Desktop Left, Mobile Top) */}
+                {/* Image First (Desktop Left, Mobile Top) */}
+                <div className="flex-1 publisher-content-item">
+                  <ImageWithFallback
+                    src="https://files.blocktempo.ai/VortixStream_cf/Catronut-ezgif-optimize(4).gif"
+                    alt="Dashboard Features"
+                    className="w-full aspect-[600/640] rounded-2xl object-cover"
+                  />
+                </div>
+
+                {/* Content Second (Desktop Right, Mobile Bottom) */}
                 <div className="flex-1 space-y-6 lg:space-y-8 publisher-content-item">
                   <div className="space-y-5 lg:space-y-6">
                     <h2 
@@ -88,15 +97,6 @@ export default function EverythingYouNeedSection({ reverse = false }: Everything
                       </div>
                     ))}
                   </div>
-                </div>
-
-                {/* Image Second (Desktop Right, Mobile Bottom) */}
-                <div className="flex-1 publisher-content-item">
-                  <ImageWithFallback
-                    src="https://files.blocktempo.ai/VortixStream_cf/Catronut-ezgif-optimize(4).gif"
-                    alt="Dashboard Features"
-                    className="w-full aspect-[600/640] rounded-2xl object-cover"
-                  />
                 </div>
               </>
             )}

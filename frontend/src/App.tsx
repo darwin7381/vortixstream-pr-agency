@@ -12,7 +12,7 @@ import ServicesSection from './components/ServicesSection';
 import LyroSection from './components/LyroSection';
 import TrustedBySection from './components/TrustedBySection';
 import TestimonialSection from './components/TestimonialSection';
-import EverythingYouNeedSection from './components/EverythingYouNeedSection';
+import VortixPortalSection from './components/VortixPortalSection';
 import FAQSection from './components/FAQSection';
 import PricingContactForm from './components/PricingContactForm';
 import Footer from './components/Footer';
@@ -91,12 +91,13 @@ function HomePage() {
       {/* Packages Preview Section - 使用完整 Section 組件 */}
       <PRPackagesSection />
 
+      {/* Vortix Portal Section */}
+      <VortixPortalSection />
+
       {/* Lyro AI Section */}
       <section id="lyro-section">
         <LyroSection />
       </section>
-
-      <EverythingYouNeedSection reverse={true} />
 
       {/* Our Clients Section */}
       <section id="clients-section">
