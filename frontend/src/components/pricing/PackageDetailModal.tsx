@@ -76,15 +76,14 @@ export default function PackageDetailModal({
               <div className="flex items-center gap-3 mb-6 flex-wrap">
                 {pkg.badge && (
                   <div 
-                    className="px-3 py-1 rounded-full bg-gradient-to-r from-[#FF7400]/10 to-[#1D3557]/5 relative"
-                    style={{
-                      border: '2px solid transparent',
-                      backgroundImage: 'linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), linear-gradient(102deg, #FF7400 0%, #1D3557 100%)',
-                      backgroundOrigin: 'border-box',
-                      backgroundClip: 'padding-box, border-box'
-                    }}
+                    className="
+                      px-4 py-1.5 rounded-full 
+                      bg-[#FF7400]/10 
+                      border border-[#FF7400]/30
+                      relative
+                    "
                   >
-                    <span className="text-white/90 text-[10px] font-semibold uppercase tracking-wide">
+                    <span className="text-[#FF7400]/90 text-[11px] font-bold uppercase tracking-wider">
                       {pkg.badge}
                     </span>
                   </div>

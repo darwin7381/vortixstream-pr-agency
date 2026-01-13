@@ -47,12 +47,17 @@ export default function EmailLoginModal({
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+        className="absolute inset-0 glass-backdrop"
         onClick={onClose}
       />
 
       {/* Modal */}
-      <div className="relative w-full max-w-2xl bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
+      <div className="
+        relative glass-modal w-full max-w-2xl 
+        border border-white/30 rounded-2xl 
+        shadow-[0_8px_32px_rgba(0,0,0,0.6),0_0_80px_rgba(255,255,255,0.05),inset_0_0_0_1px_rgba(255,255,255,0.1)]
+        overflow-hidden
+      ">
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -63,12 +68,15 @@ export default function EmailLoginModal({
 
         <div className="grid grid-cols-1 md:grid-cols-2">
           {/* Left Side - Email Form */}
-          <div className="p-8 border-r border-white/10">
+          <div className="p-8 border-r border-white/20">
             <div className="mb-6">
               <div className="w-12 h-12 bg-[#FF7400]/20 border border-[#FF7400]/40 rounded-xl flex items-center justify-center mb-4">
                 <Mail size={24} className="text-[#FF7400]" />
               </div>
-              <h3 className="text-white text-[20px] font-sans font-bold mb-2">
+              <h3 
+                className="text-white text-[20px] font-bold mb-2"
+                style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+              >
                 Email Template to Me
               </h3>
               <p className="text-white/70 text-[14px] font-sans">
@@ -114,7 +122,7 @@ export default function EmailLoginModal({
                 )}
             </form>
 
-            <div className="mt-6 pt-6 border-t border-white/10">
+            <div className="mt-6 pt-6 border-t border-white/20">
               <div className="flex items-start gap-2 text-white/60 text-[12px] font-sans">
                 <span className="text-[#FF7400]">💡</span>
                 <span>We'll send the template to your inbox within seconds. No spam, ever.</span>
@@ -128,7 +136,10 @@ export default function EmailLoginModal({
               <div className="w-12 h-12 bg-[#10B981]/20 border border-[#10B981]/40 rounded-xl flex items-center justify-center mb-4">
                 <Zap size={24} className="text-[#10B981]" />
               </div>
-              <h3 className="text-white text-[20px] font-sans font-bold mb-2">
+              <h3 
+                className="text-white text-[20px] font-bold mb-2"
+                style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+              >
                 Or Sign Up for More
               </h3>
               <p className="text-white/70 text-[14px] font-sans mb-1">

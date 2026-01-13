@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Mail, Sparkles, Zap, Wand2, Check } from 'lucide-react';
+import { X, Mail, Sparkles, Zap, Wand2, Check, Loader2 } from 'lucide-react';
 import { PRTemplate, templateAPI } from '../../api/templateClient';
 import { Button } from '../ui/button';
 
@@ -81,12 +81,17 @@ export default function TemplateDownloadForm({
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+        className="absolute inset-0 glass-backdrop"
         onClick={onClose}
       />
 
       {/* Modal */}
-      <div className="relative w-full max-w-2xl bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
+      <div className="
+        relative glass-modal w-full max-w-2xl 
+        border border-white/30 rounded-2xl 
+        shadow-[0_8px_32px_rgba(0,0,0,0.6),0_0_80px_rgba(255,255,255,0.05),inset_0_0_0_1px_rgba(255,255,255,0.1)]
+        overflow-hidden
+      ">
         {!submitted ? (
           <>
             {/* Close Button */}
@@ -100,12 +105,15 @@ export default function TemplateDownloadForm({
 
             <div className="grid grid-cols-1 md:grid-cols-2">
               {/* Left Side - Benefits (Hidden on mobile, shown on desktop) */}
-              <div className="hidden md:block p-8 bg-gradient-to-br from-white/[0.02] to-transparent border-r border-white/10">
+              <div className="hidden md:block p-8 border-r border-white/20">
                 <div className="mb-6">
                   <div className="w-12 h-12 bg-[#10B981]/20 border border-[#10B981]/40 rounded-xl flex items-center justify-center mb-4">
                     <Wand2 size={24} className="text-[#10B981]" />
                   </div>
-                  <h3 className="text-white text-[20px] font-sans font-bold mb-2">
+                  <h3 
+                    className="text-white text-[20px] font-bold mb-2"
+                    style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                  >
                     Early Access Benefits
                   </h3>
                 </div>
@@ -156,7 +164,7 @@ export default function TemplateDownloadForm({
                 </div>
 
                 {/* Stats */}
-                <div className="mt-8 pt-6 border-t border-white/10">
+                <div className="mt-8 pt-6 border-t border-white/20">
                   <div className="flex items-center gap-2 text-white/60 text-[12px] font-sans">
                     <div className="flex -space-x-2">
                       <div className="w-7 h-7 bg-gradient-to-br from-[#FF7400] to-[#10B981] rounded-full border-2 border-black" />
@@ -176,7 +184,10 @@ export default function TemplateDownloadForm({
                     <Sparkles size={11} className="animate-pulse" />
                     Coming Soon
                   </div>
-                  <h2 className="text-white text-[22px] font-sans font-bold mb-2">
+                  <h2 
+                    className="text-white text-[22px] font-bold mb-2"
+                    style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                  >
                     AI PR Editor Waitlist
                   </h2>
                   <p className="text-white/70 text-[13px] font-sans">
@@ -257,7 +268,7 @@ export default function TemplateDownloadForm({
                 )}
 
                 {/* Mobile Benefits (shown only on mobile) */}
-                <div className="md:hidden mt-6 pt-6 border-t border-white/10">
+                <div className="md:hidden mt-6 pt-6 border-t border-white/20">
                   <div className="space-y-2.5">
                     <div className="flex items-center gap-2 text-white/70 text-[12px] font-sans">
                       <Check size={14} className="text-[#10B981]" />
@@ -287,7 +298,10 @@ export default function TemplateDownloadForm({
             <div className="w-20 h-20 bg-gradient-to-br from-[#10B981] to-[#FF7400] rounded-full flex items-center justify-center mx-auto mb-6">
               <Check size={48} className="text-white animate-pulse" />
             </div>
-            <h3 className="text-white text-[26px] font-sans font-bold mb-3">
+            <h3 
+              className="text-white text-[26px] font-bold mb-3"
+              style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+            >
               You're on the Waitlist! 🎉
             </h3>
             <p className="text-white/70 text-[15px] font-sans mb-2">

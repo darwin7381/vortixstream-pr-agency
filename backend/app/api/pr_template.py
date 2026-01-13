@@ -13,6 +13,7 @@ from ..models.pr_template import (
     EmailRequestCreate,
     EmailRequestResponse
 )
+from ..services.email_service import email_service
 
 router = APIRouter(prefix="/api/public")
 logger = logging.getLogger(__name__)
@@ -292,15 +293,18 @@ async def request_template_email(
             WHERE id = $1
         """, template_id)
         
-        # TODO: 異步發送 Email（使用 Resend）
-        # await send_template_email(
-        #     to_email=data.email,
-        #     template_title=template["title"],
-        #     template_content=template["content"],
-        #     tracking_id=tracking_id
-        # )
+        # 發送 Email（使用 Resend）
+        email_sent = await email_service.send_template_email(
+            to_email=data.email,
+            template_title=template["title"],
+            template_content=template["content"],
+            tracking_id=tracking_id
+        )
         
-        logger.info(f"✅ Email request: {data.email} for {template['title']}")
+        if email_sent:
+            logger.info(f"✅ Email sent successfully: {data.email} for {template['title']}")
+        else:
+            logger.warning(f"⚠️ Email sending failed but request recorded: {data.email}")
         
         return EmailRequestResponse(
             success=True,

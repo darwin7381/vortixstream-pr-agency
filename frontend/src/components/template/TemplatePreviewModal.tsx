@@ -92,17 +92,25 @@ export default function TemplatePreviewModal({
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+        className="absolute inset-0 glass-backdrop"
         onClick={onClose}
       />
 
       {/* Modal */}
-      <div className="relative w-full max-w-4xl max-h-[90vh] bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl flex flex-col">
+      <div className="
+        relative glass-modal w-full max-w-4xl max-h-[90vh] 
+        border border-white/30 rounded-2xl 
+        shadow-[0_8px_32px_rgba(0,0,0,0.6),0_0_80px_rgba(255,255,255,0.05),inset_0_0_0_1px_rgba(255,255,255,0.1)]
+        flex flex-col
+      ">
         {/* Header */}
-        <div className="flex items-start justify-between p-6 border-b border-white/10">
+        <div className="flex items-start justify-between p-6 border-b border-white/20">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
-              <h2 className="text-white text-[24px] md:text-[28px] font-sans font-bold">
+              <h2 
+                className="text-white text-[24px] md:text-[28px] font-bold"
+                style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+              >
                 {template.title}
               </h2>
               <span
@@ -133,7 +141,10 @@ export default function TemplatePreviewModal({
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
           {/* Template Content Preview */}
           <div>
-            <h3 className="text-white text-[18px] font-sans font-bold mb-3 flex items-center gap-2">
+            <h3 
+              className="text-white text-[18px] font-bold mb-3 flex items-center gap-2"
+              style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+            >
               <FileText size={20} className="text-[#FF7400]" />
               Template Content Preview
             </h3>
@@ -233,7 +244,10 @@ export default function TemplatePreviewModal({
 
           {/* What's Included */}
           <div>
-            <h3 className="text-white text-[18px] font-sans font-bold mb-3">
+            <h3 
+              className="text-white text-[18px] font-bold mb-3"
+              style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+            >
               📌 What's Included
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -251,7 +265,10 @@ export default function TemplatePreviewModal({
 
           {/* Use Cases */}
           <div>
-            <h3 className="text-white text-[18px] font-sans font-bold mb-3">
+            <h3 
+              className="text-white text-[18px] font-bold mb-3"
+              style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+            >
               💼 Use Cases
             </h3>
             <div className="space-y-2">
@@ -270,7 +287,10 @@ export default function TemplatePreviewModal({
           {/* Industry Tags */}
           {template.industry_tags.length > 0 && (
             <div>
-              <h3 className="text-white text-[18px] font-sans font-bold mb-3">
+              <h3 
+                className="text-white text-[18px] font-bold mb-3"
+                style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+              >
                 🏢 Industries
               </h3>
               <div className="flex flex-wrap gap-2">
@@ -300,7 +320,7 @@ export default function TemplatePreviewModal({
         </div>
 
         {/* Footer Actions */}
-        <div className="p-6 border-t border-white/10 bg-black/20">
+        <div className="p-6 border-t border-white/20">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {/* Email to Me Button */}
             <Button
