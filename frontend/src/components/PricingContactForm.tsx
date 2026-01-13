@@ -1,11 +1,9 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
-import { ChevronDown, Mail, MessageCircle, Send } from 'lucide-react';
+import { ChevronDown, Mail, MessageCircle, Check } from 'lucide-react';
 import { contactAPI } from '../api/client';
 
 export default function PricingContactForm() {
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -15,6 +13,8 @@ export default function PricingContactForm() {
     budgetRange: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -30,6 +30,8 @@ export default function PricingContactForm() {
     if (isSubmitting) return;
     
     setIsSubmitting(true);
+    setSubmitError(null);
+    setSubmitSuccess(false);
     
     try {
       // 調用後端 API
@@ -52,19 +54,73 @@ export default function PricingContactForm() {
       });
       
       // 顯示成功訊息
-      alert('感謝您的提交！我們會盡快與您聯繫。');
+      setSubmitSuccess(true);
+      
+      // 5 秒後自動隱藏成功訊息
+      setTimeout(() => setSubmitSuccess(false), 5000);
       
     } catch (error) {
       console.error('Failed to submit contact form:', error);
-      alert('提交失敗，請稍後再試');
+      setSubmitError('Failed to submit. Please try again later.');
+      
+      // 5 秒後自動隱藏錯誤訊息
+      setTimeout(() => setSubmitError(null), 5000);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="bg-[#191919] py-16 md:py-28">
-      <div className="max-w-7xl mx-auto px-5 xl:px-16">
+    <>
+      {/* Success Modal */}
+      {submitSuccess && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 glass-backdrop"
+            onClick={() => setSubmitSuccess(false)}
+          />
+
+          {/* Modal */}
+          <div className="
+            relative glass-modal w-full max-w-md
+            border border-white/30 rounded-2xl
+            shadow-[0_8px_32px_rgba(0,0,0,0.6),0_0_80px_rgba(255,255,255,0.05),inset_0_0_0_1px_rgba(255,255,255,0.1)]
+            overflow-hidden
+          ">
+            <div className="p-12 text-center">
+              <div className="w-20 h-20 bg-gradient-to-br from-[#10B981] to-[#FF7400] rounded-full flex items-center justify-center mx-auto mb-6">
+                <Check size={48} className="text-white" />
+              </div>
+              <h3
+                className="text-white text-[26px] font-bold mb-3"
+                style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+              >
+                Thank You! 🎉
+              </h3>
+              <p className="text-white/70 text-[15px] font-sans mb-2">
+                We've received your message
+              </p>
+              <p className="text-[#FF7400] text-[16px] font-sans font-semibold mb-6">
+                We'll get back to you within 24 hours
+              </p>
+              <div className="flex items-center justify-center gap-2 text-[#10B981] text-[14px] font-sans mb-6">
+                <Mail size={16} />
+                Check your inbox for confirmation
+              </div>
+              <Button
+                onClick={() => setSubmitSuccess(false)}
+                className="bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="bg-[#191919] py-16 md:py-28">
+        <div className="max-w-7xl mx-auto px-5 xl:px-16">
         {/* Section Title */}
         <div className="text-left mb-12 md:mb-16">
           <h2 className="text-white text-3xl sm:text-4xl md:text-5xl xl:text-6xl mb-6" style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 'medium', letterSpacing: '-0.02em' }}>
@@ -208,6 +264,15 @@ export default function PricingContactForm() {
                   </span>
                 </Button>
               </div>
+
+              {/* Error Message */}
+              {submitError && (
+                <div className="mt-6 p-4 bg-red-500/20 border border-red-500/40 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
+                  <p className="text-red-400 text-[15px] font-sans text-center">
+                    {submitError}
+                  </p>
+                </div>
+              )}
             </form>
           </div>
 
@@ -342,5 +407,6 @@ export default function PricingContactForm() {
         </div>
       </div>
     </div>
+    </>
   );
 }

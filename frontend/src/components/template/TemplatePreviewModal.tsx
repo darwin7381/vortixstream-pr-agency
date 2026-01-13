@@ -22,6 +22,8 @@ export default function TemplatePreviewModal({
   const { user, loginWithGoogle } = useAuth();
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [isSendingEmail, setIsSendingEmail] = useState(false);
+  const [emailSuccess, setEmailSuccess] = useState(false);
+  const [emailError, setEmailError] = useState<string | null>(null);
 
   // 鎖定背景滾動
   useEffect(() => {
@@ -39,13 +41,18 @@ export default function TemplatePreviewModal({
     if (user && template) {
       // User is logged in - send directly
       setIsSendingEmail(true);
+      setEmailError(null);
+      setEmailSuccess(false);
       try {
         const response = await templateAPI.requestEmail(template.id, { email: user.email });
-        alert(response.message);
         console.log('✅ Email sent:', response);
+        setEmailSuccess(true);
+        // Auto-hide success message after 5 seconds
+        setTimeout(() => setEmailSuccess(false), 5000);
       } catch (error) {
         console.error('❌ Failed to send email:', error);
-        alert('Failed to send email. Please try again.');
+        setEmailError('Failed to send email. Please try again.');
+        setTimeout(() => setEmailError(null), 5000);
       } finally {
         setIsSendingEmail(false);
       }
@@ -58,14 +65,19 @@ export default function TemplatePreviewModal({
   const handleEmailSubmit = async (email: string) => {
     if (!template) return;
     
+    setEmailError(null);
+    setEmailSuccess(false);
     try {
       const response = await templateAPI.requestEmail(template.id, { email });
       console.log('✅ Email sent:', response);
-      alert(response.message);
+      setEmailSuccess(true);
       setShowEmailModal(false);
+      // Auto-hide success message after 5 seconds
+      setTimeout(() => setEmailSuccess(false), 5000);
     } catch (error) {
       console.error('❌ Failed to send email:', error);
-      alert('Failed to send email. Please try again.');
+      setEmailError('Failed to send email. Please try again.');
+      setTimeout(() => setEmailError(null), 5000);
     }
   };
 
@@ -73,9 +85,11 @@ export default function TemplatePreviewModal({
     // Use the same Google login method as LoginPage
     try {
       await loginWithGoogle();
+      setShowEmailModal(false);
     } catch (error) {
       console.error('Google login failed:', error);
-      alert('Google login failed. Please try again.');
+      setEmailError('Google login failed. Please try again.');
+      setTimeout(() => setEmailError(null), 5000);
     }
   };
 
@@ -361,6 +375,25 @@ export default function TemplatePreviewModal({
               )}
             </p>
           </div>
+
+          {/* Success Message */}
+          {emailSuccess && (
+            <div className="mt-4 p-4 bg-green-500/20 border border-green-500/40 rounded-lg">
+              <p className="text-green-400 text-[14px] font-sans text-center flex items-center justify-center gap-2">
+                <span className="text-xl">✓</span>
+                Template sent successfully! Check your inbox.
+              </p>
+            </div>
+          )}
+
+          {/* Error Message */}
+          {emailError && (
+            <div className="mt-4 p-4 bg-red-500/20 border border-red-500/40 rounded-lg">
+              <p className="text-red-400 text-[14px] font-sans text-center">
+                {emailError}
+              </p>
+            </div>
+          )}
         </div>
       </div>
 

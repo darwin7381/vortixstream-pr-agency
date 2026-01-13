@@ -7,13 +7,16 @@ import { ImageWithFallback } from './figma/ImageWithFallback';
 import { newsletterAPI } from '../api/client';
 import Footer from './Footer';
 import { blogCategories, blogArticles, newsletterContent, paginationConfig } from '../constants/blogData';
-import { ChevronLeft, ChevronRight, Calendar, Clock } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar, Clock, Check, Mail } from 'lucide-react';
 
 export default function BlogPage() {
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState('All Articles');
   const [currentPage, setCurrentPage] = useState(1);
   const [email, setEmail] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [subscribedEmail, setSubscribedEmail] = useState('');
 
   // Filter articles based on active category
   const filteredArticles = useMemo(() => {
@@ -54,25 +57,76 @@ export default function BlogPage() {
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     if (email.trim()) {
+      setError(null);
       try {
         await newsletterAPI.subscribe(email, 'blog-page');
         console.log('Successfully subscribed:', email);
         
-        // 清空表單
+        // 保存 email 並顯示成功模態框
+        setSubscribedEmail(email);
         setEmail('');
-        
-        // 導航到成功頁面
-        navigate('/newsletter-success');
+        setShowSuccessModal(true);
         
       } catch (error) {
         console.error('Failed to subscribe:', error);
-        alert('訂閱失敗，請稍後再試');
+        setError('Subscription failed. Please try again later.');
+        
+        // Auto-hide error after 5 seconds
+        setTimeout(() => setError(null), 5000);
       }
     }
   };
 
   return (
-    <div className="min-h-screen bg-black">
+    <>
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 glass-backdrop"
+            onClick={() => setShowSuccessModal(false)}
+          />
+
+          {/* Modal */}
+          <div className="
+            relative glass-modal w-full max-w-md
+            border border-white/30 rounded-2xl
+            shadow-[0_8px_32px_rgba(0,0,0,0.6),0_0_80px_rgba(255,255,255,0.05),inset_0_0_0_1px_rgba(255,255,255,0.1)]
+            overflow-hidden
+          ">
+            <div className="p-12 text-center">
+              <div className="w-20 h-20 bg-gradient-to-br from-[#10B981] to-[#FF7400] rounded-full flex items-center justify-center mx-auto mb-6">
+                <Check size={48} className="text-white" />
+              </div>
+              <h3
+                className="text-white text-[26px] font-bold mb-3"
+                style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+              >
+                Welcome Aboard! 🎉
+              </h3>
+              <p className="text-white/70 text-[15px] font-sans mb-2">
+                You've successfully subscribed to our Newsletter
+              </p>
+              <p className="text-[#FF7400] text-[16px] font-sans font-semibold mb-6">
+                {subscribedEmail}
+              </p>
+              <div className="flex items-center justify-center gap-2 text-[#10B981] text-[14px] font-sans mb-6">
+                <Mail size={16} />
+                Check your inbox for confirmation
+              </div>
+              <Button
+                onClick={() => setShowSuccessModal(false)}
+                className="bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="min-h-screen bg-black">
       {/* Hero Section - PR Strategy Resource Center */}
       <section className="bg-black py-section-large">
         <div className="container-global">
@@ -328,6 +382,15 @@ export default function BlogPage() {
                 </Button>
               </form>
 
+              {/* Error Message */}
+              {error && (
+                <div className="max-w-md mx-auto p-4 bg-red-500/20 border border-red-500/40 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
+                  <p className="text-red-400 text-[14px] font-sans text-center">
+                    {error}
+                  </p>
+                </div>
+              )}
+
               {/* Additional Info */}
               <p className="text-white/50 text-[10px] md:text-[12px]">
                 Join 2,500+ PR professionals who trust our insights • No spam, unsubscribe anytime
@@ -339,5 +402,6 @@ export default function BlogPage() {
 
       <Footer />
     </div>
+    </>
   );
 }

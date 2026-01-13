@@ -3,34 +3,32 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { newsletterContent } from '../../constants/blogData';
 import { newsletterAPI } from '../../api/client';
+import { Check, Mail } from 'lucide-react';
 
 export default function BlogNewsletter() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+  const [subscribedEmail, setSubscribedEmail] = useState('');
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     if (email.trim() && !loading) {
       setLoading(true);
+      setError(null);
       try {
         await newsletterAPI.subscribe(email, 'blog');
         console.log('Successfully subscribed:', email);
+        setSubscribedEmail(email);
         setEmail('');
-        
-        // Show success message
-        const button = e.currentTarget.querySelector('button[type="submit"]') as HTMLButtonElement;
-        if (button) {
-          const originalText = button.textContent;
-          button.textContent = 'Subscribed!';
-          button.disabled = true;
-          setTimeout(() => {
-            button.textContent = originalText;
-            button.disabled = false;
-          }, 2000);
-        }
+        setSuccess(true);
       } catch (error) {
         console.error('Failed to subscribe:', error);
-        alert('訂閱失敗，請稍後再試');
+        setError('Subscription failed. Please try again later.');
+        
+        // Auto-hide error after 5 seconds
+        setTimeout(() => setError(null), 5000);
       } finally {
         setLoading(false);
       }
@@ -38,8 +36,56 @@ export default function BlogNewsletter() {
   };
 
   return (
-    <section className="bg-gradient-to-br from-gray-950 via-black to-gray-900 py-section-medium">
-      <div className="container-global">
+    <>
+      {/* Success Modal */}
+      {success && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 glass-backdrop"
+            onClick={() => setSuccess(false)}
+          />
+
+          {/* Modal */}
+          <div className="
+            relative glass-modal w-full max-w-md
+            border border-white/30 rounded-2xl
+            shadow-[0_8px_32px_rgba(0,0,0,0.6),0_0_80px_rgba(255,255,255,0.05),inset_0_0_0_1px_rgba(255,255,255,0.1)]
+            overflow-hidden
+          ">
+            <div className="p-12 text-center">
+              <div className="w-20 h-20 bg-gradient-to-br from-[#10B981] to-[#FF7400] rounded-full flex items-center justify-center mx-auto mb-6">
+                <Check size={48} className="text-white" />
+              </div>
+              <h3
+                className="text-white text-[26px] font-bold mb-3"
+                style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+              >
+                Welcome Aboard! 🎉
+              </h3>
+              <p className="text-white/70 text-[15px] font-sans mb-2">
+                You've successfully subscribed to our Newsletter
+              </p>
+              <p className="text-[#FF7400] text-[16px] font-sans font-semibold mb-6">
+                {subscribedEmail}
+              </p>
+              <div className="flex items-center justify-center gap-2 text-[#10B981] text-[14px] font-sans mb-6">
+                <Mail size={16} />
+                Check your inbox for confirmation
+              </div>
+              <Button
+                onClick={() => setSuccess(false)}
+                className="bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <section className="bg-gradient-to-br from-gray-950 via-black to-gray-900 py-section-medium">
+        <div className="container-global">
         <div className="max-w-[800px] mx-auto text-center">
           {/* Background Effects */}
           <div className="absolute inset-0 overflow-hidden">
@@ -92,6 +138,15 @@ export default function BlogNewsletter() {
               </Button>
             </form>
 
+            {/* Error Message */}
+            {error && (
+              <div className="max-w-md mx-auto p-4 bg-red-500/20 border border-red-500/40 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
+                <p className="text-red-400 text-[14px] font-sans text-center">
+                  {error}
+                </p>
+              </div>
+            )}
+
             {/* Additional Info */}
             <p className="text-white/50 text-[10px] md:text-[12px]">
               Join 2,500+ PR professionals who trust our insights • No spam, unsubscribe anytime
@@ -100,6 +155,7 @@ export default function BlogNewsletter() {
         </div>
       </div>
     </section>
+    </>
   );
 }
 
