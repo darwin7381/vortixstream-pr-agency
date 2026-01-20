@@ -157,6 +157,38 @@ psql postgresql://JL@localhost:5432/vortixpr -c "DELETE FROM faqs WHERE question
 | test@vortixpr.com | test123 | super_admin | API 測試 |
 | joey@cryptoxlab.com | （Google OAuth） | super_admin | 正式管理員 |
 
+## ⚠️ 測試禁令
+
+### 🚫 絕對禁止使用正式帳號測試
+
+**禁止使用以下帳號進行任何測試**：
+- ❌ joey@cryptoxlab.com（正式管理員帳號）
+- ❌ 任何真實用戶的帳號
+
+**必須使用專用測試帳號**：
+- ✅ test@vortixpr.com（專用測試帳號）
+- ✅ 或自行創建其他測試帳號（例如：testadmin@example.com）
+
+**違反此規則的後果**：
+- 可能破壞正式用戶資料
+- 可能造成真實用戶收到測試 email
+- 嚴重違反開發規範
+
+**創建測試帳號的標準方式**：
+```bash
+# 方法 1: 使用 psql 創建測試超級管理員
+HASH=$(cd backend && python3 -c "import bcrypt; print(bcrypt.hashpw('test123'.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'))")
+
+psql postgresql://JL@localhost:5432/vortixpr -c "
+INSERT INTO users (email, hashed_password, name, role, account_status, is_active, provider) 
+VALUES ('testadmin@vortixpr.com', '$HASH', 'Test Admin', 'super_admin', 'active', true, 'email') 
+ON CONFLICT (email) DO UPDATE SET role = 'super_admin', hashed_password = '$HASH';
+"
+
+# 方法 2: 使用 Backend 註冊 API（需要先建立 invitation）
+# 詳見下方完整測試流程
+```
+
 **如何生成密碼 hash**：
 ```bash
 cd backend && python3 -c "import bcrypt; print(bcrypt.hashpw('YOUR_PASSWORD'.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'))"

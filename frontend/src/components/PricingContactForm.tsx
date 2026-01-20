@@ -119,8 +119,8 @@ export default function PricingContactForm() {
         </div>
       )}
 
-      <div className="bg-[#191919] py-16 md:py-28">
-        <div className="max-w-7xl mx-auto px-5 xl:px-16">
+    <div className="bg-[#191919] py-16 md:py-28">
+      <div className="max-w-7xl mx-auto px-5 xl:px-16">
         {/* Section Title */}
         <div className="text-left mb-12 md:mb-16">
           <h2 className="text-white text-3xl sm:text-4xl md:text-5xl xl:text-6xl mb-6" style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 'medium', letterSpacing: '-0.02em' }}>

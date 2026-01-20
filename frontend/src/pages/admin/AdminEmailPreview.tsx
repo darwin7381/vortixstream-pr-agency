@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
-import { Mail, Eye, RefreshCw } from 'lucide-react';
+import { Mail, Eye, RefreshCw, Loader2 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { authenticatedGet } from '../../utils/apiClient';
+import { API_BASE_URL } from '../../config/api';
 
 interface EmailTemplate {
   id: string;
@@ -15,7 +16,8 @@ export default function AdminEmailPreview() {
   const [templates, setTemplates] = useState<EmailTemplate[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [previewHtml, setPreviewHtml] = useState<string>('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [previewLoading, setPreviewLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -24,9 +26,15 @@ export default function AdminEmailPreview() {
 
   const loadTemplates = async () => {
     try {
-      console.log('Loading templates...');
-      const data = await authenticatedGet('/api/admin/email-preview/list');
-      console.log('Templates loaded:', data);
+      setLoading(true);
+      const response = await authenticatedGet(`${API_BASE_URL}/admin/email-preview/list`);
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to load templates');
+      }
+      
+      const data = await response.json();
       
       if (data && data.templates && Array.isArray(data.templates)) {
         setTemplates(data.templates);
@@ -35,112 +43,130 @@ export default function AdminEmailPreview() {
         if (data.templates.length > 0) {
           loadPreview(data.templates[0].id);
         }
-      } else {
-        console.error('Invalid response:', data);
-        setError(`Invalid response format: ${JSON.stringify(data)}`);
       }
     } catch (err: any) {
       console.error('Load templates error:', err);
-      setError(err.message || 'Failed to load email templates. Check console for details.');
-    }
-  };
-
-  const loadPreview = async (templateId: string) => {
-    setLoading(true);
-    setError(null);
-    setSelectedTemplate(templateId);
-    
-    try {
-      // Use fetch directly for HTML response (authenticatedGet expects JSON)
-      const token = localStorage.getItem('access_token');
-      const response = await fetch(`/api/admin/email-preview/${templateId}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      if (!response.ok) throw new Error('Failed to load preview');
-      
-      const html = await response.text();
-      setPreviewHtml(html);
-    } catch (err) {
-      setError('Failed to load email preview');
-      console.error(err);
+      setError(err.message || 'Failed to load email templates');
     } finally {
       setLoading(false);
     }
   };
 
+  const loadPreview = async (templateId: string) => {
+    setPreviewLoading(true);
+    setError(null);
+    setSelectedTemplate(templateId);
+    
+    try {
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        throw new Error('No access token found');
+      }
+      
+      const response = await fetch(`${API_BASE_URL}/admin/email-preview/${templateId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to load preview: ${response.status}`);
+      }
+      
+      const html = await response.text();
+      setPreviewHtml(html);
+    } catch (err: any) {
+      setError(err.message || 'Failed to load email preview');
+      console.error('Preview error:', err);
+    } finally {
+      setPreviewLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="p-8 flex items-center justify-center min-h-[60vh]">
+          <div className="flex flex-col items-center gap-3">
+            <Loader2 size={48} className="text-orange-500 animate-spin" />
+            <p className="text-gray-600 dark:text-gray-400">Loading email templates...</p>
+          </div>
+        </div>
+      </AdminLayout>
+    );
+  }
+
   return (
     <AdminLayout>
-      <div className="space-y-6">
+      <div className="p-8">
         {/* Header */}
-        <div>
+        <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
-            <Mail className="w-8 h-8 text-[#FF7400]" />
-            <h1 
-              className="text-white text-[32px] font-bold"
-              style={{ fontFamily: 'Space Grotesk, sans-serif' }}
-            >
+            <Mail className="w-8 h-8 text-orange-500" />
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
               Email Template Preview
             </h1>
           </div>
-          <p className="text-white/60 text-[16px] font-sans">
+          <p className="text-gray-600 dark:text-gray-400">
             Preview and review all email templates with sample data
           </p>
         </div>
 
+        {error && (
+          <div className="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+            <p className="text-red-600 dark:text-red-400 text-sm">
+              ❌ {error}
+            </p>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Sidebar - Template List */}
           <div className="lg:col-span-1">
-            <div className="bg-white/5 border border-white/10 rounded-xl p-4">
-              <h2 className="text-white text-[16px] font-sans font-semibold mb-4">
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm">
+              <h2 className="text-gray-900 dark:text-white text-lg font-semibold mb-4">
                 Email Templates
               </h2>
               
               <div className="space-y-2">
-                {Array.isArray(templates) && templates.map((template) => (
+                {templates.map((template) => (
                   <button
                     key={template.id}
                     onClick={() => loadPreview(template.id)}
+                    disabled={previewLoading}
                     className={`
-                      w-full text-left p-3 rounded-lg transition-all
+                      w-full text-left p-3 rounded-lg transition-all border
                       ${selectedTemplate === template.id 
-                        ? 'bg-[#FF7400]/20 border-2 border-[#FF7400]' 
-                        : 'bg-white/5 border border-white/10 hover:bg-white/10'
+                        ? 'bg-orange-50 dark:bg-orange-900/20 border-orange-500 shadow-sm' 
+                        : 'bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'
                       }
+                      ${previewLoading ? 'opacity-50 cursor-not-allowed' : ''}
                     `}
                   >
-                    <div className="text-white text-[14px] font-sans font-semibold mb-1">
+                    <div className="text-gray-900 dark:text-white text-sm font-semibold mb-1">
                       {template.name}
                     </div>
-                    <div className="text-white/60 text-[12px] font-sans">
+                    <div className="text-gray-500 dark:text-gray-400 text-xs">
                       To: {template.recipient}
                     </div>
                   </button>
                 ))}
               </div>
 
-              {(!templates || templates.length === 0) && !error && (
-                <div className="text-white/40 text-[13px] text-center py-4">
-                  Loading templates...
-                </div>
-              )}
-
-              <div className="mt-4 pt-4 border-t border-white/10">
+              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <Button
                   onClick={() => selectedTemplate && loadPreview(selectedTemplate)}
-                  className="w-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all text-[13px]"
-                  disabled={!selectedTemplate || loading}
+                  className="w-full bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all text-sm"
+                  disabled={!selectedTemplate || previewLoading}
                 >
                   <RefreshCw size={14} className="mr-2" />
                   Refresh Preview
                 </Button>
               </div>
 
-              <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
-                <p className="text-blue-400 text-[12px] font-sans">
-                  💡 Templates are loaded with sample data for preview purposes
+              <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                <p className="text-blue-600 dark:text-blue-400 text-xs">
+                  💡 Templates use sample data for preview
                 </p>
               </div>
             </div>
@@ -148,47 +174,43 @@ export default function AdminEmailPreview() {
 
           {/* Main - Preview Area */}
           <div className="lg:col-span-3">
-            <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm">
               {/* Preview Header */}
-              <div className="bg-white/5 border-b border-white/10 p-4 flex items-center justify-between">
+              <div className="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700 p-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Eye className="w-5 h-5 text-[#FF7400]" />
-                  <span className="text-white text-[14px] font-sans font-semibold">
+                  <Eye className="w-5 h-5 text-orange-500" />
+                  <span className="text-gray-900 dark:text-white text-sm font-semibold">
                     {templates.find(t => t.id === selectedTemplate)?.name || 'Preview'}
                   </span>
                 </div>
                 
-                {loading && (
-                  <div className="flex items-center gap-2 text-white/60 text-[13px]">
-                    <RefreshCw size={14} className="animate-spin" />
+                {previewLoading && (
+                  <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 text-sm">
+                    <Loader2 size={14} className="animate-spin" />
                     Loading...
                   </div>
                 )}
               </div>
 
               {/* Preview Content */}
-              <div className="p-6 bg-white min-h-[600px]">
-                {error ? (
-                  <div className="text-center py-12">
-                    <div className="text-red-500 text-[16px] mb-4">
-                      ❌ {error}
-                    </div>
-                    <Button
-                      onClick={() => selectedTemplate && loadPreview(selectedTemplate)}
-                      className="bg-[#FF7400] text-white hover:bg-[#FF7400]/90"
-                    >
-                      Retry
-                    </Button>
+              <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-[600px]">
+                {previewHtml ? (
+                  <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <iframe
+                      srcDoc={previewHtml}
+                      className="w-full h-[700px] border-0"
+                      title="Email Preview"
+                      sandbox="allow-same-origin"
+                    />
                   </div>
-                ) : previewHtml ? (
-                  <iframe
-                    srcDoc={previewHtml}
-                    className="w-full h-[800px] border-0"
-                    title="Email Preview"
-                  />
                 ) : (
-                  <div className="text-center py-12 text-gray-500">
-                    Select a template to preview
+                  <div className="flex items-center justify-center h-[600px]">
+                    <div className="text-center">
+                      <Mail className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                      <p className="text-gray-500 dark:text-gray-400">
+                        Select a template to preview
+                      </p>
+                    </div>
                   </div>
                 )}
               </div>
@@ -196,25 +218,25 @@ export default function AdminEmailPreview() {
 
             {/* Template Info */}
             {selectedTemplate && (
-              <div className="mt-4 bg-white/5 border border-white/10 rounded-xl p-4">
-                <h3 className="text-white text-[14px] font-sans font-semibold mb-2">
+              <div className="mt-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm">
+                <h3 className="text-gray-900 dark:text-white text-sm font-semibold mb-3">
                   Template Information
                 </h3>
-                <div className="text-white/70 text-[13px] font-sans space-y-1">
-                  <p>
-                    <span className="text-white/50">Description:</span>{' '}
+                <div className="text-gray-600 dark:text-gray-400 text-sm space-y-2">
+                  <div>
+                    <span className="text-gray-500 dark:text-gray-500">Description:</span>{' '}
                     {templates.find(t => t.id === selectedTemplate)?.description}
-                  </p>
-                  <p>
-                    <span className="text-white/50">Recipient:</span>{' '}
+                  </div>
+                  <div>
+                    <span className="text-gray-500 dark:text-gray-500">Recipient:</span>{' '}
                     {templates.find(t => t.id === selectedTemplate)?.recipient}
-                  </p>
-                  <p>
-                    <span className="text-white/50">Template File:</span>{' '}
-                    <code className="bg-white/10 px-2 py-0.5 rounded text-[#FF7400]">
+                  </div>
+                  <div>
+                    <span className="text-gray-500 dark:text-gray-500">Template File:</span>{' '}
+                    <code className="bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded text-orange-600 dark:text-orange-400 text-xs">
                       app/templates/emails/{selectedTemplate}/*.html
                     </code>
-                  </p>
+                  </div>
                 </div>
               </div>
             )}
