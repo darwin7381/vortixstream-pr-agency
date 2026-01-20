@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { Mail, Calendar, Clock, CheckCircle, XCircle, RotateCcw, Trash2, Shield } from 'lucide-react';
 import { API_BASE_URL } from '../../config/api';
+import { authenticatedGet, authenticatedPost, authenticatedDelete } from '../../utils/apiClient';
 
 interface Invitation {
   id: number;
@@ -20,8 +21,6 @@ export default function AdminInvitations() {
   const [isLoading, setIsLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<string>('pending');
 
-  const token = localStorage.getItem('access_token');
-
   useEffect(() => {
     loadInvitations();
   }, [statusFilter]);
@@ -29,9 +28,7 @@ export default function AdminInvitations() {
   const loadInvitations = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/invitations?status=${statusFilter}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await authenticatedGet(`${API_BASE_URL}/admin/invitations?status=${statusFilter}`);
       
       if (response.ok) {
         const data = await response.json();
@@ -47,10 +44,7 @@ export default function AdminInvitations() {
     if (!confirm('Are you sure you want to resend invitation email？')) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/invitations${invitationId}/resend`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await authenticatedPost(`${API_BASE_URL}/admin/invitations/${invitationId}/resend`);
 
       if (response.ok) {
         alert('Invitation email resent successfully');
@@ -68,10 +62,7 @@ export default function AdminInvitations() {
     if (!confirm(`Are you sure you want to cancel invitation for ${email} ?`)) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/invitations${invitationId}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await authenticatedDelete(`${API_BASE_URL}/admin/invitations/${invitationId}`);
 
       if (response.ok) {
         alert('Invitation cancelled successfully');

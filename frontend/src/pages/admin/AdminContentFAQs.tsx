@@ -1,20 +1,19 @@
 import { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { contentAPI, type FAQ } from '../../api/client';
+import { authenticatedGet, authenticatedPost, authenticatedPut, authenticatedDelete } from '../../utils/apiClient';
 import { useAuth } from '../../contexts/AuthContext';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 
 export default function AdminContentFAQs() {
-  const token = localStorage.getItem('access_token');
   const [faqs, setFaqs] = useState<FAQ[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingFAQ, setEditingFAQ] = useState<FAQ | null>(null);
   const [showModal, setShowModal] = useState(false);
 
   const fetchFAQs = async () => {
-    if (!token) return;
     try {
-      const data = await contentAPI.getAllFAQs(token);
+      const data = await contentAPI.getAllFAQs();
       setFaqs(data);
     } catch (error) {
       console.error('Failed to fetch FAQs:', error);
@@ -25,13 +24,13 @@ export default function AdminContentFAQs() {
 
   useEffect(() => {
     fetchFAQs();
-  }, [token]);
+  }, []);
 
   const handleDelete = async (faq: FAQ) => {
-    if (!token || !confirm(`Are you sure you want to delete "${faq.question}"?`)) return;
+    if (!confirm(`Are you sure you want to delete "${faq.question}"?`)) return;
     
     try {
-      await contentAPI.deleteFAQ(faq.id, token);
+      await contentAPI.deleteFAQ(faq.id);
       alert('FAQ deleted successfully');
       fetchFAQs();
     } catch (error) {
@@ -42,7 +41,6 @@ export default function AdminContentFAQs() {
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!token) return;
 
     const formData = new FormData(e.currentTarget);
     const data = {
@@ -54,10 +52,10 @@ export default function AdminContentFAQs() {
 
     try {
       if (editingFAQ) {
-        await contentAPI.updateFAQ(editingFAQ.id, data, token);
+        await contentAPI.updateFAQ(editingFAQ.id, data);
         alert('FAQ updated successfully');
       } else {
-        await contentAPI.createFAQ(data, token);
+        await contentAPI.createFAQ(data);
         alert('FAQ created successfully');
       }
       setShowModal(false);

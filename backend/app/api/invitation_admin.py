@@ -2,13 +2,16 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from datetime import datetime, timedelta
 from typing import List
 import secrets
+import logging
 
 from app.models.invitation import InvitationCreate, InvitationResponse
 from app.utils.security import get_current_user, require_admin
 from app.models.user import TokenData
 from app.core.database import db
 from app.config import settings
-from app.services.invitation_email import send_invitation_email
+from app.services.email_service import email_service
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/admin", tags=["Admin - Invitations"])
 
@@ -107,7 +110,7 @@ async def create_invitation(
         # 發送邀請郵件
         try:
             invitation_url = f"{settings.FRONTEND_URL}/register?invitation={token}"
-            await send_invitation_email(
+            await email_service.send_invitation_email(
                 to_email=invitation.email,
                 inviter_name=current_user.email.split('@')[0],
                 invitation_url=invitation_url,
@@ -115,7 +118,7 @@ async def create_invitation(
             )
         except Exception as e:
             # 郵件發送失敗不影響邀請創建
-            print(f"Failed to send invitation email: {e}")
+            logger.warning(f"Failed to send invitation email: {e}")
         
         return InvitationResponse(**dict(inv))
 
@@ -206,16 +209,16 @@ async def resend_invitation(
         # 重新發送郵件
         try:
             invitation_url = f"{settings.FRONTEND_URL}/register?invitation={invitation['token']}"
-            await send_invitation_email(
+            await email_service.send_invitation_email(
                 to_email=invitation["email"],
                 inviter_name=current_user.email.split('@')[0],
                 invitation_url=invitation_url,
                 role=invitation["role"]
             )
-            return {"message": "邀請郵件已重新發送"}
+            return {"message": "Invitation email has been resent"}
         except Exception as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"發送郵件失敗: {str(e)}"
+                detail=f"Failed to send email: {str(e)}"
             )
 

@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { Plus, Edit, Trash2, Image as ImageIcon } from 'lucide-react';
 import ImagePicker from '../../components/admin/ImagePicker';
 import { ADMIN_API } from '../../config/api';
+import { authenticatedGet, authenticatedPost, authenticatedPut, authenticatedPatch, authenticatedDelete } from '../../utils/apiClient';
 
 interface ClientLogo {
   id: number;
@@ -15,7 +16,6 @@ interface ClientLogo {
 }
 
 export default function AdminContentClients() {
-  const token = localStorage.getItem('access_token');
   const [clients, setClients] = useState<ClientLogo[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<ClientLogo | null>(null);
@@ -24,11 +24,8 @@ export default function AdminContentClients() {
   const [selectedLogoUrl, setSelectedLogoUrl] = useState('');
 
   const fetchData = async () => {
-    if (!token) return;
     try {
-      const response = await fetch(`${ADMIN_API}/content/clients`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await authenticatedGet(`${ADMIN_API}/content/clients`);
       const data = await response.json();
       setClients(data);
     } catch (error) {
@@ -40,16 +37,13 @@ export default function AdminContentClients() {
 
   useEffect(() => {
     fetchData();
-  }, [token]);
+  }, []);
 
   const handleDelete = async (item: ClientLogo) => {
-    if (!token || !confirm(`Are you sure you want to delete「${item.name}」?`)) return;
+    if ( !confirm(`Are you sure you want to delete「${item.name}」?`)) return;
     
     try {
-      await fetch(`${ADMIN_API}/content/clients/${item.id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      await authenticatedDelete(`${ADMIN_API}/content/clients/${item.id}`);
       alert('Deleted successfully');
       fetchData();
     } catch (error) {
@@ -59,7 +53,6 @@ export default function AdminContentClients() {
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!token) return;
 
     const formData = new FormData(e.currentTarget);
     const data = {
@@ -72,18 +65,10 @@ export default function AdminContentClients() {
 
     try {
       if (editing) {
-        await fetch(`${ADMIN_API}/content/clients/${editing.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          body: JSON.stringify(data),
-        });
+        await authenticatedPut(`${ADMIN_API}/content/clients/${editing.id}`, data);
         alert('Updated successfully');
       } else {
-        await fetch(`${ADMIN_API}/content/clients`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          body: JSON.stringify(data),
-        });
+        await authenticatedPost(`${ADMIN_API}/content/clients`, data);
         alert('Created successfully');
       }
       setShowModal(false);

@@ -5,16 +5,14 @@ import { useAuth } from '../../contexts/AuthContext';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 
 export default function AdminContentServices() {
-  const token = localStorage.getItem('access_token');
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingItem, setEditingItem] = useState<Service | null>(null);
   const [showModal, setShowModal] = useState(false);
 
   const fetchData = async () => {
-    if (!token) return;
     try {
-      const data = await contentAPI.getAllServices(token);
+      const data = await contentAPI.getAllServices();
       setServices(data);
     } catch (error) {
       console.error('Failed to fetch services:', error);
@@ -25,13 +23,13 @@ export default function AdminContentServices() {
 
   useEffect(() => {
     fetchData();
-  }, [token]);
+  }, []);
 
   const handleDelete = async (item: Service) => {
-    if (!token || !confirm(`Are you sure you want to delete「${item.title}」?`)) return;
+    if (!confirm(`Are you sure you want to delete「${item.title}」?`)) return;
     
     try {
-      await contentAPI.deleteService(item.id, token);
+      await contentAPI.deleteService(item.id);
       alert('ServiceDeleted successfully');
       fetchData();
     } catch (error) {
@@ -42,7 +40,6 @@ export default function AdminContentServices() {
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!token) return;
 
     const formData = new FormData(e.currentTarget);
     const data = {
@@ -55,10 +52,10 @@ export default function AdminContentServices() {
 
     try {
       if (editingItem) {
-        await contentAPI.updateService(editingItem.id, data, token);
+        await contentAPI.updateService(editingItem.id, data);
         alert('ServiceUpdated successfully');
       } else {
-        await contentAPI.createService(data, token);
+        await contentAPI.createService(data);
         alert('ServiceCreated successfully');
       }
       setShowModal(false);

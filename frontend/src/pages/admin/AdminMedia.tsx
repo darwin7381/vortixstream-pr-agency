@@ -6,6 +6,7 @@ import {
   Search, Trash2, Grid, List as ListIcon, Copy, ZoomIn, RefreshCw
 } from 'lucide-react';
 import { ADMIN_API } from '../../config/api';
+import { authenticatedGet, authenticatedPost, authenticatedDelete } from '../../utils/apiClient';
 
 interface MediaFile {
   id: number;
@@ -53,9 +54,9 @@ export default function AdminMedia() {
   const fetchData = async () => {
     try {
       const [filesData, foldersData, statsData] = await Promise.all([
-        fetch(`${ADMIN_API}/media/files?folder=${selectedFolder !== 'all' ? selectedFolder : ''}&limit=200`).then(r => r.json()),
-        fetch(`${ADMIN_API}/media/folders`).then(r => r.json()),
-        fetch(`${ADMIN_API}/media/stats`).then(r => r.json()),
+        authenticatedGet(`${ADMIN_API}/media/files?folder=${selectedFolder !== 'all' ? selectedFolder : ''}&limit=200`).then(r => r.json()),
+        authenticatedGet(`${ADMIN_API}/media/folders`).then(r => r.json()),
+        authenticatedGet(`${ADMIN_API}/media/stats`).then(r => r.json()),
       ]);
       
       setFiles(filesData);
@@ -116,10 +117,15 @@ export default function AdminMedia() {
         formData.append('file', file);
         formData.append('folder', uploadFolder);
         
-        await fetch(`${ADMIN_API}/media/upload`, {
+        const token = localStorage.getItem('access_token');
+        const response = await fetch(`${ADMIN_API}/media/upload`, {
           method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
           body: formData,
         });
+        if (!response.ok) throw new Error('Upload failed');
       }
       
       alert(`Successfully uploaded ${filesToUpload.length} files to「${uploadFolder}」folder`);
@@ -135,9 +141,7 @@ export default function AdminMedia() {
   const handleDelete = async (file: MediaFile) => {
     if (confirm(`Are you sure you want to delete「${file.original_filename}」?`)) {
       try {
-        await fetch(`${ADMIN_API}/media/files/${file.id}`, {
-          method: 'DELETE',
-        });
+        await authenticatedDelete(`${ADMIN_API}/media/files/${file.id}`);
         alert('File deleted successfully');
         setViewingImage(null);
         fetchData();
@@ -150,11 +154,7 @@ export default function AdminMedia() {
 
   const handleUpdate = async (file: MediaFile, data: { alt_text: string; caption: string }) => {
     try {
-      await fetch(`${ADMIN_API}/media/files/${file.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
+      await authenticatedPost(`${ADMIN_API}/media/files/${file.id}`, data);
       
       alert('Information updated successfully');
       fetchData();
@@ -183,9 +183,7 @@ export default function AdminMedia() {
     setLoading(true);
     
     try {
-      const response = await fetch(`${ADMIN_API}/media/sync-from-r2`, {
-        method: 'POST',
-      });
+      const response = await authenticatedPost(`${ADMIN_API}/media/sync-from-r2`);
       
       const result = await response.json();
       
@@ -212,8 +210,12 @@ export default function AdminMedia() {
       const formData = new FormData();
       formData.append('folder_name', folderName);
       
+      const token = localStorage.getItem('access_token');
       const response = await fetch(`${ADMIN_API}/media/folders`, {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
         body: formData,
       });
       

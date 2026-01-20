@@ -6,7 +6,6 @@ import { Plus, Edit, Trash2, Image as ImageIcon } from 'lucide-react';
 import ImagePicker from '../../components/admin/ImagePicker';
 
 export default function AdminContentTestimonials() {
-  const token = localStorage.getItem('access_token');
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingItem, setEditingItem] = useState<Testimonial | null>(null);
@@ -15,9 +14,8 @@ export default function AdminContentTestimonials() {
   const [selectedAvatarUrl, setSelectedAvatarUrl] = useState('');
 
   const fetchData = async () => {
-    if (!token) return;
     try {
-      const data = await contentAPI.getAllTestimonials(token);
+      const data = await contentAPI.getAllTestimonials();
       setTestimonials(data);
     } catch (error) {
       console.error('Failed to fetch testimonials:', error);
@@ -28,7 +26,7 @@ export default function AdminContentTestimonials() {
 
   useEffect(() => {
     fetchData();
-  }, [token]);
+  }, []);
 
   // 當 modal 開啟或 editingItem 改變時，重置 selectedAvatarUrl
   useEffect(() => {
@@ -38,10 +36,10 @@ export default function AdminContentTestimonials() {
   }, [showModal, editingItem]);
 
   const handleDelete = async (item: Testimonial) => {
-    if (!token || !confirm(`Are you sure you want to delete ${item.author_name} ?`)) return;
+    if ( !confirm(`Are you sure you want to delete ${item.author_name} ?`)) return;
     
     try {
-      await contentAPI.deleteTestimonial(item.id, token);
+      await contentAPI.deleteTestimonial(item.id);
       alert('testimonialDeleted successfully');
       fetchData();
     } catch (error) {
@@ -52,7 +50,6 @@ export default function AdminContentTestimonials() {
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!token) return;
 
     const formData = new FormData(e.currentTarget);
     const data = {
@@ -67,10 +64,10 @@ export default function AdminContentTestimonials() {
 
     try {
       if (editingItem) {
-        await contentAPI.updateTestimonial(editingItem.id, data, token);
+        await contentAPI.updateTestimonial(editingItem.id, data);
         alert('testimonialUpdated successfully');
       } else {
-        await contentAPI.createTestimonial(data, token);
+        await contentAPI.createTestimonial(data);
         alert('testimonialCreated successfully');
       }
       setShowModal(false);

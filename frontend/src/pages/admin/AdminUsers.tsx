@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { User, Shield, Mail, Calendar, Search, UserCheck, UserX, Trash2, XCircle, RefreshCw, Ban } from 'lucide-react';
 import { API_BASE_URL } from '../../config/api';
+import { authenticatedGet, authenticatedPatch, authenticatedPost, authenticatedDelete } from '../../utils/apiClient';
 
 type UserRole = 'user' | 'publisher' | 'admin' | 'super_admin';
 
@@ -39,8 +40,6 @@ export default function AdminUsers() {
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState<UserRole>('user');
 
-  const token = localStorage.getItem('access_token');
-
   useEffect(() => {
     loadUsers();
     loadStats();
@@ -54,9 +53,7 @@ export default function AdminUsers() {
       if (searchTerm) params.append('search', searchTerm);
       params.append('status', statusFilter);
 
-      const response = await fetch(`${API_BASE_URL}/admin/users?${params}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await authenticatedGet(`${API_BASE_URL}/admin/users?${params}`);
       
       if (response.ok) {
         const data = await response.json();
@@ -82,10 +79,7 @@ export default function AdminUsers() {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/activate`, {
-        method: 'PATCH',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await authenticatedPatch(`${API_BASE_URL}/admin/users/${userId}/activate`);
 
       if (response.ok) {
         alert('User已Reactivate');
@@ -103,9 +97,7 @@ export default function AdminUsers() {
 
   const loadStats = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/users/stats`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await authenticatedGet(`${API_BASE_URL}/admin/users/stats`);
       
       if (response.ok) {
         const data = await response.json();
@@ -146,10 +138,7 @@ export default function AdminUsers() {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/role?role=${newRole}`, {
-        method: 'PATCH',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await authenticatedPatch(`${API_BASE_URL}/admin/users/${userId}/role?role=${newRole}`);
 
       if (response.ok) {
         alert('RoleUpdated successfully');
@@ -174,10 +163,7 @@ export default function AdminUsers() {
 
     try {
       // 軟Delete（Deactivate帳號）
-      const response = await fetch(`${API_BASE_URL}/admin/users/${userId}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await authenticatedDelete(`${API_BASE_URL}/admin/users/${userId}`);
 
       if (response.ok) {
         const result = await response.json();
@@ -200,10 +186,7 @@ export default function AdminUsers() {
     if (!reason) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/ban?reason=${encodeURIComponent(reason)}`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await authenticatedPost(`${API_BASE_URL}/admin/users/${userId}/ban?reason=${encodeURIComponent(reason)}`);
 
       if (response.ok) {
         alert('UserBanned');
@@ -223,10 +206,7 @@ export default function AdminUsers() {
     if (!confirm(`Are you sure you want to 解除對 ${email} 的Ban？`)) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/unban`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await authenticatedDelete(`${API_BASE_URL}/admin/users/${userId}/unban`);
 
       if (response.ok) {
         alert('已解除Ban');
@@ -249,16 +229,9 @@ export default function AdminUsers() {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/invitations/`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email: inviteEmail,
-          role: inviteRole
-        })
+      const response = await authenticatedPost(`${API_BASE_URL}/admin/invitations/`, {
+        email: inviteEmail,
+        role: inviteRole
       });
 
       if (response.ok) {

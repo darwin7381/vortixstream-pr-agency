@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { ADMIN_API } from '../../config/api';
+import { authenticatedGet, authenticatedPost, authenticatedPut, authenticatedPatch, authenticatedDelete } from '../../utils/apiClient';
 import { Save, Plus, Edit, Trash2, Image as ImageIcon } from 'lucide-react';
 import ImagePicker from '../../components/admin/ImagePicker';
 
@@ -30,7 +31,6 @@ interface MediaLogo {
 }
 
 export default function AdminHeroManagement() {
-  const token = localStorage.getItem('access_token');
   const [currentPage, setCurrentPage] = useState('home');
   const [heroData, setHeroData] = useState<HeroSection | null>(null);
   const [logos, setLogos] = useState<MediaLogo[]>([]);
@@ -40,11 +40,10 @@ export default function AdminHeroManagement() {
   const [selectedLogoUrl, setSelectedLogoUrl] = useState('');
 
   const fetchData = async () => {
-    if (!token) return;
     try {
       const [hero, logosList] = await Promise.all([
-        fetch(`${ADMIN_API}/content/hero`, { headers: { 'Authorization': `Bearer ${token}` }}).then(r => r.json()),
-        fetch(`${ADMIN_API}/content/hero/${currentPage}/logos`, { headers: { 'Authorization': `Bearer ${token}` }}).then(r => r.json())
+        authenticatedGet(`${ADMIN_API}/content/hero`).then(r => r.json()),
+        authenticatedGet(`${ADMIN_API}/content/hero/${currentPage}/logos`).then(r => r.json())
       ]);
       const pageHero = hero.find((h: any) => h.page === currentPage);
       setHeroData(pageHero || null);
@@ -60,7 +59,6 @@ export default function AdminHeroManagement() {
 
   const handleSaveHero = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!token) return;
     const formData = new FormData(e.currentTarget);
     const data = {
       title_prefix: formData.get('title_prefix') as string,
@@ -72,18 +70,13 @@ export default function AdminHeroManagement() {
       cta_secondary_text: formData.get('cta_secondary_text') as string,
       cta_secondary_url: formData.get('cta_secondary_url') as string,
     };
-    await fetch(`${ADMIN_API}/content/hero/${currentPage}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-      body: JSON.stringify(data),
-    });
+    await authenticatedPut(`${ADMIN_API}/content/hero/${currentPage}`, data);
     alert('Updated');
     fetchData();
   };
 
   const handleSaveLogo = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!token) return;
     const formData = new FormData(e.currentTarget);
     const data = {
       hero_page: currentPage,
@@ -98,15 +91,11 @@ export default function AdminHeroManagement() {
       is_active: formData.get('is_active') === 'on',
     };
     
-    const url = editingLogo 
-      ? `${ADMIN_API}/content/hero-logos/${editingLogo.id}`
-      : `${ADMIN_API}/content/hero/${currentPage}/logos`;
-    
-    await fetch(url, {
-      method: editingLogo ? 'PUT' : 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-      body: JSON.stringify(data),
-    });
+    if (editingLogo) {
+      await authenticatedPut(`${ADMIN_API}/content/hero-logos/${editingLogo.id}`, data);
+    } else {
+      await authenticatedPost(`${ADMIN_API}/content/hero/${currentPage}/logos`, data);
+    }
     setShowLogoModal(false);
     setEditingLogo(null);
     setSelectedLogoUrl('');
@@ -114,11 +103,8 @@ export default function AdminHeroManagement() {
   };
 
   const handleDeleteLogo = async (logo: MediaLogo) => {
-    if (!token || !confirm(`Delete ${logo.name}?`)) return;
-    await fetch(`${ADMIN_API}/content/hero-logos/${logo.id}`, {
-      method: 'DELETE',
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
+    if ( !confirm(`Delete ${logo.name}?`)) return;
+    await authenticatedDelete(`${ADMIN_API}/content/hero-logos/${logo.id}`);
     fetchData();
   };
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { Settings as SettingsIcon, Save, Info } from 'lucide-react';
 import { API_BASE_URL } from '../../config/api';
+import { authenticatedGet, authenticatedPatch } from '../../utils/apiClient';
 
 interface Setting {
   setting_key: string;
@@ -19,8 +20,6 @@ export default function AdminSettings() {
   const [autoDelete, setAutoDelete] = useState(false);
   const [deleteDays, setDeleteDays] = useState('30');
 
-  const token = localStorage.getItem('access_token');
-
   useEffect(() => {
     loadSettings();
   }, []);
@@ -28,9 +27,7 @@ export default function AdminSettings() {
   const loadSettings = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/settings`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await authenticatedGet(`${API_BASE_URL}/admin/settings`);
       
       if (response.ok) {
         const data = await response.json();
@@ -53,24 +50,16 @@ export default function AdminSettings() {
     setIsSaving(true);
     try {
       // Update auto-delete settings
-      await fetch(`${API_BASE_URL}/admin/settingsauto_delete_deactivated_users`, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ setting_value: String(autoDelete) })
-      });
+      await authenticatedPatch(
+        `${API_BASE_URL}/admin/settings/auto_delete_deactivated_users`,
+        { setting_value: String(autoDelete) }
+      );
 
       // Update days setting
-      await fetch(`${API_BASE_URL}/admin/settingsauto_delete_days`, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ setting_value: deleteDays })
-      });
+      await authenticatedPatch(
+        `${API_BASE_URL}/admin/settings/auto_delete_days`,
+        { setting_value: deleteDays }
+      );
 
       alert('Settings saved successfully');
       loadSettings();

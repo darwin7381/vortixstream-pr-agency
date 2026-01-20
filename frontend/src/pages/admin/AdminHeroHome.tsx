@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { ADMIN_API, PUBLIC_API } from '../../config/api';
+import { authenticatedGet, authenticatedPost, authenticatedPut, authenticatedPatch, authenticatedDelete } from '../../utils/apiClient';
 import { Save, Plus, Trash2, Image as ImageIcon, Edit } from 'lucide-react';
 import ImagePicker from '../../components/admin/ImagePicker';
 
 export default function AdminHeroHome() {
-  const token = localStorage.getItem('access_token');
   const [heroData, setHeroData] = useState<any>(null);
   const [typewriterTexts, setTypewriterTexts] = useState<string[]>(['Web3 & AI']);
   const [logos, setLogos] = useState<any[]>([]);
@@ -33,7 +33,6 @@ export default function AdminHeroHome() {
 
   const handleSaveHero = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!token) return;
     const formData = new FormData(e.currentTarget);
     const data = {
       title_prefix: formData.get('title_prefix') as string,
@@ -47,11 +46,7 @@ export default function AdminHeroHome() {
       cta_secondary_url: formData.get('cta_secondary_url') as string,
       cta_secondary_url_mobile: formData.get('cta_secondary_url_mobile') as string,
     };
-    await fetch(`${ADMIN_API}/content/hero/home`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-      body: JSON.stringify(data),
-    });
+    await authenticatedPut(`${ADMIN_API}/content/hero/home`, data);
     alert('Saved');
     fetchData();
   };
@@ -164,7 +159,7 @@ export default function AdminHeroHome() {
                     <button type="button" onClick={() => { setEditingLogo(logo); setSelectedUrl(logo.logo_url); setShowLogoModal(true); }} className="flex-1 p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded">
                       <Edit size={16} />
                     </button>
-                    <button type="button" onClick={async () => { if (confirm(`Delete ${logo.name}?`) && token) { await fetch(`${ADMIN_API}/content/hero-logos/${logo.id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` }}); fetchData(); }}} className="flex-1 p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded">
+                    <button type="button" onClick={async () => { if (confirm(`Delete ${logo.name}?`)) { await authenticatedDelete(`${ADMIN_API}/content/hero-logos/${logo.id}`); fetchData(); }}} className="flex-1 p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded">
                       <Trash2 size={16} />
                     </button>
                   </div>
@@ -182,7 +177,6 @@ export default function AdminHeroHome() {
               </div>
               <form onSubmit={async (e) => {
                 e.preventDefault();
-                if (!token) return;
                 const formData = new FormData(e.currentTarget);
                 const data = {
                   hero_page: 'home',
@@ -196,12 +190,11 @@ export default function AdminHeroHome() {
                   display_order: parseInt(formData.get('display_order') as string),
                   is_active: true,
                 };
-                const url = editingLogo ? `${ADMIN_API}/content/hero-logos/${editingLogo.id}` : `${ADMIN_API}/content/hero/home/logos`;
-                await fetch(url, {
-                  method: editingLogo ? 'PUT' : 'POST',
-                  headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                  body: JSON.stringify(data),
-                });
+                if (editingLogo) {
+                  await authenticatedPut(`${ADMIN_API}/content/hero-logos/${editingLogo.id}`, data);
+                } else {
+                  await authenticatedPost(`${ADMIN_API}/content/hero/home/logos`, data);
+                }
                 setShowLogoModal(false);
                 fetchData();
               }} className="p-6 space-y-4">

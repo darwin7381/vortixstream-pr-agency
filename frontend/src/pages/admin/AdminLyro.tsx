@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { ADMIN_API, PUBLIC_API } from '../../config/api';
+import { authenticatedGet, authenticatedPost, authenticatedPut, authenticatedPatch, authenticatedDelete } from '../../utils/apiClient';
 import { Save, Plus, Edit, Trash2, Image as ImageIcon } from 'lucide-react';
 import ImagePicker from '../../components/admin/ImagePicker';
 
 export default function AdminLyro() {
-  const token = localStorage.getItem('access_token');
   const [lyroData, setLyroData] = useState<any>(null);
   const [features, setFeatures] = useState<any[]>([]);
   const [editingFeature, setEditingFeature] = useState<any>(null);
@@ -29,7 +29,6 @@ export default function AdminLyro() {
 
   const handleSaveLyro = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!token) return;
     const formData = new FormData(e.currentTarget);
     const data = {
       label: formData.get('label') as string,
@@ -38,18 +37,13 @@ export default function AdminLyro() {
       description: formData.get('description') as string,
       background_image_url: formData.get('background_image_url') as string,
     };
-    await fetch(`${ADMIN_API}/content/lyro`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-      body: JSON.stringify(data),
-    });
+    await authenticatedPut(`${ADMIN_API}/content/lyro`, data);
     alert('Saved');
     fetchData();
   };
 
   const handleSaveFeature = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!token) return;
     const formData = new FormData(e.currentTarget);
     const data = {
       text: formData.get('text') as string,
@@ -57,26 +51,19 @@ export default function AdminLyro() {
       is_active: formData.get('is_active') === 'on',
     };
     
-    const url = editingFeature 
-      ? `${ADMIN_API}/content/lyro/features/${editingFeature.id}`
-      : `${ADMIN_API}/content/lyro/features`;
-    
-    await fetch(url, {
-      method: editingFeature ? 'PUT' : 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-      body: JSON.stringify(data),
-    });
+    if (editingFeature) {
+      await authenticatedPut(`${ADMIN_API}/content/lyro/features/${editingFeature.id}`, data);
+    } else {
+      await authenticatedPost(`${ADMIN_API}/content/lyro/features`, data);
+    }
     setShowModal(false);
     setEditingFeature(null);
     fetchData();
   };
 
   const handleDeleteFeature = async (feat: any) => {
-    if (!token || !confirm(`Delete ${feat.text}?`)) return;
-    await fetch(`${ADMIN_API}/content/lyro/features/${feat.id}`, {
-      method: 'DELETE',
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
+    if ( !confirm(`Delete ${feat.text}?`)) return;
+    await authenticatedDelete(`${ADMIN_API}/content/lyro/features/${feat.id}`);
     fetchData();
   };
 

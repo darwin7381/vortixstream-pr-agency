@@ -7,9 +7,17 @@
  * - /admin/ - 管理操作（需認證，不快取）
  * 
  * 注意：統一使用 config/api.ts 中的配置
+ * 所有需要認證的請求都使用 authenticatedFetch 系列函數
  */
 
 import { API_BASE_URL, PUBLIC_API, WRITE_API, ADMIN_API } from '../config/api';
+import {
+  authenticatedGet,
+  authenticatedPost,
+  authenticatedPut,
+  authenticatedPatch,
+  authenticatedDelete,
+} from '../utils/apiClient';
 
 // ==================== Types ====================
 
@@ -169,7 +177,7 @@ export const blogAPI = {
    * 取得單篇文章（通過 ID - Admin 專用）
    */
   async getPostById(id: number): Promise<BlogPost> {
-    const response = await fetch(`${ADMIN_API}/blog/posts/by-id/${id}`);
+    const response = await authenticatedGet(`${ADMIN_API}/blog/posts/by-id/${id}`);
     if (!response.ok) throw new Error('Failed to fetch blog post');
     return response.json();
   },
@@ -178,11 +186,7 @@ export const blogAPI = {
    * 創建文章（Admin 專用）
    */
   async createPost(data: Omit<BlogPost, 'id' | 'slug' | 'created_at' | 'updated_at' | 'published_at'>): Promise<BlogPost> {
-    const response = await fetch(`${ADMIN_API}/blog/posts`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
+    const response = await authenticatedPost(`${ADMIN_API}/blog/posts`, data);
     if (!response.ok) throw new Error('Failed to create blog post');
     return response.json();
   },
@@ -191,11 +195,7 @@ export const blogAPI = {
    * 更新文章（Admin 專用）
    */
   async updatePost(id: number, data: Partial<BlogPost>): Promise<BlogPost> {
-    const response = await fetch(`${ADMIN_API}/blog/posts/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
+    const response = await authenticatedPut(`${ADMIN_API}/blog/posts/${id}`, data);
     if (!response.ok) throw new Error('Failed to update blog post');
     return response.json();
   },
@@ -204,9 +204,7 @@ export const blogAPI = {
    * 刪除文章（Admin 專用）
    */
   async deletePost(id: number): Promise<void> {
-    const response = await fetch(`${ADMIN_API}/blog/posts/${id}`, {
-      method: 'DELETE',
-    });
+    const response = await authenticatedDelete(`${ADMIN_API}/blog/posts/${id}`);
     if (!response.ok) throw new Error('Failed to delete blog post');
   },
 
@@ -254,7 +252,7 @@ export const pricingAPI = {
    * 取得單個定價方案（通過 ID - Admin 專用）
    */
   async getPackageById(id: number): Promise<PricingPackage> {
-    const response = await fetch(`${ADMIN_API}/pricing/packages/by-id/${id}`);
+    const response = await authenticatedGet(`${ADMIN_API}/pricing/packages/by-id/${id}`);
     if (!response.ok) throw new Error('Failed to fetch pricing package');
     return response.json();
   },
@@ -263,11 +261,7 @@ export const pricingAPI = {
    * 創建定價方案（Admin 專用）
    */
   async createPackage(data: Omit<PricingPackage, 'id' | 'slug' | 'created_at' | 'updated_at'>): Promise<PricingPackage> {
-    const response = await fetch(`${ADMIN_API}/pricing/packages`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
+    const response = await authenticatedPost(`${ADMIN_API}/pricing/packages`, data);
     if (!response.ok) throw new Error('Failed to create pricing package');
     return response.json();
   },
@@ -276,11 +270,7 @@ export const pricingAPI = {
    * 更新定價方案（Admin 專用）
    */
   async updatePackage(id: number, data: Partial<PricingPackage>): Promise<PricingPackage> {
-    const response = await fetch(`${ADMIN_API}/pricing/packages/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
+    const response = await authenticatedPut(`${ADMIN_API}/pricing/packages/${id}`, data);
     if (!response.ok) throw new Error('Failed to update pricing package');
     return response.json();
   },
@@ -289,9 +279,7 @@ export const pricingAPI = {
    * 刪除定價方案（Admin 專用）
    */
   async deletePackage(id: number): Promise<void> {
-    const response = await fetch(`${ADMIN_API}/pricing/packages/${id}`, {
-      method: 'DELETE',
-    });
+    const response = await authenticatedDelete(`${ADMIN_API}/pricing/packages/${id}`);
     if (!response.ok) throw new Error('Failed to delete pricing package');
   },
 };
@@ -321,7 +309,7 @@ export const prPackagesAPI = {
    * 取得單個 PR Package（通過 ID - Admin 專用）
    */
   async getPackageById(id: number): Promise<PRPackage> {
-    const response = await fetch(`${ADMIN_API}/pr-packages/by-id/${id}`);
+    const response = await authenticatedGet(`${ADMIN_API}/pr-packages/by-id/${id}`);
     if (!response.ok) throw new Error('Failed to fetch PR package');
     return response.json();
   },
@@ -330,11 +318,7 @@ export const prPackagesAPI = {
    * 創建 PR Package（Admin 專用）
    */
   async createPackage(data: Omit<PRPackage, 'id' | 'slug' | 'created_at' | 'updated_at'>): Promise<PRPackage> {
-    const response = await fetch(`${ADMIN_API}/pr-packages/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
+    const response = await authenticatedPost(`${ADMIN_API}/pr-packages/`, data);
     if (!response.ok) throw new Error('Failed to create PR package');
     return response.json();
   },
@@ -343,11 +327,7 @@ export const prPackagesAPI = {
    * 更新 PR Package（Admin 專用）
    */
   async updatePackage(id: number, data: Partial<PRPackage>): Promise<PRPackage> {
-    const response = await fetch(`${ADMIN_API}/pr-packages/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
+    const response = await authenticatedPut(`${ADMIN_API}/pr-packages/${id}`, data);
     if (!response.ok) throw new Error('Failed to update PR package');
     return response.json();
   },
@@ -356,9 +336,7 @@ export const prPackagesAPI = {
    * 刪除 PR Package（Admin 專用）
    */
   async deletePackage(id: number): Promise<void> {
-    const response = await fetch(`${ADMIN_API}/pr-packages/${id}`, {
-      method: 'DELETE',
-    });
+    const response = await authenticatedDelete(`${ADMIN_API}/pr-packages/${id}`);
     if (!response.ok) throw new Error('Failed to delete PR package');
   },
 
@@ -366,9 +344,8 @@ export const prPackagesAPI = {
    * 更新 Package 的分類和順序（Admin 專用）
    */
   async updatePackageCategory(id: number, categoryId: string, displayOrder: number = 0): Promise<any> {
-    const response = await fetch(
-      `${ADMIN_API}/pr-packages/${id}/category?category_id=${categoryId}&display_order=${displayOrder}`,
-      { method: 'PATCH' }
+    const response = await authenticatedPatch(
+      `${ADMIN_API}/pr-packages/${id}/category?category_id=${categoryId}&display_order=${displayOrder}`
     );
     if (!response.ok) throw new Error('Failed to update package category');
     return response.json();
@@ -378,7 +355,7 @@ export const prPackagesAPI = {
    * 取得所有 Packages（不分類，Admin 專用）
    */
   async getAllPackages(status: string = 'all'): Promise<PRPackage[]> {
-    const response = await fetch(`${ADMIN_API}/pr-packages/all?status=${status}`);
+    const response = await authenticatedGet(`${ADMIN_API}/pr-packages/all?status=${status}`);
     if (!response.ok) throw new Error('Failed to fetch all packages');
     return response.json();
   },
@@ -439,7 +416,7 @@ export const contactAdminAPI = {
     if (params?.limit) queryParams.append('limit', params.limit.toString());
     if (params?.search) queryParams.append('search', params.search);
 
-    const response = await fetch(`${ADMIN_API}/contact/submissions?${queryParams}`);
+    const response = await authenticatedGet(`${ADMIN_API}/contact/submissions?${queryParams}`);
     if (!response.ok) throw new Error('Failed to fetch contact submissions');
     return response.json();
   },
@@ -448,7 +425,7 @@ export const contactAdminAPI = {
    * 取得單個聯絡表單提交（Admin 專用）
    */
   async getSubmission(id: number): Promise<ContactSubmission> {
-    const response = await fetch(`${ADMIN_API}/contact/submissions/${id}`);
+    const response = await authenticatedGet(`${ADMIN_API}/contact/submissions/${id}`);
     if (!response.ok) throw new Error('Failed to fetch contact submission');
     return response.json();
   },
@@ -457,9 +434,7 @@ export const contactAdminAPI = {
    * 更新聯絡表單狀態（Admin 專用）
    */
   async updateStatus(id: number, status: string): Promise<{ message: string; submission: ContactSubmission }> {
-    const response = await fetch(`${ADMIN_API}/contact/submissions/${id}/status?status=${status}`, {
-      method: 'PATCH',
-    });
+    const response = await authenticatedPatch(`${ADMIN_API}/contact/submissions/${id}/status?status=${status}`);
     if (!response.ok) throw new Error('Failed to update submission status');
     return response.json();
   },
@@ -468,9 +443,7 @@ export const contactAdminAPI = {
    * 刪除聯絡表單提交（Admin 專用）
    */
   async deleteSubmission(id: number): Promise<void> {
-    const response = await fetch(`${ADMIN_API}/contact/submissions/${id}`, {
-      method: 'DELETE',
-    });
+    const response = await authenticatedDelete(`${ADMIN_API}/contact/submissions/${id}`);
     if (!response.ok) throw new Error('Failed to delete submission');
   },
 };
@@ -491,7 +464,7 @@ export const newsletterAdminAPI = {
     if (params?.limit) queryParams.append('limit', params.limit.toString());
     if (params?.search) queryParams.append('search', params.search);
 
-    const response = await fetch(`${ADMIN_API}/newsletter/subscribers?${queryParams}`);
+    const response = await authenticatedGet(`${ADMIN_API}/newsletter/subscribers?${queryParams}`);
     if (!response.ok) throw new Error('Failed to fetch subscribers');
     return response.json();
   },
@@ -500,7 +473,7 @@ export const newsletterAdminAPI = {
    * 取得單個訂閱者（Admin 專用）
    */
   async getSubscriber(id: number): Promise<NewsletterSubscriber> {
-    const response = await fetch(`${ADMIN_API}/newsletter/subscribers/${id}`);
+    const response = await authenticatedGet(`${ADMIN_API}/newsletter/subscribers/${id}`);
     if (!response.ok) throw new Error('Failed to fetch subscriber');
     return response.json();
   },
@@ -509,9 +482,7 @@ export const newsletterAdminAPI = {
    * 更新訂閱者狀態（Admin 專用）
    */
   async updateStatus(id: number, status: string): Promise<{ message: string; subscriber: NewsletterSubscriber }> {
-    const response = await fetch(`${ADMIN_API}/newsletter/subscribers/${id}/status?status=${status}`, {
-      method: 'PATCH',
-    });
+    const response = await authenticatedPatch(`${ADMIN_API}/newsletter/subscribers/${id}/status?status=${status}`);
     if (!response.ok) throw new Error('Failed to update subscriber status');
     return response.json();
   },
@@ -520,9 +491,7 @@ export const newsletterAdminAPI = {
    * 刪除訂閱者（Admin 專用）
    */
   async deleteSubscriber(id: number): Promise<void> {
-    const response = await fetch(`${ADMIN_API}/newsletter/subscribers/${id}`, {
-      method: 'DELETE',
-    });
+    const response = await authenticatedDelete(`${ADMIN_API}/newsletter/subscribers/${id}`);
     if (!response.ok) throw new Error('Failed to delete subscriber');
   },
 
@@ -530,7 +499,7 @@ export const newsletterAdminAPI = {
    * 取得訂閱統計（Admin 專用）
    */
   async getStats(): Promise<{ active_count: number; unsubscribed_count: number; total_count: number }> {
-    const response = await fetch(`${ADMIN_API}/newsletter/stats`);
+    const response = await authenticatedGet(`${ADMIN_API}/newsletter/stats`);
     if (!response.ok) throw new Error('Failed to fetch stats');
     return response.json();
   },
@@ -543,7 +512,7 @@ export const prCategoryAdminAPI = {
    * 取得所有分類及其 packages（Admin 專用）
    */
   async getCategories(): Promise<PRCategoryWithPackages[]> {
-    const response = await fetch(`${ADMIN_API}/pr-package-categories/`);
+    const response = await authenticatedGet(`${ADMIN_API}/pr-package-categories/`);
     if (!response.ok) throw new Error('Failed to fetch categories');
     return response.json();
   },
@@ -552,7 +521,7 @@ export const prCategoryAdminAPI = {
    * 取得單個分類（Admin 專用）
    */
   async getCategory(categoryId: string): Promise<PRCategoryWithPackages> {
-    const response = await fetch(`${ADMIN_API}/pr-package-categories/${categoryId}`);
+    const response = await authenticatedGet(`${ADMIN_API}/pr-package-categories/${categoryId}`);
     if (!response.ok) throw new Error('Failed to fetch category');
     return response.json();
   },
@@ -566,11 +535,7 @@ export const prCategoryAdminAPI = {
     badges: string[];
     display_order: number;
   }): Promise<PRCategory> {
-    const response = await fetch(`${ADMIN_API}/pr-package-categories/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
+    const response = await authenticatedPost(`${ADMIN_API}/pr-package-categories/`, data);
     if (!response.ok) throw new Error('Failed to create category');
     return response.json();
   },
@@ -584,11 +549,7 @@ export const prCategoryAdminAPI = {
     badges: string[];
     display_order: number;
   }>): Promise<PRCategory> {
-    const response = await fetch(`${ADMIN_API}/pr-package-categories/${categoryId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
+    const response = await authenticatedPut(`${ADMIN_API}/pr-package-categories/${categoryId}`, data);
     if (!response.ok) throw new Error('Failed to update category');
     return response.json();
   },
@@ -597,9 +558,7 @@ export const prCategoryAdminAPI = {
    * 刪除分類（Admin 專用）
    */
   async deleteCategory(categoryId: string): Promise<void> {
-    const response = await fetch(`${ADMIN_API}/pr-package-categories/${categoryId}`, {
-      method: 'DELETE',
-    });
+    const response = await authenticatedDelete(`${ADMIN_API}/pr-package-categories/${categoryId}`);
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.detail || 'Failed to delete category');
@@ -997,307 +956,158 @@ export const contentAPI = {
 
   // ===== Admin APIs (後台管理) =====
 
-  async createFAQ(data: Omit<FAQ, 'id' | 'created_at' | 'updated_at'>, token: string): Promise<FAQ> {
-    const response = await fetch(`${ADMIN_API}/content/faqs`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
+  async createFAQ(data: Omit<FAQ, 'id' | 'created_at' | 'updated_at'>): Promise<FAQ> {
+    const response = await authenticatedPost(`${ADMIN_API}/content/faqs`, data);
     if (!response.ok) throw new Error('Failed to create FAQ');
     return response.json();
   },
 
-  async updateFAQ(id: number, data: Partial<FAQ>, token: string): Promise<FAQ> {
-    const response = await fetch(`${ADMIN_API}/content/faqs/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
+  async updateFAQ(id: number, data: Partial<FAQ>): Promise<FAQ> {
+    const response = await authenticatedPut(`${ADMIN_API}/content/faqs/${id}`, data);
     if (!response.ok) throw new Error('Failed to update FAQ');
     return response.json();
   },
 
-  async deleteFAQ(id: number, token: string): Promise<void> {
-    const response = await fetch(`${ADMIN_API}/content/faqs/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+  async deleteFAQ(id: number): Promise<void> {
+    const response = await authenticatedDelete(`${ADMIN_API}/content/faqs/${id}`);
     if (!response.ok) throw new Error('Failed to delete FAQ');
   },
 
-  async getAllFAQs(token: string): Promise<FAQ[]> {
-    const response = await fetch(`${ADMIN_API}/content/faqs`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+  async getAllFAQs(): Promise<FAQ[]> {
+    const response = await authenticatedGet(`${ADMIN_API}/content/faqs`);
     if (!response.ok) throw new Error('Failed to fetch all FAQs');
     return response.json();
   },
 
   // Testimonials Admin
-  async createTestimonial(data: Omit<Testimonial, 'id' | 'created_at' | 'updated_at'>, token: string): Promise<Testimonial> {
-    const response = await fetch(`${ADMIN_API}/content/testimonials`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
+  async createTestimonial(data: Omit<Testimonial, 'id' | 'created_at' | 'updated_at'>): Promise<Testimonial> {
+    const response = await authenticatedPost(`${ADMIN_API}/content/testimonials`, data);
     if (!response.ok) throw new Error('Failed to create testimonial');
     return response.json();
   },
 
-  async updateTestimonial(id: number, data: Partial<Testimonial>, token: string): Promise<Testimonial> {
-    const response = await fetch(`${ADMIN_API}/content/testimonials/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
+  async updateTestimonial(id: number, data: Partial<Testimonial>): Promise<Testimonial> {
+    const response = await authenticatedPut(`${ADMIN_API}/content/testimonials/${id}`, data);
     if (!response.ok) throw new Error('Failed to update testimonial');
     return response.json();
   },
 
-  async deleteTestimonial(id: number, token: string): Promise<void> {
-    const response = await fetch(`${ADMIN_API}/content/testimonials/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+  async deleteTestimonial(id: number): Promise<void> {
+    const response = await authenticatedDelete(`${ADMIN_API}/content/testimonials/${id}`);
     if (!response.ok) throw new Error('Failed to delete testimonial');
   },
 
-  async getAllTestimonials(token: string): Promise<Testimonial[]> {
-    const response = await fetch(`${ADMIN_API}/content/testimonials`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+  async getAllTestimonials(): Promise<Testimonial[]> {
+    const response = await authenticatedGet(`${ADMIN_API}/content/testimonials`);
     if (!response.ok) throw new Error('Failed to fetch all testimonials');
     return response.json();
   },
 
   // Services Admin
-  async createService(data: Omit<Service, 'id' | 'created_at' | 'updated_at'>, token: string): Promise<Service> {
-    const response = await fetch(`${ADMIN_API}/content/services`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
+  async createService(data: Omit<Service, 'id' | 'created_at' | 'updated_at'>): Promise<Service> {
+    const response = await authenticatedPost(`${ADMIN_API}/content/services`, data);
     if (!response.ok) throw new Error('Failed to create service');
     return response.json();
   },
 
-  async updateService(id: number, data: Partial<Service>, token: string): Promise<Service> {
-    const response = await fetch(`${ADMIN_API}/content/services/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
+  async updateService(id: number, data: Partial<Service>): Promise<Service> {
+    const response = await authenticatedPut(`${ADMIN_API}/content/services/${id}`, data);
     if (!response.ok) throw new Error('Failed to update service');
     return response.json();
   },
 
-  async deleteService(id: number, token: string): Promise<void> {
-    const response = await fetch(`${ADMIN_API}/content/services/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+  async deleteService(id: number): Promise<void> {
+    const response = await authenticatedDelete(`${ADMIN_API}/content/services/${id}`);
     if (!response.ok) throw new Error('Failed to delete service');
   },
 
-  async getAllServices(token: string): Promise<Service[]> {
-    const response = await fetch(`${ADMIN_API}/content/services`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+  async getAllServices(): Promise<Service[]> {
+    const response = await authenticatedGet(`${ADMIN_API}/content/services`);
     if (!response.ok) throw new Error('Failed to fetch all services');
     return response.json();
   },
 
   // Team Members Admin
-  async createTeamMember(data: Omit<TeamMember, 'id' | 'created_at' | 'updated_at'>, token: string): Promise<TeamMember> {
-    const response = await fetch(`${ADMIN_API}/content/team`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
+  async createTeamMember(data: Omit<TeamMember, 'id' | 'created_at' | 'updated_at'>): Promise<TeamMember> {
+    const response = await authenticatedPost(`${ADMIN_API}/content/team`, data);
     if (!response.ok) throw new Error('Failed to create team member');
     return response.json();
   },
 
-  async updateTeamMember(id: number, data: Partial<TeamMember>, token: string): Promise<TeamMember> {
-    const response = await fetch(`${ADMIN_API}/content/team/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
+  async updateTeamMember(id: number, data: Partial<TeamMember>): Promise<TeamMember> {
+    const response = await authenticatedPut(`${ADMIN_API}/content/team/${id}`, data);
     if (!response.ok) throw new Error('Failed to update team member');
     return response.json();
   },
 
-  async deleteTeamMember(id: number, token: string): Promise<void> {
-    const response = await fetch(`${ADMIN_API}/content/team/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+  async deleteTeamMember(id: number): Promise<void> {
+    const response = await authenticatedDelete(`${ADMIN_API}/content/team/${id}`);
     if (!response.ok) throw new Error('Failed to delete team member');
   },
 
-  async getAllTeamMembers(token: string): Promise<TeamMember[]> {
-    const response = await fetch(`${ADMIN_API}/content/team`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+  async getAllTeamMembers(): Promise<TeamMember[]> {
+    const response = await authenticatedGet(`${ADMIN_API}/content/team`);
     if (!response.ok) throw new Error('Failed to fetch all team members');
     return response.json();
   },
 
   // Site Settings Admin
-  async updateSiteSetting(key: string, value: string, token: string): Promise<any> {
-    const response = await fetch(`${ADMIN_API}/content/settings/${key}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify({ value }),
-    });
+  async updateSiteSetting(key: string, value: string): Promise<any> {
+    const response = await authenticatedPatch(`${ADMIN_API}/content/settings/${key}`, { value });
     if (!response.ok) throw new Error('Failed to update setting');
     return response.json();
   },
 
-  async getAllSettings(token: string): Promise<any[]> {
-    const response = await fetch(`${ADMIN_API}/content/settings`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+  async getAllSettings(): Promise<any[]> {
+    const response = await authenticatedGet(`${ADMIN_API}/content/settings`);
     if (!response.ok) throw new Error('Failed to fetch all settings');
     return response.json();
   },
 
   // Differentiators Admin
-  async createDifferentiator(data: Omit<Differentiator, 'id' | 'created_at' | 'updated_at'>, token: string): Promise<Differentiator> {
-    const response = await fetch(`${ADMIN_API}/content/differentiators`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
+  async createDifferentiator(data: Omit<Differentiator, 'id' | 'created_at' | 'updated_at'>): Promise<Differentiator> {
+    const response = await authenticatedPost(`${ADMIN_API}/content/differentiators`, data);
     if (!response.ok) throw new Error('Failed to create differentiator');
     return response.json();
   },
 
-  async updateDifferentiator(id: number, data: Partial<Differentiator>, token: string): Promise<Differentiator> {
-    const response = await fetch(`${ADMIN_API}/content/differentiators/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
+  async updateDifferentiator(id: number, data: Partial<Differentiator>): Promise<Differentiator> {
+    const response = await authenticatedPut(`${ADMIN_API}/content/differentiators/${id}`, data);
     if (!response.ok) throw new Error('Failed to update differentiator');
     return response.json();
   },
 
-  async deleteDifferentiator(id: number, token: string): Promise<void> {
-    const response = await fetch(`${ADMIN_API}/content/differentiators/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+  async deleteDifferentiator(id: number): Promise<void> {
+    const response = await authenticatedDelete(`${ADMIN_API}/content/differentiators/${id}`);
     if (!response.ok) throw new Error('Failed to delete differentiator');
   },
 
-  async getAllDifferentiators(token: string): Promise<Differentiator[]> {
-    const response = await fetch(`${ADMIN_API}/content/differentiators`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+  async getAllDifferentiators(): Promise<Differentiator[]> {
+    const response = await authenticatedGet(`${ADMIN_API}/content/differentiators`);
     if (!response.ok) throw new Error('Failed to fetch all differentiators');
     return response.json();
   },
 
   // Stats Admin
-  async createStat(data: Omit<Stat, 'id' | 'created_at' | 'updated_at'>, token: string): Promise<Stat> {
-    const response = await fetch(`${ADMIN_API}/content/stats`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
+  async createStat(data: Omit<Stat, 'id' | 'created_at' | 'updated_at'>): Promise<Stat> {
+    const response = await authenticatedPost(`${ADMIN_API}/content/stats`, data);
     if (!response.ok) throw new Error('Failed to create stat');
     return response.json();
   },
 
-  async updateStat(id: number, data: Partial<Stat>, token: string): Promise<Stat> {
-    const response = await fetch(`${ADMIN_API}/content/stats/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
+  async updateStat(id: number, data: Partial<Stat>): Promise<Stat> {
+    const response = await authenticatedPut(`${ADMIN_API}/content/stats/${id}`, data);
     if (!response.ok) throw new Error('Failed to update stat');
     return response.json();
   },
 
-  async deleteStat(id: number, token: string): Promise<void> {
-    const response = await fetch(`${ADMIN_API}/content/stats/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+  async deleteStat(id: number): Promise<void> {
+    const response = await authenticatedDelete(`${ADMIN_API}/content/stats/${id}`);
     if (!response.ok) throw new Error('Failed to delete stat');
   },
 
-  async getAllStats(token: string): Promise<Stat[]> {
-    const response = await fetch(`${ADMIN_API}/content/stats`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+  async getAllStats(): Promise<Stat[]> {
+    const response = await authenticatedGet(`${ADMIN_API}/content/stats`);
     if (!response.ok) throw new Error('Failed to fetch all stats');
     return response.json();
   },
@@ -1310,48 +1120,25 @@ export const contentAPI = {
   },
 
   // Carousel Logos Admin
-  async createCarouselLogo(data: Omit<CarouselLogo, 'id' | 'created_at' | 'updated_at'>, token: string): Promise<CarouselLogo> {
-    const response = await fetch(`${ADMIN_API}/content/carousel-logos`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
+  async createCarouselLogo(data: Omit<CarouselLogo, 'id' | 'created_at' | 'updated_at'>): Promise<CarouselLogo> {
+    const response = await authenticatedPost(`${ADMIN_API}/content/carousel-logos`, data);
     if (!response.ok) throw new Error('Failed to create carousel logo');
     return response.json();
   },
 
-  async updateCarouselLogo(id: number, data: Partial<CarouselLogo>, token: string): Promise<CarouselLogo> {
-    const response = await fetch(`${ADMIN_API}/content/carousel-logos/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
+  async updateCarouselLogo(id: number, data: Partial<CarouselLogo>): Promise<CarouselLogo> {
+    const response = await authenticatedPut(`${ADMIN_API}/content/carousel-logos/${id}`, data);
     if (!response.ok) throw new Error('Failed to update carousel logo');
     return response.json();
   },
 
-  async deleteCarouselLogo(id: number, token: string): Promise<void> {
-    const response = await fetch(`${ADMIN_API}/content/carousel-logos/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+  async deleteCarouselLogo(id: number): Promise<void> {
+    const response = await authenticatedDelete(`${ADMIN_API}/content/carousel-logos/${id}`);
     if (!response.ok) throw new Error('Failed to delete carousel logo');
   },
 
-  async getAllCarouselLogos(token: string): Promise<CarouselLogo[]> {
-    const response = await fetch(`${ADMIN_API}/content/carousel-logos`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+  async getAllCarouselLogos(): Promise<CarouselLogo[]> {
+    const response = await authenticatedGet(`${ADMIN_API}/content/carousel-logos`);
     if (!response.ok) throw new Error('Failed to fetch all carousel logos');
     return response.json();
   },
@@ -1423,163 +1210,90 @@ export const contentAPI = {
   },
 
   // Navigation Admin
-  async getAllNavigationItems(token: string): Promise<any[]> {
-    const response = await fetch(`${ADMIN_API}/site/navigation/items`, {
-      headers: { 'Authorization': `Bearer ${token}` },
-    });
+  async getAllNavigationItems(): Promise<any[]> {
+    const response = await authenticatedGet(`${ADMIN_API}/site/navigation/items`);
     if (!response.ok) throw new Error('Failed to fetch all navigation items');
     return response.json();
   },
 
-  async createNavigationItem(data: any, token: string): Promise<any> {
-    const response = await fetch(`${ADMIN_API}/site/navigation/items`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
+  async createNavigationItem(data: any): Promise<any> {
+    const response = await authenticatedPost(`${ADMIN_API}/site/navigation/items`, data);
     if (!response.ok) throw new Error('Failed to create navigation item');
     return response.json();
   },
 
-  async updateNavigationItem(id: number, data: any, token: string): Promise<any> {
-    const response = await fetch(`${ADMIN_API}/site/navigation/items/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
+  async updateNavigationItem(id: number, data: any): Promise<any> {
+    const response = await authenticatedPut(`${ADMIN_API}/site/navigation/items/${id}`, data);
     if (!response.ok) throw new Error('Failed to update navigation item');
     return response.json();
   },
 
-  async deleteNavigationItem(id: number, token: string): Promise<void> {
-    const response = await fetch(`${ADMIN_API}/site/navigation/items/${id}`, {
-      method: 'DELETE',
-      headers: { 'Authorization': `Bearer ${token}` },
-    });
+  async deleteNavigationItem(id: number): Promise<void> {
+    const response = await authenticatedDelete(`${ADMIN_API}/site/navigation/items/${id}`);
     if (!response.ok) throw new Error('Failed to delete navigation item');
   },
 
-  async getNavigationCTAAdmin(token: string): Promise<any> {
-    const response = await fetch(`${ADMIN_API}/site/navigation/cta`, {
-      headers: { 'Authorization': `Bearer ${token}` },
-    });
+  async getNavigationCTAAdmin(): Promise<any> {
+    const response = await authenticatedGet(`${ADMIN_API}/site/navigation/cta`);
     if (!response.ok) throw new Error('Failed to fetch navigation CTA');
     return response.json();
   },
 
-  async updateNavigationCTA(data: any, token: string): Promise<any> {
-    const response = await fetch(`${ADMIN_API}/site/navigation/cta`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
+  async updateNavigationCTA(data: any): Promise<any> {
+    const response = await authenticatedPatch(`${ADMIN_API}/site/navigation/cta`, data);
     if (!response.ok) throw new Error('Failed to update navigation CTA');
     return response.json();
   },
 
   // Footer Admin
-  async getAllFooterSections(token: string): Promise<any[]> {
-    const response = await fetch(`${ADMIN_API}/site/footer/sections`, {
-      headers: { 'Authorization': `Bearer ${token}` },
-    });
+  async getAllFooterSections(): Promise<any[]> {
+    const response = await authenticatedGet(`${ADMIN_API}/site/footer/sections`);
     if (!response.ok) throw new Error('Failed to fetch all footer sections');
     return response.json();
   },
 
-  async createFooterSection(data: any, token: string): Promise<any> {
-    const response = await fetch(`${ADMIN_API}/site/footer/sections`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
+  async createFooterSection(data: any): Promise<any> {
+    const response = await authenticatedPost(`${ADMIN_API}/site/footer/sections`, data);
     if (!response.ok) throw new Error('Failed to create footer section');
     return response.json();
   },
 
-  async updateFooterSection(id: number, data: any, token: string): Promise<any> {
-    const response = await fetch(`${ADMIN_API}/site/footer/sections/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
+  async updateFooterSection(id: number, data: any): Promise<any> {
+    const response = await authenticatedPut(`${ADMIN_API}/site/footer/sections/${id}`, data);
     if (!response.ok) throw new Error('Failed to update footer section');
     return response.json();
   },
 
-  async deleteFooterSection(id: number, token: string): Promise<void> {
-    const response = await fetch(`${ADMIN_API}/site/footer/sections/${id}`, {
-      method: 'DELETE',
-      headers: { 'Authorization': `Bearer ${token}` },
-    });
+  async deleteFooterSection(id: number): Promise<void> {
+    const response = await authenticatedDelete(`${ADMIN_API}/site/footer/sections/${id}`);
     if (!response.ok) throw new Error('Failed to delete footer section');
   },
 
-  async createFooterLink(data: any, token: string): Promise<any> {
-    const response = await fetch(`${ADMIN_API}/site/footer/links`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
+  async createFooterLink(data: any): Promise<any> {
+    const response = await authenticatedPost(`${ADMIN_API}/site/footer/links`, data);
     if (!response.ok) throw new Error('Failed to create footer link');
     return response.json();
   },
 
-  async updateFooterLink(id: number, data: any, token: string): Promise<any> {
-    const response = await fetch(`${ADMIN_API}/site/footer/links/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
+  async updateFooterLink(id: number, data: any): Promise<any> {
+    const response = await authenticatedPut(`${ADMIN_API}/site/footer/links/${id}`, data);
     if (!response.ok) throw new Error('Failed to update footer link');
     return response.json();
   },
 
-  async deleteFooterLink(id: number, token: string): Promise<void> {
-    const response = await fetch(`${ADMIN_API}/site/footer/links/${id}`, {
-      method: 'DELETE',
-      headers: { 'Authorization': `Bearer ${token}` },
-    });
+  async deleteFooterLink(id: number): Promise<void> {
+    const response = await authenticatedDelete(`${ADMIN_API}/site/footer/links/${id}`);
     if (!response.ok) throw new Error('Failed to delete footer link');
   },
 
-  async getAllFooterTextSettings(token: string): Promise<any[]> {
-    const response = await fetch(`${ADMIN_API}/site/footer/text-settings`, {
-      headers: { 'Authorization': `Bearer ${token}` },
-    });
+  async getAllFooterTextSettings(): Promise<any[]> {
+    const response = await authenticatedGet(`${ADMIN_API}/site/footer/text-settings`);
     if (!response.ok) throw new Error('Failed to fetch footer text settings');
     return response.json();
   },
 
-  async updateFooterTextSetting(key: string, data: any, token: string): Promise<any> {
-    const response = await fetch(`${ADMIN_API}/site/footer/text-settings/${key}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
+  async updateFooterTextSetting(key: string, data: any): Promise<any> {
+    const response = await authenticatedPatch(`${ADMIN_API}/site/footer/text-settings/${key}`, data);
     if (!response.ok) throw new Error('Failed to update footer text setting');
     return response.json();
   },

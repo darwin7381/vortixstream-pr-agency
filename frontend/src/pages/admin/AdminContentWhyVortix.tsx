@@ -5,7 +5,6 @@ import { useAuth } from '../../contexts/AuthContext';
 import { TrendingUp, Sparkles, Plus, Edit, Trash2 } from 'lucide-react';
 
 export default function AdminContentWhyVortix() {
-  const token = localStorage.getItem('access_token');
   const [stats, setStats] = useState<Stat[]>([]);
   const [differentiators, setDifferentiators] = useState<Differentiator[]>([]);
   const [loading, setLoading] = useState(true);
@@ -15,11 +14,10 @@ export default function AdminContentWhyVortix() {
   const [showDiffModal, setShowDiffModal] = useState(false);
 
   const fetchData = async () => {
-    if (!token) return;
     try {
       const [statsData, diffsData] = await Promise.all([
-        contentAPI.getAllStats(token),
-        contentAPI.getAllDifferentiators(token)
+        contentAPI.getAllStats(),
+        contentAPI.getAllDifferentiators()
       ]);
       setStats(statsData);
       setDifferentiators(diffsData);
@@ -32,13 +30,13 @@ export default function AdminContentWhyVortix() {
 
   useEffect(() => {
     fetchData();
-  }, [token]);
+  }, []);
 
   const handleDeleteStat = async (item: Stat) => {
-    if (!token || !confirm(`Are you sure you want to delete「${item.label}」?`)) return;
+    if ( !confirm(`Are you sure you want to delete「${item.label}」?`)) return;
     
     try {
-      await contentAPI.deleteStat(item.id, token);
+      await contentAPI.deleteStat(item.id);
       alert('Deleted successfully');
       fetchData();
     } catch (error) {
@@ -49,7 +47,6 @@ export default function AdminContentWhyVortix() {
 
   const handleSaveStat = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!token) return;
 
     const formData = new FormData(e.currentTarget);
     const data = {
@@ -63,10 +60,10 @@ export default function AdminContentWhyVortix() {
 
     try {
       if (editingStat) {
-        await contentAPI.updateStat(editingStat.id, data, token);
+        await contentAPI.updateStat(editingStat.id, data);
         alert('Updated successfully');
       } else {
-        await contentAPI.createStat(data, token);
+        await contentAPI.createStat(data);
         alert('Created successfully');
       }
       setShowStatModal(false);
@@ -79,10 +76,10 @@ export default function AdminContentWhyVortix() {
   };
 
   const handleDeleteDiff = async (item: Differentiator) => {
-    if (!token || !confirm(`Are you sure you want to delete?`)) return;
+    if ( !confirm(`Are you sure you want to delete?`)) return;
     
     try {
-      await contentAPI.deleteDifferentiator(item.id, token);
+      await contentAPI.deleteDifferentiator(item.id);
       alert('Deleted successfully');
       fetchData();
     } catch (error) {
@@ -93,7 +90,6 @@ export default function AdminContentWhyVortix() {
 
   const handleSaveDiff = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!token) return;
 
     const formData = new FormData(e.currentTarget);
     const data = {
@@ -104,10 +100,10 @@ export default function AdminContentWhyVortix() {
 
     try {
       if (editingDiff) {
-        await contentAPI.updateDifferentiator(editingDiff.id, data, token);
+        await contentAPI.updateDifferentiator(editingDiff.id, data);
         alert('Updated successfully');
       } else {
-        await contentAPI.createDifferentiator(data, token);
+        await contentAPI.createDifferentiator(data);
         alert('Created successfully');
       }
       setShowDiffModal(false);

@@ -30,7 +30,7 @@ class EmailService:
         message: str
     ) -> bool:
         """
-        發送聯絡表單通知給管理員
+        Send contact form notification to admin
         
         Args:
             name: 提交者姓名
@@ -112,27 +112,27 @@ class EmailService:
             </head>
             <body>
                 <div class="header">
-                    <h1 style="margin: 0; font-size: 24px;">🔔 新的聯絡表單提交</h1>
-                    <p style="margin: 10px 0 0 0; opacity: 0.9;">VortixPR 管理後台通知</p>
+                    <h1 style="margin: 0; font-size: 24px;">🔔 New Contact Form Submission</h1>
+                    <p style="margin: 10px 0 0 0; opacity: 0.9;">VortixPR Admin Notification</p>
                 </div>
                 
                 <div class="content">
                     <div class="info-row">
-                        <div class="label">姓名</div>
+                        <div class="label">Name</div>
                         <div class="value">{name}</div>
                     </div>
                     
                     <div class="info-row">
-                        <div class="label">電郵</div>
+                        <div class="label">Email</div>
                         <div class="value">{email}</div>
                     </div>
                     
-                    {f'<div class="info-row"><div class="label">公司</div><div class="value">{company}</div></div>' if company else ''}
+                    {f'<div class="info-row"><div class="label">Company</div><div class="value">{company}</div></div>' if company else ''}
                     
-                    {f'<div class="info-row"><div class="label">電話</div><div class="value">{phone}</div></div>' if phone else ''}
+                    {f'<div class="info-row"><div class="label">Phone</div><div class="value">{phone}</div></div>' if phone else ''}
                     
                     <div class="info-row">
-                        <div class="label">訊息內容</div>
+                        <div class="label">Message</div>
                         <div class="message-box">{message}</div>
                     </div>
                     
@@ -141,15 +141,15 @@ class EmailService:
                            style="display: inline-block; background: #ea580c; color: white; 
                                   padding: 12px 30px; text-decoration: none; border-radius: 8px;
                                   font-weight: 600;">
-                            前往管理後台查看
+                            View in Admin Panel
                         </a>
                     </div>
                 </div>
                 
                 <div class="footer">
-                    <p>此郵件由 VortixPR 系統自動發送</p>
+                    <p>This email was automatically sent by VortixPR</p>
                     <p style="margin-top: 5px; font-size: 12px;">
-                        登入管理後台：<a href="{settings.FRONTEND_URL}/admin">{settings.FRONTEND_URL}/admin</a>
+                        Admin Login: <a href="{settings.FRONTEND_URL}/admin">{settings.FRONTEND_URL}/admin</a>
                     </p>
                 </div>
             </body>
@@ -160,7 +160,7 @@ class EmailService:
             params = {
                 "from": settings.FROM_EMAIL,
                 "to": [settings.ADMIN_EMAIL],
-                "subject": f"🔔 新的聯絡表單：{name}",
+                "subject": f"🔔 New Contact Form: {name}",
                 "html": html_content,
             }
             
@@ -174,7 +174,7 @@ class EmailService:
     
     async def send_newsletter_welcome(self, email: str) -> bool:
         """
-        發送 Newsletter 歡迎郵件
+        Send Newsletter welcome email
         
         Args:
             email: 訂閱者電郵
@@ -258,44 +258,44 @@ class EmailService:
             </head>
             <body>
                 <div class="header">
-                    <h1 style="margin: 0; font-size: 32px;">🎉 歡迎加入 VortixPR！</h1>
+                    <h1 style="margin: 0; font-size: 32px;">🎉 Welcome to VortixPR!</h1>
                     <p style="margin: 10px 0 0 0; opacity: 0.95; font-size: 16px;">
-                        感謝您訂閱我們的 Newsletter
+                        Thank you for subscribing to our Newsletter
                     </p>
                 </div>
                 
                 <div class="content">
                     <p class="welcome-text">
-                        您好！👋
+                        Hello there! 👋
                     </p>
                     
                     <p class="welcome-text">
-                        感謝您訂閱 VortixPR Newsletter！我們很高興能與您分享最新的 PR 趨勢、
-                        媒體策略和品牌建設的專業見解。
+                        Thank you for subscribing to the VortixPR Newsletter! We're excited to share
+                        the latest PR trends, media strategies, and professional insights on brand building with you.
                     </p>
                     
                     <div class="features">
-                        <h3 style="margin-top: 0; color: #111827;">您將收到：</h3>
-                        <div class="feature-item">最新的 PR 產業趨勢分析</div>
-                        <div class="feature-item">媒體關係建立的專業技巧</div>
-                        <div class="feature-item">成功案例和最佳實踐分享</div>
-                        <div class="feature-item">獨家優惠和活動資訊</div>
-                        <div class="feature-item">品牌建設和危機管理策略</div>
+                        <h3 style="margin-top: 0; color: #111827;">What you'll receive:</h3>
+                        <div class="feature-item">Latest PR industry trend analysis</div>
+                        <div class="feature-item">Professional tips for building media relationships</div>
+                        <div class="feature-item">Success stories and best practices</div>
+                        <div class="feature-item">Exclusive offers and event information</div>
+                        <div class="feature-item">Brand building and crisis management strategies</div>
                     </div>
                     
                     <p class="welcome-text">
-                        我們承諾只發送高質量的內容，絕不會濫發郵件。
+                        We promise to only send high-quality content and will never spam you.
                     </p>
                     
                     <div style="text-align: center;">
                         <a href="https://vortixpr.com/blog" class="cta-button">
-                            立即閱讀最新文章
+                            Read Latest Articles
                         </a>
                     </div>
                     
                     <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
-                        如果您不想再收到我們的郵件，可以隨時
-                        <a href="{settings.FRONTEND_URL}/newsletter/unsubscribe" style="color: #ea580c;">取消訂閱</a>。
+                        If you no longer wish to receive our emails, you can
+                        <a href="{settings.FRONTEND_URL}/newsletter/unsubscribe" style="color: #ea580c;">unsubscribe</a> at any time.
                     </p>
                 </div>
                 
@@ -313,7 +313,7 @@ class EmailService:
             params = {
                 "from": settings.FROM_EMAIL,
                 "to": [email],
-                "subject": "🎉 歡迎訂閱 VortixPR Newsletter！",
+                "subject": "🎉 Welcome to VortixPR Newsletter!",
                 "html": html_content,
             }
             
@@ -562,6 +562,176 @@ class EmailService:
             
         except Exception as e:
             logger.error(f"❌ Failed to send template email to {to_email}: {e}")
+            return False
+    
+    async def send_invitation_email(
+        self,
+        to_email: str,
+        inviter_name: str,
+        invitation_url: str,
+        role: str
+    ) -> bool:
+        """
+        Send user invitation email
+        
+        Args:
+            to_email: Invitee email address
+            inviter_name: Name of the person sending the invitation
+            invitation_url: Invitation URL with token
+            role: Role being invited to
+            
+        Returns:
+            bool: Whether the email was sent successfully
+        """
+        if not settings.RESEND_API_KEY:
+            logger.warning("Email sending skipped - RESEND_API_KEY not configured")
+            return False
+        
+        try:
+            role_labels = {
+                'user': 'User',
+                'publisher': 'Publisher',
+                'admin': 'Administrator',
+                'super_admin': 'Super Administrator'
+            }
+            
+            role_label = role_labels.get(role, role)
+            
+            html_content = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <style>
+                    body {{
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                        line-height: 1.6;
+                        color: #333;
+                        max-width: 600px;
+                        margin: 0 auto;
+                        padding: 20px;
+                    }}
+                    .header {{
+                        background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+                        color: white;
+                        padding: 40px;
+                        border-radius: 10px 10px 0 0;
+                        text-align: center;
+                    }}
+                    .content {{
+                        background: #ffffff;
+                        padding: 40px;
+                        border-radius: 0 0 10px 10px;
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    }}
+                    .role-badge {{
+                        display: inline-block;
+                        padding: 6px 16px;
+                        background: #ea580c;
+                        color: white;
+                        border-radius: 20px;
+                        font-size: 14px;
+                        font-weight: 600;
+                        margin: 0 4px;
+                    }}
+                    .cta-button {{
+                        display: inline-block;
+                        background: #ea580c;
+                        color: white;
+                        padding: 16px 40px;
+                        text-decoration: none;
+                        border-radius: 8px;
+                        font-weight: 600;
+                        margin: 20px 0;
+                    }}
+                    .footer {{
+                        text-align: center;
+                        margin-top: 30px;
+                        padding-top: 20px;
+                        border-top: 1px solid #e5e7eb;
+                        color: #6b7280;
+                        font-size: 14px;
+                    }}
+                    .code-block {{
+                        background: #f3f4f6;
+                        padding: 12px;
+                        border-radius: 6px;
+                        font-size: 12px;
+                        word-break: break-all;
+                        margin: 10px 0;
+                    }}
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h1 style="margin: 0; font-size: 28px;">VortixPR</h1>
+                    <p style="margin: 10px 0 0 0; opacity: 0.95; font-size: 16px;">
+                        You've Been Invited
+                    </p>
+                </div>
+                
+                <div class="content">
+                    <h2 style="color: #111827; margin-top: 0;">Hi there! 👋</h2>
+                    
+                    <p style="color: #374151; font-size: 16px; line-height: 1.8;">
+                        <strong>{inviter_name}</strong> has invited you to join <strong>VortixPR</strong>.
+                    </p>
+                    
+                    <p style="color: #374151; font-size: 16px; line-height: 1.8;">
+                        You will join our team as a <span class="role-badge">{role_label}</span>
+                    </p>
+                    
+                    <p style="color: #374151; font-size: 16px; line-height: 1.8;">
+                        Click the button below to accept the invitation and complete your registration:
+                    </p>
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="{invitation_url}" class="cta-button">
+                            Accept Invitation & Register
+                        </a>
+                    </div>
+                    
+                    <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px; border-radius: 6px; margin: 20px 0;">
+                        <p style="margin: 0; color: #92400e; font-size: 14px;">
+                            ⏰ <strong>Important:</strong> This invitation will expire in 7 days.
+                        </p>
+                    </div>
+                    
+                    <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
+                        If the button doesn't work, copy and paste this link into your browser:
+                    </p>
+                    <div class="code-block">
+                        {invitation_url}
+                    </div>
+                </div>
+                
+                <div class="footer">
+                    <p><strong>VortixPR</strong></p>
+                    <p>PR for Growing Worldwide Companies</p>
+                    <p style="margin-top: 15px; font-size: 12px;">
+                        © 2025 VortixPR. All rights reserved.
+                    </p>
+                    <p style="margin-top: 10px; font-size: 12px; color: #9ca3af;">
+                        If you didn't expect this email, you can safely ignore it.
+                    </p>
+                </div>
+            </body>
+            </html>
+            """
+            
+            params = {
+                "from": settings.FROM_EMAIL,
+                "to": [to_email],
+                "subject": f"You've Been Invited to VortixPR ({role_label})",
+                "html": html_content,
+            }
+            
+            response = resend.Emails.send(params)
+            logger.info(f"✅ Invitation email sent to {to_email} (role: {role})")
+            return True
+            
+        except Exception as e:
+            logger.error(f"❌ Failed to send invitation email to {to_email}: {e}")
             return False
 
 

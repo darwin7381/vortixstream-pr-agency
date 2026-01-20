@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { Plus, Edit, Trash2, Image as ImageIcon, Save } from 'lucide-react';
 import ImagePicker from '../../components/admin/ImagePicker';
 import { ADMIN_API } from '../../config/api';
+import { authenticatedGet, authenticatedPost, authenticatedPut, authenticatedDelete } from '../../utils/apiClient';
 
 interface CarouselLogo {
   id: number;
@@ -16,7 +17,6 @@ interface CarouselLogo {
 }
 
 export default function AdminContentCarousel() {
-  const token = localStorage.getItem('access_token');
   const [logos, setLogos] = useState<CarouselLogo[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<CarouselLogo | null>(null);
@@ -28,11 +28,8 @@ export default function AdminContentCarousel() {
   const [subtitleLoading, setSubtitleLoading] = useState(false);
 
   const fetchData = async () => {
-    if (!token) return;
     try {
-      const response = await fetch(`${ADMIN_API}/content/carousel-logos`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await authenticatedGet(`${ADMIN_API}/content/carousel-logos`);
       const data = await response.json();
       setLogos(data);
     } catch (error) {
@@ -43,11 +40,8 @@ export default function AdminContentCarousel() {
   };
 
   const fetchSubtitle = async () => {
-    if (!token) return;
     try {
-      const response = await fetch(`${ADMIN_API}/settings`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await authenticatedGet(`${ADMIN_API}/settings`);
       const data = await response.json();
       const setting = data.find((s: any) => s.setting_key === 'carousel_subtitle');
       if (setting) {
@@ -61,20 +55,12 @@ export default function AdminContentCarousel() {
   };
 
   const handleSubtitleSave = async () => {
-    if (!token) return;
     setSubtitleLoading(true);
     try {
       // 如果停用，則儲存空字串；如果啟用，儲存輸入的文字
       const valueToSave = subtitleEnabled ? subtitle : '';
       
-      const response = await fetch(`${ADMIN_API}/settings/carousel_subtitle`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ setting_value: valueToSave })
-      });
+      const response = await authenticatedPatch(`${ADMIN_API}/settings/carousel_subtitle`, { setting_value: valueToSave });
       
       if (!response.ok) {
         throw new Error('Failed to update');
@@ -92,16 +78,13 @@ export default function AdminContentCarousel() {
   useEffect(() => {
     fetchData();
     fetchSubtitle();
-  }, [token]);
+  }, []);
 
   const handleDelete = async (item: CarouselLogo) => {
-    if (!token || !confirm(`Are you sure you want to delete「${item.name}」?`)) return;
+    if ( !confirm(`Are you sure you want to delete「${item.name}」?`)) return;
     
     try {
-      await fetch(`${ADMIN_API}/content/carousel-logos/${item.id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      await authenticatedDelete(`${ADMIN_API}/content/carousel-logos/${item.id}`);
       alert('Deleted successfully');
       fetchData();
     } catch (error) {
@@ -111,7 +94,6 @@ export default function AdminContentCarousel() {
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!token) return;
 
     const formData = new FormData(e.currentTarget);
     const data = {
@@ -125,18 +107,10 @@ export default function AdminContentCarousel() {
 
     try {
       if (editing) {
-        await fetch(`${ADMIN_API}/content/carousel-logos/${editing.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          body: JSON.stringify(data),
-        });
+        await authenticatedPut(`${ADMIN_API}/content/carousel-logos/${editing.id}`, data);
         alert('Updated successfully');
       } else {
-        await fetch(`${ADMIN_API}/content/carousel-logos`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          body: JSON.stringify(data),
-        });
+        await authenticatedPost(`${ADMIN_API}/content/carousel-logos`, data);
         alert('Created successfully');
       }
       setShowModal(false);

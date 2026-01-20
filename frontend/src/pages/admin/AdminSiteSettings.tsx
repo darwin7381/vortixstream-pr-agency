@@ -8,7 +8,6 @@ import { contentAPI } from '../../api/client';
 import { Plus, Edit, Trash2, Save, Navigation as NavIcon, Layout } from 'lucide-react';
 
 export default function AdminSiteSettings() {
-  const token = localStorage.getItem('access_token');
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'navigation' | 'footer'>('navigation');
   
@@ -28,14 +27,13 @@ export default function AdminSiteSettings() {
   const [showFooterTextModal, setShowFooterTextModal] = useState(false);
 
   const fetchData = async () => {
-    if (!token) return;
     setLoading(true);
     try {
       const [navItemsData, navCTAData, footerSectionsData, footerTextData] = await Promise.all([
-        contentAPI.getAllNavigationItems(token),
-        contentAPI.getNavigationCTAAdmin(token),
-        contentAPI.getAllFooterSections(token),
-        contentAPI.getAllFooterTextSettings(token),
+        contentAPI.getAllNavigationItems(),
+        contentAPI.getNavigationCTAAdmin(),
+        contentAPI.getAllFooterSections(),
+        contentAPI.getAllFooterTextSettings(),
       ]);
       
       setNavItems(navItemsData);
@@ -51,13 +49,13 @@ export default function AdminSiteSettings() {
 
   useEffect(() => {
     fetchData();
-  }, [token]);
+  }, []);
 
   // Navigation handlers
   const handleDeleteNav = async (item: any) => {
-    if (!token || !confirm(`確定要刪除「${item.label_en}」？`)) return;
+    if ( !confirm(`確定要刪除「${item.label_en}」？`)) return;
     try {
-      await contentAPI.deleteNavigationItem(item.id, token);
+      await contentAPI.deleteNavigationItem(item.id);
       alert('刪除成功');
       fetchData();
     } catch (error) {
@@ -68,7 +66,6 @@ export default function AdminSiteSettings() {
 
   const handleSaveNav = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!token) return;
 
     const formData = new FormData(e.currentTarget);
     const data = {
@@ -82,10 +79,10 @@ export default function AdminSiteSettings() {
 
     try {
       if (editingNav) {
-        await contentAPI.updateNavigationItem(editingNav.id, data, token);
+        await contentAPI.updateNavigationItem(editingNav.id, data);
         alert('更新成功');
       } else {
-        await contentAPI.createNavigationItem(data, token);
+        await contentAPI.createNavigationItem(data);
         alert('新增成功');
       }
       setShowNavModal(false);
@@ -98,9 +95,9 @@ export default function AdminSiteSettings() {
   };
 
   const handleSaveCTA = async () => {
-    if (!token || !navCTA) return;
+    if ( !navCTA) return;
     try {
-      await contentAPI.updateNavigationCTA(navCTA, token);
+      await contentAPI.updateNavigationCTA(navCTA);
       alert('CTA 更新成功');
       fetchData();
     } catch (error) {
@@ -111,9 +108,9 @@ export default function AdminSiteSettings() {
 
   // Footer handlers
   const handleDeleteFooterSection = async (section: any) => {
-    if (!token || !confirm(`確定要刪除區塊「${section.title_en}」？（會連同刪除所有連結）`)) return;
+    if ( !confirm(`確定要刪除區塊「${section.title_en}」？（會連同刪除所有連結）`)) return;
     try {
-      await contentAPI.deleteFooterSection(section.id, token);
+      await contentAPI.deleteFooterSection(section.id);
       alert('刪除成功');
       fetchData();
     } catch (error) {
@@ -124,7 +121,6 @@ export default function AdminSiteSettings() {
 
   const handleSaveFooterSection = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!token) return;
 
     const formData = new FormData(e.currentTarget);
     const data = {
@@ -136,10 +132,10 @@ export default function AdminSiteSettings() {
 
     try {
       if (editingFooterSection) {
-        await contentAPI.updateFooterSection(editingFooterSection.id, data, token);
+        await contentAPI.updateFooterSection(editingFooterSection.id, data);
         alert('更新成功');
       } else {
-        await contentAPI.createFooterSection(data, token);
+        await contentAPI.createFooterSection(data);
         alert('新增成功');
       }
       setShowFooterSectionModal(false);
@@ -153,7 +149,6 @@ export default function AdminSiteSettings() {
 
   const handleSaveFooterLink = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!token) return;
 
     const formData = new FormData(e.currentTarget);
     const data = {
@@ -167,10 +162,10 @@ export default function AdminSiteSettings() {
 
     try {
       if (editingFooterLink?.id) {
-        await contentAPI.updateFooterLink(editingFooterLink.id, data, token);
+        await contentAPI.updateFooterLink(editingFooterLink.id, data);
         alert('更新成功');
       } else {
-        await contentAPI.createFooterLink(data, token);
+        await contentAPI.createFooterLink(data);
         alert('新增成功');
       }
       setShowFooterLinkModal(false);
@@ -183,9 +178,9 @@ export default function AdminSiteSettings() {
   };
 
   const handleDeleteFooterLink = async (link: any) => {
-    if (!token || !confirm(`確定要刪除「${link.label_en}」？`)) return;
+    if ( !confirm(`確定要刪除「${link.label_en}」？`)) return;
     try {
-      await contentAPI.deleteFooterLink(link.id, token);
+      await contentAPI.deleteFooterLink(link.id);
       alert('刪除成功');
       fetchData();
     } catch (error) {
@@ -366,10 +361,9 @@ export default function AdminSiteSettings() {
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white">Footer 文字設定</h2>
                 <button
                   onClick={async () => {
-                    if (!token) return;
                     try {
                       for (const setting of footerTextSettings) {
-                        await contentAPI.updateFooterTextSetting(setting.setting_key, setting, token);
+                        await contentAPI.updateFooterTextSetting(setting.setting_key, setting);
                       }
                       alert('儲存成功');
                       fetchData();

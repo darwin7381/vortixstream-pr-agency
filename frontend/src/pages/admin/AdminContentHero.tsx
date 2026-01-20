@@ -3,6 +3,7 @@ import AdminLayout from '../../components/admin/AdminLayout';
 import { useAuth } from '../../contexts/AuthContext';
 import { Save } from 'lucide-react';
 import { ADMIN_API } from '../../config/api';
+import { authenticatedGet, authenticatedPost, authenticatedPut, authenticatedPatch, authenticatedDelete } from '../../utils/apiClient';
 
 interface HeroSection {
   id: number;
@@ -19,18 +20,14 @@ interface HeroSection {
 }
 
 export default function AdminContentHero() {
-  const token = localStorage.getItem('access_token');
   const [heroes, setHeroes] = useState<HeroSection[]>([]);
   const [loading, setLoading] = useState(true);
   const [showImagePicker, setShowImagePicker] = useState(false);
   const [currentPage, setCurrentPage] = useState('');
 
   const fetchData = async () => {
-    if (!token) return;
     try {
-      const response = await fetch(`${ADMIN_API}/content/hero`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await authenticatedGet(`${ADMIN_API}/content/hero`);
       const data = await response.json();
       setHeroes(data);
     } catch (error) {
@@ -42,11 +39,10 @@ export default function AdminContentHero() {
 
   useEffect(() => {
     fetchData();
-  }, [token]);
+  }, []);
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>, page: string) => {
     e.preventDefault();
-    if (!token) return;
 
     const formData = new FormData(e.currentTarget);
     const data = {
@@ -61,11 +57,7 @@ export default function AdminContentHero() {
     };
 
     try {
-      await fetch(`${ADMIN_API}/content/hero/${page}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify(data),
-      });
+      await authenticatedPut(`${ADMIN_API}/content/hero/${page}`, data);
       alert('Updated successfully');
       fetchData();
     } catch (error) {

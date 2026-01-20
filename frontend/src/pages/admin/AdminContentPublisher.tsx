@@ -3,6 +3,7 @@ import AdminLayout from '../../components/admin/AdminLayout';
 import { useAuth } from '../../contexts/AuthContext';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { ADMIN_API } from '../../config/api';
+import { authenticatedGet, authenticatedPost, authenticatedPut, authenticatedPatch, authenticatedDelete } from '../../utils/apiClient';
 
 interface PublisherFeature {
   id: number;
@@ -13,18 +14,14 @@ interface PublisherFeature {
 }
 
 export default function AdminContentPublisher() {
-  const token = localStorage.getItem('access_token');
   const [features, setFeatures] = useState<PublisherFeature[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<PublisherFeature | null>(null);
   const [showModal, setShowModal] = useState(false);
 
   const fetchData = async () => {
-    if (!token) return;
     try {
-      const response = await fetch(`${ADMIN_API}/content/publisher-features`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await authenticatedGet(`${ADMIN_API}/content/publisher-features`);
       const data = await response.json();
       setFeatures(data);
     } catch (error) {
@@ -36,16 +33,13 @@ export default function AdminContentPublisher() {
 
   useEffect(() => {
     fetchData();
-  }, [token]);
+  }, []);
 
   const handleDelete = async (item: PublisherFeature) => {
-    if (!token || !confirm(`Are you sure you want to delete「${item.title}」?`)) return;
+    if ( !confirm(`Are you sure you want to delete「${item.title}」?`)) return;
     
     try {
-      await fetch(`${ADMIN_API}/content/publisher-features/${item.id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      await authenticatedDelete(`${ADMIN_API}/content/publisher-features/${item.id}`);
       alert('Deleted successfully');
       fetchData();
     } catch (error) {
@@ -55,7 +49,6 @@ export default function AdminContentPublisher() {
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!token) return;
 
     const formData = new FormData(e.currentTarget);
     const data = {
@@ -67,18 +60,10 @@ export default function AdminContentPublisher() {
 
     try {
       if (editing) {
-        await fetch(`${ADMIN_API}/content/publisher-features/${editing.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          body: JSON.stringify(data),
-        });
+        await authenticatedPut(`${ADMIN_API}/content/publisher-features/${editing.id}`, data);
         alert('Updated successfully');
       } else {
-        await fetch(`${ADMIN_API}/content/publisher-features`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          body: JSON.stringify(data),
-        });
+        await authenticatedPost(`${ADMIN_API}/content/publisher-features`, data);
         alert('Created successfully');
       }
       setShowModal(false);

@@ -15,7 +15,6 @@ interface Setting {
 }
 
 export default function AdminContentSettings() {
-  const token = localStorage.getItem('access_token');
   const [settings, setSettings] = useState<Setting[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
@@ -23,9 +22,8 @@ export default function AdminContentSettings() {
   const [currentLogoField, setCurrentLogoField] = useState<string>('');
 
   const fetchSettings = async () => {
-    if (!token) return;
     try {
-      const data = await contentAPI.getAllSettings(token);
+      const data = await contentAPI.getAllSettings();
       setSettings(data);
     } catch (error) {
       console.error('Failed to fetch settings:', error);
@@ -36,14 +34,13 @@ export default function AdminContentSettings() {
 
   useEffect(() => {
     fetchSettings();
-  }, [token]);
+  }, []);
 
   const handleUpdate = async (key: string, value: string) => {
-    if (!token) return;
     setSaving(key);
     
     try {
-      await contentAPI.updateSiteSetting(key, value, token);
+      await contentAPI.updateSiteSetting(key, value);
       fetchSettings();
     } catch (error) {
       console.error('Failed to update:', error);
@@ -55,7 +52,6 @@ export default function AdminContentSettings() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!token) return;
 
     const formData = new FormData(e.currentTarget);
     const updates: Promise<any>[] = [];
@@ -63,7 +59,7 @@ export default function AdminContentSettings() {
     settings.forEach(setting => {
       const value = formData.get(setting.setting_key) as string;
       if (value !== setting.setting_value) {
-        updates.push(contentAPI.updateSiteSetting(setting.setting_key, value, token));
+        updates.push(contentAPI.updateSiteSetting(setting.setting_key, value));
       }
     });
 
