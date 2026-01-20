@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
-import { MaterialSymbol } from './ui/material-symbol';
+import TemplateDownloadForm from './template/TemplateDownloadForm';
 
 const vortixPortalFeatures = [
   'Plan and manage PR campaigns in one place',
@@ -9,6 +10,8 @@ const vortixPortalFeatures = [
 ];
 
 export default function VortixPortalSection() {
+  const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
+
   return (
     <section className="bg-black py-section-large">
       <div className="container-global">
@@ -67,10 +70,29 @@ export default function VortixPortalSection() {
                   ))}
                 </div>
               </div>
+
+              {/* CTA Button */}
+              <div className="mt-8 inline-block">
+                <button 
+                  onClick={() => setIsWaitlistOpen(true)}
+                  className="relative flex justify-center items-center gap-2 px-6 py-[20px] rounded-md border border-[#FF7400] text-white transition-all duration-200 hover:before:absolute hover:before:inset-0 hover:before:bg-black/20 hover:before:rounded-md text-[12px] md:text-[16px] font-semibold"
+                  style={{ 
+                    background: 'linear-gradient(102deg, #FF7400 0%, #1D3557 100%)' 
+                  }}
+                >
+                  Join AI Editor Waitlist
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Waitlist Modal */}
+      <TemplateDownloadForm 
+        isOpen={isWaitlistOpen}
+        onClose={() => setIsWaitlistOpen(false)}
+      />
     </section>
   );
 }

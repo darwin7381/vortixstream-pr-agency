@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
-import { X, Mail, Sparkles, Zap, Wand2, Check, Loader2 } from 'lucide-react';
+import { X, Mail, Sparkles, Wand2, Check, Loader2 } from 'lucide-react';
 import { PRTemplate, templateAPI } from '../../api/templateClient';
 import { Button } from '../ui/button';
 
 interface TemplateDownloadFormProps {
-  template: PRTemplate | null;
+  template?: PRTemplate | null;  // 改為可選，支持通用 waitlist
   isOpen: boolean;
   onClose: () => void;
 }
 
 export default function TemplateDownloadForm({
-  template,
+  template = null,
   isOpen,
   onClose
 }: TemplateDownloadFormProps) {
@@ -38,7 +38,7 @@ export default function TemplateDownloadForm({
     };
   }, [isOpen]);
 
-  if (!isOpen || !template) return null;
+  if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,8 +47,9 @@ export default function TemplateDownloadForm({
     
     try {
       // 呼叫真實 API
+      // 如果沒有 template，使用 ID 1 作為通用的 AI PR Editor waitlist
       const response = await templateAPI.joinWaitlist({
-        template_id: template.id,
+        template_id: template?.id || 1,
         email: formData.email,
         name: formData.name || undefined,
         subscribe_newsletter: formData.subscribeNewsletter,
@@ -191,7 +192,11 @@ export default function TemplateDownloadForm({
                     AI PR Editor Waitlist
                   </h2>
                   <p className="text-white/70 text-[13px] font-sans">
-                    Get early access to <span className="text-[#FF7400] font-semibold">{template.title}</span> in our AI-powered PR editor
+                    {template ? (
+                      <>Get early access to <span className="text-[#FF7400] font-semibold">{template.title}</span> in our AI-powered PR editor</>
+                    ) : (
+                      <>Get early access to <span className="text-[#FF7400] font-semibold">Awards & Recognition</span> in our AI-powered PR editor</>
+                    )}
                   </p>
                 </div>
 

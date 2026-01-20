@@ -1,0 +1,119 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Your PR Template - VortixPR{% endblock %}
+
+{% block extra_styles %}
+.intro-text {
+    font-size: 16px;
+    color: #374151;
+    margin-bottom: 30px;
+    line-height: 1.8;
+}
+.template-box {
+    background: #f9fafb;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 30px;
+    margin: 30px 0;
+}
+.template-title {
+    color: #ea580c;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 20px 0;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #ea580c;
+}
+.template-content {
+    color: #1f2937;
+    font-size: 15px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+.tips-box {
+    background: #fef3c7;
+    border-left: 4px solid #f59e0b;
+    padding: 20px;
+    margin: 25px 0;
+    border-radius: 6px;
+}
+.tips-box h3 {
+    margin: 0 0 10px 0;
+    color: #92400e;
+    font-size: 16px;
+}
+.tips-box ul {
+    margin: 10px 0;
+    padding-left: 20px;
+    color: #78350f;
+}
+.tips-box li {
+    margin: 8px 0;
+}
+.tracking-info {
+    font-size: 11px;
+    color: #9ca3af;
+    margin-top: 15px;
+    font-family: monospace;
+}
+{% endblock %}
+
+{% block header %}
+<h1 style="margin: 0; font-size: 28px;">📝 Your PR Template is Ready!</h1>
+<p style="margin: 10px 0 0 0; opacity: 0.95; font-size: 16px;">
+    Professional Press Release Template - Ready to Use
+</p>
+{% endblock %}
+
+{% block content %}
+<p class="intro-text">
+    Hello! 👋<br><br>
+    Thank you for your interest in <strong>VortixPR</strong>. Below is the PR Template you requested.
+    You can use it directly or customize it according to your needs.
+</p>
+
+<div class="template-box">
+    <h2 class="template-title">📄 {{ template_title }}</h2>
+    <div class="template-content">{{ template_content }}</div>
+</div>
+
+<div class="tips-box">
+    <h3>💡 Usage Tips</h3>
+    <ul>
+        <li>Adjust the tone and wording to match your brand voice</li>
+        <li>Include specific data and results to enhance credibility</li>
+        <li>Add compelling headlines and subheadings</li>
+        <li>Attach high-quality visuals (images, videos, etc.)</li>
+        <li>Ensure contact information is complete and accurate</li>
+    </ul>
+</div>
+
+<div style="text-align: center; padding: 30px 0; border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb; margin: 35px 0;">
+    <p style="margin-bottom: 20px; color: #374151; font-size: 16px;">
+        Explore More Professional PR Templates & Services
+    </p>
+    <a href="{{ templates_url }}" class="cta-button">
+        Browse All Templates
+    </a>
+</div>
+
+<p style="color: #6b7280; font-size: 14px; line-height: 1.6;">
+    <strong>Need Professional Help?</strong><br>
+    VortixPR offers comprehensive PR services, from press release writing to media relations.
+    We can help you achieve your brand communication goals.
+</p>
+{% endblock %}
+
+{% block footer %}
+{{ super() }}
+<p style="margin-top: 15px;">
+    <a href="{{ frontend_url }}">Visit Website</a> · 
+    <a href="{{ blog_url }}">Read Blog</a> · 
+    <a href="{{ contact_url }}">Contact Us</a>
+</p>
+<p class="tracking-info">
+    Tracking ID: {{ tracking_id }}
+</p>
+{% endblock %}
+

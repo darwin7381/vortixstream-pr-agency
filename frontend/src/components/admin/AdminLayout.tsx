@@ -31,7 +31,8 @@ import {
   Monitor,
   TrendingUp,
   Navigation as NavigationIcon,
-  FileType
+  FileType,
+  Eye
 } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 import VortixLogoWhite from '../../assets/VortixLogo White_Horizontal.png';
@@ -153,6 +154,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       label: 'Newsletter', 
       icon: Mail, 
       path: '/admin/newsletter' 
+    },
+    { 
+      label: 'Email Preview', 
+      icon: Eye, 
+      path: '/admin/email-preview' 
     },
     {
       label: 'User Management',

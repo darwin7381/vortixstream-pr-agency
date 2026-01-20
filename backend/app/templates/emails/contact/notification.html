@@ -1,0 +1,89 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}New Contact Form - VortixPR{% endblock %}
+
+{% block extra_styles %}
+.info-row {
+    margin: 15px 0;
+    padding: 15px;
+    background: #f9fafb;
+    border-radius: 8px;
+    border-left: 4px solid #ea580c;
+}
+.label {
+    font-weight: 600;
+    color: #6b7280;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.value {
+    color: #111827;
+    margin-top: 5px;
+    font-size: 16px;
+}
+.message-box {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    margin-top: 15px;
+    white-space: pre-wrap;
+}
+{% endblock %}
+
+{% block header %}
+<h1 style="margin: 0; font-size: 24px;">🔔 New Contact Form Submission</h1>
+<p style="margin: 10px 0 0 0; opacity: 0.9;">VortixPR Admin Notification</p>
+{% endblock %}
+
+{% block content %}
+<div class="info-row">
+    <div class="label">Name</div>
+    <div class="value">{{ name }}</div>
+</div>
+
+<div class="info-row">
+    <div class="label">Email</div>
+    <div class="value">{{ email }}</div>
+</div>
+
+{% if company %}
+<div class="info-row">
+    <div class="label">Company</div>
+    <div class="value">{{ company }}</div>
+</div>
+{% endif %}
+
+{% if phone %}
+<div class="info-row">
+    <div class="label">Phone</div>
+    <div class="value">{{ phone }}</div>
+</div>
+{% endif %}
+
+<div class="info-row">
+    <div class="label">Message</div>
+    <div class="message-box">{{ message }}</div>
+</div>
+
+<div style="margin-top: 30px; text-align: center;">
+    <a href="{{ admin_url }}/contact" 
+       style="display: inline-block; background: #ea580c; color: white; 
+              padding: 12px 30px; text-decoration: none; border-radius: 8px;
+              font-weight: 600;">
+        View in Admin Panel
+    </a>
+</div>
+{% endblock %}
+
+{% block footer %}
+{{ super() }}
+<p style="margin-top: 10px; font-size: 12px;">
+    This email was automatically sent by VortixPR
+</p>
+<p style="margin-top: 5px; font-size: 12px;">
+    Admin Login: <a href="{{ admin_url }}">{{ admin_url }}</a>
+</p>
+{% endblock %}
+

@@ -1,0 +1,72 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Welcome to VortixPR Newsletter{% endblock %}
+
+{% block extra_styles %}
+.welcome-text {
+    font-size: 18px;
+    color: #111827;
+    margin: 20px 0;
+}
+.features {
+    background: #f9fafb;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+.feature-item {
+    margin: 12px 0;
+    padding-left: 25px;
+    position: relative;
+}
+.feature-item:before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #ea580c;
+    font-weight: bold;
+}
+{% endblock %}
+
+{% block header %}
+<h1 style="margin: 0; font-size: 32px;">🎉 Welcome to VortixPR!</h1>
+<p style="margin: 10px 0 0 0; opacity: 0.95; font-size: 16px;">
+    Thank you for subscribing to our Newsletter
+</p>
+{% endblock %}
+
+{% block content %}
+<p class="welcome-text">
+    Hello there! 👋
+</p>
+
+<p class="welcome-text">
+    Thank you for subscribing to the VortixPR Newsletter! We're excited to share
+    the latest PR trends, media strategies, and professional insights on brand building with you.
+</p>
+
+<div class="features">
+    <h3 style="margin-top: 0; color: #111827;">What you'll receive:</h3>
+    <div class="feature-item">Latest PR industry trend analysis</div>
+    <div class="feature-item">Professional tips for building media relationships</div>
+    <div class="feature-item">Success stories and best practices</div>
+    <div class="feature-item">Exclusive offers and event information</div>
+    <div class="feature-item">Brand building and crisis management strategies</div>
+</div>
+
+<p class="welcome-text">
+    We promise to only send high-quality content and will never spam you.
+</p>
+
+<div style="text-align: center;">
+    <a href="{{ blog_url }}" class="cta-button">
+        Read Latest Articles
+    </a>
+</div>
+
+<p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
+    If you no longer wish to receive our emails, you can
+    <a href="{{ unsubscribe_url }}" style="color: #ea580c;">unsubscribe</a> at any time.
+</p>
+{% endblock %}
+

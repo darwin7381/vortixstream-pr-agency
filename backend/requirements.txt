@@ -30,6 +30,9 @@ fastapi-cors==0.0.6
 # Email Service
 resend==2.19.0
 
+# Template Engine
+jinja2==3.1.4
+
 # Cloud Storage
 boto3==1.42.17
 
