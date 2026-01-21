@@ -21,16 +21,17 @@ interface ServicesSectionProps {
 }
 
 export default function ServicesSection({ onContactClick }: ServicesSectionProps = {}) {
-  const [services, setServices] = useState<Service[]>([]);
+  const [sectionData, setSectionData] = useState<any>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [visibleItems, setVisibleItems] = useState(new Set());
   const sectionRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  // 載入 services
+  // 載入 services section 內容（從 JSONB）
   useEffect(() => {
-    contentAPI.getServices()
-      .then(setServices)
+    fetch(`${import.meta.env.VITE_API_URL}/public/content/sections/services`)
+      .then(r => r.json())
+      .then(setSectionData)
       .catch(console.error);
   }, []);
 
@@ -73,7 +74,7 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
     });
 
     return () => observers.forEach(observer => observer.disconnect());
-  }, [services]);  // ✅ 添加 services 依賴，確保數據載入後重新設置 observer
+  }, [sectionData?.items]);  // ✅ 添加 items 依賴，確保數據載入後重新設置 observer
 
   const ServiceIcon = () => (
     <div className="size-12 relative">
@@ -160,7 +161,7 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
               style={{ transitionDelay: '0.3s' }}
             >
               <span className="text-[16px] font-semibold text-white font-sans font-semibold">
-                Services
+                {sectionData?.label}
               </span>
             </div>
             <h2 
@@ -171,7 +172,7 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
               }`}
               style={{ transitionDelay: '0.7s' }}
             >
-              What We Offer
+              {sectionData?.title}
             </h2>
             <p 
               className={`text-[12px] md:text-[18px] text-white font-sans transition-all duration-1300 ease-out ${
@@ -181,7 +182,7 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
               }`}
               style={{ transitionDelay: '1.1s' }}
             >
-              At VortixPR, we amplify blockchain, Web3, and AI projects through strategic media engagement. Our global network ensures your message resonates with the right audience.
+              {sectionData?.description}
             </p>
           </div>
 
@@ -204,10 +205,10 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
                     <ServiceIcon />
                   </div>
                   <h3 className="text-[24px] font-medium text-white mb-3 tracking-[-0.24px] font-heading font-medium">
-                    {services[0]?.title || ''}
+                    {sectionData?.items?.[0]?.title}
                   </h3>
                   <p className="text-[14px] text-white font-sans">
-                    {services[0]?.description || ''}
+                    {sectionData?.items?.[0]?.description}
                   </p>
                 </div>
 
@@ -225,10 +226,10 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
                     <ServiceIcon />
                   </div>
                   <h3 className="text-[24px] font-medium text-white mb-3 tracking-[-0.24px] font-heading font-medium">
-                    {services[1]?.title || ''}
+                    {sectionData?.items?.[1]?.title}
                   </h3>
                   <p className="text-[14px] text-white font-sans">
-                    {services[1]?.description || ''}
+                    {sectionData?.items?.[1]?.description}
                   </p>
                 </div>
               </div>
@@ -288,10 +289,10 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
                     <ServiceIcon />
                   </div>
                   <h3 className="text-[24px] font-medium text-white mb-3 tracking-[-0.24px] font-heading font-medium">
-                    {services[2]?.title || ''}
+                    {sectionData?.items?.[2]?.title}
                   </h3>
                   <p className="text-[14px] text-white font-sans">
-                    {services[2]?.description || ''}
+                    {sectionData?.items?.[2]?.description}
                   </p>
                 </div>
 
@@ -309,10 +310,10 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
                     <ServiceIcon />
                   </div>
                   <h3 className="text-[24px] font-medium text-white mb-3 tracking-[-0.24px] font-heading font-medium">
-                    {services[3]?.title || ''}
+                    {sectionData?.items?.[3]?.title}
                   </h3>
                   <p className="text-[14px] text-white font-sans">
-                    {services[3]?.description || ''}
+                    {sectionData?.items?.[3]?.description}
                   </p>
                 </div>
               </div>
@@ -322,12 +323,12 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
           {/* Enhanced Mobile Layout - 列表式布局 with 分隔線 */}
           <div className="md:hidden mb-12">
             <div className="space-y-0">
-              {services.map((service, index) => (
+              {sectionData?.items?.map((service: any, index: number) => (
                 <div 
                   key={index} 
                   ref={el => { itemRefs.current[index + 4] = el; }}
                   className={`flex items-start gap-4 py-6 px-3 transition-all duration-1400 ease-out hover:bg-white/[0.02] group ${
-                    index !== services.length - 1 ? 'border-b border-white/5' : ''
+                    index !== sectionData?.items?.length - 1 ? 'border-b border-white/5' : ''
                   } ${
                     visibleItems.has(index + 4) 
                       ? 'opacity-100 translate-y-0' 
@@ -398,21 +399,43 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
             </div>
           </div>
 
-          {/* Actions */}
+          {/* Actions - 從 JSONB 讀取，不使用 fallback */}
           <div className="flex flex-row gap-6 items-center justify-center">
             <Button 
-              onClick={onContactClick}
+              onClick={() => {
+                const url = sectionData?.cta_primary?.url;
+                if (!url) return;
+                if (url.startsWith('#')) {
+                  const element = document.getElementById(url.substring(1));
+                  if (element) {
+                    window.scrollTo({ top: element.offsetTop - 72, behavior: 'smooth' });
+                  }
+                } else {
+                  window.location.href = url;
+                }
+              }}
               variant="outline" 
               className="border-2 border-white text-white bg-transparent hover:bg-white hover:text-black text-[12px] md:text-[16px] py-[20px]"
             >
-              Get Started
+              {sectionData?.cta_primary?.text}
             </Button>
             <Button 
-              onClick={onContactClick}
+              onClick={() => {
+                const url = sectionData?.cta_secondary?.url;
+                if (!url) return;
+                if (url.startsWith('#')) {
+                  const element = document.getElementById(url.substring(1));
+                  if (element) {
+                    window.scrollTo({ top: element.offsetTop - 72, behavior: 'smooth' });
+                  }
+                } else {
+                  window.location.href = url;
+                }
+              }}
               variant="ghost" 
               className="text-white transition-all duration-500 ease-in-out hover:bg-transparent hover:text-[#FF7400] hover:animate-[text-pulse_2s_ease-in-out_infinite] hover:[text-shadow:0_0_6px_rgba(255,116,0,0.4),0_0_12px_rgba(255,116,0,0.2),0_0_18px_rgba(255,116,0,0.1)] text-[12px] md:text-[16px] py-[20px]"
             >
-              Contact Us
+              {sectionData?.cta_secondary?.text}
               <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
           </div>

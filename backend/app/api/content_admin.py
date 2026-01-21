@@ -306,92 +306,9 @@ async def delete_team_member(
 
 # ==================== Services Management ====================
 
-@router.get("/services", response_model=List[ServiceResponse])
-async def get_all_services(
-    conn: asyncpg.Connection = Depends(get_db_conn)
-):
-    """取得所有服務項目（包含停用的）"""
-    rows = await conn.fetch("""
-        SELECT * FROM services 
-        ORDER BY display_order ASC, id ASC
-    """)
-    return [dict(row) for row in rows]
-
-
-@router.post("/services", response_model=ServiceResponse)
-async def create_service(
-    service: ServiceCreate,
-    conn: asyncpg.Connection = Depends(get_db_conn),
-    current_user = Depends(get_current_user)
-):
-    """創建新服務項目"""
-    row = await conn.fetchrow("""
-        INSERT INTO services (title, description, icon, display_order, is_active)
-        VALUES ($1, $2, $3, $4, $5)
-        RETURNING *
-    """, service.title, service.description, service.icon, 
-        service.display_order, service.is_active)
-    
-    return dict(row)
-
-
-@router.put("/services/{service_id}", response_model=ServiceResponse)
-async def update_service(
-    service_id: int,
-    service: ServiceUpdate,
-    conn: asyncpg.Connection = Depends(get_db_conn),
-    current_user = Depends(get_current_user)
-):
-    """更新服務項目"""
-    existing = await conn.fetchrow("SELECT * FROM services WHERE id = $1", service_id)
-    if not existing:
-        raise HTTPException(status_code=404, detail="Service not found")
-    
-    # 使用 model_dump(exclude_unset=True) 只獲取真正提供的欄位
-    update_data = service.model_dump(exclude_unset=True)
-    
-    if not update_data:
-        raise HTTPException(status_code=400, detail="No fields to update")
-    
-    update_fields = []
-    values = []
-    param_count = 1
-    
-    for field, value in update_data.items():
-        update_fields.append(f"{field} = ${param_count}")
-        values.append(value)
-        param_count += 1
-    
-    update_fields.append(f"updated_at = ${param_count}")
-    values.append(datetime.utcnow())
-    param_count += 1
-    
-    values.append(service_id)
-    
-    query = f"""
-        UPDATE services 
-        SET {', '.join(update_fields)}
-        WHERE id = ${param_count}
-        RETURNING *
-    """
-    
-    row = await conn.fetchrow(query, *values)
-    return dict(row)
-
-
-@router.delete("/services/{service_id}")
-async def delete_service(
-    service_id: int,
-    conn: asyncpg.Connection = Depends(get_db_conn),
-    current_user = Depends(get_current_user)
-):
-    """刪除服務項目"""
-    result = await conn.execute("DELETE FROM services WHERE id = $1", service_id)
-    
-    if result == "DELETE 0":
-        raise HTTPException(status_code=404, detail="Service not found")
-    
-    return {"message": "Service deleted successfully"}
+# ==================== Services 已遷移到 JSONB ====================
+# 所有 services 相關 API 已移除
+# 請使用: GET/PUT /admin/content/sections/services
 
 
 # ==================== Site Settings Management ====================

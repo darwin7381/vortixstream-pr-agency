@@ -193,21 +193,38 @@ class Database:
                 CREATE INDEX IF NOT EXISTS idx_team_members_active_order ON team_members(is_active, display_order);
             """)
             
-            # ==================== Services ====================
+            # ==================== Section Contents (JSONB CMS) ====================
+            # 🎯 統一的 JSONB Section 管理表（現代化 CMS 架構）
+            # 取代舊的獨立表模式（services, publisher_section 等）
             await conn.execute("""
-                CREATE TABLE IF NOT EXISTS services (
+                CREATE TABLE IF NOT EXISTS section_contents (
                     id SERIAL PRIMARY KEY,
-                    title VARCHAR(200) NOT NULL,
-                    description TEXT NOT NULL,
-                    icon VARCHAR(50),
-                    display_order INTEGER DEFAULT 0,
-                    is_active BOOLEAN DEFAULT TRUE,
+                    section_key VARCHAR(100) UNIQUE NOT NULL,
+                    content JSONB NOT NULL,
                     created_at TIMESTAMP DEFAULT NOW(),
                     updated_at TIMESTAMP DEFAULT NOW()
                 );
                 
-                CREATE INDEX IF NOT EXISTS idx_services_active_order ON services(is_active, display_order);
+                -- GIN 索引：加速 JSONB 查詢
+                CREATE INDEX IF NOT EXISTS idx_section_content_gin 
+                ON section_contents USING GIN (content);
+                
+                -- section_key 索引
+                CREATE INDEX IF NOT EXISTS idx_section_key 
+                ON section_contents (section_key);
             """)
+            
+            # ⚠️ 舊的 services 表已廢棄
+            # 已遷移到 section_contents (JSONB 模式)
+            # 
+            # 🗑️ 本地開發環境清理指令：
+            #    DROP TABLE IF EXISTS services;
+            # 
+            # 🚨 生產環境注意事項：
+            #    1. 如果生產環境已有 services 表且有資料，請先備份
+            #    2. 確認已遷移到 section_contents
+            #    3. 再手動執行：DROP TABLE services;
+            #    4. 本 database.py 不會自動刪除（遵循安全原則）
             
             # ==================== Differentiators ====================
             await conn.execute("""
@@ -1009,20 +1026,34 @@ class Database:
             """)
             logger.info("✅ Testimonials seeded")
         
-        # === Seed Services ===
-        service_count = await conn.fetchval("SELECT COUNT(*) FROM services")
-        if service_count == 0:
-            logger.info("📝 Seeding services...")
+        # === Seed Services (JSONB 模式) ===
+        # ⚠️ 已遷移到 section_contents 表（JSONB 格式）
+        # 舊的 services 表已廢棄，不再使用
+        section_count = await conn.fetchval("SELECT COUNT(*) FROM section_contents WHERE section_key = 'services'")
+        if section_count == 0:
+            logger.info("📝 Seeding services section (JSONB)...")
+            import json
+            services_content = {
+                'label': 'Services',
+                'title': 'What We Offer',
+                'description': 'At VortixPR, we amplify blockchain, Web3, and AI projects through strategic media engagement. Our global network ensures your message resonates with the right audience.',
+                'cta': {
+                    'text': 'Get Started',
+                    'url': '/contact'
+                },
+                'items': [
+                    {'id': 1, 'title': 'Global Press Distribution', 'description': 'Targeted distribution across top crypto, tech and AI media.', 'icon': 'globe', 'display_order': 1},
+                    {'id': 2, 'title': 'Asia-Market Localization & Outreach', 'description': 'CN, KR, JP & SEA outreach with language + narrative adaptation.', 'icon': 'language', 'display_order': 2},
+                    {'id': 3, 'title': 'PR & Narrative Strategy', 'description': 'Angle shaping, headline advice, and editorial review.', 'icon': 'strategy', 'display_order': 3},
+                    {'id': 4, 'title': 'Founder & Personal Branding PR', 'description': 'Articles, interviews and content for founder authority.', 'icon': 'user', 'display_order': 4},
+                    {'id': 5, 'title': 'Influencer Marketing & Community Activation', 'description': 'Leverage key opinion leaders and build engaged communities around your project.', 'icon': 'users', 'display_order': 5}
+                ]
+            }
             await conn.execute("""
-                INSERT INTO services (title, description, icon, display_order, is_active)
-                VALUES
-                    ('Global Press Distribution', 'Targeted distribution across top crypto, tech and AI media.', 'globe', 1, true),
-                    ('Asia-Market Localization & Outreach', 'CN, KR, JP & SEA outreach with language + narrative adaptation.', 'language', 2, true),
-                    ('PR & Narrative Strategy', 'Angle shaping, headline advice, and editorial review.', 'strategy', 3, true),
-                    ('Founder & Personal Branding PR', 'Articles, interviews and content for founder authority.', 'user', 4, true),
-                    ('Influencer Marketing & Community Activation', 'Leverage key opinion leaders and build engaged communities around your project.', 'users', 5, true)
-            """)
-            logger.info("✅ Services seeded")
+                INSERT INTO section_contents (section_key, content)
+                VALUES ($1, $2::jsonb)
+            """, 'services', json.dumps(services_content))
+            logger.info("✅ Services section seeded (JSONB)")
         
         # === Seed Differentiators ===
         diff_count = await conn.fetchval("SELECT COUNT(*) FROM differentiators")

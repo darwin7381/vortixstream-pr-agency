@@ -55,9 +55,9 @@ export default function AdminContentTestimonials() {
     const data = {
       quote: formData.get('quote') as string,
       author_name: formData.get('author_name') as string,
-      author_title: formData.get('author_title') as string || null,
-      author_company: formData.get('author_company') as string || null,
-      author_avatar_url: formData.get('author_avatar_url') as string || null,
+      author_title: (formData.get('author_title') as string) || '',  // ✅ 修復：送空字串而非 null
+      author_company: (formData.get('author_company') as string) || '',  // ✅ 修復：送空字串而非 null
+      author_avatar_url: (formData.get('author_avatar_url') as string) || '',  // ✅ 修復：送空字串而非 null
       display_order: parseInt(formData.get('display_order') as string) || 0,
       is_active: formData.get('is_active') === 'on',
     };

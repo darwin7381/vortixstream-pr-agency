@@ -14,8 +14,10 @@ from ..models.content import (
     HeroSectionCreate, HeroSectionUpdate, HeroSectionResponse,
     HeroMediaLogoCreate, HeroMediaLogoUpdate, HeroMediaLogoResponse,
     LyroSectionUpdate, LyroSectionResponse,
-    LyroFeatureCreate, LyroFeatureUpdate, LyroFeatureResponse
+    LyroFeatureCreate, LyroFeatureUpdate, LyroFeatureResponse,
+    SectionContentCreate, SectionContentUpdate, SectionContentResponse
 )
+import json
 
 router = APIRouter(prefix="/admin/content", tags=["Admin Content Extended"], dependencies=[Depends(require_admin)])
 
@@ -178,6 +180,79 @@ async def update_hero_section(page: str, item: HeroSectionUpdate, conn: asyncpg.
     values.append(page)
     
     row = await conn.fetchrow(f"UPDATE hero_sections SET {', '.join(update_fields)} WHERE page = ${param_count} RETURNING *", *values)
+    return dict(row)
+
+
+# ==================== Section Contents (JSONB) ====================
+
+@router.get("/sections/{section_key}", response_model=SectionContentResponse)
+async def get_section_content_admin(
+    section_key: str,
+    conn: asyncpg.Connection = Depends(get_db_conn),
+    current_user = Depends(get_current_user)
+):
+    """取得 Section 內容（Admin 用，包含完整資訊）"""
+    row = await conn.fetchrow("""
+        SELECT * FROM section_contents WHERE section_key = $1
+    """, section_key)
+    
+    if not row:
+        raise HTTPException(status_code=404, detail=f"Section '{section_key}' not found")
+    
+    result = dict(row)
+    # 解析 JSONB 字串
+    if isinstance(result['content'], str):
+        result['content'] = json.loads(result['content'])
+    
+    return result
+
+
+@router.put("/sections/{section_key}")
+async def update_section_content(
+    section_key: str,
+    item: SectionContentUpdate,
+    conn: asyncpg.Connection = Depends(get_db_conn),
+    current_user = Depends(get_current_user)
+):
+    """
+    更新 Section 內容
+    
+    使用 JSONB 的好處：
+    - 不需要為每個 section 寫一個 API
+    - 內容結構可以靈活調整
+    - 前端可以送任意 JSON 結構
+    """
+    row = await conn.fetchrow("""
+        INSERT INTO section_contents (section_key, content, updated_at)
+        VALUES ($1, $2::jsonb, NOW())
+        ON CONFLICT (section_key) 
+        DO UPDATE SET 
+            content = EXCLUDED.content,
+            updated_at = NOW()
+        RETURNING id, section_key, created_at, updated_at
+    """, section_key, json.dumps(item.content))
+    
+    return {
+        "id": row['id'],
+        "section_key": row['section_key'],
+        "message": "Section updated successfully",
+        "updated_at": row['updated_at'].isoformat()
+    }
+
+
+@router.post("/sections", response_model=SectionContentResponse)
+async def create_section_content(
+    item: SectionContentCreate,
+    conn: asyncpg.Connection = Depends(get_db_conn),
+    current_user = Depends(get_current_user)
+):
+    """創建新的 Section 內容"""
+    row = await conn.fetchrow("""
+        INSERT INTO section_contents (section_key, content)
+        VALUES ($1, $2::jsonb)
+        RETURNING *
+    """, item.section_key, json.dumps(item.content))
+    
     return dict(row)
 
 

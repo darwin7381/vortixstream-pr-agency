@@ -53,14 +53,14 @@ export default function AdminSiteSettings() {
 
   // Navigation handlers
   const handleDeleteNav = async (item: any) => {
-    if ( !confirm(`確定要刪除「${item.label_en}」？`)) return;
+    if (!confirm(`Are you sure you want to delete "${item.label_en}"?`)) return;
     try {
       await contentAPI.deleteNavigationItem(item.id);
-      alert('刪除成功');
+      alert('Deleted successfully');
       fetchData();
     } catch (error) {
       console.error('Failed to delete:', error);
-      alert('刪除失敗');
+      alert('Delete failed');
     }
   };
 
@@ -90,29 +90,29 @@ export default function AdminSiteSettings() {
     try {
       if (editingNav) {
         await contentAPI.updateNavigationItem(editingNav.id, data);
-        alert('更新成功');
+        alert('Updated successfully');
       } else {
         await contentAPI.createNavigationItem(data);
-        alert('新增成功');
+        alert('Created successfully');
       }
       setShowNavModal(false);
       setEditingNav(null);
       fetchData();
     } catch (error) {
       console.error('Failed to save:', error);
-      alert('儲存失敗');
+      alert('Save failed');
     }
   };
 
   const handleSaveCTA = async () => {
-    if ( !navCTA) return;
+    if (!navCTA) return;
     try {
       await contentAPI.updateNavigationCTA(navCTA);
-      alert('CTA 更新成功');
+      alert('CTA updated successfully');
       fetchData();
     } catch (error) {
       console.error('Failed to save CTA:', error);
-      alert('儲存失敗');
+      alert('Save failed');
     }
   };
 
@@ -215,7 +215,7 @@ export default function AdminSiteSettings() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Navigation & Footer</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">管理網站導航和頁尾設定</p>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">Manage site navigation and footer settings</p>
         </div>
 
         {/* Tabs */}
@@ -257,11 +257,11 @@ export default function AdminSiteSettings() {
           <div className="space-y-6">
             {/* CTA Section */}
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">CTA 按鈕</h2>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">CTA Button</h2>
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                    按鈕文字 (EN)
+                    Button Text (EN)
                   </label>
                   <input
                     type="text"
@@ -288,17 +288,46 @@ export default function AdminSiteSettings() {
                   className="flex items-center gap-2 bg-orange-600 text-white px-4 py-2 text-sm rounded-lg hover:bg-orange-700 transition-colors"
                 >
                   <Save size={16} />
-                  儲存
+                  Save
                 </button>
               </div>
+            </div>
+
+            {/* Section IDs Reference */}
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+              <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-3">📍 Available Section IDs on Homepage</h4>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 text-sm">
+                <div className="flex items-start gap-2">
+                  <code className="bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 px-2 py-1 rounded font-mono text-xs">#services-section</code>
+                </div>
+                <div className="flex items-start gap-2">
+                  <code className="bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 px-2 py-1 rounded font-mono text-xs">#packages-section</code>
+                </div>
+                <div className="flex items-start gap-2">
+                  <code className="bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 px-2 py-1 rounded font-mono text-xs">#lyro-section</code>
+                </div>
+                <div className="flex items-start gap-2">
+                  <code className="bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 px-2 py-1 rounded font-mono text-xs">#clients-section</code>
+                </div>
+                <div className="flex items-start gap-2">
+                  <code className="bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 px-2 py-1 rounded font-mono text-xs">#publisher-section</code>
+                </div>
+                <div className="flex items-start gap-2">
+                  <code className="bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 px-2 py-1 rounded font-mono text-xs">#contact-section</code>
+                </div>
+                <div className="flex items-start gap-2">
+                  <code className="bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 px-2 py-1 rounded font-mono text-xs">#about-section</code>
+                </div>
+              </div>
+              <p className="text-xs text-blue-700 dark:text-blue-400 mt-3">💡 Copy any of these IDs above and paste into the Desktop URL or Mobile URL fields.</p>
             </div>
 
             {/* Navigation Items Table */}
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
               <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">選單項目</h2>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">共 {navItems.length} 項</p>
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">Menu Items</h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Total {navItems.length} items</p>
                 </div>
                 <button
                   onClick={() => {
@@ -308,7 +337,7 @@ export default function AdminSiteSettings() {
                   className="flex items-center gap-2 bg-orange-600 text-white px-4 py-2 text-sm rounded-lg hover:bg-orange-700 transition-colors"
                 >
                   <Plus size={18} />
-                  新增項目
+                  Add Item
                 </button>
               </div>
 
@@ -354,7 +383,7 @@ export default function AdminSiteSettings() {
                 </table>
                 {navItems.length === 0 && (
                   <div className="p-8 text-center text-gray-500 dark:text-gray-400 text-sm">
-                    尚無選單項目，請點擊「新增項目」
+                    No menu items yet. Click "Add Item" to create one.
                   </div>
                 )}
               </div>
@@ -489,7 +518,7 @@ export default function AdminSiteSettings() {
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-2xl w-full">
               <div className="p-6 border-b border-gray-200 dark:border-gray-700">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {editingNav ? '編輯選單項目' : '新增選單項目'}
+                  {editingNav ? 'Edit Menu Item' : 'Add Menu Item'}
                 </h2>
               </div>
               
@@ -501,14 +530,14 @@ export default function AdminSiteSettings() {
                 
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Desktop URL *</label>
-                  <input type="text" name="desktop_url" defaultValue={editingNav?.desktop_url} required className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:text-white" placeholder="#services-section 或 /services" />
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">以 # 開頭會 scroll，否則跳轉頁面</p>
+                  <input type="text" name="desktop_url" defaultValue={editingNav?.desktop_url} required className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:text-white" placeholder="#services-section or /services" />
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Starts with # will scroll to section, otherwise navigate to page</p>
                 </div>
                 
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Mobile URL</label>
                   <input type="text" name="mobile_url" defaultValue={editingNav?.mobile_url || ''} className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:text-white" placeholder="/services" />
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">手機版專用 URL（留空則使用 Desktop URL）</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Mobile-specific URL (leave empty to use Desktop URL)</p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -530,7 +559,7 @@ export default function AdminSiteSettings() {
                     {editingNav ? '更新' : '新增'}
                   </button>
                   <button type="button" onClick={() => { setShowNavModal(false); setEditingNav(null); }} className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-6 py-2.5 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium">
-                    取消
+                    Cancel
                   </button>
                 </div>
               </form>

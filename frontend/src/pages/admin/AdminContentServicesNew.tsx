@@ -34,24 +34,15 @@ export default function AdminContentServices() {
       label: formData.get('label') as string,
       title: formData.get('title') as string,
       description: formData.get('description') as string,
-      cta_primary: {
-        text: formData.get('cta_primary_text') as string,
-        url: formData.get('cta_primary_url') as string,
-      },
-      cta_secondary: {
-        text: formData.get('cta_secondary_text') as string,
-        url: formData.get('cta_secondary_url') as string,
+      cta: {
+        text: formData.get('cta_text') as string,
+        url: formData.get('cta_url') as string,
       }
     };
 
-    try {
-      await authenticatedPut(`${ADMIN_API}/content/sections/services`, { content: updatedContent });
-      await fetchData();  // 先重新載入資料
-      alert('Section updated successfully');
-    } catch (error) {
-      console.error('Failed to update:', error);
-      alert('Update failed');
-    }
+    await authenticatedPut(`${ADMIN_API}/sections/services`, { content: updatedContent });
+    alert('Section updated successfully');
+    fetchData();
   };
 
   const handleSaveItem = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -82,16 +73,11 @@ export default function AdminContentServices() {
       items: updatedItems
     };
 
-    try {
-      await authenticatedPut(`${ADMIN_API}/content/sections/services`, { content: updatedContent });
-      setShowItemModal(false);
-      setEditingItem(null);
-      await fetchData();  // 先重新載入資料
-      alert(editingItem ? 'Item updated successfully' : 'Item created successfully');
-    } catch (error) {
-      console.error('Failed to save:', error);
-      alert('Save failed');
-    }
+    await authenticatedPut(`${ADMIN_API}/sections/services`, { content: updatedContent });
+    alert(editingItem ? 'Item updated successfully' : 'Item created successfully');
+    setShowItemModal(false);
+    setEditingItem(null);
+    fetchData();
   };
 
   const handleDeleteItem = async (item: any) => {
@@ -103,14 +89,9 @@ export default function AdminContentServices() {
       items: updatedItems
     };
 
-    try {
-      await authenticatedPut(`${ADMIN_API}/content/sections/services`, { content: updatedContent });
-      await fetchData();  // 先重新載入資料
-      alert('Item deleted successfully');
-    } catch (error) {
-      console.error('Failed to delete:', error);
-      alert('Delete failed');
-    }
+    await authenticatedPut(`${ADMIN_API}/sections/services`, { content: updatedContent });
+    alert('Item deleted successfully');
+    fetchData();
   };
 
   if (loading) {
@@ -143,7 +124,6 @@ export default function AdminContentServices() {
             <input 
               type="text" 
               name="label" 
-              key={`label-${sectionData?.label}`}
               defaultValue={sectionData?.label} 
               placeholder="Services"
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" 
@@ -155,7 +135,6 @@ export default function AdminContentServices() {
             <input 
               type="text" 
               name="title" 
-              key={`title-${sectionData?.title}`}
               defaultValue={sectionData?.title} 
               required
               placeholder="What We Offer"
@@ -167,7 +146,6 @@ export default function AdminContentServices() {
             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Description (描述)</label>
             <textarea 
               name="description" 
-              key={`desc-${sectionData?.description?.substring(0, 20)}`}
               defaultValue={sectionData?.description}
               rows={3}
               placeholder="At VortixPR, we amplify blockchain..."
@@ -175,59 +153,26 @@ export default function AdminContentServices() {
             />
           </div>
 
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Primary CTA Button</h3>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Button Text</label>
-                <input 
-                  type="text" 
-                  name="cta_primary_text" 
-                  key={`cta-primary-text-${sectionData?.cta_primary?.text}`}
-                  defaultValue={sectionData?.cta_primary?.text}
-                  placeholder="Get Started"
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" 
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Button URL</label>
-                <input 
-                  type="text" 
-                  name="cta_primary_url" 
-                  key={`cta-primary-url-${sectionData?.cta_primary?.url}`}
-                  defaultValue={sectionData?.cta_primary?.url}
-                  placeholder="/contact"
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" 
-                />
-              </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">CTA Button Text</label>
+              <input 
+                type="text" 
+                name="cta_text" 
+                defaultValue={sectionData?.cta?.text}
+                placeholder="Get Started"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" 
+              />
             </div>
-          </div>
-
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Secondary CTA Button</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Button Text</label>
-                <input 
-                  type="text" 
-                  name="cta_secondary_text" 
-                  key={`cta-secondary-text-${sectionData?.cta_secondary?.text}`}
-                  defaultValue={sectionData?.cta_secondary?.text}
-                  placeholder="Contact Us"
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" 
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Button URL</label>
-                <input 
-                  type="text" 
-                  name="cta_secondary_url" 
-                  key={`cta-secondary-url-${sectionData?.cta_secondary?.url}`}
-                  defaultValue={sectionData?.cta_secondary?.url}
-                  placeholder="/contact"
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" 
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">CTA Button URL</label>
+              <input 
+                type="text" 
+                name="cta_url" 
+                defaultValue={sectionData?.cta?.url}
+                placeholder="/contact"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" 
+              />
             </div>
           </div>
         </form>

@@ -232,30 +232,19 @@ async def update_navigation_cta(
         """, data.text_en or 'Get Started', data.text_zh, data.text_ja, 
             data.url or '/contact', data.is_active if data.is_active is not None else True)
     else:
-        # 更新現有記錄
+        # ✅ 修復：使用 model_dump(exclude_unset=True) 來區分「未提供」和「空值」
+        update_data = data.model_dump(exclude_unset=True)
+        
+        if not update_data:
+            raise HTTPException(status_code=400, detail="No fields to update")
+        
         updates = []
         values = []
         param_count = 1
         
-        if data.text_en is not None:
-            updates.append(f"text_en = ${param_count}")
-            values.append(data.text_en)
-            param_count += 1
-        if data.text_zh is not None:
-            updates.append(f"text_zh = ${param_count}")
-            values.append(data.text_zh)
-            param_count += 1
-        if data.text_ja is not None:
-            updates.append(f"text_ja = ${param_count}")
-            values.append(data.text_ja)
-            param_count += 1
-        if data.url is not None:
-            updates.append(f"url = ${param_count}")
-            values.append(data.url)
-            param_count += 1
-        if data.is_active is not None:
-            updates.append(f"is_active = ${param_count}")
-            values.append(data.is_active)
+        for field, value in update_data.items():
+            updates.append(f"{field} = ${param_count}")
+            values.append(value)
             param_count += 1
         
         updates.append(f"updated_at = NOW()")
@@ -327,38 +316,20 @@ async def update_footer_section(
     current_user: TokenData = Depends(require_admin),
     conn: asyncpg.Connection = Depends(get_db_conn)
 ):
-    """更新 Footer Section"""
+    """✅ 修復：使用 model_dump(exclude_unset=True) 來區分「未提供」和「空值」"""
+    update_data = data.model_dump(exclude_unset=True)
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
     updates = []
     values = []
     param_count = 1
     
-    if data.section_key is not None:
-        updates.append(f"section_key = ${param_count}")
-        values.append(data.section_key)
+    for field, value in update_data.items():
+        updates.append(f"{field} = ${param_count}")
+        values.append(value)
         param_count += 1
-    if data.title_en is not None:
-        updates.append(f"title_en = ${param_count}")
-        values.append(data.title_en)
-        param_count += 1
-    if data.title_zh is not None:
-        updates.append(f"title_zh = ${param_count}")
-        values.append(data.title_zh)
-        param_count += 1
-    if data.title_ja is not None:
-        updates.append(f"title_ja = ${param_count}")
-        values.append(data.title_ja)
-        param_count += 1
-    if data.display_order is not None:
-        updates.append(f"display_order = ${param_count}")
-        values.append(data.display_order)
-        param_count += 1
-    if data.is_active is not None:
-        updates.append(f"is_active = ${param_count}")
-        values.append(data.is_active)
-        param_count += 1
-    
-    if not updates:
-        raise HTTPException(status_code=400, detail="No fields to update")
     
     updates.append(f"updated_at = NOW()")
     values.append(section_id)
@@ -418,46 +389,20 @@ async def update_footer_link(
     current_user: TokenData = Depends(require_admin),
     conn: asyncpg.Connection = Depends(get_db_conn)
 ):
-    """更新 Footer Link"""
+    """✅ 修復：使用 model_dump(exclude_unset=True) 來區分「未提供」和「空值」"""
+    update_data = data.model_dump(exclude_unset=True)
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
     updates = []
     values = []
     param_count = 1
     
-    if data.section_id is not None:
-        updates.append(f"section_id = ${param_count}")
-        values.append(data.section_id)
+    for field, value in update_data.items():
+        updates.append(f"{field} = ${param_count}")
+        values.append(value)
         param_count += 1
-    if data.label_en is not None:
-        updates.append(f"label_en = ${param_count}")
-        values.append(data.label_en)
-        param_count += 1
-    if data.label_zh is not None:
-        updates.append(f"label_zh = ${param_count}")
-        values.append(data.label_zh)
-        param_count += 1
-    if data.label_ja is not None:
-        updates.append(f"label_ja = ${param_count}")
-        values.append(data.label_ja)
-        param_count += 1
-    if data.url is not None:
-        updates.append(f"url = ${param_count}")
-        values.append(data.url)
-        param_count += 1
-    if data.target is not None:
-        updates.append(f"target = ${param_count}")
-        values.append(data.target)
-        param_count += 1
-    if data.display_order is not None:
-        updates.append(f"display_order = ${param_count}")
-        values.append(data.display_order)
-        param_count += 1
-    if data.is_active is not None:
-        updates.append(f"is_active = ${param_count}")
-        values.append(data.is_active)
-        param_count += 1
-    
-    if not updates:
-        raise HTTPException(status_code=400, detail="No fields to update")
     
     updates.append(f"updated_at = NOW()")
     values.append(link_id)
@@ -513,7 +458,7 @@ async def update_footer_text_setting(
     current_user: TokenData = Depends(require_admin),
     conn: asyncpg.Connection = Depends(get_db_conn)
 ):
-    """更新 Footer 文字設定"""
+    """✅ 修復：使用 model_dump(exclude_unset=True) 來區分「未提供」和「空值」"""
     # 檢查是否存在
     existing = await conn.fetchrow("""
         SELECT id FROM footer_text_settings WHERE setting_key = $1
@@ -522,26 +467,20 @@ async def update_footer_text_setting(
     if not existing:
         raise HTTPException(status_code=404, detail="Setting not found")
     
-    # 構建更新語句
+    # 使用 model_dump(exclude_unset=True)
+    update_data = data.model_dump(exclude_unset=True)
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
     updates = []
     values = []
     param_count = 1
     
-    if data.value_en is not None:
-        updates.append(f"value_en = ${param_count}")
-        values.append(data.value_en)
+    for field, value in update_data.items():
+        updates.append(f"{field} = ${param_count}")
+        values.append(value)
         param_count += 1
-    if data.value_zh is not None:
-        updates.append(f"value_zh = ${param_count}")
-        values.append(data.value_zh)
-        param_count += 1
-    if data.value_ja is not None:
-        updates.append(f"value_ja = ${param_count}")
-        values.append(data.value_ja)
-        param_count += 1
-    
-    if not updates:
-        raise HTTPException(status_code=400, detail="No fields to update")
     
     updates.append(f"updated_at = NOW()")
     values.append(setting_key)

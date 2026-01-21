@@ -47,13 +47,13 @@ export default function AdminContentHero() {
     const formData = new FormData(e.currentTarget);
     const data = {
       title: formData.get(`${page}_title`) as string,
-      subtitle: formData.get(`${page}_subtitle`) as string || null,
-      description: formData.get(`${page}_description`) as string || null,
-      cta_primary_text: formData.get(`${page}_cta_primary_text`) as string || null,
-      cta_primary_url: formData.get(`${page}_cta_primary_url`) as string || null,
-      cta_secondary_text: formData.get(`${page}_cta_secondary_text`) as string || null,
-      cta_secondary_url: formData.get(`${page}_cta_secondary_url`) as string || null,
-      background_image_url: formData.get(`${page}_background_image_url`) as string || null,
+      subtitle: (formData.get(`${page}_subtitle`) as string) || '',  // ✅ 修復：送空字串而非 null
+      description: (formData.get(`${page}_description`) as string) || '',  // ✅ 修復：送空字串而非 null
+      cta_primary_text: (formData.get(`${page}_cta_primary_text`) as string) || '',  // ✅ 修復：送空字串而非 null
+      cta_primary_url: (formData.get(`${page}_cta_primary_url`) as string) || '',  // ✅ 修復：送空字串而非 null
+      cta_secondary_text: (formData.get(`${page}_cta_secondary_text`) as string) || '',  // ✅ 修復：送空字串而非 null
+      cta_secondary_url: (formData.get(`${page}_cta_secondary_url`) as string) || '',  // ✅ 修復：送空字串而非 null
+      background_image_url: (formData.get(`${page}_background_image_url`) as string) || '',  // ✅ 修復：送空字串而非 null
     };
 
     try {

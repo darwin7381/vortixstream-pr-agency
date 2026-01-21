@@ -339,6 +339,36 @@ class HeroSectionResponse(HeroSectionBase):
         from_attributes = True
 
 
+# ==================== Section Contents (JSONB) Models ====================
+
+class SectionContentBase(BaseModel):
+    """
+    通用的 Section Content Model（使用 JSONB）
+    
+    所有 section 的內容都可以存在 section_contents 表中
+    這樣不需要為每個 section 創建新表
+    """
+    section_key: str = Field(..., max_length=100)
+    content: dict  # JSONB 欄位，可以存任意結構
+
+
+class SectionContentCreate(SectionContentBase):
+    pass
+
+
+class SectionContentUpdate(BaseModel):
+    content: dict  # 更新時只需要提供 content
+
+
+class SectionContentResponse(SectionContentBase):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+
 # ==================== Hero Media Logo Models ====================
 
 class HeroMediaLogoBase(BaseModel):

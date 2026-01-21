@@ -99,8 +99,8 @@ export default function AdminContentCarousel() {
     const data = {
       name: formData.get('name') as string,
       logo_url: selectedLogoUrl || formData.get('logo_url') as string,
-      alt_text: formData.get('alt_text') as string || null,
-      website_url: formData.get('website_url') as string || null,
+      alt_text: (formData.get('alt_text') as string) || '',  // ✅ 修復：送空字串而非 null
+      website_url: (formData.get('website_url') as string) || '',  // ✅ 修復：送空字串而非 null
       display_order: parseInt(formData.get('display_order') as string) || 0,
       is_active: formData.get('is_active') === 'on',
     };

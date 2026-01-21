@@ -4,6 +4,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from typing import List
 import asyncpg
+import json
 
 from ..core.database import Database
 from ..config import settings
@@ -19,7 +20,8 @@ from ..models.content import (
     HeroSectionResponse,
     HeroMediaLogoResponse,
     LyroSectionResponse,
-    LyroFeatureResponse
+    LyroFeatureResponse,
+    SectionContentResponse
 )
 
 router = APIRouter(prefix="/public/content", tags=["Public Content"])
@@ -82,18 +84,7 @@ async def get_team_members(
 
 # ==================== Services ====================
 
-@router.get("/services", response_model=List[ServiceResponse])
-async def get_services(
-    conn: asyncpg.Connection = Depends(get_db_conn)
-):
-    """取得所有啟用的服務項目（按順序）"""
-    rows = await conn.fetch("""
-        SELECT * FROM services 
-        WHERE is_active = true 
-        ORDER BY display_order ASC, id ASC
-    """)
-    
-    return [dict(row) for row in rows]
+# Services API 已完全移除 - 請使用 /sections/services
 
 
 # ==================== Site Settings ====================
@@ -284,6 +275,37 @@ async def get_carousel_logos(
     """)
     
     return [dict(row) for row in rows]
+
+
+# ==================== Section Contents (JSONB) ====================
+
+@router.get("/sections/{section_key}")
+async def get_section_content(
+    section_key: str,
+    conn: asyncpg.Connection = Depends(get_db_conn)
+):
+    """
+    取得指定 section 的內容（JSONB 格式）
+    
+    使用範例：
+    - GET /public/content/sections/services
+    - GET /public/content/sections/lyro
+    """
+    row = await conn.fetchrow("""
+        SELECT content 
+        FROM section_contents 
+        WHERE section_key = $1
+    """, section_key)
+    
+    if not row:
+        raise HTTPException(status_code=404, detail=f"Section '{section_key}' not found")
+    
+    # asyncpg 返回的 JSONB 是字串，需要解析成 dict
+    content = row['content']
+    if isinstance(content, str):
+        content = json.loads(content)
+    
+    return content
 
 
 # ==================== Navigation ====================

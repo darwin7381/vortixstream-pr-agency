@@ -216,8 +216,8 @@ export default function AdminHeroHome() {
                   opacity: parseFloat(formData.get('opacity') as string),
                   size: formData.get('size') as string,
                   position_top: formData.get('position_top') as string,
-                  position_left: formData.get('position_left') as string || null,
-                  position_right: formData.get('position_right') as string || null,
+                  position_left: (formData.get('position_left') as string) || '',  // ✅ 修復：送空字串而非 null
+                  position_right: (formData.get('position_right') as string) || '',  // ✅ 修復：送空字串而非 null
                   display_order: parseInt(formData.get('display_order') as string),
                   is_active: true,
                 };
