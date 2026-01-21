@@ -68,10 +68,20 @@ export default function AdminSiteSettings() {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
+    
+    /**
+     * ⚠️ 重要：禁止使用 || null 進行 fallback
+     * 
+     * ❌ 錯誤寫法：mobile_url: formData.get('mobile_url') as string || null
+     * 問題：空字串會被轉成 null，而後端的 if data.mobile_url is not None 會忽略 null，
+     *      導致資料庫不會被更新，舊值會保留
+     * 
+     * ✅ 正確寫法：直接送空字串，讓後端正確更新為空值
+     */
     const data = {
       label_en: formData.get('label_en') as string,
       desktop_url: formData.get('desktop_url') as string,
-      mobile_url: formData.get('mobile_url') as string || null,
+      mobile_url: (formData.get('mobile_url') as string) || '',  // 送空字串而非 null
       target: formData.get('target') as string || '_self',
       display_order: parseInt(formData.get('display_order') as string) || 0,
       is_active: formData.get('is_active') === 'on',

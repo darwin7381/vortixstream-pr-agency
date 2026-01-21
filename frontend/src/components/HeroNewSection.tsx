@@ -90,7 +90,17 @@ export default function HeroNewSection() {
 
   const handleCTA = (desktopUrl?: string, mobileUrl?: string) => {
     const isMobile = window.innerWidth < 1024;
-    const url = isMobile ? (mobileUrl || desktopUrl) : desktopUrl;
+    
+    /**
+     * ⚠️ 重要原則：禁止使用 || 運算符進行 fallback
+     * 
+     * ❌ 錯誤寫法：const url = isMobile ? (mobileUrl || desktopUrl) : desktopUrl;
+     * 問題：空字串 "" 會被視為 falsy 而 fallback 到 desktopUrl，導致行銷人員設定無效
+     * 
+     * ✅ 正確寫法：只有在 mobileUrl 為 null/undefined/空字串時才使用 desktopUrl
+     * 這樣才能確保行銷人員的設定被正確使用
+     */
+    const url = isMobile ? (mobileUrl && mobileUrl.trim() !== '' ? mobileUrl : desktopUrl) : desktopUrl;
     if (!url) return;
     
     if (url.startsWith('#')) {
@@ -257,7 +267,7 @@ export default function HeroNewSection() {
                   <Button 
                     variant="outline"
                     className="group relative h-12 lg:h-14 px-4 sm:px-5 lg:px-7 text-[13px] sm:text-[14px] lg:text-[15px] font-semibold !text-white hover:!text-white focus:!text-white bg-transparent border border-white/30 rounded-[0.75rem] hover:bg-white/8 hover:border-white/50 hover:-translate-y-[1px] focus:ring-2 focus:ring-[#FF7400]/40 focus:ring-offset-2 transition-all duration-300 ease-out overflow-hidden flex-1"
-                    onClick={() => window.open('#', '_blank')} // 這裡填入實際的表單連結
+                    onClick={() => handleCTA(heroData?.cta_secondary_url, heroData?.cta_secondary_url_mobile)}
                   >
                     <span className="relative z-10 !text-white hover:!text-white focus:!text-white transition-colors duration-300">
                       {heroData?.cta_secondary_text}

@@ -92,7 +92,17 @@ export default function Navigation({ user, onLogout, onQuickLogin }: NavigationP
   // 處理導航點擊
   const handleNavClick = (item: any) => {
     const isDesktop = window.innerWidth >= 1024;
-    const url = isDesktop ? item.desktop_url : (item.mobile_url || item.desktop_url);
+    
+    /**
+     * ⚠️ 重要原則：禁止使用 || 運算符進行 fallback
+     * 
+     * ❌ 錯誤寫法：const url = isDesktop ? item.desktop_url : (item.mobile_url || item.desktop_url);
+     * 問題：空字串 "" 會被視為 falsy 而 fallback 到 desktop_url，導致行銷人員設定無效
+     * 
+     * ✅ 正確寫法：只有在 mobile_url 為 null/undefined/空字串時才使用 desktop_url
+     * 這樣才能確保行銷人員的設定被正確使用
+     */
+    const url = isDesktop ? item.desktop_url : (item.mobile_url && item.mobile_url.trim() !== '' ? item.mobile_url : item.desktop_url);
     
     if (url?.startsWith('#')) {
       const sectionId = url.substring(1);

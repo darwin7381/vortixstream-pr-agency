@@ -140,53 +140,32 @@ async def update_navigation_item(
     current_user: TokenData = Depends(require_admin),
     conn: asyncpg.Connection = Depends(get_db_conn)
 ):
-    """更新 Navigation Item"""
-    # 構建更新語句
+    """
+    更新 Navigation Item
+    
+    ⚠️ 重要：使用 model_dump(exclude_unset=True) 來區分「未提供」和「空值」
+    - exclude_unset=True：只包含前端明確提供的欄位
+    - 這樣可以正確處理空字串（前端想清空欄位）
+    """
+    # 使用 exclude_unset=True 只獲取前端明確提供的欄位
+    update_data = data.model_dump(exclude_unset=True)
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
     updates = []
     values = []
     param_count = 1
     
-    if data.label_en is not None:
-        updates.append(f"label_en = ${param_count}")
-        values.append(data.label_en)
-        param_count += 1
-    if data.label_zh is not None:
-        updates.append(f"label_zh = ${param_count}")
-        values.append(data.label_zh)
-        param_count += 1
-    if data.label_ja is not None:
-        updates.append(f"label_ja = ${param_count}")
-        values.append(data.label_ja)
-        param_count += 1
-    if data.desktop_url is not None:
-        updates.append(f"desktop_url = ${param_count}")
-        values.append(data.desktop_url)
-        param_count += 1
-    if data.mobile_url is not None:
-        updates.append(f"mobile_url = ${param_count}")
-        values.append(data.mobile_url)
-        param_count += 1
-    if data.target is not None:
-        updates.append(f"target = ${param_count}")
-        values.append(data.target)
-        param_count += 1
-    if data.parent_id is not None:
-        updates.append(f"parent_id = ${param_count}")
-        values.append(data.parent_id)
-        param_count += 1
-    if data.display_order is not None:
-        updates.append(f"display_order = ${param_count}")
-        values.append(data.display_order)
-        param_count += 1
-    if data.is_active is not None:
-        updates.append(f"is_active = ${param_count}")
-        values.append(data.is_active)
+    for field, value in update_data.items():
+        updates.append(f"{field} = ${param_count}")
+        values.append(value)
         param_count += 1
     
-    if not updates:
-        raise HTTPException(status_code=400, detail="No fields to update")
-    
+    # 添加 updated_at
     updates.append(f"updated_at = NOW()")
+    
+    # 添加 WHERE 條件的參數
     values.append(item_id)
     
     query = f"""

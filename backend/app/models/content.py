@@ -279,6 +279,17 @@ class PublisherFeatureResponse(PublisherFeatureBase):
 # ==================== Hero Section Models ====================
 
 class HeroSectionBase(BaseModel):
+    """
+    Hero Section 基礎模型
+    
+    ⚠️ 重要：所有欄位都必須在這裡定義，否則 API 不會返回該欄位
+    
+    特別注意：
+    - cta_primary_url: 桌面版 CTA 連結
+    - cta_primary_url_mobile: 手機版 CTA 連結（重要！必須定義才會被 API 返回）
+    - cta_secondary_url: 桌面版次要 CTA 連結
+    - cta_secondary_url_mobile: 手機版次要 CTA 連結（重要！必須定義才會被 API 返回）
+    """
     page: str = Field(..., max_length=50)
     title_prefix: Optional[str] = None
     title_highlights: Optional[List[str]] = Field(default=['Web3 & AI'])
@@ -288,8 +299,10 @@ class HeroSectionBase(BaseModel):
     center_logo_url: Optional[str] = None
     cta_primary_text: Optional[str] = None
     cta_primary_url: Optional[str] = None
+    cta_primary_url_mobile: Optional[str] = None  # ⚠️ 必須定義，否則 API 不返回此欄位
     cta_secondary_text: Optional[str] = None
     cta_secondary_url: Optional[str] = None
+    cta_secondary_url_mobile: Optional[str] = None  # ⚠️ 必須定義，否則 API 不返回此欄位
     background_image_url: Optional[str] = None
     background_video_url: Optional[str] = None
     is_active: bool = Field(default=True)
