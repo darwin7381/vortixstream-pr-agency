@@ -635,13 +635,10 @@ export const authAPI = {
 
   /**
    * 獲取當前用戶資料
+   * 使用 authenticatedGet 自動處理 token 刷新
    */
-  async getMe(token: string): Promise<User> {
-    const response = await fetch(`${API_BASE_URL}/auth/me`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+  async getMe(): Promise<User> {
+    const response = await authenticatedGet(`${API_BASE_URL}/auth/me`);
     if (!response.ok) {
       throw new Error('Failed to get user data');
     }

@@ -50,6 +50,20 @@ const processQueue = (error: Error | null, token: string | null = null) => {
 };
 
 /**
+ * 檢查是否為網路錯誤（後端重啟、連線失敗等）
+ */
+const isNetworkError = (error: any): boolean => {
+  const errorMessage = error?.message?.toLowerCase() || '';
+  return (
+    errorMessage.includes('failed to fetch') ||
+    errorMessage.includes('network') ||
+    errorMessage.includes('connection') ||
+    errorMessage.includes('econnrefused') ||
+    error?.name === 'TypeError'
+  );
+};
+
+/**
  * 刷新 Access Token
  */
 const refreshAccessToken = async (): Promise<string> => {
@@ -87,18 +101,31 @@ const refreshAccessToken = async (): Promise<string> => {
     
     return data.access_token;
   } catch (error) {
-    // 刷新失敗，清除所有 tokens
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    
-    // 觸發登出
-    window.dispatchEvent(new StorageEvent('storage', {
-      key: 'access_token',
-      newValue: null,
-      url: window.location.href,
-    }));
-    
-    throw error;
+    // 區分錯誤類型
+    if (isNetworkError(error)) {
+      // 網路錯誤（後端重啟、連線失敗）- 不清除 tokens
+      console.warn('[apiClient] 網路錯誤，保留 tokens（可能是後端重啟）');
+      
+      if (import.meta.env.DEV) {
+        console.info('[DEV] 後端重啟中，請稍候再試。Tokens 已保留。');
+      }
+      
+      throw error; // 拋出錯誤但不清除 tokens
+    } else {
+      // 認證錯誤（refresh_token 真的無效）- 清除 tokens
+      console.error('[apiClient] Refresh token 無效，清除登入狀態');
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      
+      // 觸發登出
+      window.dispatchEvent(new StorageEvent('storage', {
+        key: 'access_token',
+        newValue: null,
+        url: window.location.href,
+      }));
+      
+      throw error;
+    }
   }
 };
 

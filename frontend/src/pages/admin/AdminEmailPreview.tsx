@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
-import { Mail, Eye, RefreshCw, Loader2 } from 'lucide-react';
+import { Mail, Eye, RefreshCw, Loader2, Monitor, Tablet, Smartphone, Maximize } from 'lucide-react';
 import { Button } from '../../components/ui/button';
-import { authenticatedGet } from '../../utils/apiClient';
 import { API_BASE_URL } from '../../config/api';
+import { authenticatedGet } from '../../utils/apiClient';
 
 interface EmailTemplate {
   id: string;
@@ -12,6 +12,15 @@ interface EmailTemplate {
   recipient: string;
 }
 
+type ViewportSize = 'fullwidth' | 'desktop' | 'tablet' | 'mobile';
+
+const VIEWPORT_SIZES = {
+  fullwidth: { width: '100%', label: 'Full Width', icon: Maximize },
+  desktop: { width: 700, label: 'Desktop', icon: Monitor },
+  tablet: { width: 480, label: 'Tablet', icon: Tablet },
+  mobile: { width: 320, label: 'Mobile', icon: Smartphone },
+};
+
 export default function AdminEmailPreview() {
   const [templates, setTemplates] = useState<EmailTemplate[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
@@ -19,6 +28,7 @@ export default function AdminEmailPreview() {
   const [loading, setLoading] = useState(true);
   const [previewLoading, setPreviewLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [viewportSize, setViewportSize] = useState<ViewportSize>('fullwidth');
 
   useEffect(() => {
     loadTemplates();
@@ -58,16 +68,7 @@ export default function AdminEmailPreview() {
     setSelectedTemplate(templateId);
     
     try {
-      const token = localStorage.getItem('access_token');
-      if (!token) {
-        throw new Error('No access token found');
-      }
-      
-      const response = await fetch(`${API_BASE_URL}/admin/email-preview/${templateId}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await authenticatedGet(`${API_BASE_URL}/admin/email-preview/${templateId}`);
       
       if (!response.ok) {
         throw new Error(`Failed to load preview: ${response.status}`);
@@ -176,26 +177,69 @@ export default function AdminEmailPreview() {
           <div className="lg:col-span-3">
             <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm">
               {/* Preview Header */}
-              <div className="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700 p-4 flex items-center justify-between">
+              <div className="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700 p-4">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <Eye className="w-5 h-5 text-orange-500" />
+                    <span className="text-gray-900 dark:text-white text-sm font-semibold">
+                      {templates.find(t => t.id === selectedTemplate)?.name || 'Preview'}
+                    </span>
+                  </div>
+                  
+                  {previewLoading && (
+                    <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 text-sm">
+                      <Loader2 size={14} className="animate-spin" />
+                      Loading...
+                    </div>
+                  )}
+                </div>
+
+                {/* Viewport Size Selector */}
                 <div className="flex items-center gap-2">
-                  <Eye className="w-5 h-5 text-orange-500" />
-                  <span className="text-gray-900 dark:text-white text-sm font-semibold">
-                    {templates.find(t => t.id === selectedTemplate)?.name || 'Preview'}
+                  <span className="text-gray-600 dark:text-gray-400 text-xs font-medium mr-2">
+                    Viewport:
+                  </span>
+                  {(Object.keys(VIEWPORT_SIZES) as ViewportSize[]).map((size) => {
+                    const { label, icon: Icon } = VIEWPORT_SIZES[size];
+                    return (
+                      <button
+                        key={size}
+                        onClick={() => setViewportSize(size)}
+                        className={`
+                          flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all
+                          ${viewportSize === size
+                            ? 'bg-orange-500 text-white shadow-sm'
+                            : 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-500'
+                          }
+                        `}
+                      >
+                        <Icon size={14} />
+                        {label}
+                      </button>
+                    );
+                  })}
+                  <span className="text-gray-500 dark:text-gray-400 text-xs ml-2">
+                    {viewportSize === 'fullwidth' 
+                      ? '(Full Width)' 
+                      : `(${VIEWPORT_SIZES[viewportSize].width}px)`
+                    }
                   </span>
                 </div>
-                
-                {previewLoading && (
-                  <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 text-sm">
-                    <Loader2 size={14} className="animate-spin" />
-                    Loading...
-                  </div>
-                )}
               </div>
 
               {/* Preview Content */}
-              <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-[600px]">
+              <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-[600px] flex items-center justify-center">
                 {previewHtml ? (
-                  <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+                  <div 
+                    className="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300"
+                    style={viewportSize === 'fullwidth' 
+                      ? { width: '100%' }
+                      : { 
+                          width: `${VIEWPORT_SIZES[viewportSize].width}px`,
+                          maxWidth: '100%'
+                        }
+                    }
+                  >
                     <iframe
                       srcDoc={previewHtml}
                       className="w-full h-[700px] border-0"

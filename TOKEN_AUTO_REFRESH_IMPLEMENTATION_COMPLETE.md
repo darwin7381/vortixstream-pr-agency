@@ -309,7 +309,7 @@ def create_refresh_token(data: dict) -> str:
     # ...
 ```
 
-#### 前端核心（3 個檔案）
+#### 前端核心（4 個檔案）
 
 **1. `frontend/src/utils/apiClient.ts`**（新建）
 - 251 行代碼
@@ -321,6 +321,7 @@ def create_refresh_token(data: dict) -> str:
 **2. `frontend/src/api/client.ts`**
 - 導入所有 authenticated 方法
 - 72 處 ADMIN_API 調用已全部使用 authenticated
+- **authAPI.getMe 已修改使用 authenticatedGet** ⭐ 關鍵修復
 - 涵蓋所有 Admin API：
   - blogAPI (4 個 Admin 方法)
   - pricingAPI (5 個 Admin 方法)
@@ -333,6 +334,10 @@ def create_refresh_token(data: dict) -> str:
 **3. `frontend/src/api/templateAdminClient.ts`**
 - 完全重構使用 authenticated 方法
 - 移除所有手動 token 管理
+
+**4. `frontend/src/contexts/AuthContext.tsx`**
+- **所有 authAPI.getMe 調用已移除 token 參數** ⭐ 關鍵修復
+- 現在會自動刷新 token 而不是直接登出
 
 #### Admin 頁面（17 個檔案）
 
@@ -538,7 +543,65 @@ const response = await fetch(`${ADMIN_API}/media/upload`, {
 - [ ] Hero Section 管理
 - [ ] Media 管理（上傳、刪除、更新）
 
-### 十一、技術細節
+### 十一、關鍵漏網之魚的發現與修復 ⭐
+
+#### 問題發現
+在最終驗證時發現了**最關鍵的漏網之魚**：
+
+**`authAPI.getMe(token)` 沒有使用 `authenticatedGet`！**
+
+這導致：
+1. AuthContext 初始化時調用 `authAPI.getMe(token)`
+2. 如果 token 過期（15分鐘後），請求失敗（401）
+3. AuthContext catch 錯誤後**直接執行 `logout()`**
+4. 用戶被登出！
+
+**這就是「每次修改代碼後被登出」的根本原因！**
+
+#### 為何會發生？
+- 開發環境的 HMR（Hot Module Replacement）
+- React 組件重新渲染
+- AuthContext 可能被重新初始化或執行 refreshAuth
+- 如果此時 token 剛好過期
+- getMe 失敗 → 觸發 logout → 用戶被登出
+
+#### 修復方案
+**修改前（有問題）：**
+```typescript
+// authAPI
+async getMe(token: string): Promise<User> {
+  const response = await fetch(`${API_BASE_URL}/auth/me`, {
+    headers: { 'Authorization': `Bearer ${token}` },
+  });
+  // Token 過期時會失敗，沒有自動刷新！
+}
+
+// AuthContext
+const userData = await authAPI.getMe(token);
+// 失敗時會觸發 logout()
+```
+
+**修改後（正確）：**
+```typescript
+// authAPI
+async getMe(): Promise<User> {
+  const response = await authenticatedGet(`${API_BASE_URL}/auth/me`);
+  // 現在會自動刷新 token！
+}
+
+// AuthContext
+const userData = await authAPI.getMe();
+// 現在會自動刷新，不會因為 token 過期而登出！
+```
+
+#### 影響範圍
+- `frontend/src/api/client.ts` - authAPI.getMe 方法
+- `frontend/src/contexts/AuthContext.tsx` - 3 處調用
+  1. 初始化（line 77）
+  2. 跨標籤頁同步（line 111）
+  3. refreshAuth（line 286）
+
+### 十二、技術細節
 
 #### Token 刷新 API
 ```typescript
@@ -723,7 +786,69 @@ A: 因為檔案上傳需要 FormData，不能用 JSON。但我們已經添加了
    - 監控刷新失敗率
    - 異常檢測和告警
 
-### 十八、總結
+### 十八、超深度全面檢查結果
+
+#### 第一輪檢查發現的關鍵問題
+**漏網之魚 #1: authAPI.getMe(token)** ⭐ 最關鍵
+- 位置：`frontend/src/api/client.ts`
+- 問題：沒有使用 authenticatedGet，導致 token 過期時直接失敗
+- 影響：AuthContext 的 3 處調用（初始化、跨標籤頁、refreshAuth）
+- **這就是「修改代碼後被登出」的根本原因！**
+- 狀態：✅ 已修復
+
+#### 第二輪深度檢查發現的問題
+**漏網之魚 #2: AdminEmailPreview.tsx** ⭐
+- 問題：直接使用 fetch 和手動 token 管理
+- 狀態：✅ 已修復
+
+**漏網之魚 #3: AdminMedia.tsx FormData 上傳** ⭐
+- 問題：FormData 上傳仍使用手動 token
+- 優化：改用 authenticatedFetch（支持 FormData）
+- 狀態：✅ 已優化
+
+#### 最終完整性檢查
+```bash
+✅ 後端配置
+   ACCESS_TOKEN_EXPIRE_MINUTES=15
+   REFRESH_TOKEN_EXPIRE_DAYS=7
+
+✅ 前端核心
+   authenticated 方法: 6 個
+   authenticatedFetch 正確導出: 是
+   API Client 檔案: 4 個已修改
+
+✅ Admin 頁面清理（19 個）
+   localStorage token 手動調用: 0 處
+   Bearer token 手動添加: 0 處
+   所有頁面已使用 authenticated 方法
+
+✅ API Client 完整性
+   ADMIN_API 使用 authenticated: 72 處
+   ADMIN_API 未使用 authenticated: 0 處
+   所有 API 已修復（blogAPI, pricingAPI, prPackagesAPI, etc.）
+
+✅ authAPI 關鍵修復
+   authAPI.getMe 使用 authenticatedGet: 是
+   AuthContext 調用次數: 3 處
+   authAPI.getMe(token) 遺留: 0 處
+
+✅ 無循環依賴
+   refreshAccessToken 直接用 fetch: 是
+   不會造成無限循環: 是
+
+✅ HMR 問題解決
+   authAPI.getMe 自動刷新: 是
+   AuthContext 不會因 HMR 登出: 是
+```
+
+#### 關鍵修復確認
+- ✅ authAPI.getMe 使用 authenticatedGet
+- ✅ AuthContext 所有調用已更新（移除 token 參數）
+- ✅ 不會因為 access_token 過期而直接登出
+- ✅ 會自動刷新 token 並繼續操作
+- ✅ 只有 refresh_token 也失效時才登出（正確行為）
+
+### 十九、總結
 
 #### 解決的問題
 1. ✅ **登入狀態時限很短** → 現在可以保持 7 天

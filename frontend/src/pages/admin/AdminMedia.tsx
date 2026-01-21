@@ -6,7 +6,7 @@ import {
   Search, Trash2, Grid, List as ListIcon, Copy, ZoomIn, RefreshCw
 } from 'lucide-react';
 import { ADMIN_API } from '../../config/api';
-import { authenticatedGet, authenticatedPost, authenticatedDelete } from '../../utils/apiClient';
+import { authenticatedGet, authenticatedPost, authenticatedDelete, authenticatedFetch } from '../../utils/apiClient';
 
 interface MediaFile {
   id: number;
@@ -117,12 +117,8 @@ export default function AdminMedia() {
         formData.append('file', file);
         formData.append('folder', uploadFolder);
         
-        const token = localStorage.getItem('access_token');
-        const response = await fetch(`${ADMIN_API}/media/upload`, {
+        const response = await authenticatedFetch(`${ADMIN_API}/media/upload`, {
           method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
           body: formData,
         });
         if (!response.ok) throw new Error('Upload failed');
@@ -210,12 +206,8 @@ export default function AdminMedia() {
       const formData = new FormData();
       formData.append('folder_name', folderName);
       
-      const token = localStorage.getItem('access_token');
-      const response = await fetch(`${ADMIN_API}/media/folders`, {
+      const response = await authenticatedFetch(`${ADMIN_API}/media/folders`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
         body: formData,
       });
       

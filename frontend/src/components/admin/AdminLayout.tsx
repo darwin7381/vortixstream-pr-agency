@@ -11,7 +11,6 @@ import {
   ChevronDown,
   Folder,
   Menu,
-  X,
   Home,
   Image,
   List,
@@ -29,10 +28,11 @@ import {
   Palette,
   Sparkles,
   Monitor,
-  TrendingUp,
   Navigation as NavigationIcon,
   FileType,
-  Eye
+  Eye,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 import VortixLogoWhite from '../../assets/VortixLogo White_Horizontal.png';
@@ -64,7 +64,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   };
 
   // 檢查路徑是否在某個父選單下
-  const isPathInMenu = (menuLabel: string, children?: NavItem[]): boolean => {
+  const isPathInMenu = (children?: NavItem[]): boolean => {
     if (!children) return false;
     return children.some(child => child.path && location.pathname.startsWith(child.path));
   };
@@ -74,7 +74,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     const menusToExpand: string[] = [];
     
     navStructure.forEach(item => {
-      if (item.children && isPathInMenu(item.label, item.children)) {
+      if (item.children && isPathInMenu(item.children)) {
         menusToExpand.push(item.label);
       }
     });
@@ -292,8 +292,28 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           {navStructure.map(item => renderNavItem(item))}
         </nav>
         
-        {/* 底部資訊 */}
+        {/* 收合按鈕 */}
         <div className="p-4 border-t border-gray-800 flex-shrink-0">
+          <button
+            onClick={toggleSidebar}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-gray-800 hover:bg-gray-700 transition-all duration-300 group"
+            title={sidebarCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+          >
+            {sidebarCollapsed ? (
+              <ChevronRight size={20} className="text-gray-400 group-hover:text-white transition-colors" />
+            ) : (
+              <>
+                <ChevronLeft size={20} className="text-gray-400 group-hover:text-white transition-colors" />
+                <span className="text-sm font-medium text-gray-400 group-hover:text-white transition-colors">
+                  Collapse
+                </span>
+              </>
+            )}
+          </button>
+        </div>
+        
+        {/* 底部資訊 */}
+        <div className="px-4 pb-4 flex-shrink-0">
           {!sidebarCollapsed && (
             <div className="text-center">
               <p className="text-xs text-gray-500">© 2025 VortixPR</p>
@@ -308,6 +328,15 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         {/* 頂部導航欄 - 專業設計 */}
         <header className="h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-8 flex items-center justify-between flex-shrink-0 shadow-sm">
           <div className="flex items-center gap-6">
+            {/* 側邊欄切換按鈕 */}
+            <button
+              onClick={toggleSidebar}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              title={sidebarCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+            >
+              <Menu size={20} className="text-gray-600 dark:text-gray-400" />
+            </button>
+            
             {/* 頁面標題 */}
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
               {location.pathname === '/admin' && 'Dashboard'}

@@ -293,13 +293,29 @@ export default function Navigation({ user, onLogout, onQuickLogin }: NavigationP
                         </p>
                       </div>
                       <div className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[#FF7400]/10 text-[#FF7400] border border-[#FF7400]/20">
-                        {user.role === 'publisher' ? 'Publisher' : 'User'}
+                        {user.role === 'super_admin' ? 'Super Admin' : 
+                         user.role === 'admin' ? 'Admin' :
+                         user.role === 'publisher' ? 'Publisher' : 'User'}
                       </div>
                     </div>
                   </div>
 
                   {/* 用戶選項按鈕 */}
                   <div className="space-y-2">
+                    {/* Admin Dashboard 連結（僅管理員可見） */}
+                    {(user.role === 'admin' || user.role === 'super_admin') && (
+                      <>
+                        <button 
+                          onClick={() => { navigate('/admin'); setIsMobileMenuOpen(false); }}
+                          className="w-full flex items-center gap-3 px-4 py-3 text-white text-sm hover:bg-gray-800/50 rounded-lg transition-colors duration-200 font-medium"
+                        >
+                          <LayoutDashboard size={16} />
+                          Admin Dashboard
+                        </button>
+                        <div className="border-t border-gray-800/50"></div>
+                      </>
+                    )}
+                    
                     <button className="w-full flex items-center gap-3 px-4 py-3 text-white text-sm hover:bg-gray-800/50 rounded-lg transition-colors duration-200">
                       <User size={16} />
                       Profile Settings

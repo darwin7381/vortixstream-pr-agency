@@ -62,6 +62,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
     is_verified: apiUser.is_verified
   }), []);
 
+  // ==================== Helper: Error Type Detection ====================
+  
+  const isNetworkError = (error: any): boolean => {
+    // 檢查是否為網路錯誤（後端重啟、連線失敗等）
+    const errorMessage = error?.message?.toLowerCase() || '';
+    return (
+      errorMessage.includes('failed to fetch') ||
+      errorMessage.includes('network') ||
+      errorMessage.includes('connection') ||
+      errorMessage.includes('econnrefused') ||
+      error?.name === 'TypeError' // fetch 失敗通常是 TypeError
+    );
+  };
+
   // ==================== Initialization: Restore from localStorage ====================
   
   useEffect(() => {
@@ -74,22 +88,36 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
 
       try {
-        const userData = await authAPI.getMe(token);
+        const userData = await authAPI.getMe();
         console.log('[AuthContext] 初始化成功，用戶資料:', userData);
         setUser(convertUser(userData));
       } catch (error) {
-        console.error('[AuthContext] Token 驗證失敗:', error);
-        // Token 無效，清除
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        setUser(null);
+        console.error('[AuthContext] 初始化失敗:', error);
+        
+        // 區分錯誤類型
+        if (isNetworkError(error)) {
+          // 網路錯誤（後端重啟、連線失敗）- 保留 tokens
+          console.warn('[AuthContext] 網路錯誤，保留登入狀態（等待後端恢復）');
+          setUser(null); // 暫時清除 user，但保留 tokens
+          
+          // 開發環境：提示用戶
+          if (import.meta.env.DEV) {
+            console.info('[DEV] 後端可能正在重啟，tokens 已保留，刷新頁面即可恢復');
+          }
+        } else {
+          // 認證錯誤（token 真的無效）- 清除 tokens
+          console.error('[AuthContext] Token 無效，清除登入狀態');
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+          setUser(null);
+        }
       } finally {
         setIsLoading(false);
       }
     };
 
     initAuth();
-  }, [convertUser]);
+  }, []); // 移除 convertUser 依賴，只在 mount 時執行一次
 
   // ==================== Cross-Tab Sync: Listen to localStorage changes ====================
   
@@ -108,10 +136,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
         // Token 被更新（登入）
         console.log('[AuthContext] 跨標籤頁登入，重新載入用戶資料');
         try {
-          const userData = await authAPI.getMe(e.newValue);
+          const userData = await authAPI.getMe();
           setUser(convertUser(userData));
         } catch (error) {
           console.error('[AuthContext] 跨標籤頁同步失敗:', error);
+          // 同步失敗不清除 tokens（可能只是暫時的網路問題）
           setUser(null);
         }
       }
@@ -123,7 +152,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, [convertUser]);
+  }, []); // 移除 convertUser 依賴
 
   // ==================== BroadcastChannel: For same-tab sync (optional enhancement) ====================
   
@@ -283,7 +312,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     try {
       console.log('[AuthContext] 刷新認證狀態');
-      const userData = await authAPI.getMe(token);
+      const userData = await authAPI.getMe();
       const newUser = convertUser(userData);
       setUser(newUser);
       
@@ -291,8 +320,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
       broadcastAuthChange('UPDATE', newUser);
     } catch (error) {
       console.error('[AuthContext] 刷新認證失敗:', error);
-      // Token 無效，登出
-      logout();
+      
+      // 區分錯誤類型
+      if (isNetworkError(error)) {
+        // 網路錯誤：保留 tokens，只清除 user
+        console.warn('[AuthContext] 網路錯誤，保留登入狀態');
+        setUser(null);
+      } else {
+        // 認證錯誤：真的需要登出
+        console.error('[AuthContext] Token 無效，執行登出');
+        logout();
+      }
     }
   }, [convertUser, broadcastAuthChange, logout]);
 
