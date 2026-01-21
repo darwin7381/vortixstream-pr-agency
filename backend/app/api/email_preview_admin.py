@@ -107,24 +107,82 @@ async def list_email_templates(
 @router.get("/{template_type}", response_class=HTMLResponse)
 async def preview_email_template(
     template_type: Literal['contact', 'newsletter', 'template', 'invitation'],
+    show_variables: bool = False,
     current_user: TokenData = Depends(require_admin)
 ):
     """
-    Preview an email template with sample data
+    Preview an email template with sample data or show variable names
     
     Available template types:
     - contact: Contact form notification
     - newsletter: Newsletter welcome email
     - template: PR template email
     - invitation: User invitation email
+    
+    Query params:
+    - show_variables: If true, shows Jinja2 variable names instead of sample data
     """
     try:
-        sample_data = SAMPLE_DATA.get(template_type)
-        if not sample_data:
-            raise HTTPException(status_code=404, detail="Template not found")
-        
-        html = email_service.preview_email(template_type, sample_data)
-        return HTMLResponse(content=html)
+        if show_variables:
+            # Return raw template with variable names visible
+            from pathlib import Path
+            
+            template_map = {
+                'contact': 'contact/notification.html',
+                'newsletter': 'newsletter/welcome.html',
+                'template': 'template/send.html',
+                'invitation': 'invitation/invite.html'
+            }
+            
+            template_name = template_map.get(template_type)
+            if not template_name:
+                raise HTTPException(status_code=404, detail="Template not found")
+            
+            # Read raw template file and render it with placeholder values
+            # Create a special rendering that shows variable names
+            placeholder_data = {}
+            if template_type == 'contact':
+                placeholder_data = {
+                    'name': '{{ name }}',
+                    'email': '{{ email }}',
+                    'company': '{{ company }}',
+                    'phone': '{{ phone }}',
+                    'message': '{{ message }}',
+                    'admin_url': '{{ admin_url }}'
+                }
+            elif template_type == 'newsletter':
+                placeholder_data = {
+                    'email': '{{ email }}',
+                    'blog_url': '{{ blog_url }}',
+                    'unsubscribe_url': '{{ unsubscribe_url }}'
+                }
+            elif template_type == 'template':
+                placeholder_data = {
+                    'template_title': '{{ template_title }}',
+                    'template_content': '{{ template_content }}',
+                    'tracking_id': '{{ tracking_id }}',
+                    'templates_url': '{{ templates_url }}',
+                    'blog_url': '{{ blog_url }}',
+                    'contact_url': '{{ contact_url }}',
+                    'frontend_url': '{{ frontend_url }}'
+                }
+            elif template_type == 'invitation':
+                placeholder_data = {
+                    'inviter_name': '{{ inviter_name }}',
+                    'invitation_url': '{{ invitation_url }}',
+                    'role_label': '{{ role_label }}'
+                }
+            
+            html = email_service.preview_email(template_type, placeholder_data)
+            return HTMLResponse(content=html)
+        else:
+            # Return template with sample data
+            sample_data = SAMPLE_DATA.get(template_type)
+            if not sample_data:
+                raise HTTPException(status_code=404, detail="Template not found")
+            
+            html = email_service.preview_email(template_type, sample_data)
+            return HTMLResponse(content=html)
         
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

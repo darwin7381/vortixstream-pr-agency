@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
-import { Mail, Eye, RefreshCw, Loader2, Monitor, Tablet, Smartphone, Maximize } from 'lucide-react';
+import { Mail, Eye, RefreshCw, Loader2, Monitor, Tablet, Smartphone, Maximize, Code, User } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { API_BASE_URL } from '../../config/api';
 import { authenticatedGet } from '../../utils/apiClient';
@@ -13,6 +13,7 @@ interface EmailTemplate {
 }
 
 type ViewportSize = 'fullwidth' | 'desktop' | 'tablet' | 'mobile';
+type PreviewMode = 'data' | 'variables';
 
 const VIEWPORT_SIZES = {
   fullwidth: { width: '100%', label: 'Full Width', icon: Maximize },
@@ -29,6 +30,7 @@ export default function AdminEmailPreview() {
   const [previewLoading, setPreviewLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [viewportSize, setViewportSize] = useState<ViewportSize>('fullwidth');
+  const [previewMode, setPreviewMode] = useState<PreviewMode>('data');
 
   useEffect(() => {
     loadTemplates();
@@ -62,13 +64,16 @@ export default function AdminEmailPreview() {
     }
   };
 
-  const loadPreview = async (templateId: string) => {
+  const loadPreview = async (templateId: string, mode: PreviewMode = previewMode) => {
     setPreviewLoading(true);
     setError(null);
     setSelectedTemplate(templateId);
     
     try {
-      const response = await authenticatedGet(`${API_BASE_URL}/admin/email-preview/${templateId}`);
+      const showVariables = mode === 'variables';
+      const url = `${API_BASE_URL}/admin/email-preview/${templateId}${showVariables ? '?show_variables=true' : ''}`;
+      
+      const response = await authenticatedGet(url);
       
       if (!response.ok) {
         throw new Error(`Failed to load preview: ${response.status}`);
@@ -83,6 +88,7 @@ export default function AdminEmailPreview() {
       setPreviewLoading(false);
     }
   };
+
 
   if (loading) {
     return (
@@ -124,10 +130,51 @@ export default function AdminEmailPreview() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Sidebar - Template List */}
           <div className="lg:col-span-1">
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm">
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm sticky top-6">
               <h2 className="text-gray-900 dark:text-white text-lg font-semibold mb-4">
                 Email Templates
               </h2>
+
+              {/* Preview Mode Toggle */}
+              <div className="mb-4 pb-4 border-b border-gray-200 dark:border-gray-700">
+                <label className="text-gray-600 dark:text-gray-400 text-xs font-medium mb-2 block">
+                  Preview Mode:
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => {
+                      setPreviewMode('data');
+                      if (selectedTemplate) loadPreview(selectedTemplate, 'data');
+                    }}
+                    className={`
+                      flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-xs font-medium transition-all
+                      ${previewMode === 'data'
+                        ? 'bg-green-500 text-white shadow-sm'
+                        : 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-500'
+                      }
+                    `}
+                  >
+                    <User size={14} />
+                    Sample Data
+                  </button>
+                  <button
+                    onClick={() => {
+                      setPreviewMode('variables');
+                      if (selectedTemplate) loadPreview(selectedTemplate, 'variables');
+                    }}
+                    className={`
+                      flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-xs font-medium transition-all
+                      ${previewMode === 'variables'
+                        ? 'bg-purple-500 text-white shadow-sm'
+                        : 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-500'
+                      }
+                    `}
+                  >
+                    <Code size={14} />
+                    Variables
+                  </button>
+                </div>
+              </div>
               
               <div className="space-y-2">
                 {templates.map((template) => (
