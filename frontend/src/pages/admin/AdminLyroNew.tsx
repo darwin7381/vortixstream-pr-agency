@@ -3,14 +3,12 @@ import AdminLayout from '../../components/admin/AdminLayout';
 import { ADMIN_API, PUBLIC_API } from '../../config/api';
 import { authenticatedPut } from '../../utils/apiClient';
 import { Save, Plus, Edit, Trash2, Image as ImageIcon } from 'lucide-react';
-import ImagePicker from '../../components/admin/ImagePicker';
 
 export default function AdminLyro() {
   const [sectionData, setSectionData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [editingItem, setEditingItem] = useState<any>(null);
   const [showItemModal, setShowItemModal] = useState(false);
-  const [showImagePicker, setShowImagePicker] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -148,19 +146,8 @@ export default function AdminLyro() {
           <div>
             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Background Image URL</label>
             <div className="flex gap-2">
-              <input 
-                type="url" 
-                name="background_image_url" 
-                id="background_image_url"
-                key={`img-${sectionData?.background_image_url}`} 
-                defaultValue={sectionData?.background_image_url} 
-                className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" 
-              />
-              <button 
-                type="button" 
-                onClick={() => setShowImagePicker(true)}
-                className="px-4 py-3 border-2 border-orange-600 text-orange-600 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-900/20"
-              >
+              <input type="url" name="background_image_url" key={`img-${sectionData?.background_image_url}`} defaultValue={sectionData?.background_image_url} className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" />
+              <button type="button" className="px-4 py-3 border-2 border-orange-600 text-orange-600 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-900/20">
                 <ImageIcon size={20} />
               </button>
             </div>
@@ -169,19 +156,6 @@ export default function AdminLyro() {
             )}
           </div>
         </form>
-
-        {/* Image Picker Modal */}
-        <ImagePicker 
-          isOpen={showImagePicker} 
-          onClose={() => setShowImagePicker(false)} 
-          onSelect={(url) => {
-            const input = document.getElementById('background_image_url') as HTMLInputElement;
-            if (input) input.value = url;
-            setShowImagePicker(false);
-          }} 
-          currentUrl={sectionData?.background_image_url} 
-          defaultFolder="lyro" 
-        />
 
         {/* Features */}
         <div className="bg-white dark:bg-gray-800 rounded-xl p-6">

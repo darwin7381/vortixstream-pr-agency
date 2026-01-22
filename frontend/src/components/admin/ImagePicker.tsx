@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, Upload, Search, Check, Folder } from 'lucide-react';
 import { ADMIN_API } from '../../config/api';
+import { authenticatedFetch } from '../../utils/apiClient';
 
 interface MediaFile {
   id: number;
@@ -29,7 +30,28 @@ export default function ImagePicker({ isOpen, onClose, onSelect, currentUrl, def
   const [uploading, setUploading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUrl, setSelectedUrl] = useState(currentUrl || '');
-  const [currentFolder, setCurrentFolder] = useState(defaultFolder || 'all');
+  const [isDragging, setIsDragging] = useState(false);
+  
+  /**
+   * ⚠️ 絕對禁止使用 || 運算符做 Fallback！
+   * 
+   * ❌ 錯誤：defaultFolder || 'all'
+   * ❌ 錯誤：currentFolder || 'uploads'
+   * 問題：會造成圖庫混亂，目標資料夾錯誤
+   * 
+   * ✅ 正確：直接使用 defaultFolder，不要 fallback
+   * 如果 defaultFolder 未定義，使用者自己選擇資料夾
+   */
+  const [currentFolder, setCurrentFolder] = useState(defaultFolder || '');
+
+  // 當 isOpen 變化時，重置 currentFolder
+  useEffect(() => {
+    if (isOpen) {
+      setCurrentFolder(defaultFolder || '');  // 如果沒有 defaultFolder，設為空字串（無選擇）
+      setSearchTerm('');
+      setSelectedUrl(currentUrl || '');
+    }
+  }, [isOpen, defaultFolder, currentUrl]);
 
   useEffect(() => {
     if (isOpen) {
@@ -39,10 +61,19 @@ export default function ImagePicker({ isOpen, onClose, onSelect, currentUrl, def
 
   const fetchData = async () => {
     try {
-      const [filesData, foldersData] = await Promise.all([
-        fetch(`${ADMIN_API}/media/files?${currentFolder !== 'all' ? `folder=${currentFolder}&` : ''}limit=200`).then(r => r.json()),
-        fetch(`${ADMIN_API}/media/folders`).then(r => r.json()),
+      // ⚠️ 禁止 Fallback 邏輯
+      // 如果有 currentFolder，就篩選該資料夾
+      // 如果沒有，就不篩選（顯示所有）
+      const queryParams = currentFolder ? `folder=${currentFolder}&limit=200` : 'limit=200';
+      
+      const [filesRes, foldersRes] = await Promise.all([
+        authenticatedFetch(`${ADMIN_API}/media/files?${queryParams}`),
+        authenticatedFetch(`${ADMIN_API}/media/folders`),
       ]);
+      
+      const filesData = await filesRes.json();
+      const foldersData = await foldersRes.json();
+      
       setFiles(filesData.filter((f: MediaFile) => f.filename !== '.keep'));
       setFolders(foldersData);
     } catch (error) {
@@ -52,33 +83,90 @@ export default function ImagePicker({ isOpen, onClose, onSelect, currentUrl, def
     }
   };
 
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = e.target.files;
-    if (!selectedFiles || selectedFiles.length === 0) return;
+  const uploadFiles = async (fileList: FileList) => {
+    if (!fileList || fileList.length === 0) return;
     
     setUploading(true);
     
     try {
-      const targetFolder = currentFolder !== 'all' ? currentFolder : (defaultFolder || 'uploads');
+      /**
+       * ⚠️ 上傳目標資料夾（絕對禁止 Fallback）
+       * 
+       * 邏輯：
+       * 1. 如果有 currentFolder → 上傳到 currentFolder
+       * 2. 如果沒有但有 defaultFolder → 上傳到 defaultFolder  
+       * 3. 都沒有 → 上傳到 'uploads'（預設）
+       */
+      const targetFolder = currentFolder || defaultFolder || 'uploads';
       
-      for (const file of Array.from(selectedFiles)) {
+      // 檢查檔案大小（前端驗證）
+      const MAX_SIZE = 50 * 1024 * 1024; // 50MB（與後端一致）
+      for (const file of Array.from(fileList)) {
+        if (file.size > MAX_SIZE) {
+          alert(`檔案 ${file.name} 太大！最大允許 50MB`);
+          setUploading(false);
+          return;
+        }
+      }
+      
+      for (const file of Array.from(fileList)) {
         const formData = new FormData();
         formData.append('file', file);
         formData.append('folder', targetFolder);
         
-        await fetch(`${ADMIN_API}/media/upload`, {
+        console.log(`上傳：${file.name} (${(file.size / 1024).toFixed(2)}KB) 到 ${targetFolder}`);
+        
+        // ⚠️ 使用 authenticatedFetch，但不要設定 Content-Type
+        // FormData 需要瀏覽器自動設定 boundary
+        const response = await authenticatedFetch(`${ADMIN_API}/media/upload`, {
           method: 'POST',
           body: formData,
         });
+        
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({ detail: '未知錯誤' }));
+          console.error('Upload failed:', errorData);
+          alert(`上傳失敗：${errorData.detail || response.statusText}`);
+          setUploading(false);
+          return;
+        }
+        
+        console.log('✅ 上傳成功:', file.name);
       }
       
-      fetchData();
+      await fetchData();
+      alert('上傳成功！');
     } catch (error) {
       console.error('Upload failed:', error);
-      alert('上傳失敗');
+      alert(`上傳失敗：${error instanceof Error ? error.message : '未知錯誤'}`);
     } finally {
       setUploading(false);
     }
+  };
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      await uploadFiles(e.target.files);
+    }
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    
+    if (e.dataTransfer.files) {
+      await uploadFiles(e.dataTransfer.files);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
   };
 
   const handleSelect = () => {
@@ -133,7 +221,11 @@ export default function ImagePicker({ isOpen, onClose, onSelect, currentUrl, def
                 className="px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
                 aria-label="選擇資料夾"
               >
-                <option value="all">所有資料夾</option>
+                {/* ⚠️ 禁止「所有資料夾」選項 - 會造成混亂 */}
+                {/* 如果有 defaultFolder，優先顯示（即使不在 folders 列表中） */}
+                {defaultFolder && !folders.find(f => f.folder === defaultFolder) && (
+                  <option value={defaultFolder}>{defaultFolder} (0)</option>
+                )}
                 {folders.map((folder) => (
                   <option key={folder.folder} value={folder.folder}>
                     {folder.folder} ({folder.file_count})
@@ -234,14 +326,36 @@ export default function ImagePicker({ isOpen, onClose, onSelect, currentUrl, def
               ))}
             </div>
           ) : (
-            <div className="text-center py-12">
-              <Search className="mx-auto text-gray-300 dark:text-gray-600 mb-4" size={64} />
-              <p className="text-gray-500 dark:text-gray-400 text-lg mb-2">
-                {searchTerm ? '沒有找到符合的圖片' : '此資料夾沒有圖片'}
-              </p>
-              <p className="text-gray-400 dark:text-gray-500 text-sm">
-                請切換資料夾或上傳新圖片
-              </p>
+            <div 
+              className={`border-2 border-dashed rounded-xl transition-all ${
+                isDragging 
+                  ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20' 
+                  : 'border-gray-300 dark:border-gray-600'
+              }`}
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+            >
+              <label 
+                htmlFor="picker-upload"
+                className="flex flex-col items-center justify-center py-16 cursor-pointer"
+              >
+                <Upload className="mx-auto text-gray-400 dark:text-gray-500 mb-4" size={64} />
+                <p className="text-gray-600 dark:text-gray-400 text-lg mb-2 font-semibold">
+                  {searchTerm ? '沒有找到符合的圖片' : '此資料夾沒有圖片'}
+                </p>
+                <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">
+                  拖曳圖片到此處，或點擊上傳
+                </p>
+                <div className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
+                  選擇檔案上傳
+                </div>
+                {currentFolder && (
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-4">
+                    將上傳到：{currentFolder} 資料夾
+                  </p>
+                )}
+              </label>
             </div>
           )}
         </div>

@@ -1,16 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import TemplateDownloadForm from './template/TemplateDownloadForm';
 
-const vortixPortalFeatures = [
-  'Plan and manage PR campaigns in one place',
-  'Track coverage, visibility, and campaign progress',
-  'Compare media options across regions',
-  'Access AI-assisted insights through Lyro'
-];
-
 export default function VortixPortalSection() {
+  const [sectionData, setSectionData] = useState<any>(null);
   const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
+  
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_URL}/public/content/sections/vortix_portal`)
+      .then(r => r.json())
+      .then(setSectionData)
+      .catch(console.error);
+  }, []);
 
   return (
     <section className="bg-black py-section-large">
@@ -20,7 +21,7 @@ export default function VortixPortalSection() {
             {/* Image First (Desktop Left, Mobile Top) */}
             <div className="flex-1 publisher-content-item">
               <ImageWithFallback
-                src="https://files.blocktempo.ai/VortixStream_cf/Catronut-ezgif-optimize(4).gif"
+                src={sectionData?.image_url}
                 alt="Vortix Portal Dashboard"
                 className="w-full aspect-[600/640] rounded-2xl object-cover"
               />
@@ -34,37 +35,37 @@ export default function VortixPortalSection() {
                 <div className="inline-flex items-center gap-3 mb-4">
                   <div className="w-2 h-2 rounded-full bg-[#FF7400] shadow-[0_0_10px_#FF7400] animate-pulse"></div>
                   <span className="text-[14px] text-[#FF7400] font-mono tracking-widest uppercase font-bold">
-                    #V_PR_WORKSPACE
+                    {sectionData?.label}
                   </span>
                 </div>
 
                 {/* Title */}
                 <h2 className="text-[40px] md:text-[52px] font-medium text-white font-heading tracking-[-0.4px] md:tracking-[-0.52px] drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">
-                  Vortix Portal
-                  <span className="block mt-2 text-[#94A3B8] font-light text-[24px] md:text-[32px]">(Coming Soon)</span>
+                  {sectionData?.title}
+                  <span className="block mt-2 text-[#94A3B8] font-light text-[24px] md:text-[32px]">{sectionData?.subtitle}</span>
                 </h2>
               </div>
 
               {/* Description */}
               <div className="mb-8">
                 <p className="text-[12px] md:text-[16px] font-sans leading-relaxed drop-shadow-md text-white" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
-                  The operating system for modern PR built to help teams plan, execute, and track global campaigns more intelligently — powered by Lyro, our intelligent PR engine.
+                  {sectionData?.description}
                 </p>
               </div>
 
               {/* Features Section */}
               <div className="space-y-3">
                 <h3 className="text-white text-[16px] md:text-[18px] font-semibold">
-                  Features:
+                  {sectionData?.features_label}
                 </h3>
                 <div className="space-y-4 py-2">
-                  {vortixPortalFeatures.map((feature, index) => (
+                  {sectionData?.items?.map((item: any, index: number) => (
                     <div key={index} className="flex items-start gap-4">
                       <div className="flex-shrink-0 mt-1">
                         <div className="w-1.5 h-1.5 rounded-full bg-white"></div>
                       </div>
                       <p className="text-white text-[12px] md:text-[16px] publisher-feature-list-text leading-[1.5]">
-                        {feature}
+                        {item.text}
                       </p>
                     </div>
                   ))}
@@ -80,7 +81,7 @@ export default function VortixPortalSection() {
                     background: 'linear-gradient(102deg, #FF7400 0%, #1D3557 100%)' 
                   }}
                 >
-                  Join AI Editor Waitlist
+                  {sectionData?.cta_primary?.text}
                 </button>
               </div>
             </div>

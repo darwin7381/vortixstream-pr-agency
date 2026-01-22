@@ -138,6 +138,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         { label: 'FAQs', icon: FileQuestion, path: '/admin/content/faqs' },
         { label: 'Testimonials', icon: MessageCircle, path: '/admin/content/testimonials' },
         { label: 'Services', icon: Briefcase, path: '/admin/content/services' },
+        { label: 'Vortix Portal', icon: Monitor, path: '/admin/content/vortix-portal' },
         { label: 'Why Vortix', icon: Sparkles, path: '/admin/content/why-vortix' },
         { label: 'Client Logos', icon: Image, path: '/admin/content/clients' },
         { label: 'Publisher Features', icon: FileText, path: '/admin/content/publisher' },

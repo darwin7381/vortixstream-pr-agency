@@ -13,15 +13,16 @@ import StatsCardCompact from './StatsCardCompact';
 export default function StatsSection() {
   const [isVisible, setIsVisible] = useState(false);
   const [visibleDiff, setVisibleDiff] = useState(new Set());
-  const [stats, setStats] = useState<Stat[]>([]);
-  const [differentiators, setDifferentiators] = useState<Differentiator[]>([]);
+  const [sectionData, setSectionData] = useState<any>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
   const diffRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  // 載入 stats 和 differentiators
+  // 載入 Why Vortix section 資料（JSONB）
   useEffect(() => {
-    contentAPI.getStats().then(setStats).catch(console.error);
-    contentAPI.getDifferentiators().then(setDifferentiators).catch(console.error);
+    fetch(`${import.meta.env.VITE_API_URL}/public/content/sections/why_vortix`)
+      .then(r => r.json())
+      .then(setSectionData)
+      .catch(console.error);
   }, []);
 
   // Intersection Observer for triggering animations
@@ -63,7 +64,7 @@ export default function StatsSection() {
     });
 
     return () => observers.forEach(observer => observer.disconnect());
-  }, [differentiators]);
+  }, [sectionData?.differentiators]);
 
   // Check icon for differentiators
   const CheckIcon = () => (
@@ -148,24 +149,24 @@ export default function StatsSection() {
       {/* Content */}
       <div className="relative z-10 container-global py-section-large">
           <h2 className="text-[24px] sm:text-[28px] md:text-[44px] font-medium text-white mb-8 sm:mb-10 md:mb-20 tracking-[-0.24px] sm:tracking-[-0.28px] md:tracking-[-0.44px] font-heading font-medium text-left">
-            Why Vortix Is Different?
+            {sectionData?.title}
           </h2>
           
           {/* Stats Cards - 動態渲染 */}
           <div className="mb-12 sm:mb-16 md:mb-20 lg:mb-24">
-            <StatsCardCompact stats={stats.map(stat => ({
+            <StatsCardCompact stats={sectionData?.stats?.map((stat: any) => ({
               number: `${stat.value}${stat.suffix}`,
               targetNumber: stat.value,
               suffix: stat.suffix,
               label: stat.label,
               description: stat.description
-            }))} />
+            })) || []} />
           </div>
 
           {/* Differentiators Section - 動態網格佈局 */}
           <div className="max-w-[1100px] mx-auto">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
-                {differentiators.map((item, index) => (
+                {sectionData?.differentiators?.map((item: any, index: number) => (
                 <div 
                   key={index}
                   ref={el => { diffRefs.current[index] = el; }}

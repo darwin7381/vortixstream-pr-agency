@@ -43,7 +43,7 @@ export default function AdminContentServices() {
         url: formData.get('cta_secondary_url') as string,
       }
     };
-
+    
     try {
       await authenticatedPut(`${ADMIN_API}/content/sections/services`, { content: updatedContent });
       await fetchData();  // 先重新載入資料
@@ -236,30 +236,30 @@ export default function AdminContentServices() {
         <div className="bg-white dark:bg-gray-800 rounded-xl p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">Service Items</h2>
-            <button 
-              onClick={() => {
-                setEditingItem(null);
+          <button
+            onClick={() => {
+              setEditingItem(null);
                 setShowItemModal(true);
-              }}
+            }}
               className="flex items-center gap-2 bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700"
-            >
+          >
               <Plus size={18} />
               Add Item
-            </button>
-          </div>
+          </button>
+        </div>
 
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
-                <tr>
+            <thead className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+              <tr>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">Order</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">Title</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">Description</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">Icon</th>
                   <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {sectionData?.items?.map((item: any) => (
                   <tr key={item.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                     <td className="px-4 py-3 text-center text-sm text-gray-500 dark:text-gray-400">{item.display_order}</td>
@@ -267,69 +267,69 @@ export default function AdminContentServices() {
                     <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{item.description}</td>
                     <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{item.icon}</td>
                     <td className="px-4 py-3">
-                      <div className="flex items-center justify-center gap-2">
-                        <button 
-                          onClick={() => {
-                            setEditingItem(item);
+                    <div className="flex items-center justify-center gap-2">
+                      <button
+                        onClick={() => {
+                          setEditingItem(item);
                             setShowItemModal(true);
-                          }}
+                        }}
                           className="p-1.5 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded"
-                        >
+                      >
                           <Edit size={16} />
-                        </button>
-                        <button 
+                      </button>
+                      <button
                           onClick={() => handleDeleteItem(item)}
                           className="p-1.5 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
-                        >
+                      >
                           <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
+      </div>
 
         {/* Item Modal */}
         {showItemModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-2xl w-full">
-              <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                   {editingItem ? 'Edit Service Item' : 'Add Service Item'}
-                </h2>
-              </div>
-              
+              </h2>
+            </div>
+            
               <form onSubmit={handleSaveItem} className="p-6 space-y-4">
-                <div>
+              <div>
                   <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Title *</label>
-                  <input 
-                    type="text" 
-                    name="title" 
-                    defaultValue={editingItem?.title} 
-                    required
+                <input
+                  type="text"
+                  name="title"
+                  defaultValue={editingItem?.title}
+                  required
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" 
-                  />
-                </div>
+                />
+              </div>
 
-                <div>
+              <div>
                   <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Description *</label>
-                  <textarea 
-                    name="description" 
-                    defaultValue={editingItem?.description}
-                    required
+                <textarea
+                  name="description"
+                  defaultValue={editingItem?.description}
+                  required
                     rows={3}
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white resize-none" 
-                  />
-                </div>
+                />
+              </div>
 
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Icon</label>
-                  <input 
-                    type="text" 
-                    name="icon" 
+                  <input
+                    type="text"
+                    name="icon"
                     defaultValue={editingItem?.icon}
                     placeholder="globe, language, strategy, user, users"
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" 
@@ -338,36 +338,36 @@ export default function AdminContentServices() {
 
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Display Order</label>
-                  <input 
-                    type="number" 
-                    name="display_order" 
+                  <input
+                    type="number"
+                    name="display_order"
                     defaultValue={editingItem?.display_order || 0}
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" 
                   />
-                </div>
+              </div>
 
-                <div className="flex gap-3 pt-4">
-                  <button 
-                    type="submit" 
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="submit"
                     className="flex-1 bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 font-medium"
-                  >
-                    {editingItem ? 'Update' : 'Create'}
-                  </button>
-                  <button 
-                    type="button" 
-                    onClick={() => {
+                >
+                  {editingItem ? 'Update' : 'Create'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
                       setShowItemModal(false);
-                      setEditingItem(null);
-                    }}
+                    setEditingItem(null);
+                  }}
                     className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-6 py-3 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 font-medium"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </div>
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
-        )}
+        </div>
+      )}
       </div>
     </AdminLayout>
   );

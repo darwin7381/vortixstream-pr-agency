@@ -17,8 +17,7 @@ const CheckIcon = () => (
 
 export default function LyroSection() {
     const [isVisible, setIsVisible] = useState(false);
-    const [lyroData, setLyroData] = useState<any>(null);
-    const [features, setFeatures] = useState<any[]>([]);
+    const [sectionData, setSectionData] = useState<any>(null);
     const sectionRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -30,13 +29,10 @@ export default function LyroSection() {
         );
         if (sectionRef.current) observer.observe(sectionRef.current);
         
-        fetch(`${import.meta.env.VITE_API_URL}/public/content/lyro`)
+        // 從 JSONB API 讀取
+        fetch(`${import.meta.env.VITE_API_URL}/public/content/sections/lyro`)
             .then(r => r.json())
-            .then(setLyroData)
-            .catch(console.error);
-        fetch(`${import.meta.env.VITE_API_URL}/public/content/lyro/features`)
-            .then(r => r.json())
-            .then(setFeatures)
+            .then(setSectionData)
             .catch(console.error);
         
         return () => observer.disconnect();
@@ -217,11 +213,11 @@ export default function LyroSection() {
             </div>
 
             {/* Background Image Layer - Cat Astronaut */}
-            {lyroData?.background_image_url && (
+            {sectionData?.background_image_url && (
                 <div 
                     className="absolute inset-0 w-full h-full bg-no-repeat cat-astronaut-bg"
                     style={{ 
-                        backgroundImage: `url('${lyroData.background_image_url}')`,
+                        backgroundImage: `url('${sectionData.background_image_url}')`,
                         backgroundPosition: 'center right',
                         zIndex: 1
                     }}
@@ -288,7 +284,7 @@ export default function LyroSection() {
                             >
                                 <div className="w-2 h-2 rounded-full bg-[#FF7400] shadow-[0_0_10px_#FF7400] animate-pulse"></div>
                                 <span className="text-[14px] text-[#FF7400] font-mono tracking-widest uppercase font-bold">
-                                    {lyroData?.label}
+                                    {sectionData?.label}
                                 </span>
                             </div>
 
@@ -299,8 +295,8 @@ export default function LyroSection() {
                                     opacity: 0
                                 }}
                             >
-                                {lyroData?.title}
-                                {lyroData?.subtitle && <span className="block mt-2 text-[#94A3B8] font-light text-[24px] md:text-[32px]">{lyroData.subtitle}</span>}
+                                {sectionData?.title}
+                                {sectionData?.subtitle && <span className="block mt-2 text-[#94A3B8] font-light text-[24px] md:text-[32px]">{sectionData.subtitle}</span>}
                             </h2>
                         </div>
 
@@ -316,7 +312,7 @@ export default function LyroSection() {
                                 className="text-[12px] md:text-[16px] font-sans leading-relaxed drop-shadow-md"
                                 style={{ color: '#ffffff', textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}
                             >
-                                {lyroData?.description}
+                                {sectionData?.description}
                             </p>
                         </div>
 
@@ -333,7 +329,7 @@ export default function LyroSection() {
                             </h3>
 
                             <ul className="space-y-4">
-                                {features.map((item, index) => (
+                                {sectionData?.items?.map((item: any, index: number) => (
                                     <li
                                         key={index}
                                         className="group relative inline-flex items-center gap-6 p-4 rounded-xl transition-all duration-300 hover:bg-white/[0.05] border border-white/20"

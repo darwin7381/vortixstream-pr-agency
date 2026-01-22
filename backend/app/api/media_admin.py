@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 # 支援的圖片格式
 ALLOWED_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'}
-MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
+MAX_FILE_SIZE = 50 * 1024 * 1024  # 50MB（合理的限制，支援高解析度圖片和動畫 GIF）
 
 
 @router.post("/folders", status_code=201)

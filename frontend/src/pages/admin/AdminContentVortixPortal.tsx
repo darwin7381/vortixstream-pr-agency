@@ -5,7 +5,7 @@ import { authenticatedPut } from '../../utils/apiClient';
 import { Save, Plus, Edit, Trash2, Image as ImageIcon } from 'lucide-react';
 import ImagePicker from '../../components/admin/ImagePicker';
 
-export default function AdminLyro() {
+export default function AdminContentVortixPortal() {
   const [sectionData, setSectionData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [editingItem, setEditingItem] = useState<any>(null);
@@ -14,7 +14,7 @@ export default function AdminLyro() {
 
   const fetchData = async () => {
     try {
-      const data = await fetch(`${PUBLIC_API}/content/sections/lyro`).then(r => r.json());
+      const data = await fetch(`${PUBLIC_API}/content/sections/vortix_portal`).then(r => r.json());
       setSectionData(data);
     } catch (error) {
       console.error('Failed to fetch:', error);
@@ -37,11 +37,16 @@ export default function AdminLyro() {
       title: formData.get('title') as string,
       subtitle: formData.get('subtitle') as string,
       description: formData.get('description') as string,
-      background_image_url: formData.get('background_image_url') as string
+      features_label: formData.get('features_label') as string,
+      image_url: formData.get('image_url') as string,
+      cta_primary: {
+        text: formData.get('cta_text') as string,
+        action: formData.get('cta_action') as string,
+      }
     };
 
     try {
-      await authenticatedPut(`${ADMIN_API}/content/sections/lyro`, { content: updatedContent });
+      await authenticatedPut(`${ADMIN_API}/content/sections/vortix_portal`, { content: updatedContent });
       await fetchData();
       alert('Section updated successfully');
     } catch (error) {
@@ -57,7 +62,7 @@ export default function AdminLyro() {
     const newItem = {
       id: editingItem?.id || Date.now(),
       text: formData.get('text') as string,
-      display_order: parseInt(formData.get('display_order') as string) || 0
+      display_order: parseInt(formData.get('display_order') as string) || 0,
     };
 
     let updatedItems;
@@ -69,10 +74,10 @@ export default function AdminLyro() {
       updatedItems = [...(sectionData.items || []), newItem];
     }
 
+    const updatedContent = { ...sectionData, items: updatedItems };
+
     try {
-      await authenticatedPut(`${ADMIN_API}/content/sections/lyro`, {
-        content: { ...sectionData, items: updatedItems }
-      });
+      await authenticatedPut(`${ADMIN_API}/content/sections/vortix_portal`, { content: updatedContent });
       setShowItemModal(false);
       setEditingItem(null);
       await fetchData();
@@ -87,11 +92,10 @@ export default function AdminLyro() {
     if (!confirm(`Delete "${item.text}"?`)) return;
 
     const updatedItems = sectionData.items.filter((i: any) => i.id !== item.id);
-    
+    const updatedContent = { ...sectionData, items: updatedItems };
+
     try {
-      await authenticatedPut(`${ADMIN_API}/content/sections/lyro`, {
-        content: { ...sectionData, items: updatedItems }
-      });
+      await authenticatedPut(`${ADMIN_API}/content/sections/vortix_portal`, { content: updatedContent });
       await fetchData();
       alert('Feature deleted');
     } catch (error) {
@@ -113,9 +117,8 @@ export default function AdminLyro() {
   return (
     <AdminLayout>
       <div className="p-8 max-w-6xl">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Lyro Section</h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Vortix Portal Section</h1>
 
-        {/* Section Content */}
         <form onSubmit={handleSaveSection} className="bg-white dark:bg-gray-800 rounded-xl p-6 space-y-6 mb-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">Section Content</h2>
@@ -126,34 +129,39 @@ export default function AdminLyro() {
 
           <div>
             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Label</label>
-            <input type="text" name="label" key={`l-${sectionData?.label}`} defaultValue={sectionData?.label} placeholder="#lyro_engine" className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" />
+            <input type="text" name="label" key={`label-${sectionData?.label}`} defaultValue={sectionData?.label} placeholder="#V_PR_WORKSPACE" className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Title *</label>
-              <input type="text" name="title" key={`t-${sectionData?.title}`} defaultValue={sectionData?.title} required className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" />
+              <input type="text" name="title" key={`title-${sectionData?.title}`} defaultValue={sectionData?.title} required placeholder="Vortix Portal" className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" />
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Subtitle</label>
-              <input type="text" name="subtitle" key={`s-${sectionData?.subtitle}`} defaultValue={sectionData?.subtitle} className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" />
+              <input type="text" name="subtitle" key={`subtitle-${sectionData?.subtitle}`} defaultValue={sectionData?.subtitle} placeholder="(Coming Soon)" className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" />
             </div>
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Description</label>
-            <textarea name="description" key={`d-${sectionData?.description?.substring(0,20)}`} defaultValue={sectionData?.description} rows={3} className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white resize-none" />
+            <textarea name="description" key={`desc-${sectionData?.description?.substring(0,20)}`} defaultValue={sectionData?.description} rows={3} className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white resize-none" />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Background Image URL</label>
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Features Label</label>
+            <input type="text" name="features_label" key={`fl-${sectionData?.features_label}`} defaultValue={sectionData?.features_label} placeholder="Features:" className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Image URL</label>
             <div className="flex gap-2">
               <input 
                 type="url" 
-                name="background_image_url" 
-                id="background_image_url"
-                key={`img-${sectionData?.background_image_url}`} 
-                defaultValue={sectionData?.background_image_url} 
+                name="image_url" 
+                id="vortix_portal_image_url"
+                key={`img-${sectionData?.image_url}`} 
+                defaultValue={sectionData?.image_url} 
                 className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" 
               />
               <button 
@@ -164,39 +172,36 @@ export default function AdminLyro() {
                 <ImageIcon size={20} />
               </button>
             </div>
-            {sectionData?.background_image_url && (
-              <img src={sectionData.background_image_url} alt="Preview" className="mt-2 h-32 object-contain bg-gray-900 p-2 rounded" />
+            {sectionData?.image_url && (
+              <img src={sectionData.image_url} alt="Preview" className="mt-2 h-32 object-contain bg-gray-900 p-2 rounded" />
             )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">CTA Text</label>
+              <input type="text" name="cta_text" key={`cta-${sectionData?.cta_primary?.text}`} defaultValue={sectionData?.cta_primary?.text} className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">CTA Action</label>
+              <input type="text" name="cta_action" key={`action-${sectionData?.cta_primary?.action}`} defaultValue={sectionData?.cta_primary?.action} placeholder="modal" className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" />
+            </div>
           </div>
         </form>
 
-        {/* Image Picker Modal */}
-        <ImagePicker 
-          isOpen={showImagePicker} 
-          onClose={() => setShowImagePicker(false)} 
-          onSelect={(url) => {
-            const input = document.getElementById('background_image_url') as HTMLInputElement;
-            if (input) input.value = url;
-            setShowImagePicker(false);
-          }} 
-          currentUrl={sectionData?.background_image_url} 
-          defaultFolder="lyro" 
-        />
-
-        {/* Features */}
         <div className="bg-white dark:bg-gray-800 rounded-xl p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">System Capabilities</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Features</h2>
             <button onClick={() => { setEditingItem(null); setShowItemModal(true); }} className="flex items-center gap-2 bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700">
               <Plus size={18} />Add Feature
             </button>
           </div>
 
           <table className="w-full">
-            <thead className="bg-gray-50 dark:bg-gray-900 border-b">
+            <thead className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">Order</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">Feature Text</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">Text</th>
                 <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">Actions</th>
               </tr>
             </thead>
@@ -204,7 +209,7 @@ export default function AdminLyro() {
               {sectionData?.items?.map((item: any) => (
                 <tr key={item.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                   <td className="px-4 py-3 text-center text-sm text-gray-500 dark:text-gray-400">{item.display_order}</td>
-                  <td className="px-4 py-3 text-sm text-gray-900 dark:text-white">{item.text}</td>
+                  <td className="px-4 py-3 text-sm font-semibold text-gray-900 dark:text-white">{item.text}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-center gap-2">
                       <button onClick={() => { setEditingItem(item); setShowItemModal(true); }} className="p-1.5 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded"><Edit size={16} /></button>
@@ -217,7 +222,6 @@ export default function AdminLyro() {
           </table>
         </div>
 
-        {/* Feature Modal */}
         {showItemModal && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-2xl w-full">
@@ -241,6 +245,19 @@ export default function AdminLyro() {
             </div>
           </div>
         )}
+
+        {/* Image Picker Modal */}
+        <ImagePicker 
+          isOpen={showImagePicker} 
+          onClose={() => setShowImagePicker(false)} 
+          onSelect={(url) => {
+            const input = document.getElementById('vortix_portal_image_url') as HTMLInputElement;
+            if (input) input.value = url;
+            setShowImagePicker(false);
+          }} 
+          currentUrl={sectionData?.image_url}
+          defaultFolder="vortix-portal" 
+        />
       </div>
     </AdminLayout>
   );

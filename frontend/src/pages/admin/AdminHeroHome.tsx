@@ -166,7 +166,7 @@ export default function AdminHeroHome() {
                   </div>
                 </div>
                 <p className="text-xs text-blue-700 dark:text-blue-400 mt-3">💡 Copy any of these IDs above and paste into the Desktop URL or Mobile URL fields.</p>
-              </div>
+            </div>
           </div>
 
           <div className="bg-white dark:bg-gray-800 rounded-xl p-6">

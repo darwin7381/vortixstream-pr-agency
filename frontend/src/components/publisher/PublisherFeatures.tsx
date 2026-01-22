@@ -18,15 +18,16 @@ const CheckIcon = () => (
 );
 
 export default function PublisherFeaturesSection() {
-  const [publisherFeatures, setPublisherFeatures] = useState<PublisherFeature[]>([]);
+  const [sectionData, setSectionData] = useState<any>(null);
   const [visibleDiff, setVisibleDiff] = useState(new Set());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
   const diffRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
-    contentAPI.getPublisherFeatures()
-      .then(setPublisherFeatures)
+    fetch(`${import.meta.env.VITE_API_URL}/public/content/sections/publisher`)
+      .then(r => r.json())
+      .then(setSectionData)
       .catch(console.error);
   }, []);
 
@@ -51,7 +52,7 @@ export default function PublisherFeaturesSection() {
     });
 
     return () => observers.forEach(observer => observer.disconnect());
-  }, [publisherFeatures]);
+  }, [sectionData?.items]);
 
   return (
     <section ref={sectionRef} className="relative w-full overflow-hidden py-section-large">
@@ -127,7 +128,7 @@ export default function PublisherFeaturesSection() {
           
           {/* Compact Header */}
           <h2 className="text-[40px] md:text-[52px] font-medium text-white mb-6 md:mb-8 tracking-[-0.4px] md:tracking-[-0.52px] leading-[1.1]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-            {publisherContent.whyPartner.title}
+            {sectionData?.title}
           </h2>
 
           {/* Main Layout: Left Content + Right Stats */}
@@ -136,7 +137,7 @@ export default function PublisherFeaturesSection() {
             {/* Left: Description + CTA */}
             <div className="flex-1 space-y-5">
               <p className="text-[12px] md:text-[18px] text-white opacity-90 leading-relaxed max-w-[520px]">
-                {publisherContent.whyPartner.description}
+                {sectionData?.description}
               </p>
 
               <div className="inline-block">
@@ -147,7 +148,7 @@ export default function PublisherFeaturesSection() {
                     background: 'linear-gradient(102deg, #FF7400 0%, #1D3557 100%)' 
                   }}
                 >
-                  Become a Publisher Partner
+                  {sectionData?.cta_button?.text}
                 </button>
               </div>
             </div>
@@ -155,7 +156,7 @@ export default function PublisherFeaturesSection() {
             {/* Right: Compact Stats Grid */}
             <div className="flex-1 w-full">
               <div className="grid grid-cols-2 gap-4">
-                {publisherStats.map((stat, index) => (
+                {sectionData?.stats?.map((stat: any, index: number) => (
                   <div 
                     key={index}
                     className="group relative h-full flex"
@@ -191,7 +192,7 @@ export default function PublisherFeaturesSection() {
           {/* Compact Features List - 動態佈局 */}
           <div className="max-w-[1100px] mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-              {publisherFeatures.map((item, index) => (
+              {sectionData?.items?.map((item: any, index: number) => (
                 <div 
                   key={index}
                   ref={el => { diffRefs.current[index] = el; }}
