@@ -184,7 +184,22 @@ export default function AdminContentVortixPortal() {
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">CTA Action</label>
-              <input type="text" name="cta_action" key={`action-${sectionData?.cta_primary?.action}`} defaultValue={sectionData?.cta_primary?.action} placeholder="modal" className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" />
+              <div 
+                className="relative group"
+                title="此按鈕行為已寫死在程式碼中：點擊會打開 AI Editor Waitlist 表單"
+              >
+                <input 
+                  type="text" 
+                  value="AI-Waitlist-Modal" 
+                  disabled
+                  className="w-full px-4 py-3 border-2 border-gray-400 dark:border-gray-500 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 cursor-not-allowed font-mono text-sm"
+                />
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+              </div>
             </div>
           </div>
         </form>

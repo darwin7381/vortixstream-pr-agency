@@ -1,0 +1,41 @@
+{
+  "label": "#lyro_engine",
+  "title": "Lyro — AI PR Engine",
+  "subtitle": "(Coming Soon)",
+  "description": "Lyro is our upcoming PR engine built to enhance accuracy, efficiency, and regional intelligence across every campaign. \nIt improves how you plan, localize, and distribute PR ,giving you a smarter and more predictable experience.",
+  "background_image_url": "https://img.vortixpr.com/VortixPR_Website/Left_Point_Cat-2.png",
+  "items": [
+    {
+      "text": "Narrative optimization",
+      "display_order": 1,
+      "is_active": true,
+      "id": 1,
+      "created_at": "2026-01-02T06:26:54.649527",
+      "updated_at": "2026-01-02T06:26:54.649527"
+    },
+    {
+      "text": "Media angle suggestions",
+      "display_order": 2,
+      "is_active": true,
+      "id": 2,
+      "created_at": "2026-01-02T06:26:54.649527",
+      "updated_at": "2026-01-02T06:26:54.649527"
+    },
+    {
+      "text": "LLM visibility forecasting",
+      "display_order": 3,
+      "is_active": true,
+      "id": 3,
+      "created_at": "2026-01-02T06:26:54.649527",
+      "updated_at": "2026-01-02T06:26:54.649527"
+    },
+    {
+      "text": "Asia geo-angle adjustments",
+      "display_order": 4,
+      "is_active": true,
+      "id": 4,
+      "created_at": "2026-01-02T06:26:54.649527",
+      "updated_at": "2026-01-02T06:26:54.649527"
+    }
+  ]
+}

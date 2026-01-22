@@ -1,0 +1,50 @@
+{
+  "label": "Services",
+  "title": "What We Offer",
+  "description": "At VortixPR, we amplify blockchain, Web3, and AI projects through strategic media engagement. Our global network ensures your message resonates with the right audience.",
+  "cta_primary": {
+    "text": "Get Started",
+    "url": "/contact"
+  },
+  "cta_secondary": {
+    "text": "Contact Us",
+    "url": "/contact"
+  },
+  "items": [
+    {
+      "id": 1,
+      "icon": "globe",
+      "title": "Global Press Distribution",
+      "description": "Targeted distribution across top crypto, tech and AI media.",
+      "display_order": 1
+    },
+    {
+      "id": 2,
+      "icon": "language",
+      "title": "Asia-Market Localization & Outreach",
+      "description": "CN, KR, JP & SEA outreach with language + narrative adaptation.",
+      "display_order": 2
+    },
+    {
+      "id": 3,
+      "icon": "strategy",
+      "title": "PR & Narrative Strategy",
+      "description": "Angle shaping, headline advice, and editorial review.",
+      "display_order": 3
+    },
+    {
+      "id": 4,
+      "icon": "user",
+      "title": "Founder & Personal Branding PR",
+      "description": "Articles, interviews and content for founder authority.",
+      "display_order": 4
+    },
+    {
+      "id": 5,
+      "icon": "users",
+      "title": "Influencer Marketing & Community Activation",
+      "description": "Leverage key opinion leaders and build engaged communities around your project.",
+      "display_order": 5
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-# VortixPortal & Publisher Features JSONB 遷移執行計劃
+# CMS Section JSONB 遷移標準指南
 
 ## ⚠️ 必讀
 
@@ -285,3 +285,76 @@ curl -X PUT "http://localhost:8000/api/admin/content/sections/vortix_portal" \
 9. ✅ 確認 100% 正常才說完成
 10. ✅ 參考 `standards/TESTING_GUIDE.md` 取得 Token
 
+
+---
+
+## 🚀 生產環境部署注意事項
+
+### 部署前（必須執行）
+
+**1. 備份遠端資料庫：**
+
+```bash
+# Railway CLI 備份
+railway run pg_dump $DATABASE_URL > backup_$(date +%Y%m%d_%H%M%S).sql
+
+# 或使用 Railway Dashboard 的備份功能
+# Settings → Backups → Create Backup
+```
+
+**2. 記錄需要清理的舊表：**
+
+已遷移到 JSONB 的舊表：
+- services → section_contents.services
+- publisher_features → section_contents.publisher
+- lyro_section → section_contents.lyro
+- lyro_features → section_contents.lyro
+- stats → section_contents.why_vortix
+- differentiators → section_contents.why_vortix
+
+**3. 驗證本地測試：**
+- [ ] 所有 Section 前台顯示正確
+- [ ] 所有 Admin 頁面編輯正常
+- [ ] ImagePicker 功能正常
+- [ ] 無 Console 錯誤
+
+---
+
+### 部署後（確認無問題後執行）
+
+**1. 驗證生產環境：**
+- 確認 section_contents 表已創建
+- 確認資料已遷移
+- 確認前後台功能正常
+
+**2. 觀察期（1-2 週）：**
+- 監控錯誤日誌
+- 確認無功能異常
+- 確認無使用舊 API
+
+**3. 清理舊表（謹慎執行）：**
+
+```sql
+-- ⚠️ 完全確認後才執行
+
+-- 先備份
+CREATE TABLE services_backup AS SELECT * FROM services;
+CREATE TABLE publisher_features_backup AS SELECT * FROM publisher_features;
+
+-- 刪除舊表（不可逆）
+DROP TABLE IF EXISTS services;
+DROP TABLE IF EXISTS publisher_features;
+DROP TABLE IF EXISTS lyro_section;
+DROP TABLE IF EXISTS lyro_features;
+DROP TABLE IF EXISTS stats;
+DROP TABLE IF EXISTS differentiators;
+```
+
+**⚠️ 刪除前必須：**
+- 已備份
+- 100% 確認不再使用
+- 低流量時段執行
+
+---
+
+**遵循此流程，確保安全遷移！**
