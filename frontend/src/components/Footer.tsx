@@ -157,7 +157,10 @@ export default function Footer() {
                   )}
                 </div>
                 <p className="text-white text-[12px] font-sans leading-[1.4] max-w-[320px]">
-                  By subscribing you agree to with our <span className="underline cursor-pointer">Privacy Policy</span> and provide consent to receive updates from our company.
+                  By subscribing you agree to with our <span 
+                    className="underline cursor-pointer hover:text-gray-300 transition-colors"
+                    onClick={() => navigate('/privacy-policy')}
+                  >Privacy Policy</span> and provide consent to receive updates from our company.
                 </p>
               </div>
             </div>
@@ -222,22 +225,34 @@ export default function Footer() {
               
               <div className="flex flex-wrap gap-x-6 gap-y-2">
                 <a 
-                  href="#" 
-                  className="text-white text-[14px] font-sans underline hover:text-gray-300 transition-colors"
+                  href="/privacy-policy"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate('/privacy-policy');
+                  }}
+                  className="text-white text-[14px] font-sans underline hover:text-gray-300 transition-colors cursor-pointer"
                 >
                   Privacy Policy
                 </a>
                 <a 
-                  href="#" 
-                  className="text-white text-[14px] font-sans underline hover:text-gray-300 transition-colors"
+                  href="/terms-of-service"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate('/terms-of-service');
+                  }}
+                  className="text-white text-[14px] font-sans underline hover:text-gray-300 transition-colors cursor-pointer"
                 >
                   Terms of Service
                 </a>
                 <a 
-                  href="#" 
-                  className="text-white text-[14px] font-sans underline hover:text-gray-300 transition-colors"
+                  href="/cookie-policy"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate('/cookie-policy');
+                  }}
+                  className="text-white text-[14px] font-sans underline hover:text-gray-300 transition-colors cursor-pointer"
                 >
-                  Cookies Settings
+                  Cookie Policy
                 </a>
               </div>
             </div>

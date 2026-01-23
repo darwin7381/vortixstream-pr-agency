@@ -1,0 +1,34 @@
+{
+  "items": [
+    {
+      "id": 1,
+      "text": "Plan and manage PR campaigns in one places",
+      "display_order": 1
+    },
+    {
+      "id": 2,
+      "text": "Track coverage, visibility, and campaign progress",
+      "display_order": 2
+    },
+    {
+      "id": 3,
+      "text": "Compare media options across regions",
+      "display_order": 3
+    },
+    {
+      "id": 4,
+      "text": "Access AI-assisted insights through Lyro",
+      "display_order": 4
+    }
+  ],
+  "label": "#V_PR_WORKSPACE",
+  "title": "Vortix Portal?",
+  "subtitle": "(Coming Soon)",
+  "image_url": "https://img.vortixpr.com/vortix-portal/ffde749e-76ba-49db-92db-6089a35b3726.gif",
+  "cta_primary": {
+    "text": "Join AI Editor Waitlist",
+    "action": "modal"
+  },
+  "description": "The operating system for modern PR built to help teams plan, execute, and track global campaigns more intelligently — powered by Lyro, our intelligent PR engine.",
+  "features_label": "Features:"
+}

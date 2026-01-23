@@ -63,6 +63,9 @@ import AdminContentCarousel from './pages/admin/AdminContentCarousel';
 import AdminSiteSettings from './pages/admin/AdminSiteSettings';
 import AdminTemplates from './pages/admin/AdminTemplates';
 import AdminEmailPreview from './pages/admin/AdminEmailPreview';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
+import CookiePolicy from './pages/CookiePolicy';
 import { contentAPI, type FAQ } from './api/client';
 
 // Home Page Component
@@ -167,6 +170,11 @@ function AppContent() {
           <Route path="/auth/google/callback" element={<GoogleCallback />} />
           <Route path="/newsletter-success" element={<NewsletterSuccessPage />} />
           <Route path="/material-symbols" element={<MaterialSymbolDemo />} />
+          
+          {/* Legal Pages */}
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/cookie-policy" element={<CookiePolicy />} />
           
           {/* 管理後台路由（需要管理員權限） */}
           <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminDashboard /></ProtectedRoute>} />
