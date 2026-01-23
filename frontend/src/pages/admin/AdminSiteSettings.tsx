@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { contentAPI } from '../../api/client';
 import { Plus, Edit, Trash2, Save, Navigation as NavIcon, Layout } from 'lucide-react';
+import SectionIdsHint from '../../components/admin/shared/SectionIdsHint';
 
 export default function AdminSiteSettings() {
   const [loading, setLoading] = useState(true);
@@ -294,33 +295,7 @@ export default function AdminSiteSettings() {
             </div>
 
             {/* Section IDs Reference */}
-            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-              <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-3">📍 Available Section IDs on Homepage</h4>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 text-sm">
-                <div className="flex items-start gap-2">
-                  <code className="bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 px-2 py-1 rounded font-mono text-xs">#services-section</code>
-                </div>
-                <div className="flex items-start gap-2">
-                  <code className="bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 px-2 py-1 rounded font-mono text-xs">#packages-section</code>
-                </div>
-                <div className="flex items-start gap-2">
-                  <code className="bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 px-2 py-1 rounded font-mono text-xs">#lyro-section</code>
-                </div>
-                <div className="flex items-start gap-2">
-                  <code className="bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 px-2 py-1 rounded font-mono text-xs">#clients-section</code>
-                </div>
-                <div className="flex items-start gap-2">
-                  <code className="bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 px-2 py-1 rounded font-mono text-xs">#publisher-section</code>
-                </div>
-                <div className="flex items-start gap-2">
-                  <code className="bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 px-2 py-1 rounded font-mono text-xs">#contact-section</code>
-                </div>
-                <div className="flex items-start gap-2">
-                  <code className="bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 px-2 py-1 rounded font-mono text-xs">#about-section</code>
-                </div>
-              </div>
-              <p className="text-xs text-blue-700 dark:text-blue-400 mt-3">💡 Copy any of these IDs above and paste into the Desktop URL or Mobile URL fields.</p>
-            </div>
+            <SectionIdsHint />
 
             {/* Navigation Items Table */}
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">

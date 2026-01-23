@@ -4,6 +4,7 @@ import { ADMIN_API, PUBLIC_API } from '../../config/api';
 import { authenticatedGet, authenticatedPost, authenticatedPut, authenticatedPatch, authenticatedDelete } from '../../utils/apiClient';
 import { Save, Plus, Trash2, Image as ImageIcon, Edit } from 'lucide-react';
 import ImagePicker from '../../components/admin/ImagePicker';
+import SectionIdsHint from '../../components/admin/shared/SectionIdsHint';
 
 export default function AdminHeroHome() {
   const [heroData, setHeroData] = useState<any>(null);
@@ -140,33 +141,7 @@ export default function AdminHeroHome() {
             </div>
 
               {/* Section ID Reference */}
-              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
-                <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-3">📍 Available Section IDs on Homepage</h4>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
-                  <div className="flex items-start gap-2">
-                    <code className="bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 px-2 py-1 rounded font-mono text-xs">#services-section</code>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <code className="bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 px-2 py-1 rounded font-mono text-xs">#packages-section</code>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <code className="bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 px-2 py-1 rounded font-mono text-xs">#lyro-section</code>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <code className="bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 px-2 py-1 rounded font-mono text-xs">#clients-section</code>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <code className="bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 px-2 py-1 rounded font-mono text-xs">#publisher-section</code>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <code className="bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 px-2 py-1 rounded font-mono text-xs">#contact-section</code>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <code className="bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 px-2 py-1 rounded font-mono text-xs">#about-section</code>
-                  </div>
-                </div>
-                <p className="text-xs text-blue-700 dark:text-blue-400 mt-3">💡 Copy any of these IDs above and paste into the Desktop URL or Mobile URL fields.</p>
-            </div>
+              <SectionIdsHint />
           </div>
 
           <div className="bg-white dark:bg-gray-800 rounded-xl p-6">

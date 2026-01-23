@@ -97,7 +97,9 @@ function HomePage() {
       <PRPackagesSection />
 
       {/* Vortix Portal Section */}
-      <VortixPortalSection />
+      <section id="vortix-portal-section">
+        <VortixPortalSection />
+      </section>
 
       {/* Lyro AI Section */}
       <section id="lyro-section">
