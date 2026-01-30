@@ -8,7 +8,7 @@ class BlogPostBase(BaseModel):
     title: str = Field(..., min_length=1, max_length=255)
     category: str = Field(..., min_length=1, max_length=100)
     excerpt: Optional[str] = None
-    content: str = Field(..., min_length=1)
+    content: str  # 移除 min_length 限制（允許空字串）
     author: str = Field(default="VortixPR Team", max_length=100)
     read_time: Optional[int] = None
     image_url: Optional[str] = None
@@ -26,7 +26,7 @@ class BlogPostUpdate(BaseModel):
     title: Optional[str] = Field(None, min_length=1, max_length=255)
     category: Optional[str] = Field(None, min_length=1, max_length=100)
     excerpt: Optional[str] = None
-    content: Optional[str] = Field(None, min_length=1)
+    content: Optional[str] = None  # 移除 min_length 限制
     author: Optional[str] = Field(None, max_length=100)
     read_time: Optional[int] = None
     image_url: Optional[str] = None
