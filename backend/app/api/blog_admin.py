@@ -156,7 +156,7 @@ async def sync_from_notion(
     
     # 2. 用 Notion SDK 取得頁面完整資訊
     try:
-        # Import 移到函數內（避免影響其他 API）
+        # 只在需要時才 import（避免影響 backend 啟動）
         from notion_client import Client
         
         notion = Client(auth=settings.NOTION_API_KEY)
