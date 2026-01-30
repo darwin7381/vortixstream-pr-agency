@@ -1,7 +1,6 @@
 from fastapi import APIRouter, HTTPException, Header
 from slugify import slugify
 from datetime import datetime
-from notion_client import Client
 
 from ..core.database import db
 from ..models.blog import BlogPostCreate, BlogPostUpdate, BlogPost, NotionBlogSync
@@ -157,6 +156,9 @@ async def sync_from_notion(
     
     # 2. 用 Notion SDK 取得頁面完整資訊
     try:
+        # Import 移到函數內（避免影響其他 API）
+        from notion_client import Client
+        
         notion = Client(auth=settings.NOTION_API_KEY)
         
         # 取得 page properties
