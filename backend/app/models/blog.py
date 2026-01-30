@@ -44,6 +44,11 @@ class BlogPost(BlogPostBase):
     updated_at: datetime
     published_at: Optional[datetime] = None
     
+    # Notion 整合欄位（可選）
+    notion_page_id: Optional[str] = None
+    sync_source: Optional[str] = None
+    notion_last_edited_time: Optional[datetime] = None
+    
     class Config:
         from_attributes = True
 
