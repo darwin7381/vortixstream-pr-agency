@@ -57,6 +57,22 @@ class BlogPostList(BaseModel):
     total_pages: int
 
 
+class NotionBlogSync(BaseModel):
+    """從 Notion 同步的資料（N8N 只需傳送 page_id）"""
+    notion_page_id: str = Field(..., min_length=1, max_length=100)
+    
+    # ⚠️ Backend 會自己去 Notion 取得所有資訊：
+    # - Page properties（title, pillar, meta_description, author...）
+    # - Page blocks（content）
+
+
+class NotionBlogResponse(BlogPost):
+    """同步成功後的回傳（包含給 Notion 的資訊）"""
+    article_url: str  # 文章完整 URL（給 Notion 回填用）
+    _sync_action: str  # 'created' or 'updated'
+
+
+
 
 
 

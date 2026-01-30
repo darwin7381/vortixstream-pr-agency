@@ -1445,6 +1445,58 @@ class Database:
                     ADD COLUMN IF NOT EXISTS mobile_url VARCHAR(255);
                 """)
                 logger.info("✅ Navigation items desktop_url/mobile_url fields added")
+        
+        # === Blog Posts - Notion Integration ===
+        notion_page_id_exists = await conn.fetchval("""
+            SELECT EXISTS (
+                SELECT 1 FROM information_schema.columns 
+                WHERE table_name='blog_posts' AND column_name='notion_page_id'
+            )
+        """)
+        
+        if not notion_page_id_exists:
+            logger.info("🔄 Adding Notion integration fields to blog_posts...")
+            
+            # 新增欄位
+            await conn.execute("""
+                ALTER TABLE blog_posts 
+                ADD COLUMN notion_page_id VARCHAR(100),
+                ADD COLUMN notion_last_edited_time TIMESTAMP,
+                ADD COLUMN sync_source VARCHAR(20) DEFAULT 'admin';
+            """)
+            
+            # 新增唯一約束
+            await conn.execute("""
+                ALTER TABLE blog_posts
+                ADD CONSTRAINT uq_blog_posts_notion_page_id UNIQUE (notion_page_id);
+            """)
+            
+            # 新增檢查約束
+            await conn.execute("""
+                ALTER TABLE blog_posts
+                ADD CONSTRAINT chk_blog_posts_sync_source 
+                CHECK (sync_source IN ('notion', 'admin', 'api'));
+            """)
+            
+            # 新增索引（在欄位存在後）
+            await conn.execute("""
+                CREATE INDEX IF NOT EXISTS idx_blog_posts_notion_page_id 
+                ON blog_posts(notion_page_id);
+            """)
+            
+            await conn.execute("""
+                CREATE INDEX IF NOT EXISTS idx_blog_posts_sync_source 
+                ON blog_posts(sync_source);
+            """)
+            
+            await conn.execute("""
+                CREATE INDEX IF NOT EXISTS idx_blog_posts_notion_last_edited 
+                ON blog_posts(notion_last_edited_time DESC);
+            """)
+            
+            logger.info("✅ Notion integration fields added to blog_posts")
+        else:
+            logger.info("✅ Notion integration fields already exist in blog_posts")
     
     async def _promote_super_admin(self, conn):
         """

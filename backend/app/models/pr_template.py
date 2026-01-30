@@ -89,3 +89,4 @@ class EmailRequestResponse(BaseModel):
     message: str
     tracking_id: Optional[str] = None
 
+

@@ -22,4 +22,3 @@ if (import.meta.env.DEV) {
   console.log('🔧 API URL:', API_BASE_URL, 
     API_BASE_URL.startsWith('https') ? '(HTTPS ✅)' : '(HTTP ⚠️)');
 }
-

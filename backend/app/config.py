@@ -43,6 +43,11 @@ class Settings(BaseSettings):
     # Environment
     ENVIRONMENT: str = "development"
     
+    # Notion Integration
+    NOTION_WEBHOOK_SECRET: str = ""
+    NOTION_API_KEY: str = ""
+    NOTION_DATABASE_ID: str = ""
+    
     class Config:
         env_file = ".env"
         case_sensitive = False
