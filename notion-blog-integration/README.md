@@ -1,142 +1,219 @@
 # Notion Blog 整合
 
-✅ **狀態**: 實作完成，測試通過
+> Backend 自動同步 Notion Database 到 PostgreSQL
+
+**狀態**: ✅ 已完成並測試通過
 
 ---
 
-## 📁 文件導航
-
-| 文件 | 用途 | 狀態 |
-|------|------|------|
-| `PLAN.md` | 完整計畫和架構說明 | ✅ 最新 |
-| `BEST_SOLUTION.md` | 最佳方案說明（Backend 處理轉換） | ✅ 已確認 |
-| `DATABASE_CHANGES.md` | Database 擴展說明 | ✅ 已實作 |
-| `N8N_HTTP_SETUP.md` | N8N HTTP node 設定指南 | ✅ 生產環境用 |
-| `IMPLEMENTATION_SUCCESS.md` | 實作成功報告 | ✅ 測試通過 |
-| `TEST_API.sh` | API 測試腳本 | ✅ 可用 |
-| `ARTICLE_EXAMPLE.md` | 文章範例 | ✅ 參考用 |
-
-**不需要的文件**（已刪除）：
-- ~~N8N_GUIDE.md~~ - 太複雜，已被 BEST_SOLUTION 取代
-- ~~SETUP_GUIDE.md~~ - 資訊重複
-
----
-
-## 🎯 快速開始
-
-### 如果你是第一次設定
-
-1. **閱讀** `PLAN.md` - 了解整體架構
-2. **查看** `BEST_SOLUTION.md` - 了解為何選擇 Backend 處理
-3. **測試** `./TEST_API.sh` - 驗證 API 功能
-4. **設定** N8N - 參考 `N8N_HTTP_SETUP.md`
-
-### 如果你要設定生產環境的 N8N
-
-**直接看** `N8N_HTTP_SETUP.md`
-
-這個文件包含：
-- ✅ 完整的 HTTP Request node 設定
-- ✅ 環境變數設定
-- ✅ Request body 範例
-- ✅ 快速複製貼上格式
-
----
-
-## ✅ 實作狀態
-
-### Backend
-
-- [x] Database 欄位擴展（`database.py`）
-- [x] Pydantic Models（`blog.py`）
-- [x] API Endpoint（`blog_admin.py`）
-- [x] Notion SDK 安裝
-- [x] Blocks 轉換邏輯
-- [x] 本地測試通過
-
-### N8N
-
-- [ ] 建立 Workflow
-- [ ] 設定 HTTP Request node
-- [ ] 設定環境變數
-- [ ] 測試執行
-- [ ] 啟用 Workflow
-
----
-
-## 🔧 技術架構
-
-### 資料流程
+## 🎯 架構
 
 ```
 Notion Database
-    ↓ (行銷人員改狀態為 "Publish")
-N8N Trigger (每 1 分鐘檢查)
-    ↓ (只傳 page_id + 基本欄位)
+  ↓ (行銷人員改狀態為 "Publish")
+N8N (Railway)
+  ↓ (HTTP POST: 只傳 notion_page_id)
 Backend API
-    ↓ (用 notion-client 取得 blocks)
-    ↓ (轉換 blocks 為 HTML)
+  ↓ (自動取得 Notion properties 和 blocks)
+  ↓ (轉換 blocks 為 HTML)
 PostgreSQL
-    ↓
-前端顯示
+  ↓
+前端網站
 ```
 
-### 為何這樣設計？
+**N8N 只需傳送**：
+```json
+{
+  "notion_page_id": "01c95bf2-3e7f-8222-ba1d-01f4e4f334f9"
+}
+```
 
-**N8N 只負責**：
-- ✅ 監聽 database 變更
-- ✅ 過濾狀態
-- ✅ 傳遞基本資訊
-
-**Backend 負責**：
-- ✅ 取得頁面內容（用 Python SDK）
-- ✅ 轉換為 HTML（20 行代碼）
-- ✅ 儲存到資料庫
-
-**優勢**：
-- N8N workflow 超簡單（5 nodes）
-- 轉換邏輯在 Backend（易維護）
-- Python 比 JavaScript 簡單
-- 官方 SDK 支援
+**Backend 自動處理**：
+- 取得所有 Notion properties（title, pillar, meta_description, author...）
+- 取得頁面 blocks 並轉換為 HTML
+- 自動計算 read_time
+- 自動設定 meta_title（加品牌）
+- 回傳 article_url
 
 ---
 
-## 🎯 下一步
+## 📋 Notion Database 欄位
 
-### 生產環境部署
+### 必填欄位
 
-1. **Backend** (如果還沒部署)
-   - 推送代碼到 Railway
-   - 確認環境變數
-   - 重啟服務
+| 欄位 | 類型 | 用途 |
+|------|------|------|
+| Title | title | 文章標題 |
+| Pillar | select | 分類（PR Strategy, Founder Branding, Asia PR, AI & Platform） |
+| Meta Description | text | SEO 描述（150-160 字元，同時用作網站摘要） |
+| Status | select | 工作流程狀態 |
 
-2. **N8N** (在 Railway 上)
-   - 設定環境變數
-   - 建立 Workflow
-   - 參考 `N8N_HTTP_SETUP.md`
+### 選填欄位
 
-3. **測試**
-   - 在 Notion 建立測試文章
-   - 狀態改為 "Publish"
-   - 等待 1-2 分鐘
-   - 檢查網站
+| 欄位 | 類型 | 用途 |
+|------|------|------|
+| Author | text | 作者（預設：VortixPR Team） |
+| Cover Image | file | 封面圖 |
+| Publish Date | date | 發布日期（預設：現在） |
+| tag | multi_select | 文章標籤 |
+
+### Backend 自動填寫
+
+| 欄位 | 用途 |
+|------|------|
+| Article URL | 文章完整連結（Backend 回傳後 N8N 回填） |
+
+### 內容撰寫
+
+**在 Notion 頁面內容中撰寫文章**（不是欄位）
+- 使用 Notion 的 rich text 編輯器
+- 支援：標題、段落、列表、圖片、分隔線
+- Backend 自動轉換為 HTML
 
 ---
 
-## 📞 支援
+## 🔧 Backend API
 
-### 文件
+### Endpoint
 
-- 架構問題 → `PLAN.md`
-- 實作細節 → `BEST_SOLUTION.md`
-- N8N 設定 → `N8N_HTTP_SETUP.md`
-- Database → `DATABASE_CHANGES.md`
+```
+POST https://api.vortixpr.com/api/admin/blog/sync-from-notion
+```
+
+### Headers
+
+```
+X-Notion-Webhook-Secret: <your-webhook-secret>
+Content-Type: application/json
+```
+
+### Request Body（超簡單！）
+
+```json
+{
+  "notion_page_id": "01c95bf2-3e7f-8222-ba1d-01f4e4f334f9"
+}
+```
+
+### Response
+
+```json
+{
+  "id": 20,
+  "title": "...",
+  "slug": "...",
+  "category": "...",
+  "article_url": "https://vortixpr.com/blog/...",
+  "_sync_action": "created"  // 或 "updated"
+}
+```
+
+---
+
+## 🤖 N8N 設定
+
+### Workflow 結構（5 個 Nodes）
+
+```
+1. Notion Trigger (Database)
+2. Filter (Status = "Publish" or "Update")
+3. HTTP Request (POST to Backend)
+4. Update Notion (Status + Article URL)
+5. Telegram Notification (可選)
+```
+
+### 關鍵設定
+
+**詳細設定參考**: `N8N_HTTP_SETUP.md`
+
+**核心重點**：
+- URL: `{{$env.BACKEND_API_URL}}/api/admin/blog/sync-from-notion`
+- Header: `X-Notion-Webhook-Secret = {{$env.NOTION_WEBHOOK_SECRET}}`
+- Body: `{ "notion_page_id": "{{ $json.id }}" }`
+
+**N8N 環境變數**：
+```bash
+BACKEND_API_URL=https://api.vortixpr.com
+NOTION_WEBHOOK_SECRET=<same-as-backend>
+NOTION_DATABASE_ID=50c95bf23e7f839e838601aff3163c7f
+```
+
+---
+
+## ✅ Backend 已完成
+
+### Database
+- ✅ 新增 3 個 Notion 欄位（notion_page_id, sync_source, notion_last_edited_time）
+- ✅ 約束和索引已設定
+- ✅ 符合 DATABASE_ARCHITECTURE.md 標準
+
+### API
+- ✅ `/api/admin/blog/sync-from-notion` endpoint
+- ✅ Notion SDK 整合（notion-client）
+- ✅ Blocks 轉 HTML（20 行代碼）
+- ✅ 自動處理：read_time, meta_title, excerpt, article_url
+
+### Models
+- ✅ NotionBlogSync（簡化，只需 page_id）
+- ✅ BlogPost（包含 Notion 欄位）
 
 ### 測試
-
-- 本地測試 → `./TEST_API.sh`
-- 檢查 logs → Backend 終端機輸出
+- ✅ 本地測試通過
+- ✅ 創建和更新都成功
 
 ---
 
-**準備好部署到生產環境！** 🚀
+## 🧪 測試
+
+### 本地測試
+
+```bash
+cd notion-blog-integration
+./TEST_API.sh
+```
+
+### 手動測試
+
+```bash
+curl -X POST "http://localhost:8000/api/admin/blog/sync-from-notion" \
+  -H "X-Notion-Webhook-Secret: <your-secret>" \
+  -H "Content-Type: application/json" \
+  -d '{"notion_page_id": "01c95bf2-3e7f-8222-ba1d-01f4e4f334f9"}'
+```
+
+---
+
+## 📁 文件說明
+
+```
+notion-blog-integration/
+├── README.md              # 本文件（總覽）
+├── N8N_HTTP_SETUP.md      # N8N HTTP node 詳細設定
+├── TEST_API.sh            # API 測試腳本
+└── ARTICLE_EXAMPLE.md     # 文章範例
+```
+
+---
+
+## 🎯 Notion 資訊
+
+- **Database 名稱**: Insights (Vortix PR)
+- **Database ID**: `50c95bf23e7f839e838601aff3163c7f`
+- **URL**: https://www.notion.so/50c95bf23e7f839e838601aff3163c7f
+
+---
+
+## 🚀 下一步
+
+### 生產環境設定
+
+1. **Backend 已部署** ✅
+2. **在 Railway N8N 設定 Workflow**
+   - 參考 `N8N_HTTP_SETUP.md`
+   - 5 個 nodes，超簡單
+3. **測試完整流程**
+4. **設定 Telegram 通知**（可選）
+
+---
+
+**準備好使用了！** 🎉

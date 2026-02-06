@@ -1,10 +1,23 @@
-# N8N HTTP Request 設定指南
+# N8N HTTP 設定
 
-> N8N HTTP node 完整設定 + 本地測試指令
+> 超簡化版本：只需要設定 HTTP Request node
 
 ---
 
-## 🧪 本地測試（在設定 N8N 之前先測試）
+## ⚡ 關鍵重點
+
+**N8N 只需要傳送**：
+```json
+{
+  "notion_page_id": "{{ $json.id }}"
+}
+```
+
+**Backend 會自動處理所有事情！**
+
+---
+
+## 🧪 本地測試
 
 ### 完整的 curl 命令（可直接複製）
 

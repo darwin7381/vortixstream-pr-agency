@@ -1,10 +1,13 @@
 from fastapi import APIRouter, HTTPException, Header
 from slugify import slugify
 from datetime import datetime
+import httpx
+import re
 
 from ..core.database import db
 from ..models.blog import BlogPostCreate, BlogPostUpdate, BlogPost, NotionBlogSync
 from ..config import settings
+from ..services.r2_storage import r2_storage
 
 router = APIRouter(prefix="/blog")
 
@@ -177,11 +180,39 @@ async def sync_from_notion(
         author_array = props.get('Author', {}).get('rich_text', [])
         author = ''.join([t.get('plain_text', '') for t in author_array]) or 'VortixPR Team'
         
-        # Cover Image
+        # Cover Image（所有圖片都上傳到 R2）
         cover_files = props.get('Cover Image', {}).get('files', [])
         cover_image_url = ''
         if cover_files:
-            cover_image_url = cover_files[0].get('file', {}).get('url') or cover_files[0].get('external', {}).get('url', '')
+            original_cover_url = cover_files[0].get('file', {}).get('url') or cover_files[0].get('external', {}).get('url', '')
+            
+            if original_cover_url:
+                # 所有圖片都上傳到 R2（不論來源）
+                try:
+                    async with httpx.AsyncClient(timeout=30.0) as client:
+                        response = await client.get(original_cover_url)
+                        if response.status_code == 200:
+                            # 從 content-type 判斷副檔名
+                            content_type = response.headers.get('content-type', 'image/jpeg')
+                            ext_map = {'image/jpeg': 'jpg', 'image/png': 'png', 'image/gif': 'gif', 'image/webp': 'webp'}
+                            ext = ext_map.get(content_type, 'jpg')
+                            
+                            filename = f"notion-blog-{payload.notion_page_id[:8]}-cover.{ext}"
+                            upload_result = r2_storage.upload_file(
+                                file_content=response.content,
+                                filename=filename,
+                                folder="blog-covers",
+                                content_type=content_type
+                            )
+                            cover_image_url = upload_result['url']
+                        else:
+                            cover_image_url = original_cover_url  # 下載失敗，fallback
+                except Exception as e:
+                    cover_image_url = original_cover_url  # 出錯，fallback
+                    import logging
+                    logging.getLogger(__name__).warning(f"⚠️ 封面圖上傳失敗: {e}")
+            else:
+                cover_image_url = ''
         
         # Publish Date
         publish_date_obj = props.get('Publish Date', {}).get('date', {})
@@ -205,8 +236,8 @@ async def sync_from_notion(
         
         blocks = blocks_response['results']
         
-        # 轉換為 HTML
-        html_content = _convert_blocks_to_html(blocks)
+        # 轉換為 HTML 並處理圖片（下載 Notion 圖片到 R2）
+        html_content = await _convert_blocks_to_html_and_upload_images(blocks, payload.notion_page_id)
         
         # 自動計算 read_time
         read_time = _calculate_read_time(html_content)
@@ -329,8 +360,8 @@ async def sync_from_notion(
         )
 
 
-def _convert_blocks_to_html(blocks):
-    """轉換 Notion blocks 為 HTML（簡化版，支援常用類型）"""
+async def _convert_blocks_to_html_and_upload_images(blocks, page_id: str):
+    """轉換 Notion blocks 為 HTML，並上傳圖片到 R2"""
     
     def get_text(rich_text_array):
         if not rich_text_array:
@@ -338,6 +369,7 @@ def _convert_blocks_to_html(blocks):
         return ''.join([t.get('plain_text', '') for t in rich_text_array])
     
     html_parts = []
+    image_count = 0
     
     for block in blocks:
         block_type = block['type']
@@ -357,9 +389,37 @@ def _convert_blocks_to_html(blocks):
         elif block_type == 'numbered_list_item':
             html_parts.append(f"<li>{get_text(block['numbered_list_item']['rich_text'])}</li>")
         elif block_type == 'image':
-            url = block['image'].get('external', {}).get('url') or block['image'].get('file', {}).get('url', '')
-            if url:
-                html_parts.append(f'<img src="{url}" alt="Image" />')
+            original_url = block['image'].get('external', {}).get('url') or block['image'].get('file', {}).get('url', '')
+            if original_url:
+                # 如果是 Notion 的臨時 URL，下載並上傳到 R2
+                if 'prod-files-secure.s3' in original_url or 'amazonaws.com' in original_url:
+                    try:
+                        # 下載圖片
+                        async with httpx.AsyncClient() as client:
+                            response = await client.get(original_url)
+                            if response.status_code == 200:
+                                image_count += 1
+                                # 生成檔名
+                                filename = f"notion-blog-{page_id[:8]}-img-{image_count}.jpg"
+                                
+                                # 上傳到 R2
+                                upload_result = r2_storage.upload_file(
+                                    file_content=response.content,
+                                    filename=filename,
+                                    folder="blog-images",
+                                    content_type=response.headers.get('content-type', 'image/jpeg')
+                                )
+                                
+                                # 使用 R2 的永久 URL
+                                final_url = upload_result['url']
+                            else:
+                                final_url = original_url  # 下載失敗，用原始 URL
+                    except Exception as e:
+                        final_url = original_url  # 出錯，用原始 URL
+                else:
+                    final_url = original_url  # 已經是外部 URL，直接使用
+                
+                html_parts.append(f'<img src="{final_url}" alt="Image" />')
         elif block_type == 'divider':
             html_parts.append('<hr />')
         # 可以之後再加更多類型（quote, code, callout 等）
@@ -367,10 +427,94 @@ def _convert_blocks_to_html(blocks):
     return '\n'.join(html_parts)
 
 
+async def _convert_blocks_to_html_and_upload_images(blocks, page_id: str):
+    """
+    轉換 Notion blocks 為 HTML，並上傳 Notion 圖片到 R2
+    
+    Notion 的圖片 URL 會過期，需要下載並上傳到我們的 R2
+    """
+    
+    def get_text(rich_text_array):
+        if not rich_text_array:
+            return ''
+        return ''.join([t.get('plain_text', '') for t in rich_text_array])
+    
+    html_parts = []
+    image_count = 0
+    
+    for block in blocks:
+        block_type = block['type']
+        
+        if block_type == 'heading_1':
+            html_parts.append(f"<h1>{get_text(block['heading_1']['rich_text'])}</h1>")
+        elif block_type == 'heading_2':
+            html_parts.append(f"<h2>{get_text(block['heading_2']['rich_text'])}</h2>")
+        elif block_type == 'heading_3':
+            html_parts.append(f"<h3>{get_text(block['heading_3']['rich_text'])}</h3>")
+        elif block_type == 'paragraph':
+            text = get_text(block['paragraph']['rich_text'])
+            if text:
+                html_parts.append(f"<p>{text}</p>")
+        elif block_type == 'bulleted_list_item':
+            html_parts.append(f"<li>{get_text(block['bulleted_list_item']['rich_text'])}</li>")
+        elif block_type == 'numbered_list_item':
+            html_parts.append(f"<li>{get_text(block['numbered_list_item']['rich_text'])}</li>")
+        elif block_type == 'image':
+            original_url = block['image'].get('external', {}).get('url') or block['image'].get('file', {}).get('url', '')
+            
+            if original_url:
+                # 所有圖片都上傳到 R2（完全掌控）
+                try:
+                    # 下載圖片
+                    async with httpx.AsyncClient(timeout=30.0) as client:
+                        response = await client.get(original_url)
+                        
+                        if response.status_code == 200:
+                            image_count += 1
+                            
+                            # 從 content-type 判斷副檔名
+                            content_type = response.headers.get('content-type', 'image/jpeg')
+                            ext_map = {
+                                'image/jpeg': 'jpg',
+                                'image/png': 'png',
+                                'image/gif': 'gif',
+                                'image/webp': 'webp'
+                            }
+                            ext = ext_map.get(content_type, 'jpg')
+                            
+                            filename = f"notion-blog-{page_id[:8]}-img-{image_count}.{ext}"
+                            
+                            # 上傳到 R2
+                            upload_result = r2_storage.upload_file(
+                                file_content=response.content,
+                                filename=filename,
+                                folder="blog-images",
+                                content_type=content_type
+                            )
+                            
+                            final_url = upload_result['url']
+                            import logging
+                            logging.getLogger(__name__).info(f"✅ 圖片已上傳到 R2: {filename} (原始: {original_url[:50]}...)")
+                        else:
+                            final_url = original_url  # 下載失敗，fallback
+                            import logging
+                            logging.getLogger(__name__).warning(f"⚠️ 下載圖片失敗 {response.status_code}: {original_url[:80]}")
+                
+                except Exception as e:
+                    final_url = original_url  # 出錯，fallback
+                    import logging
+                    logging.getLogger(__name__).warning(f"⚠️ 圖片處理失敗: {e}")
+                
+                html_parts.append(f'<img src="{final_url}" alt="Image" />')
+        
+        elif block_type == 'divider':
+            html_parts.append('<hr />')
+    
+    return '\n'.join(html_parts)
+
+
 def _calculate_read_time(html_content: str) -> int:
     """自動計算閱讀時間（基於內容長度）"""
-    import re
-    
     # 移除 HTML tags
     text = re.sub('<[^<]+?>', '', html_content)
     
