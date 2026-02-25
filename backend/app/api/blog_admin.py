@@ -1,19 +1,22 @@
-from fastapi import APIRouter, HTTPException, Header
+from fastapi import APIRouter, HTTPException, Header, Depends
 from slugify import slugify
 from datetime import datetime
 import httpx
 import re
+import logging
 
 from ..core.database import db
 from ..models.blog import BlogPostCreate, BlogPostUpdate, BlogPost, NotionBlogSync
 from ..config import settings
 from ..services.r2_storage import r2_storage
+from ..utils.security import require_admin
 
 router = APIRouter(prefix="/blog")
+logger = logging.getLogger(__name__)
 
 
 @router.get("/posts/by-id/{post_id}", response_model=BlogPost)
-async def get_blog_post_by_id(post_id: int):
+async def get_blog_post_by_id(post_id: int, current_user=Depends(require_admin)):
     """取得單篇 Blog 文章（通過 ID）- Admin 專用"""
     
     async with db.pool.acquire() as conn:
@@ -29,7 +32,7 @@ async def get_blog_post_by_id(post_id: int):
 
 
 @router.post("/posts", response_model=BlogPost, status_code=201)
-async def create_blog_post(post: BlogPostCreate):
+async def create_blog_post(post: BlogPostCreate, current_user=Depends(require_admin)):
     """創建 Blog 文章"""
     
     # 生成 slug
@@ -74,8 +77,8 @@ async def create_blog_post(post: BlogPostCreate):
     return dict(row)
 
 
-@router.put("/posts/{post_id}", response_model=BlogPost)
-async def update_blog_post(post_id: int, post: BlogPostUpdate):
+@router.put("/posts/{post_id}")
+async def update_blog_post(post_id: int, post: BlogPostUpdate, current_user=Depends(require_admin)):
     """更新 Blog 文章"""
     
     # 取得要更新的欄位
@@ -123,23 +126,206 @@ async def update_blog_post(post_id: int, post: BlogPostUpdate):
     if not row:
         raise HTTPException(status_code=404, detail="Blog post not found")
     
-    return dict(row)
+    result = dict(row)
+    
+    # 如果狀態有變更且文章來自 Notion，同步更新 Notion 狀態
+    new_status = update_data.get("status")
+    if new_status and row.get("notion_page_id"):
+        notion_status_map = {
+            "published": "Published",
+            "draft": "Draft",
+            "archived": "Archived"
+        }
+        notion_status = notion_status_map.get(new_status)
+        if notion_status:
+            notion_synced = await _sync_status_to_notion(
+                notion_page_id=row["notion_page_id"],
+                notion_status=notion_status
+            )
+            if not notion_synced:
+                result["_notion_sync_warning"] = (
+                    f"文章狀態已更新為 {new_status}，但 Notion 狀態同步失敗。"
+                    "請手動在 Notion 更新狀態，或稍後重試。"
+                )
+    
+    return result
 
 
 @router.delete("/posts/{post_id}", status_code=204)
-async def delete_blog_post(post_id: int):
-    """刪除 Blog 文章"""
+async def delete_blog_post(post_id: int, current_user=Depends(require_admin)):
+    """刪除 Blog 文章（網站刪除 → Notion 改為 Archived）"""
     
     async with db.pool.acquire() as conn:
-        result = await conn.execute(
+        # 先取得文章資料（確認存在 + 取得 notion_page_id）
+        post_row = await conn.fetchrow(
+            "SELECT id, notion_page_id FROM blog_posts WHERE id = $1",
+            post_id
+        )
+        
+        if not post_row:
+            raise HTTPException(status_code=404, detail="Blog post not found")
+        
+        # 如果來自 Notion，先同步狀態為 Archived
+        if post_row["notion_page_id"]:
+            await _sync_status_to_notion(
+                notion_page_id=post_row["notion_page_id"],
+                notion_status="Archived"
+            )
+        
+        # 刪除網站文章
+        await conn.execute(
             "DELETE FROM blog_posts WHERE id = $1",
             post_id
         )
     
-    if result == "DELETE 0":
+    return None
+
+
+@router.post("/posts/{post_id}/export-to-notion")
+async def export_post_to_notion(post_id: int, current_user=Depends(require_admin)):
+    """
+    將網站文章匯出到 Notion Database
+    
+    適用於：Admin 後台手動建立的文章（notion_page_id = NULL）
+    執行後：在 Notion 建立對應 card，並將 notion_page_id 寫回 blog_posts
+    """
+    async with db.pool.acquire() as conn:
+        post = await conn.fetchrow(
+            "SELECT * FROM blog_posts WHERE id = $1",
+            post_id
+        )
+    
+    if not post:
         raise HTTPException(status_code=404, detail="Blog post not found")
     
-    return None
+    post_dict = dict(post)
+    
+    # 已有 notion_page_id，不需要重複建立
+    if post_dict.get("notion_page_id"):
+        raise HTTPException(
+            status_code=400,
+            detail=f"文章已有對應的 Notion page: {post_dict['notion_page_id']}"
+        )
+    
+    try:
+        # Notion 的 select 欄位：傳入不存在的選項名稱時，Notion 會自動新增
+        # 因此直接使用網站的 category 值，不需要對應表
+        # 這確保兩邊的分類保持完全一致（對等）
+        pillar = post_dict.get("category", "PR Strategy") or "PR Strategy"
+        
+        # status 對應到 Notion Status
+        status_map = {
+            "published": "Published",
+            "draft": "Draft",
+            "archived": "Archived",
+        }
+        notion_status = status_map.get(post_dict["status"], "Draft")
+        
+        # 從 HTML content 提取純文字，建立 Notion paragraph blocks
+        plain_text = re.sub('<[^<]+?>', '', post_dict.get("content") or "")
+        plain_text = plain_text.strip()
+        
+        # 切成每 2000 字一段（Notion 每個 rich_text block 最多 2000 字）
+        MAX_BLOCK_LENGTH = 1900
+        content_blocks = []
+        for i in range(0, len(plain_text), MAX_BLOCK_LENGTH):
+            chunk = plain_text[i:i + MAX_BLOCK_LENGTH]
+            if chunk.strip():
+                content_blocks.append({
+                    "object": "block",
+                    "type": "paragraph",
+                    "paragraph": {
+                        "rich_text": [{"type": "text", "text": {"content": chunk}}]
+                    }
+                })
+        
+        # 建立 Notion page
+        page_data = {
+            "parent": {
+                "type": "database_id",
+                "database_id": settings.NOTION_DATABASE_ID
+            },
+            "properties": {
+                "Title": {
+                    "title": [{"type": "text", "text": {"content": post_dict["title"]}}]
+                },
+                "Pillar": {
+                    "select": {"name": pillar}
+                },
+                "Status": {
+                    "select": {"name": notion_status}
+                },
+            },
+            "children": content_blocks[:50]  # Notion 一次最多 100 個 blocks
+        }
+        
+        # 加入選填欄位（有值才加）
+        if post_dict.get("meta_description"):
+            page_data["properties"]["Meta Description"] = {
+                "rich_text": [{"type": "text", "text": {"content": post_dict["meta_description"][:2000]}}]
+            }
+        
+        if post_dict.get("author"):
+            page_data["properties"]["Author"] = {
+                "rich_text": [{"type": "text", "text": {"content": post_dict["author"]}}]
+            }
+        
+        if post_dict.get("published_at"):
+            page_data["properties"]["Publish Date"] = {
+                "date": {"start": post_dict["published_at"].strftime("%Y-%m-%d")}
+            }
+        
+        # 呼叫 Notion API 建立 page
+        async with httpx.AsyncClient(timeout=15.0) as client:
+            response = await client.post(
+                "https://api.notion.com/v1/pages",
+                headers={
+                    "Authorization": f"Bearer {settings.NOTION_API_KEY}",
+                    "Notion-Version": "2022-06-28",
+                    "Content-Type": "application/json"
+                },
+                json=page_data
+            )
+        
+        if response.status_code != 200:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Notion 建立 page 失敗: {response.text}"
+            )
+        
+        notion_page = response.json()
+        notion_page_id = notion_page["id"]
+        notion_url = notion_page.get("url", "")
+        
+        # 更新 blog_posts 寫入 notion_page_id
+        async with db.pool.acquire() as conn:
+            await conn.execute(
+                """
+                UPDATE blog_posts
+                SET notion_page_id = $1,
+                    sync_source = 'notion',
+                    updated_at = NOW()
+                WHERE id = $2
+                """,
+                notion_page_id,
+                post_id
+            )
+        
+        logger.info(f"✅ 文章 {post_id} 已匯出到 Notion: {notion_page_id}")
+        
+        return {
+            "success": True,
+            "post_id": post_id,
+            "notion_page_id": notion_page_id,
+            "notion_url": notion_url,
+            "message": f"已成功在 Notion 建立對應 card。Notion 頁面：{notion_url}"
+        }
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ 匯出到 Notion 失敗: {e}")
+        raise HTTPException(status_code=500, detail=f"匯出失敗: {str(e)}")
 
 
 @router.post("/sync-from-notion")
@@ -525,6 +711,51 @@ def _calculate_read_time(html_content: str) -> int:
     read_time = max(1, round(word_count / 250))
     
     return read_time
+
+
+async def _sync_status_to_notion(notion_page_id: str, notion_status: str) -> bool:
+    """
+    同步狀態變更到 Notion（Website → Notion 方向）
+    
+    Backend 直接呼叫 Notion API，不經過 N8N。
+    
+    Args:
+        notion_page_id: Notion page ID
+        notion_status: 要設定的 Notion Status 值（"Published"/"Draft"/"Archived"）
+    
+    Returns:
+        bool: True = 成功，False = 失敗
+    """
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.patch(
+                f"https://api.notion.com/v1/pages/{notion_page_id}",
+                headers={
+                    "Authorization": f"Bearer {settings.NOTION_API_KEY}",
+                    "Notion-Version": "2022-06-28",
+                    "Content-Type": "application/json"
+                },
+                json={
+                    "properties": {
+                        "Status": {
+                            "select": {
+                                "name": notion_status
+                            }
+                        }
+                    }
+                }
+            )
+            
+            if response.status_code == 200:
+                logger.info(f"✅ Notion 狀態已同步為 {notion_status}: {notion_page_id}")
+                return True
+            else:
+                logger.warning(f"⚠️ Notion 狀態更新失敗 HTTP {response.status_code}: {notion_page_id}")
+                return False
+    
+    except Exception as e:
+        logger.warning(f"⚠️ Notion 狀態同步失敗（不影響網站操作）: {e}")
+        return False
 
 
 

@@ -31,9 +31,10 @@ PostgreSQL
 **Backend 自動處理**：
 - 取得所有 Notion properties（title, pillar, meta_description, author...）
 - 取得頁面 blocks 並轉換為 HTML
+- **下載所有圖片（Notion + 外部）並上傳到 Cloudflare R2（永久 URL）**
 - 自動計算 read_time
 - 自動設定 meta_title（加品牌）
-- 回傳 article_url
+- 回傳 article_url 和 _sync_action（created / updated）
 
 ---
 
@@ -103,33 +104,41 @@ Content-Type: application/json
   "title": "...",
   "slug": "...",
   "category": "...",
+  "image_url": "https://img.vortixpr.com/blog-covers/...",
   "article_url": "https://vortixpr.com/blog/...",
   "_sync_action": "created"  // 或 "updated"
 }
 ```
 
+### 圖片處理
+
+**所有圖片都會自動上傳到 Cloudflare R2**：
+- ✅ Notion 圖片（會過期的臨時 URL）
+- ✅ 外部圖片（Unsplash, 其他網站）
+- ✅ 封面圖 → `blog-covers/` 資料夾
+- ✅ 內容圖 → `blog-images/` 資料夾
+- ✅ 支援格式：jpg, png, gif, webp
+- ✅ 永久 URL，完全掌控
+
 ---
 
 ## 🤖 N8N 設定
 
-### Workflow 結構（5 個 Nodes）
+### Workflow 結構
 
 ```
 1. Notion Trigger (Database)
 2. Filter (Status = "Publish" or "Update")
-3. HTTP Request (POST to Backend)
+3. HTTP Request (POST to Backend)  ← 只傳 notion_page_id
 4. Update Notion (Status + Article URL)
-5. Telegram Notification (可選)
+5A. Telegram - 發佈成功通知
+5B. Telegram - 更新成功通知
+6. Telegram - 錯誤通知
 ```
 
-### 關鍵設定
-
-**詳細設定參考**: `N8N_HTTP_SETUP.md`
-
-**核心重點**：
-- URL: `{{$env.BACKEND_API_URL}}/api/admin/blog/sync-from-notion`
-- Header: `X-Notion-Webhook-Secret = {{$env.NOTION_WEBHOOK_SECRET}}`
-- Body: `{ "notion_page_id": "{{ $json.id }}" }`
+**詳細設定參考**：
+- HTTP 設定 → `N8N_HTTP_SETUP.md`
+- Telegram 通知 → `TELEGRAM_NOTIFICATION.md`
 
 **N8N 環境變數**：
 ```bash
@@ -150,8 +159,9 @@ NOTION_DATABASE_ID=50c95bf23e7f839e838601aff3163c7f
 ### API
 - ✅ `/api/admin/blog/sync-from-notion` endpoint
 - ✅ Notion SDK 整合（notion-client）
-- ✅ Blocks 轉 HTML（20 行代碼）
-- ✅ 自動處理：read_time, meta_title, excerpt, article_url
+- ✅ Blocks 轉 HTML
+- ✅ 圖片自動下載並上傳到 R2（Notion + 外部圖片）
+- ✅ 自動處理：read_time, meta_title, excerpt, article_url, _sync_action
 
 ### Models
 - ✅ NotionBlogSync（簡化，只需 page_id）
@@ -187,10 +197,12 @@ curl -X POST "http://localhost:8000/api/admin/blog/sync-from-notion" \
 
 ```
 notion-blog-integration/
-├── README.md              # 本文件（總覽）
-├── N8N_HTTP_SETUP.md      # N8N HTTP node 詳細設定
-├── TEST_API.sh            # API 測試腳本
-└── ARTICLE_EXAMPLE.md     # 文章範例
+├── README.md                  # 本文件（總覽）
+├── SYNC_DIRECTION.md          # 同步機制設計（單向 + 半雙向）
+├── N8N_HTTP_SETUP.md          # N8N HTTP 設定 + 測試指令
+├── TELEGRAM_NOTIFICATION.md   # Telegram 三套通知範本
+├── TEST_API.sh                # API 測試腳本
+└── ARTICLE_EXAMPLE.md         # 文章範例
 ```
 
 ---
@@ -208,11 +220,9 @@ notion-blog-integration/
 ### 生產環境設定
 
 1. **Backend 已部署** ✅
-2. **在 Railway N8N 設定 Workflow**
-   - 參考 `N8N_HTTP_SETUP.md`
-   - 5 個 nodes，超簡單
-3. **測試完整流程**
-4. **設定 Telegram 通知**（可選）
+2. **在 Railway N8N 設定 Workflow** ← 參考 `N8N_HTTP_SETUP.md`
+3. **設定 Telegram 通知** ← 參考 `TELEGRAM_NOTIFICATION.md`
+4. **測試完整流程**
 
 ---
 

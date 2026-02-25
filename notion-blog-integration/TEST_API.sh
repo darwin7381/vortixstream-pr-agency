@@ -76,11 +76,7 @@ echo "---"
 curl -X POST "${BACKEND_URL}/api/admin/blog/sync-from-notion" \
   -H "X-Notion-Webhook-Secret: wrong-secret" \
   -H "Content-Type: application/json" \
-  -d '{
-    "notion_page_id": "test-id",
-    "title": "Test",
-    "pillar": "Test"
-  }' 
+  -d '{"notion_page_id": "test-id"}'
 
 echo ""
 echo ""
