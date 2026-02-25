@@ -1,6 +1,6 @@
 # N8N HTTP 設定
 
-> N8N 只傳送一個欄位，Backend 自動處理所有事情
+> N8N 只傳送 notion_page_id，Backend 自動處理所有事情（含更新 Notion 狀態）
 
 ---
 
@@ -13,60 +13,23 @@
 }
 ```
 
-**Backend 會自動**：
-- 取得所有 Notion properties
-- 取得頁面 blocks 並轉換為 HTML
-- 下載所有圖片（Notion + 外部）並上傳到 R2
-- 計算 read_time、設定 meta_title
-- 回傳 article_url 和 _sync_action
+**不需要在 N8N 做的事**：
+- ❌ 不需要 Processing Status 節點（Backend 收到即自動設定）
+- ❌ 不需要 Update database page 節點（Backend 同步完成後自動更新 Notion 狀態 + Article URL）
 
 ---
 
-## 🧪 本地測試
-
-### Curl 指令（直接複製）
-
-```bash
-curl -X POST "http://localhost:8000/api/admin/blog/sync-from-notion" \
-  -H "X-Notion-Webhook-Secret: <your-webhook-secret>" \
-  -H "Content-Type: application/json" \
-  -d '{"notion_page_id": "01c95bf2-3e7f-8222-ba1d-01f4e4f334f9"}' \
-  | python3 -m json.tool
-```
-
-### 成功回應
-
-```json
-{
-  "id": 21,
-  "title": "How to Break Into Asian Crypto Media...",
-  "slug": "how-to-break-into-asian-crypto-media-korea-japan-sea",
-  "category": "Asia PR",
-  "image_url": "https://img.vortixpr.com/blog-covers/xxxxx.jpg",
-  "article_url": "https://vortixpr.com/blog/how-to-break-into...",
-  "read_time": 4,
-  "_sync_action": "created"
-}
-```
-
-**`_sync_action`**：
-- `"created"` → 第一次發布（新文章）
-- `"updated"` → 更新現有文章
-
----
-
-## 📋 N8N Workflow 完整設定
-
-### Workflow 結構
+## 📋 N8N Workflow 結構
 
 ```
 1. Notion Trigger
-2. IF Filter (Status = Publish / Update)
-3. HTTP Request (POST to Backend)  ← 核心
-4. Update Notion (Status + Article URL)
-5A. Telegram - 發佈通知 (created)
-5B. Telegram - 更新通知 (updated)
-6.  Telegram - 錯誤通知 (失敗)
+2. Status Filter (Publish / Update / Archive)
+3. HTTP Request (POST to Backend)
+4. Switch (_sync_action: created / updated / archived)
+   ├─ created  → Telegram 發佈通知
+   ├─ updated  → Telegram 更新通知
+   └─ archived → Telegram 封存通知
+5. Telegram 錯誤通知（HTTP 失敗路徑）
 ```
 
 ---
@@ -79,13 +42,19 @@ curl -X POST "http://localhost:8000/api/admin/blog/sync-from-notion" \
 
 ---
 
-### Node 2: IF Filter
+### Node 2: Status Filter
 
-- **Condition**: `{{ $json.Status === 'Publish' || $json.Status === 'Update' }}`
+篩選三個觸發狀態：
+
+```
+Status = "Publish" OR Status = "Update" OR Status = "Archive"
+```
+
+> 完成狀態（`Published`, `Updated`, `Archived`, `Processing...`）不會觸發，天然防止迴圈。
 
 ---
 
-### Node 3: HTTP Request ← 最重要
+### Node 3: HTTP Request ← 核心
 
 **Method**: `POST`
 
@@ -108,53 +77,24 @@ Content-Type: application/json
 ```
 
 **Options**:
-- Timeout: `60000` ms（圖片上傳需要較長時間）
-- Retry On Fail: ✅ Max 3 tries
+- Timeout: `120000` ms（圖片上傳需要時間）
+- Retry On Fail: ✅ Max 2 tries
 
 ---
 
-### Node 4: Update Notion Status + Article URL
+### Node 4: Switch（依 `_sync_action` 分流）
 
-**Method**: `PATCH`
+條件：`{{ $json._sync_action }}`
 
-**URL**:
-```
-https://api.notion.com/v1/pages/{{ $('HTTP Request').first().json.notion_page_id }}
-```
-
-**Auth**: Notion API credential
-
-**Headers**:
-```
-Notion-Version: 2022-06-28
-```
-
-**Body (JSON)**:
-```json
-{
-  "properties": {
-    "Status": {
-      "select": {
-        "name": "{{ $('Notion Trigger').first().json.Status === 'Publish' ? 'Published' : 'Updated' }}"
-      }
-    },
-    "Article URL": {
-      "url": "{{ $('HTTP Request').first().json.article_url }}"
-    }
-  }
-}
-```
+- `created` → Telegram 發佈通知
+- `updated` → Telegram 更新通知
+- `archived` → Telegram 封存通知
 
 ---
 
-### Nodes 5A / 5B / 6: Telegram 通知
+### Node 5: Telegram 通知
 
-**詳細設定參考**: `TELEGRAM_NOTIFICATION.md`
-
-**三套通知**：
-- **5A**: 發佈成功（`_sync_action === 'created'`）
-- **5B**: 更新成功（`_sync_action === 'updated'`）
-- **6**: 失敗（HTTP Request error）
+**詳細文案參考**: `TELEGRAM_NOTIFICATION.md`
 
 ---
 
@@ -168,20 +108,66 @@ NOTION_DATABASE_ID=50c95bf23e7f839e838601aff3163c7f
 
 ---
 
+## 📊 Backend 回應格式
+
+### Publish / Update 成功
+
+```json
+{
+  "id": 20,
+  "title": "How to Break Into Asian Crypto Media...",
+  "slug": "how-to-break-into-asian-crypto-media-korea-japan-sea",
+  "category": "Asia PR",
+  "read_time": 4,
+  "image_url": "https://img.vortixpr.com/blog-covers/xxxxx.jpg",
+  "notion_page_id": "01c95bf2-3e7f-8222-ba1d-01f4e4f334f9",
+  "article_url": "https://vortixpr.com/blog/how-to-break-into-asian-crypto-media-korea-japan-sea",
+  "_sync_action": "created"
+}
+```
+
+### Archive 成功
+
+```json
+{
+  "id": 27,
+  "slug": "v2-how-to-build-credibility-before-token-launch-1",
+  "notion_page_id": "2ff95bf2-3e7f-80cc-bdb7-ef6a59e6a9b4",
+  "article_url": "https://vortixpr.com/blog/v2-how-to-build-credibility-before-token-launch-1",
+  "_sync_action": "archived"
+}
+```
+
+---
+
+## 🧪 本地測試
+
+```bash
+# Publish / Update 測試
+curl -X POST "http://localhost:8000/api/admin/blog/sync-from-notion" \
+  -H "X-Notion-Webhook-Secret: <your-webhook-secret>" \
+  -H "Content-Type: application/json" \
+  -d '{"notion_page_id": "01c95bf2-3e7f-8222-ba1d-01f4e4f334f9"}'
+
+# Archive 測試（頁面需先在 Notion 設為 Archive 狀態）
+curl -X POST "http://localhost:8000/api/admin/blog/sync-from-notion" \
+  -H "X-Notion-Webhook-Secret: <your-webhook-secret>" \
+  -H "Content-Type: application/json" \
+  -d '{"notion_page_id": "<page-id-with-archive-status>"}'
+```
+
+---
+
 ## 🚨 常見錯誤
 
 ### 403 Forbidden
 → Webhook secret 不一致，檢查 Backend `.env` 和 N8N 環境變數
 
+### 404 Not Found（Archive 時）
+→ 該 notion_page_id 在資料庫中找不到對應文章
+
 ### 500 Internal Server Error
 → 查看 Railway Backend logs
 
 ### Timeout
-→ 正常現象（圖片上傳需要時間），Timeout 設為 60 秒
-
-### Notion API 錯誤
-→ 確認 Integration token 有效且 Database 已分享給 Integration
-
----
-
-**設定完成後啟用 Workflow！** ⚡
+→ 正常現象（圖片上傳需要時間），Timeout 設為 120 秒

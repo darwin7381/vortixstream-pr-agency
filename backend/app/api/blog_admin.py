@@ -331,6 +331,13 @@ async def export_post_to_notion(post_id: int, current_user=Depends(require_admin
                 "date": {"start": post_dict["published_at"].strftime("%Y-%m-%d")}
             }
         
+        # Tags
+        tags = post_dict.get("tags") or []
+        if tags:
+            page_data["properties"]["tag"] = {
+                "multi_select": [{"name": t} for t in tags if t]
+            }
+        
         # 呼叫 Notion API 建立 page
         async with httpx.AsyncClient(timeout=15.0) as client:
             response = await client.post(
@@ -429,10 +436,14 @@ async def sync_from_notion(
                     payload.notion_page_id
                 )
                 if not existing:
-                    raise HTTPException(
-                        status_code=404,
-                        detail=f"找不到對應文章（notion_page_id={payload.notion_page_id}）"
-                    )
+                    # 找不到對應文章：可能已從網站刪除但 Notion 未更新
+                    # 直接把 Notion 標為 Archived 完成流程，不卡在 Processing...
+                    await _sync_status_to_notion(payload.notion_page_id, "Archived")
+                    return {
+                        "notion_page_id": payload.notion_page_id,
+                        "_sync_action": "archived",
+                        "note": "DB 中無對應文章，Notion 已直接設為 Archived",
+                    }
                 await conn.execute(
                     "UPDATE blog_posts SET status = 'archived', updated_at = NOW() WHERE id = $1",
                     existing['id']
@@ -532,13 +543,14 @@ async def sync_from_notion(
                     UPDATE blog_posts
                     SET title=$1, category=$2, excerpt=$3, content=$4, author=$5,
                         image_url=$6, read_time=$7, meta_title=$8, meta_description=$9,
-                        notion_last_edited_time=$10, updated_at=NOW()
-                    WHERE id=$11
+                        tags=$10, status='published',
+                        notion_last_edited_time=$11, updated_at=NOW()
+                    WHERE id=$12
                     RETURNING *
                     """,
                     title, pillar, excerpt, html_content, author,
                     cover_image_url, read_time, meta_title, meta_description,
-                    datetime.now(), existing['id']
+                    tags, datetime.now(), existing['id']
                 )
                 action = "updated"
             else:
@@ -552,21 +564,23 @@ async def sync_from_notion(
                         notion_page_id, notion_last_edited_time, sync_source,
                         title, slug, category, excerpt, content, author,
                         image_url, read_time, meta_title, meta_description,
-                        status, published_at
-                    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+                        tags, status, published_at
+                    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)
                     RETURNING *
                     """,
                     payload.notion_page_id, datetime.now(), 'notion',
                     title, slug, pillar, excerpt, html_content, author,
                     cover_image_url, read_time, meta_title, meta_description,
-                    'published', published_at
+                    tags, 'published', published_at
                 )
                 action = "created"
 
         article_url = f"{frontend_url}/blog/{row['slug']}"
 
         # 後端自行更新 Notion 狀態 + Article URL（N8N 不需要再做）
-        notion_done_status = "Published"
+        # created → Published（新文章上線）
+        # updated → Updated（已發布的文章更新內容）
+        notion_done_status = "Published" if action == "created" else "Updated"
         await _sync_status_to_notion(payload.notion_page_id, notion_done_status)
         try:
             notion.pages.update(

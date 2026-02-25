@@ -84,6 +84,36 @@ Cache invalidation triggered.
 
 ---
 
+### Node 5C: Telegram - 文章封存通知
+
+**Condition**: `{{ $('HTTP Request').first().json._sync_action === 'archived' }}`
+
+**Text**（複製使用）:
+```
+🗄️ *ARTICLE ARCHIVED*
+
+━━━━━━━━━━━━━━━━━━━
+📦 CONTENT DECOMMISSIONED
+━━━━━━━━━━━━━━━━━━━
+
+📝 *Title*
+{{ $('HTTP Request').first().json.title }}
+
+🔗 *Former URL*
+{{ $('HTTP Request').first().json.article_url }}
+
+━━━━━━━━━━━━━━━━━━━
+
+Content removed from public access.
+Notion record updated to *Archived*.
+
+— *Vortix Supervisor* 「任務完成。」
+```
+
+**Parse Mode**: `Markdown`
+
+---
+
 ### Node 6: Telegram - 錯誤通知
 
 **Type**: Telegram
