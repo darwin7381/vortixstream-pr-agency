@@ -1,8 +1,25 @@
 import asyncpg
+import json
 from typing import Optional
 import logging
 
 logger = logging.getLogger(__name__)
+
+
+async def _init_connection(conn):
+    """為每個連線注冊 JSONB codec，讓 asyncpg 自動 decode JSONB 為 Python 物件"""
+    await conn.set_type_codec(
+        'jsonb',
+        encoder=json.dumps,
+        decoder=json.loads,
+        schema='pg_catalog',
+    )
+    await conn.set_type_codec(
+        'json',
+        encoder=json.dumps,
+        decoder=json.loads,
+        schema='pg_catalog',
+    )
 
 
 class Database:
@@ -20,7 +37,8 @@ class Database:
             self.database_url,
             min_size=2,
             max_size=10,
-            command_timeout=60
+            command_timeout=60,
+            init=_init_connection,
         )
         
         logger.info("✅ Database connected")
@@ -1497,6 +1515,24 @@ class Database:
             logger.info("✅ Notion integration fields added to blog_posts")
         else:
             logger.info("✅ Notion integration fields already exist in blog_posts")
+        
+        # === Blog Posts - Tags ===
+        tags_exists = await conn.fetchval("""
+            SELECT EXISTS (
+                SELECT 1 FROM information_schema.columns 
+                WHERE table_name='blog_posts' AND column_name='tags'
+            )
+        """)
+        
+        if not tags_exists:
+            logger.info("🔄 Adding tags field to blog_posts...")
+            await conn.execute("""
+                ALTER TABLE blog_posts 
+                ADD COLUMN tags JSONB DEFAULT '[]'::jsonb;
+            """)
+            logger.info("✅ tags field added to blog_posts")
+        else:
+            logger.info("✅ tags field already exists in blog_posts")
     
     async def _promote_super_admin(self, conn):
         """

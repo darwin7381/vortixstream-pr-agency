@@ -1,6 +1,7 @@
-from pydantic import BaseModel, Field
-from typing import Optional
+from pydantic import BaseModel, Field, field_validator
+from typing import Optional, List, Any
 from datetime import datetime
+import json as _json
 
 
 class BlogPostBase(BaseModel):
@@ -14,6 +15,23 @@ class BlogPostBase(BaseModel):
     image_url: Optional[str] = None
     meta_title: Optional[str] = None
     meta_description: Optional[str] = None
+    tags: Optional[List[str]] = Field(default_factory=list)
+
+    @field_validator('tags', mode='before')
+    @classmethod
+    def parse_tags(cls, v: Any) -> List[str]:
+        """防禦性處理 JSONB: asyncpg 可能回傳 string 或 list"""
+        if v is None:
+            return []
+        if isinstance(v, list):
+            return v
+        if isinstance(v, str):
+            try:
+                parsed = _json.loads(v)
+                return parsed if isinstance(parsed, list) else []
+            except Exception:
+                return []
+        return []
 
 
 class BlogPostCreate(BlogPostBase):
@@ -33,6 +51,7 @@ class BlogPostUpdate(BaseModel):
     meta_title: Optional[str] = None
     meta_description: Optional[str] = None
     status: Optional[str] = Field(None, pattern="^(draft|published|archived)$")
+    tags: Optional[List[str]] = None
 
 
 class BlogPost(BlogPostBase):

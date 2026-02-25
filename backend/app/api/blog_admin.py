@@ -15,6 +15,62 @@ router = APIRouter(prefix="/blog")
 logger = logging.getLogger(__name__)
 
 
+@router.get("/posts")
+async def list_admin_blog_posts(
+    page: int = 1,
+    page_size: int = 50,
+    status: str = "all",
+    search: str = "",
+    current_user=Depends(require_admin)
+):
+    """取得所有 Blog 文章列表（Admin 專用，支援全部狀態）"""
+    offset = (page - 1) * page_size
+
+    conditions = []
+    params: list = []
+    param_count = 1
+
+    if status != "all":
+        conditions.append(f"status = ${param_count}")
+        params.append(status)
+        param_count += 1
+
+    if search:
+        conditions.append(f"(title ILIKE ${param_count} OR author ILIKE ${param_count})")
+        params.append(f"%{search}%")
+        param_count += 1
+
+    where_clause = f"WHERE {' AND '.join(conditions)}" if conditions else ""
+
+    async with db.pool.acquire() as conn:
+        total = await conn.fetchval(
+            f"SELECT COUNT(*) FROM blog_posts {where_clause}",
+            *params
+        )
+        rows = await conn.fetch(
+            f"""
+            SELECT id, title, slug, category, author, status,
+                   read_time, image_url, published_at, created_at, updated_at,
+                   notion_page_id, sync_source
+            FROM blog_posts
+            {where_clause}
+            ORDER BY
+                CASE status WHEN 'published' THEN 1 WHEN 'draft' THEN 2 ELSE 3 END,
+                updated_at DESC
+            LIMIT ${param_count} OFFSET ${param_count + 1}
+            """,
+            *params, page_size, offset
+        )
+
+    return {
+        "posts": [dict(r) for r in rows],
+        "total": total,
+        "page": page,
+        "page_size": page_size,
+        "total_pages": max(1, (total + page_size - 1) // page_size),
+    }
+
+
 @router.get("/posts/by-id/{post_id}", response_model=BlogPost)
 async def get_blog_post_by_id(post_id: int, current_user=Depends(require_admin)):
     """取得單篇 Blog 文章（通過 ID）- Admin 專用"""

@@ -34,9 +34,36 @@ export interface BlogPost {
   meta_title: string | null;
   meta_description: string | null;
   status: string;
+  tags: string[] | null;
   created_at: string;
   updated_at: string;
   published_at: string | null;
+  notion_page_id?: string | null;
+  sync_source?: string | null;
+}
+
+export interface AdminBlogPost {
+  id: number;
+  title: string;
+  slug: string;
+  category: string;
+  author: string;
+  status: string;
+  read_time: number;
+  image_url: string | null;
+  published_at: string | null;
+  created_at: string;
+  updated_at: string;
+  notion_page_id: string | null;
+  sync_source: string | null;
+}
+
+export interface AdminBlogPostsResponse {
+  posts: AdminBlogPost[];
+  total: number;
+  page: number;
+  page_size: number;
+  total_pages: number;
 }
 
 export interface BlogPostsResponse {
@@ -171,6 +198,34 @@ export const blogAPI = {
     const response = await fetch(`${PUBLIC_API}/blog/posts?${queryParams}`);
     if (!response.ok) throw new Error('Failed to fetch blog posts');
     return response.json();
+  },
+
+  /**
+   * 取得所有文章列表（Admin 專用 - 含所有狀態）
+   */
+  async getAdminPosts(params?: {
+    page?: number;
+    page_size?: number;
+    status?: string;
+    search?: string;
+  }): Promise<AdminBlogPostsResponse> {
+    const queryParams = new URLSearchParams();
+    if (params?.page) queryParams.append('page', params.page.toString());
+    if (params?.page_size) queryParams.append('page_size', params.page_size.toString());
+    if (params?.status) queryParams.append('status', params.status);
+    if (params?.search) queryParams.append('search', params.search);
+
+    const response = await authenticatedGet(`${ADMIN_API}/blog/posts?${queryParams}`);
+    if (!response.ok) throw new Error('Failed to fetch admin blog posts');
+    return response.json();
+  },
+
+  /**
+   * 快速更新文章狀態（Admin 專用）
+   */
+  async updatePostStatus(id: number, status: string): Promise<void> {
+    const response = await authenticatedPut(`${ADMIN_API}/blog/posts/${id}`, { status });
+    if (!response.ok) throw new Error('Failed to update post status');
   },
 
   /**
