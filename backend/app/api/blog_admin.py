@@ -390,83 +390,94 @@ async def sync_from_notion(
     x_notion_webhook_secret: str = Header(None, alias="X-Notion-Webhook-Secret")
 ):
     """
-    從 Notion 同步文章
-    
-    N8N 傳送基本資訊，Backend 自動取得並轉換頁面內容
+    從 Notion 同步文章（後端自行讀取 Notion 狀態並更新回 Notion）
+
+    N8N 流程：Trigger → Status Filter → HTTP（本端點）→ Telegram 通知
+    Processing Status 和 Update database page 節點均可從 N8N 移除，
+    由後端統一處理，避免 N8N 提前改寫 Notion status 導致後端讀不到原始狀態。
+
+    回傳欄位：
+      _sync_action: "created" | "updated" | "archived"
+      article_url:  文章完整 URL
+      notion_page_id: 頁面 ID
+      title:        文章標題
     """
-    
+
     # 1. 驗證 webhook secret
     if x_notion_webhook_secret != settings.NOTION_WEBHOOK_SECRET:
         raise HTTPException(status_code=403, detail="Invalid webhook secret")
-    
-    # 2. 用 Notion SDK 取得頁面完整資訊
+
     try:
-        # 只在需要時才 import（避免影響 backend 啟動）
         from notion_client import Client
-        
+
         notion = Client(auth=settings.NOTION_API_KEY)
-        
-        # 取得 page properties
+        frontend_url = settings.FRONTEND_URL.rstrip('/')
+
+        # 2. 讀取 Notion 頁面（此時 N8N 尚未改寫任何狀態，讀到的是真實觸發狀態）
         page = notion.pages.retrieve(page_id=payload.notion_page_id)
         props = page['properties']
-        
-        # ── 提前檢查 Status：若為 Archive，直接封存文章，不做內容同步 ──
         notion_status = props.get('Status', {}).get('select', {}).get('name', '')
-        
+
+        # 3. 立即把 Notion 狀態改為 Processing...（讓使用者知道後端已接收並正在處理）
+        await _sync_status_to_notion(payload.notion_page_id, "Processing...")
+
+        # ── 分支一：Archive ──────────────────────────────────────────
         if notion_status == 'Archive':
             async with db.pool.acquire() as conn:
                 existing = await conn.fetchrow(
-                    "SELECT id, slug FROM blog_posts WHERE notion_page_id = $1",
+                    "SELECT id, slug, title FROM blog_posts WHERE notion_page_id = $1",
                     payload.notion_page_id
                 )
                 if not existing:
                     raise HTTPException(
                         status_code=404,
-                        detail=f"找不到對應的文章（notion_page_id={payload.notion_page_id}）"
+                        detail=f"找不到對應文章（notion_page_id={payload.notion_page_id}）"
                     )
                 await conn.execute(
                     "UPDATE blog_posts SET status = 'archived', updated_at = NOW() WHERE id = $1",
                     existing['id']
                 )
-            frontend_url = settings.FRONTEND_URL.rstrip('/')
+
+            # 後端自行更新 Notion 狀態為 Archived + 清空 Article URL
+            await _sync_status_to_notion(payload.notion_page_id, "Archived")
+
             return {
                 "id": existing['id'],
                 "slug": existing['slug'],
+                "title": existing['title'],
                 "notion_page_id": payload.notion_page_id,
                 "_sync_action": "archived",
                 "article_url": f"{frontend_url}/blog/{existing['slug']}",
             }
-        # ── 以下為正常 Publish / Update 流程 ──
 
-        # 提取欄位
+        # ── 分支二：Publish / Update（同步完整內容）────────────────────
+
+        # 提取頁面欄位
         title = props.get('Title', {}).get('title', [{}])[0].get('plain_text', 'Untitled')
         pillar = props.get('Pillar', {}).get('select', {}).get('name', 'Industry News')
-        
-        # Meta Description
+
         meta_desc_array = props.get('Meta Description', {}).get('rich_text', [])
         meta_description = ''.join([t.get('plain_text', '') for t in meta_desc_array])
-        
-        # Author
+
         author_array = props.get('Author', {}).get('rich_text', [])
         author = ''.join([t.get('plain_text', '') for t in author_array]) or 'VortixPR Team'
-        
-        # Cover Image（所有圖片都上傳到 R2）
+
+        # Cover Image → 上傳到 R2
         cover_files = props.get('Cover Image', {}).get('files', [])
         cover_image_url = ''
         if cover_files:
-            original_cover_url = cover_files[0].get('file', {}).get('url') or cover_files[0].get('external', {}).get('url', '')
-            
+            original_cover_url = (
+                cover_files[0].get('file', {}).get('url')
+                or cover_files[0].get('external', {}).get('url', '')
+            )
             if original_cover_url:
-                # 所有圖片都上傳到 R2（不論來源）
                 try:
                     async with httpx.AsyncClient(timeout=30.0) as client:
                         response = await client.get(original_cover_url)
                         if response.status_code == 200:
-                            # 從 content-type 判斷副檔名
                             content_type = response.headers.get('content-type', 'image/jpeg')
-                            ext_map = {'image/jpeg': 'jpg', 'image/png': 'png', 'image/gif': 'gif', 'image/webp': 'webp'}
-                            ext = ext_map.get(content_type, 'jpg')
-                            
+                            ext = {'image/jpeg': 'jpg', 'image/png': 'png',
+                                   'image/gif': 'gif', 'image/webp': 'webp'}.get(content_type, 'jpg')
                             filename = f"notion-blog-{payload.notion_page_id[:8]}-cover.{ext}"
                             upload_result = r2_storage.upload_file(
                                 file_content=response.content,
@@ -476,14 +487,11 @@ async def sync_from_notion(
                             )
                             cover_image_url = upload_result['url']
                         else:
-                            cover_image_url = original_cover_url  # 下載失敗，fallback
-                except Exception as e:
-                    cover_image_url = original_cover_url  # 出錯，fallback
-                    import logging
-                    logging.getLogger(__name__).warning(f"⚠️ 封面圖上傳失敗: {e}")
-            else:
-                cover_image_url = ''
-        
+                            cover_image_url = original_cover_url
+                except Exception as img_err:
+                    cover_image_url = original_cover_url
+                    logger.warning(f"⚠️ 封面圖上傳失敗: {img_err}")
+
         # Publish Date
         publish_date_obj = props.get('Publish Date', {}).get('date', {})
         published_at = datetime.now()
@@ -491,138 +499,91 @@ async def sync_from_notion(
             try:
                 dt = datetime.fromisoformat(publish_date_obj['start'].replace('Z', '+00:00'))
                 published_at = dt.replace(tzinfo=None)
-            except:
+            except Exception:
                 pass
-        
+
         # Tags
         tags_array = props.get('tag', {}).get('multi_select', [])
         tags = [t.get('name', '') for t in tags_array]
-        
-        # 取得 page blocks（內容）
+
+        # 取得頁面 blocks 並轉換 HTML
         blocks_response = notion.blocks.children.list(
-            block_id=payload.notion_page_id,
-            page_size=100
+            block_id=payload.notion_page_id, page_size=100
         )
-        
-        blocks = blocks_response['results']
-        
-        # 轉換為 HTML 並處理圖片（下載 Notion 圖片到 R2）
-        html_content = await _convert_blocks_to_html_and_upload_images(blocks, payload.notion_page_id)
-        
-        # 自動計算 read_time
+        html_content = await _convert_blocks_to_html_and_upload_images(
+            blocks_response['results'], payload.notion_page_id
+        )
+
         read_time = _calculate_read_time(html_content)
-        
-        # 自動設定 meta_title
         meta_title = f"{title} | VortixPR"
-        
-        # excerpt 用 meta_description
         excerpt = meta_description[:160] if meta_description else title[:160]
-        
-        # meta_description 截斷到 160 字元
         meta_description = meta_description[:160] if meta_description else title[:160]
-        
-        # 3. 檢查文章是否已存在
+
+        # 寫入資料庫
         async with db.pool.acquire() as conn:
             existing = await conn.fetchrow(
                 "SELECT id, slug FROM blog_posts WHERE notion_page_id = $1",
                 payload.notion_page_id
             )
-            
+
             if existing:
-                # 更新現有文章
                 row = await conn.fetchrow(
                     """
                     UPDATE blog_posts
-                    SET
-                        title = $1,
-                        category = $2,
-                        excerpt = $3,
-                        content = $4,
-                        author = $5,
-                        image_url = $6,
-                        read_time = $7,
-                        meta_title = $8,
-                        meta_description = $9,
-                        notion_last_edited_time = $10,
-                        updated_at = NOW()
-                    WHERE id = $11
+                    SET title=$1, category=$2, excerpt=$3, content=$4, author=$5,
+                        image_url=$6, read_time=$7, meta_title=$8, meta_description=$9,
+                        notion_last_edited_time=$10, updated_at=NOW()
+                    WHERE id=$11
                     RETURNING *
                     """,
-                    title,
-                    pillar,
-                    excerpt,
-                    html_content,
-                    author,
-                    cover_image_url,
-                    read_time,
-                    meta_title,
-                    meta_description,
-                    datetime.now(),
-                    existing['id']
+                    title, pillar, excerpt, html_content, author,
+                    cover_image_url, read_time, meta_title, meta_description,
+                    datetime.now(), existing['id']
                 )
                 action = "updated"
             else:
-                # 創建新文章
                 slug = slugify(title)
-                
-                # 檢查 slug 是否已存在
-                existing_slug = await conn.fetchval(
-                    "SELECT id FROM blog_posts WHERE slug = $1", slug
-                )
-                
-                if existing_slug:
+                if await conn.fetchval("SELECT id FROM blog_posts WHERE slug=$1", slug):
                     slug = f"{slug}-{int(datetime.now().timestamp())}"
-                
+
                 row = await conn.fetchrow(
                     """
                     INSERT INTO blog_posts (
-                        notion_page_id,
-                        notion_last_edited_time,
-                        sync_source,
-                        title,
-                        slug,
-                        category,
-                        excerpt,
-                        content,
-                        author,
-                        image_url,
-                        read_time,
-                        meta_title,
-                        meta_description,
-                        status,
-                        published_at
-                    )
-                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+                        notion_page_id, notion_last_edited_time, sync_source,
+                        title, slug, category, excerpt, content, author,
+                        image_url, read_time, meta_title, meta_description,
+                        status, published_at
+                    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
                     RETURNING *
                     """,
-                    payload.notion_page_id,
-                    datetime.now(),
-                    'notion',
-                    title,
-                    slug,
-                    pillar,
-                    excerpt,
-                    html_content,
-                    author,
-                    cover_image_url,
-                    read_time,
-                    meta_title,
-                    meta_description,
-                    'published',
-                    published_at
+                    payload.notion_page_id, datetime.now(), 'notion',
+                    title, slug, pillar, excerpt, html_content, author,
+                    cover_image_url, read_time, meta_title, meta_description,
+                    'published', published_at
                 )
                 action = "created"
-        
-        # 組合回傳資料
+
+        article_url = f"{frontend_url}/blog/{row['slug']}"
+
+        # 後端自行更新 Notion 狀態 + Article URL（N8N 不需要再做）
+        notion_done_status = "Published"
+        await _sync_status_to_notion(payload.notion_page_id, notion_done_status)
+        try:
+            notion.pages.update(
+                page_id=payload.notion_page_id,
+                properties={"Article URL": {"url": article_url}}
+            )
+        except Exception as url_err:
+            logger.warning(f"⚠️ 回填 Article URL 失敗: {url_err}")
+
         result = dict(row)
         result['_sync_action'] = action
-        
-        # 生成文章完整 URL（給 Notion 回填 Article URL）
-        frontend_url = settings.FRONTEND_URL.rstrip('/')
-        result['article_url'] = f"{frontend_url}/blog/{row['slug']}"
-        
+        result['article_url'] = article_url
+        result['notion_page_id'] = payload.notion_page_id
         return result
-        
+
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(
             status_code=500,
