@@ -410,6 +410,34 @@ async def sync_from_notion(
         page = notion.pages.retrieve(page_id=payload.notion_page_id)
         props = page['properties']
         
+        # ── 提前檢查 Status：若為 Archive，直接封存文章，不做內容同步 ──
+        notion_status = props.get('Status', {}).get('select', {}).get('name', '')
+        
+        if notion_status == 'Archive':
+            async with db.pool.acquire() as conn:
+                existing = await conn.fetchrow(
+                    "SELECT id, slug FROM blog_posts WHERE notion_page_id = $1",
+                    payload.notion_page_id
+                )
+                if not existing:
+                    raise HTTPException(
+                        status_code=404,
+                        detail=f"找不到對應的文章（notion_page_id={payload.notion_page_id}）"
+                    )
+                await conn.execute(
+                    "UPDATE blog_posts SET status = 'archived', updated_at = NOW() WHERE id = $1",
+                    existing['id']
+                )
+            frontend_url = settings.FRONTEND_URL.rstrip('/')
+            return {
+                "id": existing['id'],
+                "slug": existing['slug'],
+                "notion_page_id": payload.notion_page_id,
+                "_sync_action": "archived",
+                "article_url": f"{frontend_url}/blog/{existing['slug']}",
+            }
+        # ── 以下為正常 Publish / Update 流程 ──
+
         # 提取欄位
         title = props.get('Title', {}).get('title', [{}])[0].get('plain_text', 'Untitled')
         pillar = props.get('Pillar', {}).get('select', {}).get('name', 'Industry News')
