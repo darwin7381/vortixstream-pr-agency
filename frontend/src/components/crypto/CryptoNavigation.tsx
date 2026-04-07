@@ -153,6 +153,14 @@ export default function CryptoNavigation({ user, onLogout, onQuickLogin }: Crypt
 
         {/* Desktop Actions */}
         <div className="flex items-center space-x-4">
+          {/* Cross-brand link to VortixPR (AI site) */}
+          <button
+            onClick={() => navigate('/')}
+            className="text-xs text-gray-400 hover:text-white transition-colors duration-200 border border-gray-600 hover:border-gray-400 rounded-full px-3 py-1"
+          >
+            ← VortixPR
+          </button>
+
           {user ? (
             // 已登入用戶界面
             <DropdownMenu>
@@ -352,8 +360,15 @@ export default function CryptoNavigation({ user, onLogout, onQuickLogin }: Crypt
               ) : (
                 // 未登入用戶手機版界面
                 <div className="space-y-3">
-                  <Button 
-                    variant="outline" 
+                  {/* Cross-brand link to VortixPR (AI site) */}
+                  <button
+                    onClick={() => { navigate('/'); setIsMobileMenuOpen(false); }}
+                    className="w-full text-sm text-gray-400 hover:text-white transition-colors duration-200 border border-gray-700 hover:border-gray-500 rounded-lg py-3 text-center"
+                  >
+                    ← VortixPR
+                  </button>
+                  <Button
+                    variant="outline"
                     className="w-full border-2 border-white/80 text-white bg-transparent hover:bg-white hover:text-black hover:border-white py-[18px] text-[16px] font-medium rounded-lg transition-all duration-300 hover:shadow-md"
                     onClick={() => { navigate('/login'); setIsMobileMenuOpen(false); }}
                   >
