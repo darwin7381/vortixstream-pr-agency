@@ -12,7 +12,7 @@ import CompareBar from './components/compare/CompareBar';
 import { CompareProvider } from './contexts/CompareContext';
 import PublisherPage from './components/publisher/PublisherPage';
 import OurClientsPage from './components/clients/OurClientsPage';
-import AboutPage from './components/about/AboutPage';
+import CryptoAboutPage from './pages/crypto/CryptoAboutPage';
 import CryptoServicesPage from './pages/crypto/CryptoServicesPage';
 import BlogPage from './components/blog/BlogPage';
 import ArticlePage from './components/ArticlePage';
@@ -87,7 +87,7 @@ function AppContent() {
           <Route path="/compare" element={<ComparePage />} />
           <Route path="/clients" element={<OurClientsPage />} />
           <Route path="/publisher" element={<PublisherPage />} />
-          <Route path="/about" element={<AboutPage />} />
+          <Route path="/about" element={<CryptoAboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:articleId" element={<ArticlePage />} />

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { MaterialSymbol } from '../ui/material-symbol';
-import { ImageWithFallback } from '../figma/ImageWithFallback';
-import { aboutContent } from '../../constants/aboutData';
-import { contentAPI, type TeamMember } from '../../api/client';
+import { MaterialSymbol } from '../../ui/material-symbol';
+import { ImageWithFallback } from '../../figma/ImageWithFallback';
+import { aboutContent } from '../../../constants/aboutData';
+import { contentAPI, type TeamMember } from '../../../api/client';
 import { Linkedin, Twitter } from 'lucide-react';
 
 export default function AboutTeam() {
