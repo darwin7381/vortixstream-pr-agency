@@ -8,6 +8,11 @@ import AILayout from './layouts/AILayout';
 import CryptoLayout from './layouts/CryptoLayout';
 import SharedLayout from './layouts/SharedLayout';
 import AIHomePage from './pages/ai/AIHomePage';
+import AIServicesPage from './pages/ai/AIServicesPage';
+import AIPricingPage from './pages/ai/AIPricingPage';
+import AIAboutPage from './pages/ai/AIAboutPage';
+import AIClientsPage from './pages/ai/AIClientsPage';
+import AIPublisherPage from './pages/ai/AIPublisherPage';
 import CryptoHomePage from './pages/crypto/CryptoHomePage';
 import CryptoPricingPage from './pages/crypto/CryptoPricingPage';
 import CryptoPricingPageV2 from './pages/crypto/CryptoPricingPageV2';
@@ -80,7 +85,11 @@ function AppContent() {
         {/* AI site */}
         <Route element={<AILayout user={user} onLogout={logout} />}>
           <Route path="/" element={<AIHomePage />} />
-          {/* (more AI routes added in Task 23) */}
+          <Route path="/services" element={<AIServicesPage />} />
+          <Route path="/pricing" element={<AIPricingPage />} />
+          <Route path="/about" element={<AIAboutPage />} />
+          <Route path="/clients" element={<AIClientsPage />} />
+          <Route path="/publisher" element={<AIPublisherPage />} />
         </Route>
 
         {/* Crypto subsite */}
