@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import { publisherContent, publisherStats } from '../../constants/publisherData';
-import { contentAPI, type PublisherFeature } from '../../api/client';
-import svgPaths from "../../imports/svg-f7gq800qcd";
+import { publisherContent, publisherStats } from '../../../constants/publisherData';
+import { contentAPI, type PublisherFeature } from '../../../api/client';
+import svgPaths from "../../../imports/svg-f7gq800qcd";
 import PublisherApplicationModal from './PublisherApplicationModal';
 
 const CheckIcon = () => (

@@ -14,7 +14,7 @@ import FAQSection from '../../components/FAQSection';
 import PricingContactForm from '../../components/PricingContactForm';
 import Footer from '../../components/Footer';
 import PRPackagesSection from '../../components/pricing/PRPackagesSection';
-import PublisherFeatures from '../../components/publisher/PublisherFeatures';
+import PublisherFeatures from '../../components/crypto/publisher/PublisherFeatures';
 
 export default function CryptoHomePage() {
   const navigate = useNavigate();

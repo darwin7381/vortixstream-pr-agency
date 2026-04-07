@@ -10,7 +10,7 @@ import PackageDetailPage from './components/pricing/PackageDetailPage';
 import ComparePage from './components/compare/ComparePage';
 import CompareBar from './components/compare/CompareBar';
 import { CompareProvider } from './contexts/CompareContext';
-import PublisherPage from './components/publisher/PublisherPage';
+import CryptoPublisherPage from './pages/crypto/CryptoPublisherPage';
 import CryptoClientsPage from './pages/crypto/CryptoClientsPage';
 import CryptoAboutPage from './pages/crypto/CryptoAboutPage';
 import CryptoServicesPage from './pages/crypto/CryptoServicesPage';
@@ -86,7 +86,7 @@ function AppContent() {
           <Route path="/packages/:slug" element={<PackageDetailPage />} />
           <Route path="/compare" element={<ComparePage />} />
           <Route path="/clients" element={<CryptoClientsPage />} />
-          <Route path="/publisher" element={<PublisherPage />} />
+          <Route path="/publisher" element={<CryptoPublisherPage />} />
           <Route path="/about" element={<CryptoAboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/blog" element={<BlogPage />} />
