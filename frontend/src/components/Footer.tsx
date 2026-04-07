@@ -58,7 +58,7 @@ export default function Footer() {
           links: [
             { id: 8, label: 'Blog', url: '/blog', target: '_self', display_order: 1 },
             { id: 9, label: 'Template', url: '/template', target: '_self', display_order: 2 },
-            { id: 10, label: 'Concept', url: '/concept', target: '_self', display_order: 3 },
+            { id: 10, label: 'Service Deck', url: '/service-deck', target: '_self', display_order: 3 },
           ]
         },
       ]);

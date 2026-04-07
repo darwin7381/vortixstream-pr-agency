@@ -63,3 +63,9 @@ dist-ssr
 # Vercel
 .vercel
 
+# Local working files (not for repo)
+.claude/
+package-compare-and-detail/
+VortixPR - A New PR Agency/
+PROJECT_ANALYSIS_*.md
+

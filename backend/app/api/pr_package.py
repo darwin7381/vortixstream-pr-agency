@@ -54,7 +54,8 @@ async def get_pr_packages_by_category(status: str = "active"):
                 detailed_info['ctaText'] = detailed_info.pop('cta_text')
         
         frontend_package = {
-            "id": package_dict['slug'],  # 前端用 id 存 slug
+            "id": package_dict['slug'],
+            "slug": package_dict['slug'],
             "name": package_dict['name'],
             "price": package_dict['price'],
             "description": package_dict['description'],

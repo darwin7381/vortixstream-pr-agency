@@ -27,6 +27,7 @@ class DetailedInfoFrontend(BaseModel):
 class PRPackageFrontend(BaseModel):
     """PR Package 前端格式（完全匹配前端 TypeScript）"""
     id: str  # 前端的 id 對應後端的 slug
+    slug: str
     name: str
     price: str
     description: str

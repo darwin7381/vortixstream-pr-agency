@@ -1,4 +1,7 @@
+import { Link } from 'react-router-dom';
+import { ExternalLink, GitCompareArrows, Check } from 'lucide-react';
 import { type PRPackage } from '../../api/client';
+import { useCompare } from '../../contexts/CompareContext';
 
 interface PackageCardV2Props {
   package: PRPackage;
@@ -9,6 +12,24 @@ export default function PackageCardV2({
   package: pkg,
   onViewDetails
 }: PackageCardV2Props) {
+  const { isInCompare, toggleItem, isFull } = useCompare();
+  const slug = (pkg as Record<string, unknown>).slug as string || (pkg.id as unknown as string);
+  const inCompare = isInCompare(slug);
+
+  const handleCompareToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    toggleItem({
+      id: String(pkg.id),
+      slug,
+      name: pkg.name,
+      price: pkg.price,
+      description: pkg.description,
+      badge: pkg.badge,
+      guaranteed_publications: (pkg as Record<string, unknown>).guaranteedPublications as number | null ?? pkg.guaranteed_publications,
+      features: pkg.features,
+      category_id: (pkg as Record<string, unknown>).categoryId as string ?? pkg.category_id ?? '',
+    });
+  };
   return (
     <div
       className="
@@ -83,19 +104,62 @@ export default function PackageCardV2({
         )}
       </div>
 
-      {/* View Details Button */}
-      <button
-        onClick={onViewDetails}
-        className="relative
-          w-full py-2.5 px-4
-          bg-white/5 hover:bg-white/10 rounded-lg
-          text-white/70 hover:text-white text-sm
-          transition-all duration-300
-          border border-white/10 hover:border-white/20
-        "
-      >
-        View details
-      </button>
+      {/* Action Buttons */}
+      <div className="relative space-y-2">
+        <div className="flex gap-2">
+          <button
+            onClick={onViewDetails}
+            className="
+              flex-1 py-2.5 px-4
+              bg-white/5 hover:bg-white/10 rounded-lg
+              text-white/70 hover:text-white text-sm
+              transition-all duration-300
+              border border-white/10 hover:border-white/20
+            "
+          >
+            Quick view
+          </button>
+          <Link
+            to={`/packages/${slug}`}
+            className="
+              flex items-center gap-1.5 py-2.5 px-4
+              bg-[#FF7400]/10 hover:bg-[#FF7400]/20 rounded-lg
+              text-[#FF7400]/80 hover:text-[#FF7400] text-sm font-medium
+              transition-all duration-300
+              border border-[#FF7400]/20 hover:border-[#FF7400]/40
+            "
+          >
+            Details
+            <ExternalLink className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+        <button
+          onClick={handleCompareToggle}
+          disabled={!inCompare && isFull}
+          className={`
+            w-full py-2 px-4 rounded-lg text-xs font-medium
+            flex items-center justify-center gap-1.5
+            transition-all duration-300
+            ${inCompare
+              ? 'bg-[#FF7400]/15 border border-[#FF7400]/30 text-[#FF7400]'
+              : 'bg-white/[0.02] border border-white/8 text-white/40 hover:text-white/60 hover:border-white/15'
+            }
+            disabled:opacity-30 disabled:cursor-not-allowed
+          `}
+        >
+          {inCompare ? (
+            <>
+              <Check className="w-3.5 h-3.5" />
+              Added to Compare
+            </>
+          ) : (
+            <>
+              <GitCompareArrows className="w-3.5 h-3.5" />
+              + Compare
+            </>
+          )}
+        </button>
+      </div>
     </div>
   );
 }

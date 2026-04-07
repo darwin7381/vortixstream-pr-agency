@@ -20,6 +20,10 @@ import PricingCards from './components/pricing/PricingCards';
 import PRPackagesSection from './components/pricing/PRPackagesSection';
 import PricingPage from './components/pricing/PricingPage';
 import PricingPageV2 from './components/pricing/PricingPageV2';
+import PackageDetailPage from './components/pricing/PackageDetailPage';
+import ComparePage from './components/compare/ComparePage';
+import CompareBar from './components/compare/CompareBar';
+import { CompareProvider } from './contexts/CompareContext';
 import PublisherFeatures from './components/publisher/PublisherFeatures';
 import PublisherPage from './components/publisher/PublisherPage';
 import OurClientsPage from './components/clients/OurClientsPage';
@@ -34,6 +38,7 @@ import { GoogleCallback } from './pages/GoogleCallback';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import NewsletterSuccessPage from './components/NewsletterSuccessPage';
 import ConceptPage from './components/ConceptPage';
+import ServiceDeckPage from './components/ServiceDeckPage';
 import ContactPage from './components/ContactPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminBlogList from './pages/admin/AdminBlogList';
@@ -152,6 +157,9 @@ function AppContent() {
       {/* Global Navigation - 只在前台顯示 */}
       {!isAdminRoute && <Navigation user={user} onLogout={logout} onQuickLogin={quickLogin} />}
 
+      {/* Compare Bar - 只在前台顯示 */}
+      {!isAdminRoute && <CompareBar />}
+
       {/* Main Content Area - 只在前台添加 padding-top */}
       <div className={isAdminRoute ? '' : 'pt-14 sm:pt-16 md:pt-[72px] lg:pt-[72px]'}>
         <Routes>
@@ -159,6 +167,8 @@ function AppContent() {
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/pricing-v2" element={<PricingPageV2 />} />
+          <Route path="/packages/:slug" element={<PackageDetailPage />} />
+          <Route path="/compare" element={<ComparePage />} />
           <Route path="/clients" element={<OurClientsPage />} />
           <Route path="/publisher" element={<PublisherPage />} />
           <Route path="/about" element={<AboutPage />} />
@@ -167,6 +177,7 @@ function AppContent() {
           <Route path="/blog/:articleId" element={<ArticlePage />} />
           <Route path="/template" element={<TemplatePage />} />
           <Route path="/concept" element={<ConceptPage />} />
+          <Route path="/service-deck" element={<ServiceDeckPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<LoginPage />} />
           <Route path="/auth/google/callback" element={<GoogleCallback />} />
@@ -221,9 +232,11 @@ export default function App() {
   return (
     <AuthProvider>
       <ThemeProvider>
-        <BrowserRouter>
-          <AppContent />
-        </BrowserRouter>
+        <CompareProvider>
+          <BrowserRouter>
+            <AppContent />
+          </BrowserRouter>
+        </CompareProvider>
       </ThemeProvider>
     </AuthProvider>
   );
