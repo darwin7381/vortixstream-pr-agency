@@ -11,7 +11,7 @@ import ComparePage from './components/compare/ComparePage';
 import CompareBar from './components/compare/CompareBar';
 import { CompareProvider } from './contexts/CompareContext';
 import PublisherPage from './components/publisher/PublisherPage';
-import OurClientsPage from './components/clients/OurClientsPage';
+import CryptoClientsPage from './pages/crypto/CryptoClientsPage';
 import CryptoAboutPage from './pages/crypto/CryptoAboutPage';
 import CryptoServicesPage from './pages/crypto/CryptoServicesPage';
 import BlogPage from './components/blog/BlogPage';
@@ -85,7 +85,7 @@ function AppContent() {
           <Route path="/pricing-v2" element={<CryptoPricingPageV2 />} />
           <Route path="/packages/:slug" element={<PackageDetailPage />} />
           <Route path="/compare" element={<ComparePage />} />
-          <Route path="/clients" element={<OurClientsPage />} />
+          <Route path="/clients" element={<CryptoClientsPage />} />
           <Route path="/publisher" element={<PublisherPage />} />
           <Route path="/about" element={<CryptoAboutPage />} />
           <Route path="/contact" element={<ContactPage />} />

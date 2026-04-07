@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Button } from '../ui/button';
-import { handleGetStartedClick } from '../../utils/navigationHelpers';
+import { Button } from '../../ui/button';
+import { handleGetStartedClick } from '../../../utils/navigationHelpers';
 
 const imgHeader69 = 'https://img.vortixpr.com/VortixPR_Website/target_circle_bgc.png';
 
