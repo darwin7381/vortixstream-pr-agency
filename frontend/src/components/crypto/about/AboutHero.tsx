@@ -1,6 +1,6 @@
 import { Button } from '../../ui/button';
 import { MaterialSymbol } from '../../ui/material-symbol';
-import { aboutContent } from '../../../constants/aboutData';
+import { aboutContent } from '../../../constants/crypto/aboutData';
 
 export default function AboutHero() {
   return (

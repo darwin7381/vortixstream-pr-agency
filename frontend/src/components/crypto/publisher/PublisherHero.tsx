@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '../../ui/button';
-import { publisherStats, publisherContent } from '../../../constants/publisherData';
+import { publisherStats, publisherContent } from '../../../constants/crypto/publisherData';
 import svgPaths from "../../../imports/svg-pn1p9ady5y";
 
 export default function PublisherHeroSection() {

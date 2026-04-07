@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { publisherContent, publisherStats } from '../../../constants/publisherData';
+import { publisherContent, publisherStats } from '../../../constants/crypto/publisherData';
 import { contentAPI, type PublisherFeature } from '../../../api/client';
 import svgPaths from "../../../imports/svg-f7gq800qcd";
 import PublisherApplicationModal from './PublisherApplicationModal';

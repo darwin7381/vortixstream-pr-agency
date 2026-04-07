@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button } from "../ui/button";
-import { features } from '../../constants/servicesData';
+import { features } from '../../constants/crypto/servicesData';
 import svgPaths from "../../imports/svg-f7gq800qcd";
 
 const imgCatAstronaut = 'https://img.vortixpr.com/VortixPR_Website/Left_Point_Cat-2.png';
