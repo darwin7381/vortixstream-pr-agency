@@ -33,7 +33,7 @@ export default function OldIndexPage({ onNavigate }: { onNavigate: (route: Route
         maxWidth="default"
         showCTA={true}
       />
-      <Footer onNavigate={onNavigate} />
+      <CryptoFooter onNavigate={onNavigate} />
     </>
   );
 }
