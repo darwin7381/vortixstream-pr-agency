@@ -1,12 +1,21 @@
 import { Outlet } from 'react-router-dom';
+import AINavigation from '../components/ai/AINavigation';
+import AIFooter from '../components/ai/AIFooter';
+import { User } from '../contexts/AuthContext';
 
-export default function AILayout() {
-  // Phase 3 will add AINavigation and AIFooter here.
-  // For now, just a placeholder so the route tree compiles and the
-  // root path can render its Coming Soon page.
+interface AILayoutProps {
+  user?: User | null;
+  onLogout?: () => void;
+}
+
+export default function AILayout({ user, onLogout }: AILayoutProps) {
   return (
-    <div className="min-h-screen bg-white">
-      <Outlet />
-    </div>
+    <>
+      <AINavigation user={user} onLogout={onLogout} />
+      <div className="pt-16">
+        <Outlet />
+      </div>
+      <AIFooter />
+    </>
   );
 }

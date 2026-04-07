@@ -78,8 +78,9 @@ function AppContent() {
 
       <Routes>
         {/* AI site */}
-        <Route element={<AILayout />}>
+        <Route element={<AILayout user={user} onLogout={logout} />}>
           <Route path="/" element={<AIHomePage />} />
+          {/* (more AI routes added in Task 23) */}
         </Route>
 
         {/* Crypto subsite */}
