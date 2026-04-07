@@ -1,4 +1,3 @@
-import CryptoFooter from '../crypto/CryptoFooter';
 import BlogHero from './BlogHero';
 import BlogArticlesGrid from './BlogArticlesGrid';
 import BlogNewsletter from './BlogNewsletter';
@@ -9,7 +8,6 @@ export default function BlogPage() {
       <BlogHero />
       <BlogArticlesGrid />
       <BlogNewsletter />
-      <CryptoFooter />
     </div>
   );
 }

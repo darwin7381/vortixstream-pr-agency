@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import CryptoFooter from '../components/crypto/CryptoFooter';
 
 export default function PrivacyPolicy() {
   useEffect(() => {
@@ -249,7 +248,6 @@ export default function PrivacyPolicy() {
           </div>
         </div>
       </div>
-      <CryptoFooter />
     </div>
   );
 }

@@ -4,7 +4,6 @@ import { blogCategories } from '../constants/blogData';
 import { MaterialSymbol } from './ui/material-symbol';
 import { Input } from './ui/input';
 import { ImageWithFallback } from './figma/ImageWithFallback';
-import CryptoFooter from './crypto/CryptoFooter';
 import { ArrowLeft, Calendar, Clock, User, Search, Tag } from 'lucide-react';
 import { blogAPI, type BlogPost } from '../api/client';
 
@@ -282,7 +281,6 @@ export default function ArticlePage() {
         </div>
       </div>
 
-      <CryptoFooter />
     </div>
   );
 }

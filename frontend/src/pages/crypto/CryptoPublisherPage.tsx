@@ -3,7 +3,6 @@ import PublisherFeatures from '../../components/crypto/publisher/PublisherFeatur
 import PublisherContent from '../../components/crypto/publisher/PublisherContent';
 import PublisherCTA from '../../components/crypto/publisher/PublisherCTA';
 import LogoCarousel from '../../components/crypto/LogoCarousel';
-import CryptoFooter from '../../components/crypto/CryptoFooter';
 
 export default function CryptoPublisherPage() {
   return (
@@ -23,8 +22,6 @@ export default function CryptoPublisherPage() {
       {/* CTA Section */}
       <PublisherCTA />
 
-      {/* Footer */}
-      <CryptoFooter />
     </div>
   );
 }

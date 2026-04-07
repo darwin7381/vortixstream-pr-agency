@@ -1,15 +1,18 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
-import CryptoNavigation from './components/crypto/CryptoNavigation';
 import ScrollToTop from './components/ScrollToTop';
+import CompareBar from './components/compare/CompareBar';
+import { CompareProvider } from './contexts/CompareContext';
+import AILayout from './layouts/AILayout';
+import CryptoLayout from './layouts/CryptoLayout';
+import SharedLayout from './layouts/SharedLayout';
+import AIHomePage from './pages/ai/AIHomePage';
 import CryptoHomePage from './pages/crypto/CryptoHomePage';
 import CryptoPricingPage from './pages/crypto/CryptoPricingPage';
 import CryptoPricingPageV2 from './pages/crypto/CryptoPricingPageV2';
 import PackageDetailPage from './components/pricing/PackageDetailPage';
 import ComparePage from './components/compare/ComparePage';
-import CompareBar from './components/compare/CompareBar';
-import { CompareProvider } from './contexts/CompareContext';
 import CryptoPublisherPage from './pages/crypto/CryptoPublisherPage';
 import CryptoClientsPage from './pages/crypto/CryptoClientsPage';
 import CryptoAboutPage from './pages/crypto/CryptoAboutPage';
@@ -59,9 +62,9 @@ import CookiePolicy from './pages/CookiePolicy';
 
 // AppContent - 包含路由邏輯
 function AppContent() {
-  const { user, login, logout, quickLogin } = useAuth();
+  const { user, logout, quickLogin } = useAuth();
   const location = useLocation();
-  
+
   // 判斷是否為後台路由
   const isAdminRoute = location.pathname.startsWith('/admin');
 
@@ -70,75 +73,79 @@ function AppContent() {
       {/* 自動滾動到頂部組件 */}
       <ScrollToTop />
 
-      {/* Global Navigation - 只在前台顯示 */}
-      {!isAdminRoute && <CryptoNavigation user={user} onLogout={logout} onQuickLogin={quickLogin} />}
-
       {/* Compare Bar - 只在前台顯示 */}
       {!isAdminRoute && <CompareBar />}
 
-      {/* Main Content Area - 只在前台添加 padding-top */}
-      <div className={isAdminRoute ? '' : 'pt-14 sm:pt-16 md:pt-[72px] lg:pt-[72px]'}>
-        <Routes>
-          <Route path="/" element={<CryptoHomePage />} />
-          <Route path="/services" element={<CryptoServicesPage />} />
-          <Route path="/pricing" element={<CryptoPricingPage />} />
-          <Route path="/pricing-v2" element={<CryptoPricingPageV2 />} />
-          <Route path="/packages/:slug" element={<PackageDetailPage />} />
-          <Route path="/compare" element={<ComparePage />} />
-          <Route path="/clients" element={<CryptoClientsPage />} />
-          <Route path="/publisher" element={<CryptoPublisherPage />} />
-          <Route path="/about" element={<CryptoAboutPage />} />
-          <Route path="/contact" element={<ContactPage />} />
+      <Routes>
+        {/* AI site */}
+        <Route element={<AILayout />}>
+          <Route path="/" element={<AIHomePage />} />
+        </Route>
+
+        {/* Crypto subsite */}
+        <Route element={<CryptoLayout user={user} onLogout={logout} onQuickLogin={quickLogin} />}>
+          <Route path="/crypto" element={<CryptoHomePage />} />
+          <Route path="/crypto/services" element={<CryptoServicesPage />} />
+          <Route path="/crypto/pricing" element={<CryptoPricingPage />} />
+          <Route path="/crypto/pricing-v2" element={<CryptoPricingPageV2 />} />
+          <Route path="/crypto/about" element={<CryptoAboutPage />} />
+          <Route path="/crypto/clients" element={<CryptoClientsPage />} />
+          <Route path="/crypto/publisher" element={<CryptoPublisherPage />} />
+        </Route>
+
+        {/* Shared pages */}
+        <Route element={<SharedLayout user={user} onLogout={logout} onQuickLogin={quickLogin} />}>
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:articleId" element={<ArticlePage />} />
-          <Route path="/template" element={<TemplatePage />} />
-          <Route path="/concept" element={<ConceptPage />} />
-          <Route path="/service-deck" element={<ServiceDeckPage />} />
+          <Route path="/packages/:slug" element={<PackageDetailPage />} />
+          <Route path="/compare" element={<ComparePage />} />
+          <Route path="/contact" element={<ContactPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<LoginPage />} />
           <Route path="/auth/google/callback" element={<GoogleCallback />} />
           <Route path="/newsletter-success" element={<NewsletterSuccessPage />} />
           <Route path="/material-symbols" element={<MaterialSymbolDemo />} />
-          
-          {/* Legal Pages */}
+          <Route path="/template" element={<TemplatePage />} />
+          <Route path="/concept" element={<ConceptPage />} />
+          <Route path="/service-deck" element={<ServiceDeckPage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/cookie-policy" element={<CookiePolicy />} />
-          
-          {/* 管理後台路由（需要管理員權限） */}
-          <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminDashboard /></ProtectedRoute>} />
-          <Route path="/admin/blog" element={<ProtectedRoute requireAdmin><AdminBlogList /></ProtectedRoute>} />
-          <Route path="/admin/blog/new" element={<ProtectedRoute requireAdmin><AdminBlogEdit /></ProtectedRoute>} />
-          <Route path="/admin/blog/edit/:id" element={<ProtectedRoute requireAdmin><AdminBlogEdit /></ProtectedRoute>} />
-          <Route path="/admin/pricing" element={<ProtectedRoute requireAdmin><AdminPricing /></ProtectedRoute>} />
-          <Route path="/admin/pricing/new" element={<ProtectedRoute requireAdmin><AdminPricingEdit /></ProtectedRoute>} />
-          <Route path="/admin/pricing/edit/:id" element={<ProtectedRoute requireAdmin><AdminPricingEdit /></ProtectedRoute>} />
-          <Route path="/admin/pr-packages" element={<ProtectedRoute requireAdmin><AdminPRPackages /></ProtectedRoute>} />
-          <Route path="/admin/pr-packages/new" element={<ProtectedRoute requireAdmin><AdminPRPackagesEdit /></ProtectedRoute>} />
-          <Route path="/admin/pr-packages/edit/:id" element={<ProtectedRoute requireAdmin><AdminPRPackagesEdit /></ProtectedRoute>} />
-          <Route path="/admin/pr-packages/categories" element={<ProtectedRoute requireAdmin><AdminPRPackagesCategories /></ProtectedRoute>} />
-          <Route path="/admin/templates" element={<ProtectedRoute requireAdmin><AdminTemplates /></ProtectedRoute>} />
-          <Route path="/admin/email-preview" element={<ProtectedRoute requireAdmin><AdminEmailPreview /></ProtectedRoute>} />
-          <Route path="/admin/contact" element={<ProtectedRoute requireAdmin><AdminContactList /></ProtectedRoute>} />
-          <Route path="/admin/newsletter" element={<ProtectedRoute requireAdmin><AdminNewsletterList /></ProtectedRoute>} />
-          <Route path="/admin/media" element={<ProtectedRoute requireAdmin><AdminMedia /></ProtectedRoute>} />
-          <Route path="/admin/users" element={<ProtectedRoute requireAdmin><AdminUsers /></ProtectedRoute>} />
-          <Route path="/admin/invitations" element={<ProtectedRoute requireAdmin><AdminInvitations /></ProtectedRoute>} />
-          <Route path="/admin/content/hero" element={<ProtectedRoute requireAdmin><AdminHeroHome /></ProtectedRoute>} />
-          <Route path="/admin/content/lyro" element={<ProtectedRoute requireAdmin><AdminLyro /></ProtectedRoute>} />
-          <Route path="/admin/content/carousel" element={<ProtectedRoute requireAdmin><AdminContentCarousel /></ProtectedRoute>} />
-          <Route path="/admin/content/faqs" element={<ProtectedRoute requireAdmin><AdminContentFAQs /></ProtectedRoute>} />
-          <Route path="/admin/content/testimonials" element={<ProtectedRoute requireAdmin><AdminContentTestimonials /></ProtectedRoute>} />
-          <Route path="/admin/content/services" element={<ProtectedRoute requireAdmin><AdminContentServices /></ProtectedRoute>} />
-          <Route path="/admin/content/why-vortix" element={<ProtectedRoute requireAdmin><AdminContentWhyVortix /></ProtectedRoute>} />
-          <Route path="/admin/content/clients" element={<ProtectedRoute requireAdmin><AdminContentClients /></ProtectedRoute>} />
-          <Route path="/admin/content/publisher" element={<ProtectedRoute requireAdmin><AdminContentPublisher /></ProtectedRoute>} />
-          <Route path="/admin/content/vortix-portal" element={<ProtectedRoute requireAdmin><AdminContentVortixPortal /></ProtectedRoute>} />
-          <Route path="/admin/content/settings" element={<ProtectedRoute requireAdmin><AdminContentSettings /></ProtectedRoute>} />
-          <Route path="/admin/settings" element={<ProtectedRoute requireAdmin><AdminSettings /></ProtectedRoute>} />
-          <Route path="/admin/site" element={<ProtectedRoute requireAdmin><AdminSiteSettings /></ProtectedRoute>} />
-        </Routes>
-      </div>
+        </Route>
+
+        {/* 管理後台路由（需要管理員權限） */}
+        <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminDashboard /></ProtectedRoute>} />
+        <Route path="/admin/blog" element={<ProtectedRoute requireAdmin><AdminBlogList /></ProtectedRoute>} />
+        <Route path="/admin/blog/new" element={<ProtectedRoute requireAdmin><AdminBlogEdit /></ProtectedRoute>} />
+        <Route path="/admin/blog/edit/:id" element={<ProtectedRoute requireAdmin><AdminBlogEdit /></ProtectedRoute>} />
+        <Route path="/admin/pricing" element={<ProtectedRoute requireAdmin><AdminPricing /></ProtectedRoute>} />
+        <Route path="/admin/pricing/new" element={<ProtectedRoute requireAdmin><AdminPricingEdit /></ProtectedRoute>} />
+        <Route path="/admin/pricing/edit/:id" element={<ProtectedRoute requireAdmin><AdminPricingEdit /></ProtectedRoute>} />
+        <Route path="/admin/pr-packages" element={<ProtectedRoute requireAdmin><AdminPRPackages /></ProtectedRoute>} />
+        <Route path="/admin/pr-packages/new" element={<ProtectedRoute requireAdmin><AdminPRPackagesEdit /></ProtectedRoute>} />
+        <Route path="/admin/pr-packages/edit/:id" element={<ProtectedRoute requireAdmin><AdminPRPackagesEdit /></ProtectedRoute>} />
+        <Route path="/admin/pr-packages/categories" element={<ProtectedRoute requireAdmin><AdminPRPackagesCategories /></ProtectedRoute>} />
+        <Route path="/admin/templates" element={<ProtectedRoute requireAdmin><AdminTemplates /></ProtectedRoute>} />
+        <Route path="/admin/email-preview" element={<ProtectedRoute requireAdmin><AdminEmailPreview /></ProtectedRoute>} />
+        <Route path="/admin/contact" element={<ProtectedRoute requireAdmin><AdminContactList /></ProtectedRoute>} />
+        <Route path="/admin/newsletter" element={<ProtectedRoute requireAdmin><AdminNewsletterList /></ProtectedRoute>} />
+        <Route path="/admin/media" element={<ProtectedRoute requireAdmin><AdminMedia /></ProtectedRoute>} />
+        <Route path="/admin/users" element={<ProtectedRoute requireAdmin><AdminUsers /></ProtectedRoute>} />
+        <Route path="/admin/invitations" element={<ProtectedRoute requireAdmin><AdminInvitations /></ProtectedRoute>} />
+        <Route path="/admin/content/hero" element={<ProtectedRoute requireAdmin><AdminHeroHome /></ProtectedRoute>} />
+        <Route path="/admin/content/lyro" element={<ProtectedRoute requireAdmin><AdminLyro /></ProtectedRoute>} />
+        <Route path="/admin/content/carousel" element={<ProtectedRoute requireAdmin><AdminContentCarousel /></ProtectedRoute>} />
+        <Route path="/admin/content/faqs" element={<ProtectedRoute requireAdmin><AdminContentFAQs /></ProtectedRoute>} />
+        <Route path="/admin/content/testimonials" element={<ProtectedRoute requireAdmin><AdminContentTestimonials /></ProtectedRoute>} />
+        <Route path="/admin/content/services" element={<ProtectedRoute requireAdmin><AdminContentServices /></ProtectedRoute>} />
+        <Route path="/admin/content/why-vortix" element={<ProtectedRoute requireAdmin><AdminContentWhyVortix /></ProtectedRoute>} />
+        <Route path="/admin/content/clients" element={<ProtectedRoute requireAdmin><AdminContentClients /></ProtectedRoute>} />
+        <Route path="/admin/content/publisher" element={<ProtectedRoute requireAdmin><AdminContentPublisher /></ProtectedRoute>} />
+        <Route path="/admin/content/vortix-portal" element={<ProtectedRoute requireAdmin><AdminContentVortixPortal /></ProtectedRoute>} />
+        <Route path="/admin/content/settings" element={<ProtectedRoute requireAdmin><AdminContentSettings /></ProtectedRoute>} />
+        <Route path="/admin/settings" element={<ProtectedRoute requireAdmin><AdminSettings /></ProtectedRoute>} />
+        <Route path="/admin/site" element={<ProtectedRoute requireAdmin><AdminSiteSettings /></ProtectedRoute>} />
+      </Routes>
     </div>
   );
 }

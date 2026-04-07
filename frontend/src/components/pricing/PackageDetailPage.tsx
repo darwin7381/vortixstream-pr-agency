@@ -6,7 +6,6 @@ import { handleGetStartedClick } from '../../utils/navigationHelpers';
 import { useCompare } from '../../contexts/CompareContext';
 import { Button } from '../ui/button';
 import CoverageMap from './CoverageMap';
-import CryptoFooter from '../crypto/CryptoFooter';
 
 const DEMO_COVERAGE: Record<string, {
   countries: string[];
@@ -502,7 +501,6 @@ export default function PackageDetailPage() {
         </div>
       </section>
 
-      <CryptoFooter />
     </div>
   );
 }

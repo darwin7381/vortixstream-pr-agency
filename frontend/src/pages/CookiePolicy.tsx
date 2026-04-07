@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import CryptoFooter from '../components/crypto/CryptoFooter';
 
 export default function CookiePolicy() {
   useEffect(() => {
@@ -286,7 +285,6 @@ export default function CookiePolicy() {
           </div>
         </div>
       </div>
-      <CryptoFooter />
     </div>
   );
 }

@@ -12,7 +12,6 @@ import TestimonialSection from '../../components/crypto/TestimonialSection';
 import VortixPortalSection from '../../components/crypto/VortixPortalSection';
 import FAQSection from '../../components/crypto/FAQSection';
 import PricingContactForm from '../../components/crypto/PricingContactForm';
-import CryptoFooter from '../../components/crypto/CryptoFooter';
 import PRPackagesSection from '../../components/pricing/PRPackagesSection';
 import PublisherFeatures from '../../components/crypto/publisher/PublisherFeatures';
 
@@ -78,7 +77,6 @@ export default function CryptoHomePage() {
         <PricingContactForm />
       </section>
 
-      <CryptoFooter />
     </>
   );
 }

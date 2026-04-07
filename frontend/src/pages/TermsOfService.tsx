@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import CryptoFooter from '../components/crypto/CryptoFooter';
 
 export default function TermsOfService() {
   useEffect(() => {
@@ -306,7 +305,6 @@ export default function TermsOfService() {
           </div>
         </div>
       </div>
-      <CryptoFooter />
     </div>
   );
 }

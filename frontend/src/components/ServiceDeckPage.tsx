@@ -1,12 +1,6 @@
-import CryptoFooter from './crypto/CryptoFooter';
-
-interface ServiceDeckPageProps {
-  showFooter?: boolean;
-}
-
 // Service Deck 頁面：主內容嵌入 Canva deck
 // 原始版本（VortixPR Concept slides）保留在 ConceptPage.tsx 作為備份
-export default function ServiceDeckPage({ showFooter = true }: ServiceDeckPageProps) {
+export default function ServiceDeckPage() {
   return (
     <div className="min-h-screen bg-black">
       <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:py-12">
@@ -26,7 +20,6 @@ export default function ServiceDeckPage({ showFooter = true }: ServiceDeckPagePr
         </div>
       </div>
 
-      {showFooter && <CryptoFooter />}
     </div>
   );
 }
