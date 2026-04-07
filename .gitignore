@@ -69,3 +69,6 @@ package-compare-and-detail/
 VortixPR - A New PR Agency/
 PROJECT_ANALYSIS_*.md
 
+# Git worktrees (superpowers)
+.worktrees/
+
