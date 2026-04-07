@@ -1,4 +1,4 @@
-import Footer from '../../components/Footer';
+import CryptoFooter from '../../components/crypto/CryptoFooter';
 import TrustedBySection from '../../components/crypto/TrustedBySection';
 import ClientsHero from '../../components/crypto/clients/ClientsHero';
 import ClientsCTA from '../../components/crypto/clients/ClientsCTA';
@@ -9,7 +9,7 @@ export default function CryptoClientsPage() {
       <ClientsHero />
       <TrustedBySection />
       <ClientsCTA />
-      <Footer />
+      <CryptoFooter />
     </div>
   );
 }

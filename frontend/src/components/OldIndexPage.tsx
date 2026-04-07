@@ -7,7 +7,7 @@ import FeaturesSection from './crypto/FeaturesSection';
 import TestimonialSection from './crypto/TestimonialSection';
 import EverythingYouNeedSection from './crypto/EverythingYouNeedSection';
 import FAQSection from './crypto/FAQSection';
-import Footer from './Footer';
+import CryptoFooter from './crypto/CryptoFooter';
 import { faqs } from '../constants/faqData';
 import { Route } from '../hooks/useRouter';
 

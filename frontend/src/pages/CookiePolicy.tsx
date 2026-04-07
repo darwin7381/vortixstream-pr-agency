@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import Footer from '../components/Footer';
+import CryptoFooter from '../components/crypto/CryptoFooter';
 
 export default function CookiePolicy() {
   useEffect(() => {
@@ -286,7 +286,7 @@ export default function CookiePolicy() {
           </div>
         </div>
       </div>
-      <Footer />
+      <CryptoFooter />
     </div>
   );
 }

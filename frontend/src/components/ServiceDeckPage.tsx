@@ -1,4 +1,4 @@
-import Footer from './Footer';
+import CryptoFooter from './crypto/CryptoFooter';
 
 interface ServiceDeckPageProps {
   showFooter?: boolean;
@@ -26,7 +26,7 @@ export default function ServiceDeckPage({ showFooter = true }: ServiceDeckPagePr
         </div>
       </div>
 
-      {showFooter && <Footer />}
+      {showFooter && <CryptoFooter />}
     </div>
   );
 }

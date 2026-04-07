@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button } from './ui/button';
-import Footer from './Footer';
+import CryptoFooter from './crypto/CryptoFooter';
 import TrustedBySection from './TrustedBySection';
 
 const imgHeader69 = 'https://img.vortixpr.com/VortixPR_Website/target_circle_bgc.png';
@@ -215,7 +215,7 @@ export default function OurClientsPage({ showFooter = true }: OurClientsPageProp
       </section>
 
       {/* Footer */}
-      {showFooter && <Footer />}
+      {showFooter && <CryptoFooter />}
     </div>
   );
 }

@@ -3,7 +3,7 @@ import { ArrowLeft, Trash2, GitCompareArrows } from 'lucide-react';
 import { useCompare, type CompareItem } from '../../contexts/CompareContext';
 import { handleGetStartedClick } from '../../utils/navigationHelpers';
 import { Button } from '../ui/button';
-import Footer from '../Footer';
+import CryptoFooter from '../crypto/CryptoFooter';
 
 function getAllFeatures(items: CompareItem[]): string[] {
   const featureSet = new Set<string>();
@@ -266,7 +266,7 @@ export default function ComparePage() {
         </section>
       )}
 
-      <Footer />
+      <CryptoFooter />
     </div>
   );
 }

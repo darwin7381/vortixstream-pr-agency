@@ -1,5 +1,5 @@
 import PricingContactForm from './crypto/PricingContactForm';
-import Footer from './Footer';
+import CryptoFooter from './crypto/CryptoFooter';
 import ContactHero from './contact/ContactHero';
 import ContactInfo from './contact/ContactInfo';
 
@@ -9,7 +9,7 @@ export default function ContactPage() {
       <ContactHero />
       <PricingContactForm />
       <ContactInfo />
-      <Footer />
+      <CryptoFooter />
     </div>
   );
 }

@@ -4,7 +4,7 @@ import FAQSection from './crypto/FAQSection';
 import PricingContactForm from './crypto/PricingContactForm';
 import PricingCommitment from './crypto/PricingCommitment';
 import LogoCarousel from './crypto/LogoCarousel';
-import Footer from './Footer';
+import CryptoFooter from './crypto/CryptoFooter';
 import { pricingPlans } from '../constants/pricingData';
 import { contentAPI, type FAQ } from '../api/client';
 
@@ -170,7 +170,7 @@ export default function PricingPage({ showFooter = true }: PricingPageProps) {
       <PricingCommitment />
 
       {/* Footer */}
-      {showFooter && <Footer />}
+      {showFooter && <CryptoFooter />}
     </div>
   );
 }

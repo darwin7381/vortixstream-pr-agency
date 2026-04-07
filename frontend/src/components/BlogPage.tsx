@@ -5,7 +5,7 @@ import { Input } from './ui/input';
 import { MaterialSymbol } from './ui/material-symbol';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { newsletterAPI } from '../api/client';
-import Footer from './Footer';
+import CryptoFooter from './crypto/CryptoFooter';
 import { blogCategories, blogArticles, newsletterContent, paginationConfig } from '../constants/blogData';
 import { ChevronLeft, ChevronRight, Calendar, Clock, Check, Mail } from 'lucide-react';
 
@@ -400,7 +400,7 @@ export default function BlogPage() {
         </div>
       </section>
 
-      <Footer />
+      <CryptoFooter />
     </div>
     </>
   );

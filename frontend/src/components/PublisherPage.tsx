@@ -3,7 +3,7 @@ import PublisherFeaturesSection from './PublisherFeaturesSection';
 import PublisherContentSections from './PublisherContentSections';
 import PublisherCTASection from './PublisherCTASection';
 import LogoCarousel from './LogoCarousel';
-import Footer from './Footer';
+import CryptoFooter from './crypto/CryptoFooter';
 
 interface PublisherPageProps {
   showFooter?: boolean;
@@ -28,7 +28,7 @@ export default function PublisherPage({ showFooter = true }: PublisherPageProps)
       <PublisherCTASection />
 
       {/* Footer */}
-      {showFooter && <Footer />}
+      {showFooter && <CryptoFooter />}
     </div>
   );
 }

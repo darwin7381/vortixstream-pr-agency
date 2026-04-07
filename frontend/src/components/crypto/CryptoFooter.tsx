@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 import { Facebook, Instagram, Twitter, Linkedin, Youtube } from "lucide-react";
-import { newsletterAPI, contentAPI, type FooterSection, type FooterTextSettings, type SiteSettings } from '../api/client';
-import VortixLogoWhite from '../assets/VortixLogo White_Horizontal.png';
+import { newsletterAPI, contentAPI, type FooterSection, type FooterTextSettings, type SiteSettings } from '../../api/client';
+import VortixLogoWhite from '../../assets/VortixLogo White_Horizontal.png';
 
-export default function Footer() {
+export default function CryptoFooter() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');

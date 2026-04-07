@@ -1,5 +1,5 @@
 import ServicesSection from '../../components/crypto/ServicesSection';
-import Footer from '../../components/Footer';
+import CryptoFooter from '../../components/crypto/CryptoFooter';
 
 interface ServicesPageProps {
   showFooter?: boolean;
@@ -11,7 +11,7 @@ export default function CryptoServicesPage({ showFooter = true }: ServicesPagePr
       <ServicesSection />
       
       {/* Footer */}
-      {showFooter && <Footer />}
+      {showFooter && <CryptoFooter />}
     </div>
   );
 }
