@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
-import FAQSection from '../FAQSection';
-import PricingContactForm from '../PricingContactForm';
-import PricingCommitment from '../PricingCommitment';
-import LogoCarousel from '../LogoCarousel';
-import Footer from '../Footer';
-import PricingHero from './PricingHero';
-import PRPackagesGrid from './PRPackagesGrid';
-import PackageDetailModal from './PackageDetailModal';
+import FAQSection from '../../components/FAQSection';
+import PricingContactForm from '../../components/PricingContactForm';
+import PricingCommitment from '../../components/PricingCommitment';
+import LogoCarousel from '../../components/LogoCarousel';
+import Footer from '../../components/Footer';
+import PricingHero from '../../components/pricing/PricingHero';
+import PRPackagesGrid from '../../components/pricing/PRPackagesGrid';
+import PackageDetailModal from '../../components/pricing/PackageDetailModal';
 import { contentAPI, type FAQ, type PRPackage } from '../../api/client';
 
-export default function PricingPageV2() {
+export default function CryptoPricingPageV2() {
   const [faqs, setFaqs] = useState<FAQ[]>([]);
   const [selectedPackage, setSelectedPackage] = useState<PRPackage | null>(null);
 
@@ -44,7 +44,7 @@ export default function PricingPageV2() {
       </section>
 
       {/* FAQ Section */}
-      <FAQSection 
+      <FAQSection
         faqs={faqs.map(faq => ({ question: faq.question, answer: faq.answer }))}
         variant="default"
         maxWidth="default"
@@ -62,6 +62,3 @@ export default function PricingPageV2() {
     </div>
   );
 }
-
-
-

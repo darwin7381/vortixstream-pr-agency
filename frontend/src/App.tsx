@@ -5,7 +5,7 @@ import Navigation from './components/Navigation';
 import ScrollToTop from './components/ScrollToTop';
 import CryptoHomePage from './pages/crypto/CryptoHomePage';
 import CryptoPricingPage from './pages/crypto/CryptoPricingPage';
-import PricingPageV2 from './components/pricing/PricingPageV2';
+import CryptoPricingPageV2 from './pages/crypto/CryptoPricingPageV2';
 import PackageDetailPage from './components/pricing/PackageDetailPage';
 import ComparePage from './components/compare/ComparePage';
 import CompareBar from './components/compare/CompareBar';
@@ -82,7 +82,7 @@ function AppContent() {
           <Route path="/" element={<CryptoHomePage />} />
           <Route path="/services" element={<CryptoServicesPage />} />
           <Route path="/pricing" element={<CryptoPricingPage />} />
-          <Route path="/pricing-v2" element={<PricingPageV2 />} />
+          <Route path="/pricing-v2" element={<CryptoPricingPageV2 />} />
           <Route path="/packages/:slug" element={<PackageDetailPage />} />
           <Route path="/compare" element={<ComparePage />} />
           <Route path="/clients" element={<OurClientsPage />} />
