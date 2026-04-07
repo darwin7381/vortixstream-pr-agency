@@ -1,11 +1,11 @@
-import ServicesSection from './ServicesSection';
-import Footer from './Footer';
+import ServicesSection from '../../components/ServicesSection';
+import Footer from '../../components/Footer';
 
 interface ServicesPageProps {
   showFooter?: boolean;
 }
 
-export default function ServicesPage({ showFooter = true }: ServicesPageProps) {
+export default function CryptoServicesPage({ showFooter = true }: ServicesPageProps) {
   return (
     <div className="min-h-screen bg-black">
       <ServicesSection />

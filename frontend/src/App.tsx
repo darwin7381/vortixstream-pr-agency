@@ -13,7 +13,7 @@ import { CompareProvider } from './contexts/CompareContext';
 import PublisherPage from './components/publisher/PublisherPage';
 import OurClientsPage from './components/clients/OurClientsPage';
 import AboutPage from './components/about/AboutPage';
-import ServicesPage from './components/ServicesPage';
+import CryptoServicesPage from './pages/crypto/CryptoServicesPage';
 import BlogPage from './components/blog/BlogPage';
 import ArticlePage from './components/ArticlePage';
 import TemplatePage from './components/template/TemplatePage';
@@ -80,7 +80,7 @@ function AppContent() {
       <div className={isAdminRoute ? '' : 'pt-14 sm:pt-16 md:pt-[72px] lg:pt-[72px]'}>
         <Routes>
           <Route path="/" element={<CryptoHomePage />} />
-          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/services" element={<CryptoServicesPage />} />
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/pricing-v2" element={<PricingPageV2 />} />
           <Route path="/packages/:slug" element={<PackageDetailPage />} />
