@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Button } from './ui/button';
+import { Button } from '../ui/button';
 import { ChevronDown, Mail, MessageCircle, Check } from 'lucide-react';
-import { contactAPI } from '../api/client';
+import { contactAPI } from '../../api/client';
 
 export default function PricingContactForm() {
   const [formData, setFormData] = useState({

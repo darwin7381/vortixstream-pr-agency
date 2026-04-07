@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { ImageWithFallback } from './figma/ImageWithFallback';
-import TemplateDownloadForm from './template/TemplateDownloadForm';
+import { ImageWithFallback } from '../figma/ImageWithFallback';
+import TemplateDownloadForm from '../template/TemplateDownloadForm';
 
 export default function VortixPortalSection() {
   const [sectionData, setSectionData] = useState<any>(null);

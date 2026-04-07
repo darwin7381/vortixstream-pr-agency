@@ -1,4 +1,4 @@
-import PricingContactForm from './PricingContactForm';
+import PricingContactForm from './crypto/PricingContactForm';
 import Footer from './Footer';
 import ContactHero from './contact/ContactHero';
 import ContactInfo from './contact/ContactInfo';

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { contentAPI, CarouselLogo as CarouselLogoType } from '../api/client';
+import { contentAPI, CarouselLogo as CarouselLogoType } from '../../api/client';
 
 export default function LogoCarousel() {
   const [logos, setLogos] = useState<CarouselLogoType[]>([]);

@@ -11,9 +11,9 @@
  * 如果資料載入失敗或為空，就讓它顯示空白，不要加任何防禦邏輯！
  */
 import { useState, useEffect, useRef } from 'react';
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { ChevronRight } from "lucide-react";
-import { contentAPI, type Service } from '../api/client';
+import { contentAPI, type Service } from '../../api/client';
 const catAstronautImage = "https://img.vortixpr.com/VortixPR_Website/austronaut_cat_profile_pic.png";
 
 interface ServicesSectionProps {

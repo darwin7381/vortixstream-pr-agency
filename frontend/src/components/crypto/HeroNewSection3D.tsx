@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from "./ui/button";
-import VortixLogoMark from '../assets/Vortix Logo mark.png';
+import { Button } from "../ui/button";
+import VortixLogoMark from '../../assets/Vortix Logo mark.png';
 import { Orbiting3DLogos } from './Orbiting3DLogos';
 
 // ========================================

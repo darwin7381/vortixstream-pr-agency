@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import svgPaths from "../imports/svg-f7gq800qcd";
+import svgPaths from "../../imports/svg-f7gq800qcd";
 
 export default function ClientLogosSection() {
   const [isVisible, setIsVisible] = useState(false);

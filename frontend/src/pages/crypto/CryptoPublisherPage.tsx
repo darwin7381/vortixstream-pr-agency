@@ -2,7 +2,7 @@ import PublisherHero from '../../components/crypto/publisher/PublisherHero';
 import PublisherFeatures from '../../components/crypto/publisher/PublisherFeatures';
 import PublisherContent from '../../components/crypto/publisher/PublisherContent';
 import PublisherCTA from '../../components/crypto/publisher/PublisherCTA';
-import LogoCarousel from '../../components/LogoCarousel';
+import LogoCarousel from '../../components/crypto/LogoCarousel';
 import Footer from '../../components/Footer';
 
 export default function CryptoPublisherPage() {

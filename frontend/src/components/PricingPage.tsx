@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
-import PricingCard from './PricingCard';
-import FAQSection from './FAQSection';
-import PricingContactForm from './PricingContactForm';
-import PricingCommitment from './PricingCommitment';
-import LogoCarousel from './LogoCarousel';
+import PricingCard from './pricing/PricingCard';
+import FAQSection from './crypto/FAQSection';
+import PricingContactForm from './crypto/PricingContactForm';
+import PricingCommitment from './crypto/PricingCommitment';
+import LogoCarousel from './crypto/LogoCarousel';
 import Footer from './Footer';
 import { pricingPlans } from '../constants/pricingData';
 import { contentAPI, type FAQ } from '../api/client';

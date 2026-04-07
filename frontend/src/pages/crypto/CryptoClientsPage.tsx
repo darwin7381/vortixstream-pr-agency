@@ -1,5 +1,5 @@
 import Footer from '../../components/Footer';
-import TrustedBySection from '../../components/TrustedBySection';
+import TrustedBySection from '../../components/crypto/TrustedBySection';
 import ClientsHero from '../../components/crypto/clients/ClientsHero';
 import ClientsCTA from '../../components/crypto/clients/ClientsCTA';
 

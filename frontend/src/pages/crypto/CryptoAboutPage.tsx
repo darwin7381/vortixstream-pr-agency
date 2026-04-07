@@ -1,7 +1,7 @@
 import Footer from '../../components/Footer';
 import AboutHero from '../../components/crypto/about/AboutHero';
 import AboutTeam from '../../components/crypto/about/AboutTeam';
-import StatsSection from '../../components/StatsSection';
+import StatsSection from '../../components/crypto/StatsSection';
 
 export default function CryptoAboutPage() {
   return (

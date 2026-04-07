@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import PricingCard from '../PricingCard';
+import PricingCard from './PricingCard';
 import { pricingPlans } from '../../constants/pricingData';
 
 export default function PricingCards() {

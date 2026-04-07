@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import FAQSection from '../../components/FAQSection';
-import PricingContactForm from '../../components/PricingContactForm';
-import PricingCommitment from '../../components/PricingCommitment';
-import LogoCarousel from '../../components/LogoCarousel';
+import FAQSection from '../../components/crypto/FAQSection';
+import PricingContactForm from '../../components/crypto/PricingContactForm';
+import PricingCommitment from '../../components/crypto/PricingCommitment';
+import LogoCarousel from '../../components/crypto/LogoCarousel';
 import Footer from '../../components/Footer';
 import PricingHero from '../../components/pricing/PricingHero';
 import PRPackagesGrid from '../../components/pricing/PRPackagesGrid';

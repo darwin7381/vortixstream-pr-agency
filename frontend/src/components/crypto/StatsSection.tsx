@@ -7,7 +7,7 @@
  * 5. ✅ 使用 map 動態渲染所有資料
  */
 import { useState, useEffect, useRef } from 'react';
-import { contentAPI, type Stat, type Differentiator } from '../api/client';
+import { contentAPI, type Stat, type Differentiator } from '../../api/client';
 import StatsCardCompact from './StatsCardCompact';
 
 export default function StatsSection() {

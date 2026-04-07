@@ -1,4 +1,4 @@
-import ServicesSection from '../../components/ServicesSection';
+import ServicesSection from '../../components/crypto/ServicesSection';
 import Footer from '../../components/Footer';
 
 interface ServicesPageProps {

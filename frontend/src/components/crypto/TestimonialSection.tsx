@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { contentAPI, type Testimonial } from '../api/client';
+import { contentAPI, type Testimonial } from '../../api/client';
 import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
 
 // 生成頭像圖片 - 使用不同的 Unsplash 圖片
