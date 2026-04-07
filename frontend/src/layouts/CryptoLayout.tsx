@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import CryptoNavigation from '../components/crypto/CryptoNavigation';
 import CryptoFooter from '../components/crypto/CryptoFooter';
+import CompareBar from '../components/compare/CompareBar';
 import { User } from '../contexts/AuthContext';
 
 interface CryptoLayoutProps {
@@ -17,6 +18,7 @@ export default function CryptoLayout({ user, onLogout, onQuickLogin }: CryptoLay
         <Outlet />
       </div>
       <CryptoFooter />
+      <CompareBar />
     </>
   );
 }

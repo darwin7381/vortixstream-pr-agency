@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import CryptoNavigation from '../components/crypto/CryptoNavigation';
 import CryptoFooter from '../components/crypto/CryptoFooter';
+import CompareBar from '../components/compare/CompareBar';
 import { User } from '../contexts/AuthContext';
 
 interface SharedLayoutProps {
@@ -17,6 +18,7 @@ export default function SharedLayout({ user, onLogout, onQuickLogin }: SharedLay
         <Outlet />
       </div>
       <CryptoFooter />
+      <CompareBar />
     </>
   );
 }

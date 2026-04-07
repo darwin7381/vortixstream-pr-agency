@@ -1,8 +1,7 @@
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import ScrollToTop from './components/ScrollToTop';
-import CompareBar from './components/compare/CompareBar';
 import { CompareProvider } from './contexts/CompareContext';
 import AILayout from './layouts/AILayout';
 import CryptoLayout from './layouts/CryptoLayout';
@@ -68,18 +67,11 @@ import CookiePolicy from './pages/CookiePolicy';
 // AppContent - 包含路由邏輯
 function AppContent() {
   const { user, logout, quickLogin } = useAuth();
-  const location = useLocation();
-
-  // 判斷是否為後台路由
-  const isAdminRoute = location.pathname.startsWith('/admin');
 
   return (
     <div className="min-h-screen bg-black">
       {/* 自動滾動到頂部組件 */}
       <ScrollToTop />
-
-      {/* Compare Bar - 只在前台顯示 */}
-      {!isAdminRoute && <CompareBar />}
 
       <Routes>
         {/* AI site */}

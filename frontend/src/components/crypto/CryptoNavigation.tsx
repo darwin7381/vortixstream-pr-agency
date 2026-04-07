@@ -106,8 +106,8 @@ export default function CryptoNavigation({ user, onLogout, onQuickLogin }: Crypt
     
     if (url?.startsWith('#')) {
       const sectionId = url.substring(1);
-      if (currentPath !== '/') {
-        navigate('/');
+      if (currentPath !== '/crypto') {
+        navigate('/crypto');
         setTimeout(() => {
           const section = document.getElementById(sectionId);
           if (section) {
@@ -132,7 +132,7 @@ export default function CryptoNavigation({ user, onLogout, onQuickLogin }: Crypt
       {/* Desktop Navigation Bar */}
       <div className="hidden lg:flex items-center justify-between h-[72px] px-[20px] xl:px-[64px]">
         {/* Desktop VortixPR Logo */}
-        <button onClick={() => navigate('/')} className="cursor-pointer">
+        <button onClick={() => navigate('/crypto')} className="cursor-pointer">
           <VortixPRLogo />
         </button>
         
@@ -258,7 +258,7 @@ export default function CryptoNavigation({ user, onLogout, onQuickLogin }: Crypt
       {/* Mobile Navigation Bar */}
       <div className="lg:hidden flex items-center justify-between h-14 sm:h-16 md:h-[72px] px-[20px] xl:px-[64px]">
         {/* Mobile VortixPR Logo */}
-        <button onClick={() => navigate('/')} className="cursor-pointer">
+        <button onClick={() => navigate('/crypto')} className="cursor-pointer">
           <VortixPRLogo />
         </button>
         

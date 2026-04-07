@@ -41,12 +41,12 @@ export default function CryptoFooter() {
           section_key: 'map',
           display_order: 1,
           links: [
-            { id: 1, label: 'Home', url: '/', target: '_self', display_order: 1 },
-            { id: 2, label: 'Services', url: '/services', target: '_self', display_order: 2 },
-            { id: 3, label: 'Packages', url: '/pricing', target: '_self', display_order: 3 },
-            { id: 4, label: 'Our Client', url: '/clients', target: '_self', display_order: 4 },
-            { id: 5, label: 'Publisher', url: '/publisher', target: '_self', display_order: 5 },
-            { id: 6, label: 'About', url: '/about', target: '_self', display_order: 6 },
+            { id: 1, label: 'Home', url: '/crypto', target: '_self', display_order: 1 },
+            { id: 2, label: 'Services', url: '/crypto/services', target: '_self', display_order: 2 },
+            { id: 3, label: 'Packages', url: '/crypto/pricing', target: '_self', display_order: 3 },
+            { id: 4, label: 'Our Client', url: '/crypto/clients', target: '_self', display_order: 4 },
+            { id: 5, label: 'Publisher', url: '/crypto/publisher', target: '_self', display_order: 5 },
+            { id: 6, label: 'About', url: '/crypto/about', target: '_self', display_order: 6 },
             { id: 7, label: 'Contact', url: '/contact', target: '_self', display_order: 7 },
           ]
         },
