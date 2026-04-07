@@ -4,7 +4,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import Navigation from './components/Navigation';
 import ScrollToTop from './components/ScrollToTop';
 import CryptoHomePage from './pages/crypto/CryptoHomePage';
-import PricingPage from './components/pricing/PricingPage';
+import CryptoPricingPage from './pages/crypto/CryptoPricingPage';
 import PricingPageV2 from './components/pricing/PricingPageV2';
 import PackageDetailPage from './components/pricing/PackageDetailPage';
 import ComparePage from './components/compare/ComparePage';
@@ -81,7 +81,7 @@ function AppContent() {
         <Routes>
           <Route path="/" element={<CryptoHomePage />} />
           <Route path="/services" element={<CryptoServicesPage />} />
-          <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/pricing" element={<CryptoPricingPage />} />
           <Route path="/pricing-v2" element={<PricingPageV2 />} />
           <Route path="/packages/:slug" element={<PackageDetailPage />} />
           <Route path="/compare" element={<ComparePage />} />
