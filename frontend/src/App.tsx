@@ -1,30 +1,15 @@
-import { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import Navigation from './components/Navigation';
-import { handleContactClick } from './utils/navigationHelpers';
 import ScrollToTop from './components/ScrollToTop';
-import HeroNewSection from './components/HeroNewSection';
-import LogoCarousel from './components/LogoCarousel';
-import StatsSection from './components/StatsSection';
-import ServicesSection from './components/ServicesSection';
-import LyroSection from './components/LyroSection';
-import TrustedBySection from './components/TrustedBySection';
-import TestimonialSection from './components/TestimonialSection';
-import VortixPortalSection from './components/VortixPortalSection';
-import FAQSection from './components/FAQSection';
-import PricingContactForm from './components/PricingContactForm';
-import Footer from './components/Footer';
-import PricingCards from './components/pricing/PricingCards';
-import PRPackagesSection from './components/pricing/PRPackagesSection';
+import CryptoHomePage from './pages/crypto/CryptoHomePage';
 import PricingPage from './components/pricing/PricingPage';
 import PricingPageV2 from './components/pricing/PricingPageV2';
 import PackageDetailPage from './components/pricing/PackageDetailPage';
 import ComparePage from './components/compare/ComparePage';
 import CompareBar from './components/compare/CompareBar';
 import { CompareProvider } from './contexts/CompareContext';
-import PublisherFeatures from './components/publisher/PublisherFeatures';
 import PublisherPage from './components/publisher/PublisherPage';
 import OurClientsPage from './components/clients/OurClientsPage';
 import AboutPage from './components/about/AboutPage';
@@ -71,75 +56,6 @@ import AdminEmailPreview from './pages/admin/AdminEmailPreview';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import CookiePolicy from './pages/CookiePolicy';
-import { contentAPI, type FAQ } from './api/client';
-
-// Home Page Component
-function HomePage() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [faqs, setFaqs] = useState<FAQ[]>([]);
-
-  useEffect(() => {
-    contentAPI.getFAQs()
-      .then(setFaqs)
-      .catch(console.error);
-  }, []);
-
-  const handleCTAClick = () => {
-    handleContactClick(navigate, location.pathname);
-  };
-
-  return (
-    <>
-      <HeroNewSection />
-      <LogoCarousel />
-      <section id="about-section">
-        <StatsSection />
-      </section>
-      <ServicesSection onContactClick={handleCTAClick} />
-
-      {/* Packages Preview Section - 使用完整 Section 組件 */}
-      <PRPackagesSection />
-
-      {/* Vortix Portal Section */}
-      <section id="vortix-portal-section">
-        <VortixPortalSection />
-      </section>
-
-      {/* Lyro AI Section */}
-      <section id="lyro-section">
-        <LyroSection />
-      </section>
-
-      {/* Our Clients Section */}
-      <section id="clients-section">
-        <TrustedBySection showTitle={true} />
-      </section>
-
-      {/* Publisher Features Preview - 只顯示特點區域 */}
-      <section id="publisher-section">
-        <PublisherFeatures />
-      </section>
-
-      <TestimonialSection />
-      <FAQSection
-        faqs={faqs.map(faq => ({ question: faq.question, answer: faq.answer }))}
-        variant="default"
-        maxWidth="default"
-        showCTA={true}
-        onPrimaryAction={handleCTAClick}
-        onSecondaryAction={handleCTAClick}
-      />
-
-      {/* Contact Us Section */}
-      <section id="contact-section">
-        <PricingContactForm />
-      </section>
-
-      <Footer />
-    </>
-  );
-}
 
 // AppContent - 包含路由邏輯
 function AppContent() {
@@ -163,7 +79,7 @@ function AppContent() {
       {/* Main Content Area - 只在前台添加 padding-top */}
       <div className={isAdminRoute ? '' : 'pt-14 sm:pt-16 md:pt-[72px] lg:pt-[72px]'}>
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<CryptoHomePage />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/pricing-v2" element={<PricingPageV2 />} />
