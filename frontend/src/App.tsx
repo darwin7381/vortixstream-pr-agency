@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
-import Navigation from './components/Navigation';
+import CryptoNavigation from './components/crypto/CryptoNavigation';
 import ScrollToTop from './components/ScrollToTop';
 import CryptoHomePage from './pages/crypto/CryptoHomePage';
 import CryptoPricingPage from './pages/crypto/CryptoPricingPage';
@@ -71,7 +71,7 @@ function AppContent() {
       <ScrollToTop />
 
       {/* Global Navigation - 只在前台顯示 */}
-      {!isAdminRoute && <Navigation user={user} onLogout={logout} onQuickLogin={quickLogin} />}
+      {!isAdminRoute && <CryptoNavigation user={user} onLogout={logout} onQuickLogin={quickLogin} />}
 
       {/* Compare Bar - 只在前台顯示 */}
       {!isAdminRoute && <CompareBar />}

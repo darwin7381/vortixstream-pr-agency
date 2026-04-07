@@ -1,21 +1,21 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown, User, Settings, LogOut, CreditCard, LayoutDashboard } from "lucide-react";
-import { Button } from "./ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Button } from "../ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import { contentAPI, type NavItem, type NavCTA } from '../api/client';
-import { User as UserType } from '../contexts/AuthContext';
+} from "../ui/dropdown-menu";
+import { contentAPI, type NavItem, type NavCTA } from '../../api/client';
+import { User as UserType } from '../../contexts/AuthContext';
 
 // VortixPR Logo - 使用本地資源
 
-import VortixLogoWhite from '../assets/VortixLogo White_Horizontal.png';
+import VortixLogoWhite from '../../assets/VortixLogo White_Horizontal.png';
 
 // VortixPR Logo 組件
 function VortixPRLogo({ className = "" }: { className?: string }) {
@@ -43,7 +43,7 @@ function MobileMenuToggle({ isOpen, toggle }: { isOpen: boolean; toggle: () => v
   );
 }
 
-interface NavigationProps {
+interface CryptoNavigationProps {
   user?: UserType | null;
   onLogout?: () => void;
   onQuickLogin?: () => void;
@@ -56,7 +56,7 @@ interface NavigationProps {
  * - 響應式設計支援所有設備
  * - 直接導入 logo 確保顯示正確
  */
-export default function Navigation({ user, onLogout, onQuickLogin }: NavigationProps) {
+export default function CryptoNavigation({ user, onLogout, onQuickLogin }: CryptoNavigationProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
