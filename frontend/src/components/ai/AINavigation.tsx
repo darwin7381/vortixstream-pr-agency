@@ -35,12 +35,14 @@ interface AINavigationProps {
   onQuickLogin?: () => void;
 }
 
+// Mirrors CryptoNavigation's desktop_url / mobile_url pattern:
+// Desktop scrolls to an anchor on the home page; mobile jumps to a dedicated page.
 const AI_NAV_ITEMS = [
-  { id: 1, label: 'About', url: '/about' },
-  { id: 2, label: 'Services', url: '/services' },
-  { id: 3, label: 'Packages', url: '/pricing' },
-  { id: 4, label: 'Clients', url: '/clients' },
-  { id: 5, label: 'Publisher', url: '/publisher' },
+  { id: 1, label: 'About', desktop_url: '#about-section', mobile_url: '/about' },
+  { id: 2, label: 'Services', desktop_url: '#services-section', mobile_url: '/services' },
+  { id: 3, label: 'Packages', desktop_url: '#packages-section', mobile_url: '/pricing' },
+  { id: 4, label: 'Clients', desktop_url: '#clients-section', mobile_url: '/clients' },
+  { id: 5, label: 'Publisher', desktop_url: '#publisher-section', mobile_url: '/publisher' },
 ];
 
 export default function AINavigation({ user, onLogout, onQuickLogin }: AINavigationProps) {
@@ -49,15 +51,33 @@ export default function AINavigation({ user, onLogout, onQuickLogin }: AINavigat
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const currentPath = location.pathname;
 
-  const handleNavClick = (url: string) => {
-    if (url.startsWith('#')) {
-      const el = document.getElementById(url.substring(1));
-      if (el) {
-        window.scrollTo({ top: el.offsetTop - 72, behavior: 'smooth' });
+  const handleNavClick = (item: typeof AI_NAV_ITEMS[number]) => {
+    const isDesktop = window.innerWidth >= 1024;
+    // Only fall back to desktop_url if mobile_url is null/undefined/empty — matches crypto behaviour.
+    const url = isDesktop
+      ? item.desktop_url
+      : (item.mobile_url && item.mobile_url.trim() !== '' ? item.mobile_url : item.desktop_url);
+
+    if (url?.startsWith('#')) {
+      const sectionId = url.substring(1);
+      if (currentPath !== '/') {
+        navigate('/');
+        setTimeout(() => {
+          const section = document.getElementById(sectionId);
+          if (section) {
+            window.scrollTo({ top: section.offsetTop - 72, behavior: 'smooth' });
+          }
+        }, 100);
+      } else {
+        const section = document.getElementById(sectionId);
+        if (section) {
+          window.scrollTo({ top: section.offsetTop - 72, behavior: 'smooth' });
+        }
       }
-    } else {
+    } else if (url) {
       navigate(url);
     }
+
     setIsMobileMenuOpen(false);
   };
 
@@ -75,9 +95,9 @@ export default function AINavigation({ user, onLogout, onQuickLogin }: AINavigat
           {AI_NAV_ITEMS.map((item) => (
             <button
               key={item.id}
-              onClick={() => handleNavClick(item.url)}
+              onClick={() => handleNavClick(item)}
               className={`text-[16px] transition-all duration-300 hover:[text-shadow:0_0_6px_rgba(255,255,255,0.3)] relative py-2 ${
-                currentPath === item.url ? 'text-[#FF7400]' : 'text-white hover:text-white/90'
+                currentPath === item.mobile_url ? 'text-[#FF7400]' : 'text-white hover:text-white/90'
               }`}
             >
               {item.label}
@@ -142,9 +162,9 @@ export default function AINavigation({ user, onLogout, onQuickLogin }: AINavigat
               {AI_NAV_ITEMS.map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => handleNavClick(item.url)}
+                  onClick={() => handleNavClick(item)}
                   className={`block w-full text-left text-[16px] py-3.5 px-3 rounded-lg hover:bg-white/5 transition-all duration-300 font-medium ${
-                    currentPath === item.url ? 'text-[#FF7400] bg-[#FF7400]/5' : 'text-white'
+                    currentPath === item.mobile_url ? 'text-[#FF7400] bg-[#FF7400]/5' : 'text-white'
                   }`}
                 >
                   {item.label}
