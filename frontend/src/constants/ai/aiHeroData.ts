@@ -13,14 +13,15 @@ export const aiHeroData = {
   cta_primary_url: "#contact-section",
   cta_secondary_text: "View AI Packages",
   cta_secondary_url: "#packages-section",
-  center_logo_url: "https://img.vortixpr.com/VortixPR_Website/vortix_logo_white_horizontal.png",
+  center_logo_url: "https://img.vortixpr.com/brand/a4724e24-50d7-41a3-a89d-9ab50dc8575d.png",
 };
 
+// Logos hosted on our R2 CDN — sourced from Wikipedia article images via scripts/upload_ai_logos.py
 export const aiMediaLogos = [
   {
     id: 1,
     name: "TechCrunch",
-    logo_url: "https://logo.clearbit.com/techcrunch.com",
+    logo_url: "https://img.vortixpr.com/ai-media-logos/5fb6b9f6-9c7f-481c-8ab0-7d1db1226ce1.png",
     size: "md",
     opacity: 0.8,
     position_top: "10%",
@@ -30,7 +31,7 @@ export const aiMediaLogos = [
   {
     id: 2,
     name: "The Verge",
-    logo_url: "https://logo.clearbit.com/theverge.com",
+    logo_url: "https://img.vortixpr.com/ai-media-logos/4731c9b5-9555-4401-a75a-733b304df7ca.png",
     size: "md",
     opacity: 0.7,
     position_top: "20%",
@@ -40,7 +41,7 @@ export const aiMediaLogos = [
   {
     id: 3,
     name: "VentureBeat",
-    logo_url: "https://logo.clearbit.com/venturebeat.com",
+    logo_url: "https://img.vortixpr.com/ai-media-logos/7ff3a43e-c3fe-43b0-bffc-297cae3c3f50.png",
     size: "sm",
     opacity: 0.65,
     position_top: "35%",
@@ -50,7 +51,7 @@ export const aiMediaLogos = [
   {
     id: 4,
     name: "Wired",
-    logo_url: "https://logo.clearbit.com/wired.com",
+    logo_url: "https://img.vortixpr.com/ai-media-logos/e4591930-6946-40e0-b9b7-6a339c2e4f99.png",
     size: "sm",
     opacity: 0.75,
     position_top: "50%",
@@ -60,7 +61,7 @@ export const aiMediaLogos = [
   {
     id: 5,
     name: "MIT Technology Review",
-    logo_url: "https://logo.clearbit.com/technologyreview.com",
+    logo_url: "https://img.vortixpr.com/ai-media-logos/d5d8b169-0a60-4997-8d89-33185b4396c8.png",
     size: "lg",
     opacity: 0.6,
     position_top: "65%",
@@ -70,7 +71,7 @@ export const aiMediaLogos = [
   {
     id: 6,
     name: "Ars Technica",
-    logo_url: "https://logo.clearbit.com/arstechnica.com",
+    logo_url: "https://img.vortixpr.com/ai-media-logos/a421bba0-5f8c-489c-886e-53a0bcdbe32c.png",
     size: "md",
     opacity: 0.7,
     position_top: "78%",
@@ -80,7 +81,7 @@ export const aiMediaLogos = [
   {
     id: 7,
     name: "Product Hunt",
-    logo_url: "https://logo.clearbit.com/producthunt.com",
+    logo_url: "https://img.vortixpr.com/ai-media-logos/6d63db5a-f7c3-4afa-918a-7f544a5ec987.png",
     size: "sm",
     opacity: 0.65,
     position_top: "88%",
@@ -90,7 +91,7 @@ export const aiMediaLogos = [
   {
     id: 8,
     name: "IEEE Spectrum",
-    logo_url: "https://logo.clearbit.com/spectrum.ieee.org",
+    logo_url: "https://img.vortixpr.com/ai-media-logos/8ab2079a-f263-416b-8ce7-dcd816f3a2ba.png",
     size: "sm",
     opacity: 0.6,
     position_top: "5%",

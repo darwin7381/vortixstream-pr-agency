@@ -1,0 +1,33 @@
+{
+  "media": {
+    "TechCrunch": "https://img.vortixpr.com/ai-media-logos/5fb6b9f6-9c7f-481c-8ab0-7d1db1226ce1.png",
+    "The Verge": "https://img.vortixpr.com/ai-media-logos/4731c9b5-9555-4401-a75a-733b304df7ca.png",
+    "VentureBeat": "https://img.vortixpr.com/ai-media-logos/7ff3a43e-c3fe-43b0-bffc-297cae3c3f50.png",
+    "Wired": "https://img.vortixpr.com/ai-media-logos/e4591930-6946-40e0-b9b7-6a339c2e4f99.png",
+    "MIT Technology Review": "https://img.vortixpr.com/ai-media-logos/d5d8b169-0a60-4997-8d89-33185b4396c8.png",
+    "Ars Technica": "https://img.vortixpr.com/ai-media-logos/a421bba0-5f8c-489c-886e-53a0bcdbe32c.png",
+    "Product Hunt": "https://img.vortixpr.com/ai-media-logos/6d63db5a-f7c3-4afa-918a-7f544a5ec987.png",
+    "IEEE Spectrum": "https://img.vortixpr.com/ai-media-logos/8ab2079a-f263-416b-8ce7-dcd816f3a2ba.png",
+    "The Information": "https://img.vortixpr.com/ai-media-logos/7193ce67-d1be-4fe2-8fc0-a8a80332c749.png",
+    "Forbes": "https://img.vortixpr.com/ai-media-logos/14a564b3-cdb0-496e-ae14-5a57db6e8e8e.png",
+    "Fortune": "https://img.vortixpr.com/ai-media-logos/74ecb52a-c1d4-42d6-b7e2-e12803f609f0.png",
+    "Bloomberg": "https://img.vortixpr.com/ai-media-logos/1cbd7c50-eb24-4e15-882e-21bd216bdaed.png"
+  },
+  "clients": {
+    "OpenAI": "https://img.vortixpr.com/ai-clients/1a826da9-881f-4101-b2b5-295b52ada08f.png",
+    "Anthropic": "https://img.vortixpr.com/ai-clients/072a5d56-dae1-40e4-8a7e-77d6f04d2496.png",
+    "Hugging Face": "https://img.vortixpr.com/ai-clients/1d08bc9d-3fa7-4ce0-b5ef-44bca0e3f9df.png",
+    "Mistral AI": "https://img.vortixpr.com/ai-clients/ff5a6e7d-d3fc-41ce-9b63-20c3092aad30.png",
+    "Cohere": "https://img.vortixpr.com/ai-clients/59d369fc-8300-4cc2-b305-9279c5a8fdc3.png",
+    "Stability AI": "https://img.vortixpr.com/ai-clients/e46b312b-090c-49b4-811d-a1162ecee34e.png",
+    "Runway": "https://img.vortixpr.com/ai-clients/3880d593-6fe6-4a38-a24d-06888c5786b4.png",
+    "Perplexity AI": "https://img.vortixpr.com/ai-clients/1496aaf6-fc33-4dbb-ad99-f59fe6163925.png",
+    "Replicate": "https://img.vortixpr.com/ai-clients/f7a93469-8b94-474e-803c-b34863afb366.png",
+    "ElevenLabs": "https://img.vortixpr.com/ai-clients/b4661c78-7c6b-44fe-89c7-eef92624e40d.png",
+    "Groq": "https://img.vortixpr.com/ai-clients/80357fa6-319d-4eb4-9547-066d2247a0ab.png",
+    "Scale AI": "https://img.vortixpr.com/ai-clients/87bd7681-2bde-4335-85c2-b6d5ce7d636c.png",
+    "Together AI": "https://img.vortixpr.com/ai-clients/5eb5f952-0b89-44aa-9663-58c647db89c4.png",
+    "Weights & Biases": "https://img.vortixpr.com/ai-clients/12d24b3a-107f-48df-a724-585ec3bbd6eb.png",
+    "LangChain": "https://img.vortixpr.com/ai-clients/81ce81c1-d066-4d96-b4d0-86f254925c56.png"
+  }
+}
