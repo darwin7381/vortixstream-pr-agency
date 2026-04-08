@@ -1,23 +1,20 @@
 /**
  * AI Lyro Section data
- * Repositions the Lyro AI co-pilot as built for AI founders
  * Shape mirrors /public/content/sections/lyro JSONB response
  */
 
 export const aiLyroData = {
-  label: "AI CO-PILOT",
-  title: "Lyro",
-  subtitle: "Your AI PR co-pilot, built for AI founders",
+  label: "AI NARRATIVE ENGINE",
+  title: "Lyro: AI Narrative Engine",
+  subtitle: "Built into Vortix Platform",
   description:
-    "Lyro is our proprietary AI assistant trained on thousands of successful tech and AI press placements. It helps you draft pitches, analyze journalist sentiment, and identify the perfect timing window for your next announcement.",
+    "Lyro helps refine your announcement before distribution, improving clarity, strengthening your angle, and increasing how well your story surfaces across media, search, and AI systems.",
   background_image_url:
     "https://img.vortixpr.com/VortixPR_Website/austronaut_cat_profile_pic.png",
   items: [
-    { text: "Auto-generate journalist-ready press releases from your product brief" },
-    { text: "Real-time media monitoring — know when AI reporters are covering your space" },
-    { text: "Pitch personalization engine that scores and tailors outreach for each reporter" },
-    { text: "Embargo management dashboard with conflict detection" },
-    { text: "Sentiment analysis on live coverage to inform your follow-up strategy" },
-    { text: "Competitor coverage alerts to stay ahead of your narrative" },
+    { text: "Narrative clarity optimization" },
+    { text: "Media angle suggestions" },
+    { text: "LLM visibility improvement" },
+    { text: "Regional positioning insights" },
   ],
 };

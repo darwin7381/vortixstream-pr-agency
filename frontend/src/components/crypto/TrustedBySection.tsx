@@ -20,12 +20,14 @@ interface ClientLogo {
 interface TrustedBySectionProps {
   showTitle?: boolean;
   title?: string;
+  subtitle?: string;
   dataOverride?: ClientLogo[];
 }
 
 export default function TrustedBySection({
   showTitle = false,
   title = "Trusted by industry leaders",
+  subtitle,
   dataOverride
 }: TrustedBySectionProps) {
   const [clients, setClients] = useState<ClientLogo[]>(dataOverride ?? []);
@@ -110,6 +112,11 @@ export default function TrustedBySection({
               <p className="text-[12px] md:text-[18px] font-bold text-white font-sans font-bold">
                 {title}
               </p>
+              {subtitle && (
+                <p className="mt-2 text-[11px] md:text-[14px] text-white/60 font-sans">
+                  {subtitle}
+                </p>
+              )}
             </div>
           )}
           

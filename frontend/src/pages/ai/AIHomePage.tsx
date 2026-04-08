@@ -47,7 +47,7 @@ export default function AIHomePage() {
       {/* Packages Preview Section */}
       <PRPackagesSection
         title="AI PR PACKAGES"
-        description="Flexible plans for every stage — from solo founder to Series B. All packages include our Lyro AI co-pilot and dedicated account management."
+        description="Designed for AI startups, product launches, and teams shipping fast. Start with a package and customize based on your distribution needs."
         audience="ai"
       />
 
@@ -65,7 +65,8 @@ export default function AIHomePage() {
       <section id="clients-section">
         <TrustedBySection
           showTitle={true}
-          title="Trusted by AI-native companies"
+          title="Trusted by teams building and shipping fast"
+          subtitle="From early-stage builders to global teams."
           dataOverride={aiTrustedByClients as any[]}
         />
       </section>

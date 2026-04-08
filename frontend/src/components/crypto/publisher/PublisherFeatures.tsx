@@ -132,6 +132,11 @@ export default function PublisherFeaturesSection({ dataOverride }: PublisherFeat
         <div className="container-large">
           
           {/* Compact Header */}
+          {sectionData?.label && (
+            <p className="text-[11px] md:text-[12px] text-white/60 font-sans tracking-[0.12em] uppercase mb-3 md:mb-4">
+              {sectionData.label}
+            </p>
+          )}
           <h2 className="text-[40px] md:text-[52px] font-medium text-white mb-6 md:mb-8 tracking-[-0.4px] md:tracking-[-0.52px] leading-[1.1]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
             {sectionData?.title}
           </h2>

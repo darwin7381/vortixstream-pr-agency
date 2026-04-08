@@ -1,18 +1,18 @@
 /**
- * AI Vortix Portal Section data
- * Repositions the portal as an AI-first PR command center
+ * AI Vortix Platform Section data
  * Shape mirrors /public/content/sections/vortix_portal JSONB response
  */
 
 export const aiVortixPortalData = {
-  label: "AI PR PORTAL",
-  title: "Your AI-first PR command center",
-  subtitle: "Track every placement, in real time",
+  label: "VORTIX PLATFORM",
+  title: "Vortix Platform",
+  subtitle:
+    "A smarter way to plan, distribute, and track PR — built for teams shipping fast.",
   description:
-    "The Vortix Portal is purpose-built for AI founders who move fast. Monitor your coverage across TechCrunch, VentureBeat, MIT Tech Review, and 200+ AI-focused outlets from a single dashboard. No more email threads — just clear signal.",
+    "Behind every campaign is a system. Vortix Platform brings together distribution, campaign visibility, and AI-assisted insights. Move faster without guessing what works.",
   image_url:
     "https://img.vortixpr.com/VortixPR_Website/portal_dashboard_preview.png",
-  features_label: "Portal capabilities",
+  features_label: "Platform capabilities",
   items: [
     { text: "Live placement tracker across AI, tech, and mainstream publications" },
     { text: "Journalist sentiment scoring updated daily" },
@@ -22,7 +22,8 @@ export const aiVortixPortalData = {
     { text: "One-click export for board decks and investor updates" },
   ],
   cta_primary: {
-    text: "Request Portal Access",
+    text: "Get Early Access",
     url: "#contact-section",
   },
+  cta_note: "Be among the first to access the Vortix Platform and Lyro.",
 };
