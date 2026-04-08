@@ -15,9 +15,13 @@ const CheckIcon = () => (
     </div>
 );
 
-export default function LyroSection() {
+interface LyroSectionProps {
+    dataOverride?: any;
+}
+
+export default function LyroSection({ dataOverride }: LyroSectionProps = {}) {
     const [isVisible, setIsVisible] = useState(false);
-    const [sectionData, setSectionData] = useState<any>(null);
+    const [sectionData, setSectionData] = useState<any>(dataOverride ?? null);
     const sectionRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -28,13 +32,15 @@ export default function LyroSection() {
             { threshold: 0.1 }
         );
         if (sectionRef.current) observer.observe(sectionRef.current);
-        
+
         // 從 JSONB API 讀取
-        fetch(`${import.meta.env.VITE_API_URL}/public/content/sections/lyro`)
-            .then(r => r.json())
-            .then(setSectionData)
-            .catch(console.error);
-        
+        if (!dataOverride) {
+            fetch(`${import.meta.env.VITE_API_URL}/public/content/sections/lyro`)
+                .then(r => r.json())
+                .then(setSectionData)
+                .catch(console.error);
+        }
+
         return () => observer.disconnect();
     }, []);
 

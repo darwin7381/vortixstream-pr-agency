@@ -12,13 +12,18 @@ const avatarImages = [
   'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&crop=face'
 ];
 
-export default function TestimonialSection() {
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
-  const [loading, setLoading] = useState(true);
+interface TestimonialSectionProps {
+  dataOverride?: any[];
+}
+
+export default function TestimonialSection({ dataOverride }: TestimonialSectionProps = {}) {
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(dataOverride ?? []);
+  const [loading, setLoading] = useState(!dataOverride);
   const [currentPage, setCurrentPage] = useState(0);
 
   // 載入 testimonials
   useEffect(() => {
+    if (dataOverride) return;
     contentAPI.getTestimonials()
       .then(setTestimonials)
       .catch(console.error)

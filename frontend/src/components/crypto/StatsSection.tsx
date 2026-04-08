@@ -10,15 +10,20 @@ import { useState, useEffect, useRef } from 'react';
 import { contentAPI, type Stat, type Differentiator } from '../../api/client';
 import StatsCardCompact from './StatsCardCompact';
 
-export default function StatsSection() {
+interface StatsSectionProps {
+  dataOverride?: any;
+}
+
+export default function StatsSection({ dataOverride }: StatsSectionProps = {}) {
   const [isVisible, setIsVisible] = useState(false);
   const [visibleDiff, setVisibleDiff] = useState(new Set());
-  const [sectionData, setSectionData] = useState<any>(null);
+  const [sectionData, setSectionData] = useState<any>(dataOverride ?? null);
   const sectionRef = useRef<HTMLDivElement>(null);
   const diffRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   // 載入 Why Vortix section 資料（JSONB）
   useEffect(() => {
+    if (dataOverride) return;
     fetch(`${import.meta.env.VITE_API_URL}/public/content/sections/why_vortix`)
       .then(r => r.json())
       .then(setSectionData)

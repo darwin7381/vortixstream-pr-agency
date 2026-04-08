@@ -17,14 +17,19 @@ const CheckIcon = () => (
   </div>
 );
 
-export default function PublisherFeaturesSection() {
-  const [sectionData, setSectionData] = useState<any>(null);
+interface PublisherFeaturesSectionProps {
+  dataOverride?: any;
+}
+
+export default function PublisherFeaturesSection({ dataOverride }: PublisherFeaturesSectionProps = {}) {
+  const [sectionData, setSectionData] = useState<any>(dataOverride ?? null);
   const [visibleDiff, setVisibleDiff] = useState(new Set());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
   const diffRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
+    if (dataOverride) return;
     fetch(`${import.meta.env.VITE_API_URL}/public/content/sections/publisher`)
       .then(r => r.json())
       .then(setSectionData)

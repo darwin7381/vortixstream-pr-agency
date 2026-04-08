@@ -2,11 +2,16 @@ import { useState, useEffect } from 'react';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import TemplateDownloadForm from '../template/TemplateDownloadForm';
 
-export default function VortixPortalSection() {
-  const [sectionData, setSectionData] = useState<any>(null);
+interface VortixPortalSectionProps {
+  dataOverride?: any;
+}
+
+export default function VortixPortalSection({ dataOverride }: VortixPortalSectionProps = {}) {
+  const [sectionData, setSectionData] = useState<any>(dataOverride ?? null);
   const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
-  
+
   useEffect(() => {
+    if (dataOverride) return;
     fetch(`${import.meta.env.VITE_API_URL}/public/content/sections/vortix_portal`)
       .then(r => r.json())
       .then(setSectionData)

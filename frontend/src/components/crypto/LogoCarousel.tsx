@@ -1,12 +1,20 @@
 import { useEffect, useState } from 'react';
 import { contentAPI, CarouselLogo as CarouselLogoType } from '../../api/client';
 
-export default function LogoCarousel() {
-  const [logos, setLogos] = useState<CarouselLogoType[]>([]);
-  const [subtitle, setSubtitle] = useState('');
-  const [loading, setLoading] = useState(true);
+interface LogoCarouselProps {
+  dataOverride?: {
+    logos?: CarouselLogoType[];
+    subtitle?: string;
+  };
+}
+
+export default function LogoCarousel({ dataOverride }: LogoCarouselProps = {}) {
+  const [logos, setLogos] = useState<CarouselLogoType[]>(dataOverride?.logos ?? []);
+  const [subtitle, setSubtitle] = useState(dataOverride?.subtitle ?? '');
+  const [loading, setLoading] = useState(!dataOverride);
 
   useEffect(() => {
+    if (dataOverride) return;
     // 從 CMS 載入跑馬燈 Logo 和副標題
     const fetchData = async () => {
       try {

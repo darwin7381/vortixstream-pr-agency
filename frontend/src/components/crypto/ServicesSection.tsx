@@ -18,10 +18,11 @@ const catAstronautImage = "https://img.vortixpr.com/VortixPR_Website/austronaut_
 
 interface ServicesSectionProps {
   onContactClick?: () => void;
+  dataOverride?: any;
 }
 
-export default function ServicesSection({ onContactClick }: ServicesSectionProps = {}) {
-  const [sectionData, setSectionData] = useState<any>(null);
+export default function ServicesSection({ onContactClick, dataOverride }: ServicesSectionProps = {}) {
+  const [sectionData, setSectionData] = useState<any>(dataOverride ?? null);
   const [isVisible, setIsVisible] = useState(false);
   const [visibleItems, setVisibleItems] = useState(new Set());
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -29,6 +30,7 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
 
   // 載入 services section 內容（從 JSONB）
   useEffect(() => {
+    if (dataOverride) return;
     fetch(`${import.meta.env.VITE_API_URL}/public/content/sections/services`)
       .then(r => r.json())
       .then(setSectionData)

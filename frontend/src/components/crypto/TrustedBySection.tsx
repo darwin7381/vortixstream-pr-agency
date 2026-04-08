@@ -20,17 +20,20 @@ interface ClientLogo {
 interface TrustedBySectionProps {
   showTitle?: boolean;
   title?: string;
+  dataOverride?: ClientLogo[];
 }
 
-export default function TrustedBySection({ 
-  showTitle = false, 
-  title = "Trusted by industry leaders" 
+export default function TrustedBySection({
+  showTitle = false,
+  title = "Trusted by industry leaders",
+  dataOverride
 }: TrustedBySectionProps) {
-  const [clients, setClients] = useState<ClientLogo[]>([]);
+  const [clients, setClients] = useState<ClientLogo[]>(dataOverride ?? []);
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (dataOverride) return;
     fetch(`${import.meta.env.VITE_API_URL}/public/content/clients`)
       .then(res => res.json())
       .then(setClients)

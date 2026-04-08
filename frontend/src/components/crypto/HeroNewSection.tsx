@@ -69,22 +69,31 @@ function TypewriterText({ words }: TypewriterProps) {
 }
 
 
-export default function HeroNewSection() {
+interface HeroNewSectionProps {
+  dataOverride?: {
+    hero?: any;
+    mediaLogos?: any[];
+  };
+}
+
+export default function HeroNewSection({ dataOverride }: HeroNewSectionProps = {}) {
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(false);
-  const [heroData, setHeroData] = useState<any>(null);
-  const [mediaLogos, setMediaLogos] = useState<any[]>([]);
+  const [heroData, setHeroData] = useState<any>(dataOverride?.hero ?? null);
+  const [mediaLogos, setMediaLogos] = useState<any[]>(dataOverride?.mediaLogos ?? []);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoaded(true), 100);
-    fetch(`${import.meta.env.VITE_API_URL}/public/content/hero/home`)
-      .then(r => r.json())
-      .then(setHeroData)
-      .catch(console.error);
-    fetch(`${import.meta.env.VITE_API_URL}/public/content/hero/home/logos`)
-      .then(r => r.json())
-      .then(setMediaLogos)
-      .catch(console.error);
+    if (!dataOverride) {
+      fetch(`${import.meta.env.VITE_API_URL}/public/content/hero/home`)
+        .then(r => r.json())
+        .then(setHeroData)
+        .catch(console.error);
+      fetch(`${import.meta.env.VITE_API_URL}/public/content/hero/home/logos`)
+        .then(r => r.json())
+        .then(setMediaLogos)
+        .catch(console.error);
+    }
     return () => clearTimeout(timer);
   }, []);
 
