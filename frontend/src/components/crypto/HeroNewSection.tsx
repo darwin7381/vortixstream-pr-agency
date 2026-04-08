@@ -223,6 +223,9 @@ export default function HeroNewSection({ dataOverride }: HeroNewSectionProps = {
                         }}
                       >
                         {heroData?.title_highlights && <TypewriterText words={heroData.title_highlights} />}
+                        {heroData?.title_suffix && (
+                          <span className="text-white">{' '}{heroData.title_suffix}</span>
+                        )}
                       </span>
                     </h1>
                   </div>

@@ -153,9 +153,14 @@ export default function StatsSection({ dataOverride }: StatsSectionProps = {}) {
 
       {/* Content */}
       <div className="relative z-10 container-global py-section-large">
-          <h2 className="text-[24px] sm:text-[28px] md:text-[44px] font-medium text-white mb-8 sm:mb-10 md:mb-20 tracking-[-0.24px] sm:tracking-[-0.28px] md:tracking-[-0.44px] font-heading font-medium text-left">
+          <h2 className={`text-[24px] sm:text-[28px] md:text-[44px] font-medium text-white tracking-[-0.24px] sm:tracking-[-0.28px] md:tracking-[-0.44px] font-heading font-medium text-left ${sectionData?.description ? 'mb-4 sm:mb-5 md:mb-6' : 'mb-8 sm:mb-10 md:mb-20'}`}>
             {sectionData?.title}
           </h2>
+          {sectionData?.description && (
+            <p className="text-[14px] md:text-[16px] lg:text-[18px] text-white/70 leading-relaxed mb-8 sm:mb-10 md:mb-16 max-w-[720px] font-sans">
+              {sectionData.description}
+            </p>
+          )}
           
           {/* Stats Cards - 動態渲染 */}
           <div className="mb-12 sm:mb-16 md:mb-20 lg:mb-24">

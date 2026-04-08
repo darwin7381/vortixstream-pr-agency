@@ -4,15 +4,17 @@
  */
 
 export const aiHeroData = {
-  eyebrow_label: "PR & Distribution for AI Founders",
-  title_prefix: "PR for the AI era —",
-  title_highlights: ["Founders", "AI Startups", "Solo Builders", "Indie Hackers", "Model Labs"],
+  eyebrow_label: "PR & Distribution for Startups & Emerging Tech",
+  title_prefix: "Building is easy now",
+  // Single-word typewriter stays orange; ' isn't.' is rendered as static white text after it
+  title_highlights: ["Distribution"],
+  title_suffix: "isn't.",
   subtitle:
-    "From model launches to funding announcements, we get your AI story into TechCrunch, VentureBeat, MIT Tech Review and the publications that move the needle. Built for founders who ship fast and need coverage that keeps up.",
-  cta_primary_text: "Start an AI Launch",
-  cta_primary_url: "#contact-section",
-  cta_secondary_text: "View AI Packages",
-  cta_secondary_url: "#packages-section",
+    "AI has made it easier than ever to ship. We help you get seen — across global and Asia media.",
+  cta_primary_text: "View Packages",
+  cta_primary_url: "#packages-section",
+  cta_secondary_text: "Explore Platform",
+  cta_secondary_url: "#vortix-portal-section",
   center_logo_url: "https://img.vortixpr.com/brand/a4724e24-50d7-41a3-a89d-9ab50dc8575d.png",
 };
 

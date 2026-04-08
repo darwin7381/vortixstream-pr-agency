@@ -1,42 +1,38 @@
 /**
- * AI "Why VortixPR" / Stats Section data
+ * AI "Why Vortix" / Stats Section data
  * Shape mirrors the /public/content/sections/why_vortix JSONB response
  */
 
 export const aiWhyVortixData = {
-  title: "Why VortixPR for AI",
+  title: "Why Vortix",
+  description:
+    "Built for teams shipping fast — where distribution is the real bottleneck.",
   stats: [
     {
-      value: 300,
-      suffix: "M+",
-      label: "AI-curious readers reached",
-      description: "Combined audience of our AI & tech media partners",
-    },
-    {
-      value: 1200,
+      value: 900,
       suffix: "+",
-      label: "AI launches placed",
-      description: "Model releases, product launches, and funding rounds covered",
+      label: "Publications",
+      description: "Global and regional media in our network",
     },
     {
-      value: 48,
-      suffix: "hr",
-      label: "Distribution turnaround",
-      description: "From brief to live coverage in 48 hours or less",
+      value: 300,
+      suffix: "+",
+      label: "Teams",
+      description: "Startups and companies we've supported",
     },
     {
-      value: 94,
-      suffix: "%",
-      label: "Editor reply rate",
-      description: "Our AI reporter relationships convert at industry-leading rates",
+      value: 20,
+      suffix: "+",
+      label: "Countries",
+      description: "Coverage across key global markets",
+    },
+    {
+      value: 100,
+      suffix: "M+",
+      label: "Estimated Reach",
+      description: "Across campaigns delivered",
     },
   ],
-  differentiators: [
-    { text: "Deep relationships with AI/ML beat reporters at top-tier publications" },
-    { text: "Model launch playbook refined across 500+ AI product releases" },
-    { text: "Technical translation: journalists understand your architecture without dumbing it down" },
-    { text: "Stealth-friendly embargo management for sensitive pre-launch campaigns" },
-    { text: "Specialized AI fundraising narrative — Series A through C announcement strategies" },
-    { text: "Community amplification on Hacker News, r/MachineLearning, and AI Twitter" },
-  ],
+  // No differentiator cards in the new copy — only the four stats above.
+  differentiators: [],
 };

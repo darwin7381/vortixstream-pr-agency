@@ -4,55 +4,43 @@
  */
 
 export const aiServicesData = {
-  title: "Every service an AI founder needs",
-  subtitle: "From stealth to Series B",
+  title: "How it works",
+  subtitle: "",
   label: "SERVICES",
   description:
-    "We've helped AI founders navigate the full communications journey — from pre-launch whisper campaigns to post-funding momentum. Our team knows the difference between a model release and a product launch, and crafts the right story for each.",
+    "Whether you're shipping fast, experimenting, or vibe coding your next idea, Vortix helps your story reach the right audience. From launches to major announcements, we handle distribution so you can focus on building.",
   items: [
     {
-      title: "AI Launch PR",
+      title: "Global Press Distribution",
       description:
-        "Orchestrate your model or product launch across tier-1 AI publications. We coordinate embargoes, write technical briefs, and ensure your announcement lands in TechCrunch, VentureBeat, and The Verge simultaneously.",
-      icon: "rocket",
+        "Distribution across AI, tech, startup, and global media.",
+      icon: "globe",
     },
     {
-      title: "Founder Storytelling",
+      title: "Asia Localization & Outreach",
       description:
-        "Investors and journalists fund people, not just products. We shape your personal narrative — your path, your vision, and why you're the right person to build this — into a story editors actually want to publish.",
+        "Regional distribution across CN, KR, JP, and SEA with localized messaging.",
+      icon: "map",
+    },
+    {
+      title: "PR & Narrative Strategy",
+      description:
+        "We help shape your story so it's clear, relevant, and picked up by the media.",
       icon: "pen",
     },
     {
-      title: "Media Training for Technical Founders",
+      title: "Founder & Personal Branding",
       description:
-        "Explain transformers, RAG pipelines, and RLHF to journalists in plain English. Our workshops prepare technical founders for live interviews, press calls, and on-camera appearances without losing accuracy.",
-      icon: "mic",
-    },
-    {
-      title: "Investor Comms & Fundraising PR",
-      description:
-        "From pre-announce signal seeding to day-of TechCrunch exclusives, we manage every layer of your funding announcement to maximize signaling value and inbound deal flow.",
-      icon: "chart",
-    },
-    {
-      title: "Demo Day Press",
-      description:
-        "Accelerator demo day is your first public moment. We build pre-event buzz, arrange journalist attendance, and ensure your startup name is in every round-up piece the next morning.",
-      icon: "presentation",
-    },
-    {
-      title: "Thought Leadership & Op-Eds",
-      description:
-        "Bylines in MIT Technology Review, Wired, and IEEE Spectrum position you as the go-to voice in your AI niche. We research, draft, and place opinion pieces that build long-term authority.",
-      icon: "lightbulb",
+        "Build credibility through interviews, articles, and thought leadership.",
+      icon: "user",
     },
   ],
   cta_primary: {
-    text: "Get Started",
-    url: "#contact-section",
+    text: "View Packages",
+    url: "#packages-section",
   },
   cta_secondary: {
-    text: "Contact Us",
+    text: "Talk to a Specialist",
     url: "#contact-section",
   },
 };

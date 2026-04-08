@@ -26,4 +26,4 @@ export const aiCarouselLogos: CarouselLogoItem[] = [
   { id: 12, name: "Bloomberg", logo_url: "https://img.vortixpr.com/ai-media-logos/1cbd7c50-eb24-4e15-882e-21bd216bdaed.png", alt_text: "Bloomberg" },
 ];
 
-export const aiCarouselSubtitle = "Covered in the publications that matter most to AI founders";
+export const aiCarouselSubtitle = "Get featured across AI, tech, startup, and regional media";
