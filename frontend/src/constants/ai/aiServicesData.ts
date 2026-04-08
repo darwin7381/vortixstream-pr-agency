@@ -47,4 +47,12 @@ export const aiServicesData = {
       icon: "lightbulb",
     },
   ],
+  cta_primary: {
+    text: "Get Started",
+    url: "#contact-section",
+  },
+  cta_secondary: {
+    text: "Contact Us",
+    url: "#contact-section",
+  },
 };

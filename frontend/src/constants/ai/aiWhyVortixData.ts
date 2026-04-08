@@ -34,12 +34,9 @@ export const aiWhyVortixData = {
   differentiators: [
     { text: "Deep relationships with AI/ML beat reporters at top-tier publications" },
     { text: "Model launch playbook refined across 500+ AI product releases" },
-    { text: "YC, a16z, and Sequoia accelerator partner — we know what demo day coverage looks like" },
-    { text: "Technical translation: we help journalists understand your architecture without dumbing it down" },
-    { text: "Stealth-friendly approach — coordinated embargo management for sensitive launches" },
-    { text: "Real-time coverage dashboards so you can show your board and investors every placement" },
-    { text: "Specialized in AI fundraising narrative: Series A through Series C announcement strategies" },
+    { text: "Technical translation: journalists understand your architecture without dumbing it down" },
+    { text: "Stealth-friendly embargo management for sensitive pre-launch campaigns" },
+    { text: "Specialized AI fundraising narrative — Series A through C announcement strategies" },
     { text: "Community amplification on Hacker News, r/MachineLearning, and AI Twitter" },
-    { text: "Ethics-forward framing — we help position responsible AI development, not just hype" },
   ],
 };

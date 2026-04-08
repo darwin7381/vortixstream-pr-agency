@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import AINavigation from '../components/ai/AINavigation';
 import AIFooter from '../components/ai/AIFooter';
+import CompareBar from '../components/compare/CompareBar';
 import { User } from '../contexts/AuthContext';
 
 interface AILayoutProps {
@@ -16,6 +17,7 @@ export default function AILayout({ user, onLogout }: AILayoutProps) {
         <Outlet />
       </div>
       <AIFooter />
+      <CompareBar />
     </div>
   );
 }
