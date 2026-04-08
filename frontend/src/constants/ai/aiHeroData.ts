@@ -4,6 +4,7 @@
  */
 
 export const aiHeroData = {
+  eyebrow_label: "PR & Distribution for AI Founders",
   title_prefix: "PR for the AI era —",
   title_highlights: ["Founders", "AI Startups", "Solo Builders", "Indie Hackers", "Model Labs"],
   subtitle:

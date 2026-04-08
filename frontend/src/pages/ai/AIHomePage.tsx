@@ -48,6 +48,7 @@ export default function AIHomePage() {
       <PRPackagesSection
         title="AI PR PACKAGES"
         description="Flexible plans for every stage — from solo founder to Series B. All packages include our Lyro AI co-pilot and dedicated account management."
+        audience="ai"
       />
 
       {/* Vortix Portal Section */}

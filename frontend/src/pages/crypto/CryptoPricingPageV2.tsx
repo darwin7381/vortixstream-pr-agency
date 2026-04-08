@@ -26,7 +26,7 @@ export default function CryptoPricingPageV2() {
       {/* PR Packages Grid */}
       <section className="bg-black py-section-large">
         <div className="container-large px-[17px] md:px-[17px]">
-          <PRPackagesGrid onPackageSelect={setSelectedPackage} />
+          <PRPackagesGrid onPackageSelect={setSelectedPackage} audience="crypto" />
         </div>
       </section>
 

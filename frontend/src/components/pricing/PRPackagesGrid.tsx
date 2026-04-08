@@ -19,13 +19,16 @@ interface PRPackagesGridProps {
   showLoading?: boolean;
   /** Package 選擇回調 */
   onPackageSelect?: (pkg: PRPackage) => void;
+  /** 過濾受眾：'ai' 只顯示 AI 包、'crypto' 只顯示 crypto 包、省略則顯示全部 */
+  audience?: 'ai' | 'crypto' | 'both';
 }
 
-export default function PRPackagesGrid({ 
+export default function PRPackagesGrid({
   showAnimation = true,
   className = '',
   showLoading = true,
-  onPackageSelect
+  onPackageSelect,
+  audience,
 }: PRPackagesGridProps) {
   const [isVisible, setIsVisible] = useState(!showAnimation);
   const [pricingPackagesV2, setPricingPackagesV2] = useState<PRPackageCategory[]>([]);
@@ -36,7 +39,7 @@ export default function PRPackagesGrid({
     const fetchPackages = async () => {
       setLoading(true);
       try {
-        const data = await prPackagesAPI.getPackagesByCategory();
+        const data = await prPackagesAPI.getPackagesByCategory('active', audience);
         setPricingPackagesV2(data);
       } catch (error) {
         console.error('Failed to fetch PR packages:', error);
@@ -46,7 +49,7 @@ export default function PRPackagesGrid({
     };
 
     fetchPackages();
-  }, []);
+  }, [audience]);
 
   // Animation trigger
   useEffect(() => {

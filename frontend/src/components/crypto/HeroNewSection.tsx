@@ -191,7 +191,7 @@ export default function HeroNewSection({ dataOverride }: HeroNewSectionProps = {
                     style={{ transitionDelay: '0.2s' }}
                   >
                     <p className="text-[10px] sm:text-[11px] md:text-[12px] lg:text-[12px] text-white/60 font-sans tracking-[0.12em] uppercase">
-                      PR & Distribution for Web3 + AI
+                      {heroData?.eyebrow_label ?? 'PR & Distribution for Web3 + AI'}
                     </p>
                   </div>
 

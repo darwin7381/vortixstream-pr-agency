@@ -345,8 +345,13 @@ export const prPackagesAPI = {
   /**
    * 取得所有 PR Packages（按分類）（Public API - 可快取）
    */
-  async getPackagesByCategory(status: string = 'active'): Promise<PRPackageCategory[]> {
-    const response = await fetch(`${PUBLIC_API}/pr-packages/?status=${status}`);
+  async getPackagesByCategory(
+    status: string = 'active',
+    audience?: 'ai' | 'crypto' | 'both',
+  ): Promise<PRPackageCategory[]> {
+    const params = new URLSearchParams({ status });
+    if (audience) params.set('audience', audience);
+    const response = await fetch(`${PUBLIC_API}/pr-packages/?${params.toString()}`);
     if (!response.ok) throw new Error('Failed to fetch PR packages');
     return response.json();
   },

@@ -23,13 +23,16 @@ interface PRPackagesSectionProps {
   showCTA?: boolean;
   /** CTA 文字 */
   ctaText?: string;
+  /** 過濾受眾：'ai' / 'crypto' / 'both'；省略則顯示全部 */
+  audience?: 'ai' | 'crypto' | 'both';
 }
 
 export default function PRPackagesSection({
   title = "PACKAGES",
   description = "Global distribution, Asia-market localization and founder-focused plans. Below is a high-level view; each package can be customized.",
   showCTA = true,
-  ctaText = "Contact Us"
+  ctaText = "Contact Us",
+  audience,
 }: PRPackagesSectionProps) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -155,9 +158,10 @@ export default function PRPackagesSection({
         </div>
 
         {/* PR Packages Grid */}
-        <PRPackagesGrid 
+        <PRPackagesGrid
           showAnimation={isVisible}
           onPackageSelect={setSelectedPackage}
+          audience={audience}
         />
 
         {/* Bottom CTA */}

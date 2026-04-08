@@ -40,7 +40,7 @@ export default function CryptoHomePage() {
       <ServicesSection onContactClick={handleCTAClick} />
 
       {/* Packages Preview Section */}
-      <PRPackagesSection />
+      <PRPackagesSection audience="crypto" />
 
       {/* Vortix Portal Section */}
       <section id="vortix-portal-section">
