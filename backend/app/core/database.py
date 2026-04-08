@@ -781,17 +781,42 @@ class Database:
                     -- Display Order (within category)
                     display_order INTEGER DEFAULT 0,
                     
+                    -- Audience (crypto, ai, both)
+                    audience VARCHAR(16) NOT NULL DEFAULT 'crypto'
+                        CONSTRAINT pr_packages_audience_check CHECK (audience IN ('crypto', 'ai', 'both')),
+
                     -- Status
                     status VARCHAR(20) DEFAULT 'active',
-                    
+
                     -- Timestamps
                     created_at TIMESTAMP DEFAULT NOW(),
                     updated_at TIMESTAMP DEFAULT NOW()
                 );
-                
+
                 CREATE INDEX IF NOT EXISTS idx_pr_packages_category ON pr_packages(category_id);
                 CREATE INDEX IF NOT EXISTS idx_pr_packages_status ON pr_packages(status);
                 CREATE INDEX IF NOT EXISTS idx_pr_packages_order ON pr_packages(category_order, display_order);
+            """)
+
+            # ==================== Migrations ====================
+            # Add audience column to existing pr_packages tables (idempotent)
+            audience_col_exists = await conn.fetchval("""
+                SELECT EXISTS(
+                    SELECT 1 FROM information_schema.columns
+                    WHERE table_name = 'pr_packages' AND column_name = 'audience'
+                )
+            """)
+            if not audience_col_exists:
+                logger.info("📝 Adding audience column to pr_packages...")
+                await conn.execute("""
+                    ALTER TABLE pr_packages
+                    ADD COLUMN audience VARCHAR(16) NOT NULL DEFAULT 'crypto'
+                        CONSTRAINT pr_packages_audience_check CHECK (audience IN ('crypto', 'ai', 'both'))
+                """)
+                logger.info("✅ audience column added to pr_packages")
+            # Always ensure the index exists (idempotent)
+            await conn.execute("""
+                CREATE INDEX IF NOT EXISTS idx_pr_packages_audience ON pr_packages(audience)
             """)
             
             # Media Files Table（媒體檔案管理）
