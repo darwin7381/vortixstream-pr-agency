@@ -1,44 +1,101 @@
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import VortixLogoWhite from '../../assets/VortixLogo White_Horizontal.png';
+
+const AI_FOOTER_LINKS = {
+  map: [
+    { label: 'Home', url: '/' },
+    { label: 'Services', url: '/services' },
+    { label: 'Pricing', url: '/pricing' },
+    { label: 'Clients', url: '/clients' },
+    { label: 'Publisher', url: '/publisher' },
+    { label: 'About', url: '/about' },
+  ],
+  resources: [
+    { label: 'Blog', url: '/blog' },
+    { label: 'Crypto PR →', url: '/crypto' },
+  ],
+};
 
 export default function AIFooter() {
+  const navigate = useNavigate();
+
   return (
-    <footer className="border-t border-gray-200 mt-24">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          <div>
-            <h3 className="text-sm font-semibold mb-4">VortixPR</h3>
-            <p className="text-sm text-gray-600">
-              The PR agency for AI startups.
+    <footer className="bg-black py-16 md:py-20">
+      <div className="container-large px-[20px] xl:px-[64px] mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr_1fr] gap-8 lg:gap-12 xl:gap-16 mb-16 md:mb-20">
+
+          {/* Brand Column */}
+          <div className="space-y-6">
+            <div className="flex items-center">
+              <img
+                src={VortixLogoWhite}
+                alt="VortixPR Logo"
+                className="h-10 sm:h-12 md:h-14 xl:h-16 w-auto object-contain"
+              />
+            </div>
+            <p className="text-white text-[14px] font-sans leading-[1.5] max-w-[320px]">
+              The PR agency for AI startups and technical founders. From stealth to Series B — we get your story told in the publications that matter.
             </p>
           </div>
-          <div>
-            <h3 className="text-sm font-semibold mb-4">Services</h3>
-            <ul className="space-y-2 text-sm text-gray-600">
-              <li><Link to="/services" className="hover:text-black">All Services</Link></li>
-              <li><Link to="/pricing" className="hover:text-black">Pricing</Link></li>
-            </ul>
+
+          {/* Map Column */}
+          <div className="space-y-6">
+            <h4 className="text-white text-[16px] font-sans font-semibold">Map</h4>
+            <div className="space-y-4">
+              {AI_FOOTER_LINKS.map.map((link) => (
+                <button
+                  key={link.url}
+                  onClick={() => navigate(link.url)}
+                  className="block text-white text-[14px] font-sans hover:text-gray-300 transition-colors leading-[1.4] cursor-pointer text-left"
+                >
+                  {link.label}
+                </button>
+              ))}
+            </div>
           </div>
-          <div>
-            <h3 className="text-sm font-semibold mb-4">Company</h3>
-            <ul className="space-y-2 text-sm text-gray-600">
-              <li><Link to="/about" className="hover:text-black">About</Link></li>
-              <li><Link to="/clients" className="hover:text-black">Clients</Link></li>
-              <li><Link to="/contact" className="hover:text-black">Contact</Link></li>
-            </ul>
+
+          {/* Resources Column */}
+          <div className="space-y-6">
+            <h4 className="text-white text-[16px] font-sans font-semibold">Resources</h4>
+            <div className="space-y-4">
+              {AI_FOOTER_LINKS.resources.map((link) => (
+                <button
+                  key={link.url}
+                  onClick={() => navigate(link.url)}
+                  className="block text-white text-[14px] font-sans hover:text-gray-300 transition-colors leading-[1.4] cursor-pointer text-left"
+                >
+                  {link.label}
+                </button>
+              ))}
+            </div>
           </div>
-          <div>
-            <h3 className="text-sm font-semibold mb-4">Other Brands</h3>
-            <ul className="space-y-2 text-sm text-gray-600">
-              <li><Link to="/crypto" className="hover:text-black">Vortix Crypto →</Link></li>
-            </ul>
-          </div>
+
         </div>
-        <div className="mt-12 pt-8 border-t border-gray-200 flex flex-col sm:flex-row justify-between text-xs text-gray-500">
-          <p>© {new Date().getFullYear()} VortixPR. All rights reserved.</p>
-          <div className="flex space-x-4 mt-4 sm:mt-0">
-            <Link to="/privacy-policy" className="hover:text-black">Privacy</Link>
-            <Link to="/terms-of-service" className="hover:text-black">Terms</Link>
-            <Link to="/cookie-policy" className="hover:text-black">Cookies</Link>
+
+        {/* Bottom Bar */}
+        <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <p className="text-white/60 text-[12px] font-sans">
+            © {new Date().getFullYear()} VortixPR. All rights reserved.
+          </p>
+          <div className="flex space-x-6">
+            <button
+              onClick={() => navigate('/privacy-policy')}
+              className="text-white/60 text-[12px] font-sans hover:text-white transition-colors"
+            >
+              Privacy
+            </button>
+            <button
+              onClick={() => navigate('/terms-of-service')}
+              className="text-white/60 text-[12px] font-sans hover:text-white transition-colors"
+            >
+              Terms
+            </button>
+            <button
+              onClick={() => navigate('/cookie-policy')}
+              className="text-white/60 text-[12px] font-sans hover:text-white transition-colors"
+            >
+              Cookies
+            </button>
           </div>
         </div>
       </div>

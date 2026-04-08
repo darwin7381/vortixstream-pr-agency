@@ -10,7 +10,7 @@ interface AILayoutProps {
 
 export default function AILayout({ user, onLogout }: AILayoutProps) {
   return (
-    <div className="min-h-screen bg-white text-gray-900">
+    <div className="min-h-screen bg-black text-white">
       <AINavigation user={user} onLogout={onLogout} />
       <div className="pt-16">
         <Outlet />
