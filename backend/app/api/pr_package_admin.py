@@ -96,9 +96,9 @@ async def create_pr_package(package: PRPackageCreate):
             INSERT INTO pr_packages (
                 name, slug, price, description, badge, guaranteed_publications,
                 category_id, media_logos, features, detailed_info,
-                display_order, category_order, status
+                display_order, category_order, status, audience
             )
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb, $9::jsonb, $10::jsonb, $11, $12, $13)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb, $9::jsonb, $10::jsonb, $11, $12, $13, $14)
             RETURNING *
             """,
             package.name,
@@ -113,7 +113,8 @@ async def create_pr_package(package: PRPackageCreate):
             json.dumps(package.detailed_info.dict()) if package.detailed_info else None,
             package.display_order,
             package.category_order if hasattr(package, 'category_order') else 1,
-            package.status
+            package.status,
+            package.audience
         )
     
     package_dict = dict(row)
