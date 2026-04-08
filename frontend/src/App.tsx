@@ -75,7 +75,7 @@ function AppContent() {
 
       <Routes>
         {/* AI site */}
-        <Route element={<AILayout user={user} onLogout={logout} />}>
+        <Route element={<AILayout user={user} onLogout={logout} onQuickLogin={quickLogin} />}>
           <Route path="/" element={<AIHomePage />} />
           <Route path="/services" element={<AIServicesPage />} />
           <Route path="/pricing" element={<AIPricingPage />} />

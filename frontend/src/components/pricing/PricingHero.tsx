@@ -1,6 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 
-export default function PricingHero() {
+interface PricingHeroProps {
+  eyebrow?: string;
+  title?: string;
+  subtitle?: string;
+}
+
+export default function PricingHero({
+  eyebrow = 'Pricing',
+  title = 'Choose Your Perfect Plan',
+  subtitle = 'From startups to enterprises, we have the right package to amplify your story and reach your audience.',
+}: PricingHeroProps = {}) {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -67,7 +77,7 @@ export default function PricingHero() {
             style={{ transitionDelay: '0.3s' }}
           >
             <span className="text-white text-sm md:text-base" style={{ fontWeight: '600' }}>
-              Pricing
+              {eyebrow}
             </span>
           </div>
           <h1 
@@ -83,7 +93,7 @@ export default function PricingHero() {
               transitionDelay: '0.6s'
             }}
           >
-            Choose Your Perfect Plan
+            {title}
           </h1>
           <p 
             className={`text-white text-base md:text-lg opacity-80 transition-all duration-1300 ${
@@ -93,7 +103,7 @@ export default function PricingHero() {
             }`}
             style={{ transitionDelay: '0.9s' }}
           >
-            From startups to enterprises, we have the right package to amplify your story and reach your audience.
+            {subtitle}
           </p>
         </div>
       </div>

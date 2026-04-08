@@ -7,12 +7,13 @@ import { User } from '../contexts/AuthContext';
 interface AILayoutProps {
   user?: User | null;
   onLogout?: () => void;
+  onQuickLogin?: () => void;
 }
 
-export default function AILayout({ user, onLogout }: AILayoutProps) {
+export default function AILayout({ user, onLogout, onQuickLogin }: AILayoutProps) {
   return (
     <div className="min-h-screen bg-black text-white">
-      <AINavigation user={user} onLogout={onLogout} />
+      <AINavigation user={user} onLogout={onLogout} onQuickLogin={onQuickLogin} />
       <div className="pt-16">
         <Outlet />
       </div>
