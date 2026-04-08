@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Literal
 from datetime import datetime
 
 
@@ -33,6 +33,7 @@ class PRPackageBase(BaseModel):
     features: List[str] = Field(default_factory=list)
     detailed_info: Optional[DetailedInfo] = None
     category_id: str = Field(..., max_length=50)
+    audience: Literal['crypto', 'ai', 'both'] = 'crypto'
 
 
 class PRPackageCreate(PRPackageBase):
@@ -52,6 +53,7 @@ class PRPackageUpdate(BaseModel):
     features: Optional[List[str]] = None
     detailed_info: Optional[DetailedInfo] = None
     category_id: Optional[str] = Field(None, max_length=50)
+    audience: Optional[Literal['crypto', 'ai', 'both']] = None
     status: Optional[str] = Field(None, pattern="^(active|inactive)$")
     display_order: Optional[int] = None
 
@@ -60,6 +62,7 @@ class PRPackage(PRPackageBase):
     """PR Package 完整模型"""
     id: int
     slug: str
+    audience: Literal['crypto', 'ai', 'both']
     status: str
     display_order: int
     created_at: datetime

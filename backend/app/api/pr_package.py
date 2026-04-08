@@ -1,5 +1,5 @@
-from fastapi import APIRouter, HTTPException
-from typing import List
+from fastapi import APIRouter, HTTPException, Query
+from typing import List, Optional
 import json
 
 from ..core.database import db
@@ -10,11 +10,36 @@ router = APIRouter(prefix="/pr-packages")
 
 
 @router.get("/", response_model=List[PRPackageCategoryFrontend])
-async def get_pr_packages_by_category(status: str = "active"):
+async def get_pr_packages_by_category(
+    status: str = "active",
+    audience: Optional[str] = Query(None, description="Filter by audience: ai, crypto, or both"),
+):
     """取得所有 PR Packages（按分類組織）"""
-    
+
     async with db.pool.acquire() as conn:
-        if status == "all":
+        if audience is not None:
+            # Filter: packages whose audience matches OR is 'both'
+            if status == "all":
+                rows = await conn.fetch(
+                    """
+                    SELECT * FROM pr_packages
+                    WHERE (audience = $1 OR audience = 'both')
+                    ORDER BY category_order, display_order, id
+                    """,
+                    audience
+                )
+            else:
+                rows = await conn.fetch(
+                    """
+                    SELECT * FROM pr_packages
+                    WHERE status = $1
+                      AND (audience = $2 OR audience = 'both')
+                    ORDER BY category_order, display_order, id
+                    """,
+                    status,
+                    audience
+                )
+        elif status == "all":
             rows = await conn.fetch(
                 """
                 SELECT * FROM pr_packages
@@ -64,6 +89,7 @@ async def get_pr_packages_by_category(status: str = "active"):
             "guaranteedPublications": package_dict['guaranteed_publications'],
             "mediaLogos": package_dict['media_logos'],
             "detailedInfo": detailed_info,
+            "audience": package_dict.get('audience', 'crypto'),
         }
         
         category_id = package_dict['category_id']

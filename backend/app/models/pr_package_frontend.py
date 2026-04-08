@@ -2,7 +2,7 @@
 前端專用的 PR Package models（完全匹配前端 TypeScript interface）
 """
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional, List, Literal
 
 
 class MediaLogoFrontend(BaseModel):
@@ -36,6 +36,7 @@ class PRPackageFrontend(BaseModel):
     guaranteedPublications: Optional[int] = None
     mediaLogos: Optional[List[MediaLogoFrontend]] = None
     detailedInfo: Optional[DetailedInfoFrontend] = None
+    audience: Literal['crypto', 'ai', 'both'] = 'crypto'
 
 
 class PRPackageCategoryFrontend(BaseModel):
