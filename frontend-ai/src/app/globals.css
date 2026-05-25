@@ -166,53 +166,174 @@ a {
   font-weight: 500;
 }
 
-/* Editorial CTAs — sharp-edged, typography-led, NOT pill SaaS */
+/* Editorial Cinematic CTAs — typographic call-outs, NOT SaaS buttons.
+   Magazine convention (Paris Review / Lapham's Quarterly / A24 / NYRB):
+   - italic Fraunces serif label (matches the page's display typography)
+   - amber arrow on the right with hover-translate
+   - animated amber hairline underline that draws left → right on hover
+   - no fill, no box, no border, no pill — just type + line + arrow */
 .cta-primary {
+  position: relative;
   display: inline-flex;
-  align-items: center;
-  gap: 0.625rem;
-  background: var(--accent);
-  color: var(--paper);
-  padding: 0.85rem 1.4rem;
-  font-family: var(--font-body), "Helvetica Neue", sans-serif;
-  font-size: 0.95rem;
-  letter-spacing: var(--tracking-tight);
-  border: 1px solid var(--accent);
-  border-radius: 2px;
-  transition: background var(--duration-deliberate) var(--ease-editorial),
-              transform var(--duration-quick) var(--ease-editorial);
-  cursor: pointer;
-}
-.cta-primary:hover {
-  background: var(--accent-deep);
-  border-color: var(--accent-deep);
-}
-.cta-primary:active { transform: translateY(1px); }
-.cta-primary .arr {
-  display: inline-block;
-  transition: transform var(--duration-quick) var(--ease-editorial);
-}
-.cta-primary:hover .arr { transform: translateX(3px); }
-
-.cta-outline {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.625rem;
+  align-items: baseline;
+  gap: 0.65rem;
   background: transparent;
   color: var(--paper);
-  padding: 0.85rem 1.4rem;
-  font-family: var(--font-body), "Helvetica Neue", sans-serif;
-  font-size: 0.95rem;
-  letter-spacing: var(--tracking-tight);
-  border: 1px solid var(--rule-strong);
-  border-radius: 2px;
-  transition: border-color var(--duration-deliberate) var(--ease-editorial),
+  padding: 0.25rem 0;
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-style: italic;
+  font-size: 1.625rem;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.1;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  transition: color var(--duration-deliberate) var(--ease-editorial),
+              transform var(--duration-quick) var(--ease-editorial);
+}
+.cta-primary::after {
+  /* hairline underline — draws left → right on hover */
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 1px;
+  width: 100%;
+  background: var(--accent);
+  transform: scaleX(0.18);
+  transform-origin: left;
+  transition: transform var(--duration-deliberate) var(--ease-editorial),
               background var(--duration-deliberate) var(--ease-editorial);
 }
-.cta-outline:hover {
-  border-color: var(--paper);
-  background: rgba(244, 239, 229, 0.05);
+.cta-primary .arr {
+  display: inline-block;
+  font-family: var(--font-onest), "Helvetica Neue", sans-serif;
+  font-style: normal;
+  color: var(--accent);
+  font-size: 1.25rem;
+  line-height: 1;
+  transition: transform var(--duration-deliberate) var(--ease-editorial),
+              color var(--duration-deliberate) var(--ease-editorial);
 }
+.cta-primary:hover { color: var(--paper); }
+.cta-primary:hover::after {
+  transform: scaleX(1);
+  background: var(--gold);
+}
+.cta-primary:hover .arr {
+  transform: translateX(6px);
+  color: var(--gold);
+}
+.cta-primary:active { transform: translateY(1px); }
+
+.cta-outline {
+  /* Secondary editorial call-out — same line/arrow vocabulary, smaller weight.
+     Sentence-case Onest medium (not italic) to differentiate from primary serif. */
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  background: transparent;
+  color: var(--paper-muted);
+  padding: 0.25rem 0;
+  font-family: var(--font-onest), "Helvetica Neue", sans-serif;
+  font-style: normal;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: -0.008em;
+  line-height: 1.25;
+  border: none;
+  border-radius: 0;
+  transition: color var(--duration-deliberate) var(--ease-editorial),
+              transform var(--duration-quick) var(--ease-editorial);
+}
+.cta-outline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 1px;
+  width: 100%;
+  background: var(--paper-muted);
+  transform: scaleX(0.22);
+  transform-origin: left;
+  transition: transform var(--duration-deliberate) var(--ease-editorial),
+              background var(--duration-deliberate) var(--ease-editorial);
+}
+.cta-outline .arr {
+  display: inline-block;
+  font-family: var(--font-onest), "Helvetica Neue", sans-serif;
+  color: var(--paper-muted);
+  font-size: 1rem;
+  line-height: 1;
+  transition: transform var(--duration-deliberate) var(--ease-editorial),
+              color var(--duration-deliberate) var(--ease-editorial);
+}
+.cta-outline:hover { color: var(--paper); }
+.cta-outline:hover::after {
+  transform: scaleX(1);
+  background: var(--paper);
+}
+.cta-outline:hover .arr {
+  transform: translateX(5px);
+  color: var(--paper);
+}
+.cta-outline:active { transform: translateY(1px); }
+
+/* Compact nav variant — typographic call-out in mono caps (matches nav link family).
+   Same anti-button philosophy as .cta-primary but tighter for the floating glass pill. */
+.cta-primary-sm {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  background: transparent;
+  color: var(--paper);
+  padding: 0.25rem 0.1rem 0.3rem 0.1rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-style: normal;
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  transition: color var(--duration-deliberate) var(--ease-editorial),
+              transform var(--duration-quick) var(--ease-editorial);
+}
+.cta-primary-sm::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  height: 1px;
+  width: 100%;
+  background: var(--accent);
+  transform: scaleX(0.28);
+  transform-origin: left;
+  transition: transform var(--duration-deliberate) var(--ease-editorial),
+              background var(--duration-deliberate) var(--ease-editorial);
+}
+.cta-primary-sm .arr {
+  display: inline-block;
+  font-size: 0.85rem;
+  line-height: 1;
+  color: var(--accent);
+  transition: transform var(--duration-deliberate) var(--ease-editorial),
+              color var(--duration-deliberate) var(--ease-editorial);
+}
+.cta-primary-sm:hover::after {
+  transform: scaleX(1);
+  background: var(--gold);
+}
+.cta-primary-sm:hover .arr {
+  transform: translateX(3px);
+  color: var(--gold);
+}
+.cta-primary-sm:active { transform: translateY(1px); }
 
 .cta-link {
   display: inline-flex;
@@ -509,28 +630,8 @@ section:hover .eyebrow-num {
   transform: scaleX(1);
 }
 
-/* 6. Button corner tick frames (cta-primary/cta-outline micro-affordance) */
-.cta-primary, .cta-outline {
-  position: relative;
-  overflow: visible;
-}
-.cta-primary::before, .cta-outline::before {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  border: 1px solid transparent;
-  pointer-events: none;
-  transition: border-color 0.3s var(--ease-precise), inset 0.3s var(--ease-precise);
-  border-radius: 2px;
-}
-.cta-primary:hover::before {
-  inset: -4px;
-  border-color: rgba(213, 138, 77, 0.45);
-}
-.cta-outline:hover::before {
-  inset: -4px;
-  border-color: rgba(244, 239, 229, 0.25);
-}
+/* 6. (removed) Old expanding-ring CTA frames superseded by left accent-bar
+   redesign in the .cta-primary / .cta-outline block above. */
 
 /* 7. Subtle letter-spacing hover tighten for display headings */
 .t-h2, .t-display {

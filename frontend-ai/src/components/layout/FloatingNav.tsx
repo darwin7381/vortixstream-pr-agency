@@ -32,11 +32,11 @@ export default function FloatingNav() {
         </Link>
         <InteractiveButton
           href="#contact"
-          className="inline-flex items-center rounded-[2px] bg-[var(--accent)] px-4.5 py-1.5 font-medium tracking-tight text-[length:var(--text-caption)] text-[var(--paper)] transition-all duration-[600ms] ease-[var(--ease-editorial)] hover:bg-[var(--accent-deep)] active:translate-y-[1px]"
+          className="cta-primary-sm"
           magnetic={true}
-          glow={true}
+          glow={false}
         >
-          Get started
+          Get started <span aria-hidden className="arr">→</span>
         </InteractiveButton>
       </nav>
     </header>
