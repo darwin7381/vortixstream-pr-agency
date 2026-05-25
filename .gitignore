@@ -72,3 +72,11 @@ PROJECT_ANALYSIS_*.md
 # Git worktrees (superpowers)
 .worktrees/
 
+
+# frontend-ai (Next.js)
+frontend-ai/node_modules
+frontend-ai/.next
+frontend-ai/.turbo
+frontend-ai/dist
+frontend-ai/build
+frontend-ai/tsconfig.tsbuildinfo
